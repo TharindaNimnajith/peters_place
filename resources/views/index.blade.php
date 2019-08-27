@@ -6,19 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <link href="{{ URL::asset('css/bootstrap.css') }}" rel="stylesheet" media="all" />
-    <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet" media="all" />
-    <link href="{{ URL::asset('css/font-awesome.css') }}" rel="stylesheet" />   
-    <link href="{{ URL::asset('css/easy-responsive-tabs.css') }}" rel="stylesheet" />
-    <link href="{{ URL::asset('css/flexslider.css') }}" rel="stylesheet" media="screen" property="" />
-    <link href="{{ URL::asset('css/chocolat.css') }}" rel="stylesheet" media="screen" />
-    <link href="{{ URL::asset('css/jquery-ui.css') }}" rel="stylesheet" />
-    <link href="{{ URL::asset('css/swipebox.css') }}" rel="stylesheet" />
+    <link href="{{ URL::asset('css/bootstrap.css') }}" rel="stylesheet" media="all"/>
+    <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet" media="all"/>
+    <link href="{{ URL::asset('css/font-awesome.css') }}" rel="stylesheet"/>
+    <link href="{{ URL::asset('css/easy-responsive-tabs.css') }}" rel="stylesheet"/>
+    <link href="{{ URL::asset('css/flexslider.css') }}" rel="stylesheet" media="screen" property=""/>
+    <link href="{{ URL::asset('css/chocolat.css') }}" rel="stylesheet" media="screen"/>
+    <link href="{{ URL::asset('css/jquery-ui.css') }}" rel="stylesheet"/>
+    <link href="{{ URL::asset('css/swipebox.css') }}" rel="stylesheet"/>
 
-    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Federo&display=swap" rel="stylesheet" /> 
-    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Federo&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/>
 
     <script src="{{ URL::asset('js/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ URL::asset('js/jquery-2.1.4.min.js') }}"></script>
@@ -212,7 +212,8 @@
                                 <p>Welcome to our hotel</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>
@@ -228,7 +229,8 @@
                                 <p>Come & enjoy precious moments with us</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>
@@ -244,7 +246,8 @@
                                 <p>Get accommodation today</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>

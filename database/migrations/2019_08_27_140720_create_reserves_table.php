@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateReservesTable extends Migration
 {
@@ -28,7 +28,7 @@ class CreateReservesTable extends Migration
 
             $table->timestamp('resereved_date_time')->useCurrent();
             $table->date('check_in');
-            $table->date('check_out');  
+            $table->date('check_out');
 
             $table->timestamps();
             $table->softDeletes();

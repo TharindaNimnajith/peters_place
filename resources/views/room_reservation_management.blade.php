@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>Peter's Place || Room Management</title>
+    <title>Peter's Place || Room Reservation Management</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
@@ -196,81 +196,81 @@
 
                 <div class="modal-body">
                     <div class="modal-body">
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="fname" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lname" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Room Type</label>
+                        <div class="form-group">
+                            <label>Room Type</label>
 
-                        <select name="rtype" class="form-control" required>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-                    </div>
+                            <select name="rtype" class="form-control" required>
+                                <option value="1">Single Bedroom</option>
+                                <option value="2">Double Bedroom</option>
+                                <option value="3">Family Bedroom</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <label>Room No</label>
+                            <input type="text" name="r_no" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <br/>
+                            <label>Check In</label>
+                            <input name="cin" type="date" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" required>
-                    </div>
+                        <div class="form-group">
+                            <br/>
+                            <label>Check Out</label>
+                            <input name="cout" type="date" class="form-control" required>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Food Type</label>
+                        <div class="form-group">
+                            <label>Food Type</label>
 
-                        <select name="food" class="form-control" required>
-                            <option value="1">Breakfast</option>
-                            <option value="2">Full Board</option>
-                            <option value="3">Half Board</option>
-                        </select>
-                    </div>
+                            <select name="food" class="form-control" required>
+                                <option value="1">Breakfast</option>
+                                <option value="2">Full Board</option>
+                                <option value="3">Half Board</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Adults</label>
+                        <div class="form-group">
+                            <label>Adults</label>
 
-                        <select name="adults" class="form-control" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
+                            <select name="adults" class="form-control" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Children</label>
+                        <div class="form-group">
+                            <label>Children</label>
 
-                        <select name="Children" class="form-control" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
+                            <select name="Children" class="form-control" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -370,7 +370,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                 </div>
@@ -481,4 +481,4 @@
     </div>
 </div>
 </body>
-</html>            
+</html>
