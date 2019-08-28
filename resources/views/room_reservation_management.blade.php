@@ -82,12 +82,14 @@
         <table class="table table-striped table-hover">
             <thead>
             <tr>
-                <th>Cust_ID</th>
+                <th>R_ID</th>
+                <th>C_ID</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Phone Number</th>
+                <th>Phone No</th>
                 <th>Room Type</th>
-                <th>Reserved Date</th>
+                <th>Room No</th>
+                <th>Reserved_Date_Time</th>
                 <th>Check In</th>
                 <th>Check Out</th>
                 <th>Actions</th>
@@ -96,11 +98,13 @@
 
             <tbody>
             <tr>
-                <td>C102</td>
+                <td>1</td>
+                <td>1</td>
                 <td>Tharinda</td>
                 <td>Nimnajith</td>
                 <td>0712089046</td>
                 <td>Single Bedroom</td>
+                <td>100</td>
                 <td>27/08/2019</td>
                 <td>28/08/2019</td>
                 <td>29/08/2019</td>
@@ -161,6 +165,11 @@
                             <option value="3">Family Bedroom</option>
                         </select>
                     </div>
+
+                    <div class="form-group">
+                            <label>Room No</label>
+                            <input type="text" name="r_no" class="form-control">
+                        </div>
 
                     <div class="form-group">
                         <br/>
@@ -237,40 +246,6 @@
                             <label>Check Out</label>
                             <input name="cout" type="date" class="form-control" required>
                         </div>
-
-                        <div class="form-group">
-                            <label>Food Type</label>
-
-                            <select name="food" class="form-control" required>
-                                <option value="1">Breakfast</option>
-                                <option value="2">Full Board</option>
-                                <option value="3">Half Board</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Adults</label>
-
-                            <select name="adults" class="form-control" required>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Children</label>
-
-                            <select name="Children" class="form-control" required>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
                     </div>
                 </div>
 
@@ -294,6 +269,16 @@
                 </div>
 
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label>Reservation ID</label>
+                        <input type="text" name="rid" class="form-control" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Customer ID</label>
+                        <input type="text" name="cid" class="form-control" disabled>
+                    </div>
+                
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" class="form-control" disabled>
@@ -335,40 +320,6 @@
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control" disabled>
                     </div>
-
-                    <div class="form-group">
-                        <label>Food Type</label>
-
-                        <select name="food" class="form-control" disabled>
-                            <option value="1">Breakfast</option>
-                            <option value="2">Full Board</option>
-                            <option value="3">Half Board</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Adults</label>
-
-                        <select name="adults" class="form-control" disabled>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Children</label>
-
-                        <select name="Children" class="form-control" disabled>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -391,6 +342,11 @@
 
                 <div class="modal-body">
                     <div class="form-group">
+                        <label>Reservation ID</label>
+                        <input type="text" name="cid" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
                         <label>Customer ID</label>
                         <input type="text" name="cid" class="form-control">
                     </div>
@@ -403,11 +359,6 @@
                     <div class="form-group">
                         <label>Last Name</label>
                         <input type="text" name="lname" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -435,16 +386,6 @@
                         <br/>
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Food Type</label>
-
-                        <select name="food" class="form-control">
-                            <option value="1">Breakfast</option>
-                            <option value="2">Full Board</option>
-                            <option value="3">Half Board</option>
-                        </select>
                     </div>
                 </div>
 

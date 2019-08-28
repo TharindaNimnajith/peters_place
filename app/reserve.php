@@ -10,7 +10,7 @@ class reserve extends Model
         'r_id',
         'cid',
         'room_no',
-        'rtype',
+        't_id',
         'resereved_date_time',
         'check_in',
         'check_out'

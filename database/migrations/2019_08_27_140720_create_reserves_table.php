@@ -14,10 +14,9 @@ class CreateReservesTable extends Migration
     public function up()
     {
         Schema::create('reserves', function (Blueprint $table) {
-            $table->integer('r_id');
-            $table->primary('r_id');
+            $table->increments('r_id');
 
-            $table->integer('cid');
+            $table->integer('cid')->unsigned();
             $table->foreign('cid')->references('cid')->on('customers');
 
             $table->integer('room_no');
