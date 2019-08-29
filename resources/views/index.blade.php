@@ -154,7 +154,7 @@
 
     <div class="col-sm-6">
         <div class="top-right links">
-            <a href="login.php">Sign in</a>
+            <a href="{{ url('/login') }}">Sign in</a>
             <!--<a href="register.php">Register</a>-->
         </div>
     </div>
@@ -212,8 +212,7 @@
                                 <p>Welcome to our hotel</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
-                                        More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
                                 </div>
                             </div>
                         </div>
@@ -229,8 +228,7 @@
                                 <p>Come & enjoy precious moments with us</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
-                                        More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
                                 </div>
                             </div>
                         </div>
@@ -246,8 +244,7 @@
                                 <p>Get accommodation today</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
-                                        More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
                                 </div>
                             </div>
                         </div>
@@ -768,7 +765,7 @@
     <div class="container">
         <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
 
-        <form name="form" method="post" action="includes/room_reservation.php">
+        <form name="form" method="post" action="">
             <div class="form-border">
                 <div class="row">
                     <div class="col-md-6 col-sm-6">

@@ -8,6 +8,7 @@
 .room_mngmnt a {
     text-decoration: none;
     color: white;
+    font-size: 26px;
 }
 
 .row2 {
@@ -232,11 +233,11 @@ table.table td i {
 }
 
 #nav-topics a {
-    font-size: 18px;
+    font-size: 20px;
 }
 
 #nav-sign a {
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .navbar-header a {

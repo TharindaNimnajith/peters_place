@@ -34,20 +34,25 @@
     <div class="navigation">
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
+                <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="home.php">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
+                -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li class="active"><a href="#">Rooms</a></li>
-                    <li><a href="room_type_management.php">Room Types</a></li>
-                    <li><a href="room_reservation_management.php">Room Reservations</a></li>
-                    <li><a href="room_reports.php">Reports</a></li>
+                    <li><a href="{{ url('/room_type_management') }}">Room Types</a></li>
+                    <li><a href="{{ url('/room_reservation_management') }}">Room Reservations</a></li>
+                    <li><a href="{{ url('/room_reports') }}">Reports</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <li><a href="profile.php"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    <li><a href="index.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <!--
+                    <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    -->
+
+                    <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>
         </nav>
@@ -58,14 +63,14 @@
             <div class="row">
                 <div class="col-sm-6">
                     <h2 class="room_mngmnt">
-                        <a href="room_management.php">Room <b>Management</b></a>
+                        <a href="{{ url('/room_management') }}">Room <b>Management</b></a>
                     </h2>
                 </div>
 
                 <div class="col-sm-3">
                     <div class="search-box">
                         <a href="#searchRoomModal" class="search" data-toggle="modal">
-                            <img src="images/search_bar.png" alt="search_icon">
+                            <img src="{{ asset('images/search_bar.png') }}" alt="search_icon">
                         </a>
                     </div>
                 </div>
@@ -124,7 +129,7 @@
 <div id="addRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="includes/add_room.php">
+            <form method="post" action="">
                 <div class="modal-header">
                     <h4 class="modal-title">Add New Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

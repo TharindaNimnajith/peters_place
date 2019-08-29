@@ -34,20 +34,25 @@
     <div class="navigation">
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
+                <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="home.php">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
+                -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
-                    <li><a href="room_management.php">Rooms</a></li>
-                    <li><a href="room_type_management.php">Room Types</a></li>
-                    <li><a href="room_reservation_management.php">Room Reservations</a></li>
-                    <li class="active"><a href="#">Reports</a></li>
+                    <li class="active"><a href="{{ url('/room_management') }}">Rooms</a></li>
+                    <li><a href="{{ url('/room_type_management') }}">Room Types</a></li>
+                    <li><a href="{{ url('/room_reservation_management') }}">Room Reservations</a></li>
+                    <li><a href="#">Reports</a></li>
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <li><a href="profile.php"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    <li><a href="index.php"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                    <!--
+                    <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    -->
+                    
+                    <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>
         </nav>
@@ -58,7 +63,7 @@
             <div class="row">
                 <div class="col-sm-4">
                     <h2 class="room_mngmnt">
-                        <a href="room_reports.php">Room Reports <b>Generation</b></a>
+                        <a href="{{ url('/room_reports') }}">Room Reports <b>Generation</b></a>
                     </h2>
                 </div>
             </div>
