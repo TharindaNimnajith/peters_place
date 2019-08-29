@@ -1,3 +1,11 @@
+.alert-danger li {
+    margin-left: 40px;
+}
+
+.alert-danger li:first-child {
+    margin-left: 0;
+}
+
 .search-box img {
     margin: -1px -10px 0 0;
     height: 70%;

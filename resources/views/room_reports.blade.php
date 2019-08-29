@@ -32,6 +32,22 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('success'))
+            <div class="alert alert-success">
+                {{ session()->get('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                </ul>
+                    @endforeach
+            </div>
+        @endif
+
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <!--

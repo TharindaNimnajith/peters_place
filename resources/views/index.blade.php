@@ -133,6 +133,22 @@
 </head>
 
 <body>
+@if (session()->has('success'))
+    <div class="alert alert-success">
+        {{ session()->get('success') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+        </ul>
+        @endforeach
+    </div>
+@endif
+
 <div class="banner-top" id="home">
     <div class="col-sm-6">
         <div class="social-bnr-agileits">
@@ -765,7 +781,9 @@
     <div class="container">
         <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
 
-        <form name="form" method="post" action="">
+        <form name="form" method="post" action="/reserve_online">
+            {{ csrf_field() }}
+            
             <div class="form-border">
                 <div class="row">
                     <div class="col-md-6 col-sm-6">

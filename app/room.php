@@ -12,6 +12,6 @@ class room extends Model
         'availability',
         'status',
         'description',
-        'type_id'
+        't_id'
     ];
 }

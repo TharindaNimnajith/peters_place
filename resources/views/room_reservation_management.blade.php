@@ -32,6 +32,22 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('success'))
+            <div class="alert alert-success">
+                {{ session()->get('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                </ul>
+                    @endforeach
+            </div>
+        @endif
+        
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <!--
@@ -139,7 +155,9 @@
 <div id="addReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/add_room_reservation">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Add New Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -202,7 +220,9 @@
 <div id="editReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form>
+            <form method="post" action="/edit_room_reservation">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Edit Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -267,7 +287,9 @@
 <div id="viewReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form>
+            <form method="post" action="/view_room_reservation">
+                {{ csrf_field() }}
+            
                 <div class="modal-header">
                     <h4 class="modal-title">View Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -339,7 +361,9 @@
 <div id="searchReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/search_room_reservation">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Search Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -407,7 +431,9 @@
 <div id="deleteReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form>
+            <form method="post" action="/delete_room_reservation">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

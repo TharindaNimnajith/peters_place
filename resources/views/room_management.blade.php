@@ -32,6 +32,22 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('success'))
+            <div class="alert alert-success">
+                {{ session()->get('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                </ul>
+                    @endforeach
+            </div>
+        @endif
+
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <!--
@@ -129,7 +145,9 @@
 <div id="addRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/add_room">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Add New Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -138,7 +156,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" required>
+                        <input type="text" name="r_no" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -180,7 +198,9 @@
 <div id="editRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/edit_room">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Edit Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -263,7 +283,9 @@
 <div id="viewRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/view_room">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">View Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -345,7 +367,9 @@
 <div id="searchRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/search_room">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Search Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -423,7 +447,9 @@
 <div id="deleteRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/delete_room">
+                {{ csrf_field() }}
+                
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

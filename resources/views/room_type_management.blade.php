@@ -32,6 +32,22 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('success'))
+            <div class="alert alert-success">
+                {{ session()->get('success') }}
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                </ul>
+                    @endforeach
+            </div>
+        @endif
+
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
                 <!--
@@ -129,7 +145,9 @@
 <div id="addRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/add_room_type">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Add New Room Type</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -138,12 +156,12 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room Type ID</label>
-                        <input type="text" name="t_id" class="form-control" required>
+                        <input type="text" name="t_id" class="form-control">
                     </div>
 
                     <div class="form-group">
                         <label>Room Type Name</label>
-                        <input type="text" name="t_name" class="form-control" required>
+                        <input type="text" name="t_name" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -153,7 +171,7 @@
 
                     <div class="form-group">
                         <label>Base Price (LKR)</label>
-                        <input type="text" name="price" class="form-control" required>
+                        <input type="text" name="price" class="form-control">
                     </div>
                 </div>
 
@@ -170,7 +188,9 @@
 <div id="editRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/edit_room_type">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Edit Room Type</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -211,7 +231,9 @@
 <div id="viewRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/view_room_type">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">View Room Type</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -261,7 +283,9 @@
 <div id="searchRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="">
+            <form method="post" action="/search_room_type">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Search Room Type</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -304,7 +328,9 @@
 <div id="deleteRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form>
+            <form method="post" action="/delete_room_type">
+                {{ csrf_field() }}
+
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room Type</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
