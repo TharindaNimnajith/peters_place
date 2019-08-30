@@ -32,16 +32,16 @@
 <body>
 <div class="container">
     <div class="navigation">
-        @if (session()->has('success'))
+        @if (session() -> has('success'))
             <div class="alert alert-success">
-                {{ session()->get('success') }}
+                {{ session() -> get('success') }}
             </div>
         @endif
 
-        @if ($errors->any())
+        @if ($errors -> any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors->all() as $error)
+                    @foreach ($errors -> all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                     @endforeach
@@ -57,9 +57,9 @@
                 -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
-                    <li class="active"><a href="{{ url('/room_management') }}">Rooms</a></li>
+                    <li><a href="{{ url('/room_management') }}">Rooms</a></li>
                     <li><a href="{{ url('/room_type_management') }}">Room Types</a></li>
-                    <li><a href="#">Room Reservations</a></li>
+                    <li class="active"><a href="#">Room Reservations</a></li>
                     <li><a href="{{ url('/room_reports') }}">Reports</a></li>
                 </ul>
 

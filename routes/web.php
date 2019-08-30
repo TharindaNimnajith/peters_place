@@ -47,7 +47,7 @@ Route::get('/room_reservation_management', function () {
     return view('room_reservation_management');
 });
 
-Route::post('/reserve_online', 'RoomController@');
+Route::post('/reserve_online', 'RoomController@reserve_online');
 
 Route::post('/add_room', 'RoomController@add_room');
 

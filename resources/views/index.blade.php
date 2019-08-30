@@ -133,16 +133,16 @@
 </head>
 
 <body>
-@if (session()->has('success'))
+@if (session() -> has('success'))
     <div class="alert alert-success">
-        {{ session()->get('success') }}
+        {{ session() -> get('success') }}
     </div>
 @endif
 
-@if ($errors->any())
+@if ($errors -> any())
     <div class="alert alert-danger">
         <ul>
-            @foreach ($errors->all() as $error)
+            @foreach ($errors -> all() as $error)
                 <li>{{ $error }}</li>
         </ul>
         @endforeach
@@ -795,19 +795,19 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input name="fname" class="form-control" required/>
+                                    <input name="fname" class="form-control"/>
                                     <br/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input name="lname" class="form-control" required/>
+                                    <input name="lname" class="form-control"/>
                                     <br/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone Number</label>
-                                    <input name="phone" type="text" class="form-control" required/>
+                                    <input name="phone" type="text" class="form-control"/>
                                 </div>
                             </div>
                         </div>
@@ -823,7 +823,7 @@
                                 <div class="form-group">
                                     <label>Room Type</label>
 
-                                    <select name="rtype" class="form-control" required>
+                                    <select name="rtype" class="form-control">
                                         <option value="1">Single Bedroom</option>
                                         <option value="2">Double Bedroom</option>
                                         <option value="3">Family Bedroom</option>
@@ -833,13 +833,13 @@
                                 <div class="form-group">
                                     <br/>
                                     <label>Check In</label>
-                                    <input name="cin" type="date" class="form-control" required/>
+                                    <input name="cin" type="date" class="form-control"/>
                                 </div>
 
                                 <div class="form-group">
                                     <br/>
                                     <label>Check Out</label>
-                                    <input name="cout" type="date" class="form-control" required/>
+                                    <input name="cout" type="date" class="form-control"/>
                                 </div>
                             </div>
                         </div>

@@ -37,11 +37,14 @@ class RoomTypeValidation extends FormRequest
             't_id.numeric'    => 'ERROR: Type ID must be numeric!',
             't_id.required'   => 'ERROR: Type ID field is required!',
             't_id.unique'     => 'ERROR: Entered room type id has already been taken!',
+
             'desc.required'   => 'ERROR: Description field is required!',
             'desc.max'        => 'ERROR: Description is too long. Limit to only 100 characters!',
-            'desc.string'     => 'ERROR: Description must be a string!', 
+            'desc.string'     => 'ERROR: Description must be a string!',
+
             'price.numeric'   => 'ERROR: Base price must be numeric!',
             'price.required'  => 'ERROR: Base price field is required!',
+            
             't_name.required' => 'ERROR: Type name field is required!',
             't_name.max'      => 'ERROR: Type name is too long. Limit to only 20 characters!',
             't_name.string'   => 'ERROR: Type name must be a string!',

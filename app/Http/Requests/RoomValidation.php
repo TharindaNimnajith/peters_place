@@ -36,9 +36,11 @@ class RoomValidation extends FormRequest
             'r_no.numeric'    => 'ERROR: Room number must be numeric!',
             'r_no.required'   => 'ERROR: Room number field is required!',
             'r_no.unique'     => 'ERROR: Entered room number has already been taken!',
+
             'desc.required'   => 'ERROR: Description field is required!',
             'desc.max'        => 'ERROR: Description is too long. Limit to only 100 characters!',
             'desc.string'     => 'ERROR: Description must be a string!',
+            
             'roomtype.exists' => 'ERROR: Selected room type does not exist!'
         ];
     }

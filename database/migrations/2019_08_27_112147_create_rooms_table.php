@@ -14,19 +14,19 @@ class CreateRoomsTable extends Migration
     public function up()
     {
         Schema::create('rooms', function (Blueprint $table) {
-            $table->integer('room_no');
-            $table->primary('room_no');
+            $table -> integer('room_no');
+            $table -> primary('room_no');
 
-            $table->integer('floor');
-            $table->boolean('availability')->default(1);
-            $table->boolean('status')->default(1);
-            $table->string('description')->nullable();
+            $table -> integer('floor');
+            $table -> boolean('availability') -> default(1);
+            $table -> boolean('status') -> default(1);
+            $table -> string('description') -> nullable();
 
-            $table->integer('t_id');
-            $table->foreign('t_id')->references('t_id')->on('room_types');
+            $table -> integer('t_id');
+            $table -> foreign('t_id') -> references('t_id') -> on('room_types');
 
-            $table->timestamps();
-            $table->softDeletes();
+            $table -> timestamps();
+            $table -> softDeletes();
         });
     }
 
