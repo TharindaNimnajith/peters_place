@@ -156,16 +156,16 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control">
+                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Room Type</label>
 
                         <select name="roomtype" class="form-control">
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
+                            <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
+                            <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
+                            <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
                         </select>
                     </div>
 
@@ -173,15 +173,15 @@
                         <label>Floor</label>
 
                         <select name="floor" class="form-control">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
+                            <option value="1" @if (old('floor') == '1') selected @endif>1</option>
+                            <option value="2" @if (old('floor') == '2') selected @endif>2</option>
+                            <option value="3" @if (old('floor') == '3') selected @endif>3</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="desc"></textarea>
+                        <textarea class="form-control" name="desc">{{ old('desc') }}</textarea>
                     </div>
                 </div>
 

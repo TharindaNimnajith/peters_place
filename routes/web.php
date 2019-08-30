@@ -69,7 +69,7 @@ Route::post('/search_room_type', 'RoomController@');
 
 Route::post('/delete_room_type', 'RoomController@');
 
-Route::post('/add_room_reservation', 'RoomController@');
+Route::post('/add_room_reservation', 'RoomController@add_reservation');
 
 Route::post('/view_room_reservation', 'RoomController@');
 
@@ -81,4 +81,4 @@ Route::post('/delete_room_reservation', 'RoomController@');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index') -> name('home');

@@ -166,44 +166,44 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" required>
+                        <input type="text" name="fname" class="form-control" value="{{ old('fname') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" required>
+                        <input type="text" name="lname" class="form-control" value="{{ old('lname') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" required>
+                        <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Room Type</label>
 
-                        <select name="rtype" class="form-control" required>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
+                        <select name="rtype" class="form-control">
+                            <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
+                            <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
+                            <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                             <label>Room No</label>
-                            <input type="text" name="r_no" class="form-control">
+                            <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                         </div>
 
                     <div class="form-group">
                         <br/>
                         <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" required>
+                        <input name="cin" type="date" class="form-control" value="{{ old('cin') }}">
                     </div>
 
                     <div class="form-group">
                         <br/>
                         <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" required>
+                        <input name="cout" type="date" class="form-control" value="{{ old('cout') }}">
                     </div>
                 </div>
 

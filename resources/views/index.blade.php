@@ -127,7 +127,7 @@
         }, false);
 
         function hideURLbar() {
-            window.scrollTo(0, 1);
+            //window.scrollTo(0, 1);
         }
     </script>
 </head>
@@ -145,7 +145,7 @@
             @foreach ($errors -> all() as $error)
                 <li>{{ $error }}</li>
         </ul>
-        @endforeach
+            @endforeach
     </div>
 @endif
 
@@ -781,6 +781,22 @@
     <div class="container">
         <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
 
+        @if (session() -> has('success'))
+            <div class="alert alert-success">
+                {{ session() -> get('success') }}
+            </div>
+        @endif
+
+        @if ($errors -> any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors -> all() as $error)
+                        <li>{{ $error }}</li>
+                </ul>
+                    @endforeach
+            </div>
+        @endif
+
         <form name="form" method="post" action="/reserve_online">
             {{ csrf_field() }}
             
@@ -795,19 +811,19 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input name="fname" class="form-control"/>
+                                    <input name="fname" class="form-control" value="{{ old('fname') }}"/>
                                     <br/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input name="lname" class="form-control"/>
+                                    <input name="lname" class="form-control" value="{{ old('lname') }}"/>
                                     <br/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone Number</label>
-                                    <input name="phone" type="text" class="form-control"/>
+                                    <input name="phone" type="text" class="form-control" value="{{ old('phone') }}"/>
                                 </div>
                             </div>
                         </div>
@@ -824,22 +840,22 @@
                                     <label>Room Type</label>
 
                                     <select name="rtype" class="form-control">
-                                        <option value="1">Single Bedroom</option>
-                                        <option value="2">Double Bedroom</option>
-                                        <option value="3">Family Bedroom</option>
+                                        <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
+                                        <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
+                                        <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
                                     <br/>
                                     <label>Check In</label>
-                                    <input name="cin" type="date" class="form-control"/>
+                                    <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"/>
                                 </div>
 
                                 <div class="form-group">
                                     <br/>
                                     <label>Check Out</label>
-                                    <input name="cout" type="date" class="form-control"/>
+                                    <input name="cout" type="date" class="form-control" value="{{ old('cout') }}"/>
                                 </div>
                             </div>
                         </div>

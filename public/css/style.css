@@ -1,3 +1,17 @@
+.alert-success {
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.alert-danger {
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+
+.alert-danger li {
+    margin-left: 2%;
+}
+
 .top-right {
     padding-top: 10px;
     float: right;
@@ -24,6 +38,10 @@
 .reservation-section {
     font-family: 'Open Sans', sans-serif;
     margin-bottom: 100px;
+}
+
+#reservation {
+    padding-top: 50px;
 }
 
 .row {

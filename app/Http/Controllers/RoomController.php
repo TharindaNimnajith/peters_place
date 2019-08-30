@@ -8,10 +8,11 @@ use App\customer;
 use App\reserve;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Requests\RoomValidation;
 use App\Http\Requests\RoomTypeValidation;
-use App\Http\Requests\OnlineReservationValidation;
+use App\Http\Requests\ReservationValidation;
 
 class RoomController extends Controller
 {
@@ -78,27 +79,71 @@ class RoomController extends Controller
 
         return redirect() -> back() -> with('success', 'A new room type has been added successfully!');
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function reserve_online(OnlineReservationValidation $request)
+    public function reserve_online(ReservationValidation $request)
     {
-        $validatedData = $request->validated();
+        $validatedData = $request -> validated();
 
-        $room_type = new room_type([
-            't_id'        => $request -> get('t_id'),
-            'name'        => $request -> get('t_name'),
-            'description' => $request -> get('desc'),
-            'base_price'  => $request -> get('price')
+        $customer = new customer([
+            'fname' => $request -> get('fname'),
+            'lname' => $request -> get('lname'),
+            'phone' => $request -> get('phone')
         ]);
 
-        $room_type -> save();
+        $customer -> save();
 
-        return redirect() -> back() -> with('success', 'Your room has been reserved successfully!');
+        $maxValue = DB::table('customers') -> max('cid');
+
+        $reserve = new reserve([
+            't_id'      => $request -> get('rtype'),
+            'check_in'  => $request -> get('cin'),
+            'check_out' => $request -> get('cout'),
+            'room_no'   => 200,
+            'cid'       => $maxValue
+        ]);
+
+        $reserve -> save();
+
+        return redirect() -> to('/'.'#reservation') -> with('success', 'Your room has been reserved successfully!');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function add_reservation(ReservationValidation $request)
+    {
+        $validatedData = $request -> validated();
+
+        $customer = new customer([
+            'fname' => $request -> get('fname'),
+            'lname' => $request -> get('lname'),
+            'phone' => $request -> get('phone')
+        ]);
+
+        $customer -> save();
+
+        $maxValue = DB::table('customers') -> max('cid');
+
+        $reserve = new reserve([
+            't_id'      => $request -> get('rtype'),
+            'check_in'  => $request -> get('cin'),
+            'check_out' => $request -> get('cout'),
+            'room_no'   => 200,
+            'cid'       => $maxValue
+        ]);
+
+        $reserve -> save();
+
+        return redirect() -> back() -> with('success', 'Room has been reserved successfully!');
     }
 
     /**

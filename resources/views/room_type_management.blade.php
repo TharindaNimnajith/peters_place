@@ -156,22 +156,22 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room Type ID</label>
-                        <input type="text" name="t_id" class="form-control">
+                        <input type="text" name="t_id" class="form-control" value="{{ old('t_id') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Room Type Name</label>
-                        <input type="text" name="t_name" class="form-control">
+                        <input type="text" name="t_name" class="form-control" value="{{ old('t_name') }}">
                     </div>
 
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="desc"></textarea>
+                        <textarea class="form-control" name="desc">{{ old('desc') }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Base Price (LKR)</label>
-                        <input type="text" name="price" class="form-control">
+                        <input type="text" name="price" class="form-control" value="{{ old('price') }}">
                     </div>
                 </div>
 

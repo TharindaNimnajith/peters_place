@@ -18,7 +18,7 @@ class CreateCustomersTable extends Migration
 
             $table -> string('fname', 20);
             $table -> string('lname', 20);
-            $table -> string('nic', 12);
+            $table -> string('nic', 12) -> nullable();
             $table -> string('email') -> nullable();
             $table -> char('phone', 10) -> nullable();
             $table -> string('address') -> nullable();
