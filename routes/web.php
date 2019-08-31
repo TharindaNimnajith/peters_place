@@ -15,6 +15,10 @@ Route::get('/', function () {
     return view('index');
 });
 
+Route::get('/online_reservation', function () {
+    return view('online_reservation');
+});
+
 Route::get('/home', function () {
     return view('home');
 });

@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css?family=Federo&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/>
-
+    
     <script src="{{ URL::asset('js/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ URL::asset('js/jquery-2.1.4.min.js') }}"></script>
     <script src="{{ URL::asset('js/jqBootstrapValidation.js') }}"></script>
@@ -127,28 +127,12 @@
         }, false);
 
         function hideURLbar() {
-            //window.scrollTo(0, 1);
+            window.scrollTo(0, 1);
         }
     </script>
 </head>
 
 <body>
-@if (session() -> has('success'))
-    <div class="alert alert-success">
-        {{ session() -> get('success') }}
-    </div>
-@endif
-
-@if ($errors -> any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors -> all() as $error)
-                <li>{{ $error }}</li>
-        </ul>
-            @endforeach
-    </div>
-@endif
-
 <div class="banner-top" id="home">
     <div class="col-sm-6">
         <div class="social-bnr-agileits">
@@ -171,7 +155,6 @@
     <div class="col-sm-6">
         <div class="top-right links">
             <a href="{{ url('/login') }}">Sign in</a>
-            <!--<a href="register.php">Register</a>-->
         </div>
     </div>
 
@@ -205,8 +188,7 @@
                         <li class="menu__item"><a href="#about" class="menu__link scroll">About Us</a></li>
                         <li class="menu__item"><a href="#gallery" class="menu__link scroll">Gallery</a></li>
                         <li class="menu__item"><a href="#rooms" class="menu__link scroll">Accomodation</a></li>
-                        <li class="menu__item"><a href="#reservation" class="menu__link scroll">Room Reservation</a>
-                        </li>
+                        <li class="menu__item"><a href="{{ url('/online_reservation') }}">Room Reservation</a></li>>
                         <li class="menu__item"><a href="#contact" class="menu__link scroll">Contact Us</a></li>
                     </ul>
                 </nav>
@@ -714,7 +696,7 @@
 
                         <div class="price-selet">
                             <h3><span>LKR</span>2000</h3>
-                            <a href="#reservation">Book Now</a>
+                            <a href="{{ url('/online_reservation') }}">Book Now</a>
                         </div>
                     </div>
                 </div>
@@ -740,7 +722,7 @@
 
                         <div class="price-selet">
                             <h3><span>LKR</span>4000</h3>
-                            <a href="#reservation">Book Now</a>
+                            <a href="{{ url('/online_reservation') }}">Book Now</a>
                         </div>
                     </div>
                 </div>
@@ -766,109 +748,18 @@
 
                         <div class="price-selet">
                             <h3><span>LKR</span>7500</h3>
-                            <a href="#reservation">Book Now</a>
+                            <a href="{{ url('/online_reservation') }}">Book Now</a>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div id="book">
+                <a href="{{ url('/online_reservation') }}" class="myButton">BOOK NOW!</a>
             </div>
 
             <div class="clearfix"></div>
         </div>
-    </div>
-</div>
-
-<div class="reservation-section" id="reservation">
-    <div class="container">
-        <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
-
-        @if (session() -> has('success'))
-            <div class="alert alert-success">
-                {{ session() -> get('success') }}
-            </div>
-        @endif
-
-        @if ($errors -> any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors -> all() as $error)
-                        <li>{{ $error }}</li>
-                </ul>
-                    @endforeach
-            </div>
-        @endif
-
-        <form name="form" method="post" action="/reserve_online">
-            {{ csrf_field() }}
-            
-            <div class="form-border">
-                <div class="row">
-                    <div class="col-md-6 col-sm-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                PERSONAL INFORMATION
-                            </div>
-
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label>First Name</label>
-                                    <input name="fname" class="form-control" value="{{ old('fname') }}"/>
-                                    <br/>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Last Name</label>
-                                    <input name="lname" class="form-control" value="{{ old('lname') }}"/>
-                                    <br/>
-                                </div>
-
-                                <div class="form-group">
-                                    <label>Phone Number</label>
-                                    <input name="phone" type="text" class="form-control" value="{{ old('phone') }}"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-sm-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                RESERVATION INFORMATION
-                            </div>
-
-                            <div class="panel-body">
-                                <div class="form-group">
-                                    <label>Room Type</label>
-
-                                    <select name="rtype" class="form-control">
-                                        <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
-                                        <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
-                                        <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <br/>
-                                    <label>Check In</label>
-                                    <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"/>
-                                </div>
-
-                                <div class="form-group">
-                                    <br/>
-                                    <label>Check Out</label>
-                                    <input name="cout" type="date" class="form-control" value="{{ old('cout') }}"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="buttonHolder">
-                    <input type="submit" name="submit" class="btn btn-primary" value="Submit" style="font-size:20px"/>
-                </div>
-            </div>
-        </form>
-
-        <div class="clearfix"></div>
     </div>
 </div>
 
@@ -883,7 +774,7 @@
                             <li><a href="#about">About Us</a></li>
                             <li><a href="#gallery">Gallery</a></li>
                             <li><a href="#rooms">Accomodation</a></li>
-                            <li><a href="#reservation">Room Reservation</a></li>
+                            <li><a href="{{ url('/online_reservation') }}">Room Reservation</a></li>
                             <li><a href="#contact">Contact Us</a></li>
                         </ul>
                     </div>

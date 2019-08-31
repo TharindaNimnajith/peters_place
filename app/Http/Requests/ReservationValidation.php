@@ -30,7 +30,7 @@ class ReservationValidation extends FormRequest
             'rtype' => 'exists:room_types,t_id',
             'cin'   => 'required|after_or_equal:today',
             'cout'  => 'required|after:cin',
-
+            
             'r_no'  => 'exists:rooms,room_no'
         ];
     }
@@ -51,7 +51,7 @@ class ReservationValidation extends FormRequest
             'phone.numeric'      => 'ERROR: Phone number must be numeric!',
             'phone.required'     => 'ERROR: Phone number field is required!',
             'phone.phone_number' => 'ERROR: Invalid phone number format!',
-            'phone.size'         => 'ERROR: Phone number should have only 10 digits!',
+            'phone.digits'       => 'ERROR: Phone number should have only 10 digits!',
 
             'rtype.exists'       => 'ERROR: Selected room type does not exist!',
 

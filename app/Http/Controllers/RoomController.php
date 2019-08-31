@@ -110,7 +110,9 @@ class RoomController extends Controller
 
         $reserve -> save();
 
-        return redirect() -> to('/'.'#reservation') -> with('success', 'Your room has been reserved successfully!');
+        //return redirect() -> to('/'.'#reservation') -> with('success', 'Your room has been reserved successfully!');
+        
+        return redirect() -> back() -> with('success', 'Your room has been reserved successfully!');
     }
 
     /**
