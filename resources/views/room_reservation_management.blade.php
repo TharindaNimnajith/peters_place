@@ -44,13 +44,13 @@
                     @foreach ($errors -> all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                    @endforeach
+                @endforeach
             </div>
         @endif
-        
+
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-                <!--
+            <!--
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
@@ -64,10 +64,10 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <!--
+                <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                     -->
-                    
+
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>
@@ -118,34 +118,34 @@
             </thead>
 
             <tbody>
-            @foreach ($reservations as $reservation)    
-            <tr>
-                <td>{{ $reservation -> r_id }}</td>
-                <td>{{ $reservation -> cid }}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td>{{ $reservation -> t_id }}</td>
-                <td>{{ $reservation -> room_no }}</td>
-                <td>{{ $reservation -> resereved_date_time }}</td>
-                <td>{{ $reservation -> check_in }}</td>
-                <td>{{ $reservation -> check_out }}</td>
+            @foreach ($reservations as $reservation)
+                <tr>
+                    <td>{{ $reservation -> r_id }}</td>
+                    <td>{{ $reservation -> cid }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ $reservation -> t_id }}</td>
+                    <td>{{ $reservation -> room_no }}</td>
+                    <td>{{ $reservation -> resereved_date_time }}</td>
+                    <td>{{ $reservation -> check_in }}</td>
+                    <td>{{ $reservation -> check_out }}</td>
 
-                <td>
-                    <a href="#viewReservationModal" class="view" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                    </a>
+                    <td>
+                        <a href="#viewReservationModal" class="view" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                        </a>
 
-                    <a href="#editReservationModal" class="edit" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                    </a>
+                        <a href="#editReservationModal" class="edit" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                        </a>
 
-                    <a href="#deleteReservationModal" class="delete" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                    </a>
-                </td>
-            </tr>
-            @endforeach 
+                        <a href="#deleteReservationModal" class="delete" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
 
@@ -192,9 +192,9 @@
                     </div>
 
                     <div class="form-group">
-                            <label>Room No</label>
-                            <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
-                        </div>
+                        <label>Room No</label>
+                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
+                    </div>
 
                     <div class="form-group">
                         <br/>
@@ -291,7 +291,7 @@
         <div class="modal-content">
             <form method="post" action="/view_room_reservation">
                 {{ csrf_field() }}
-            
+
                 <div class="modal-header">
                     <h4 class="modal-title">View Reservation</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -307,7 +307,7 @@
                         <label>Customer ID</label>
                         <input type="text" name="cid" class="form-control" disabled>
                     </div>
-                
+
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" class="form-control" disabled>
@@ -376,7 +376,7 @@
                         <label>Reservation ID</label>
                         <input type="text" name="cid" class="form-control">
                     </div>
-                    
+
                     <div class="form-group">
                         <label>Customer ID</label>
                         <input type="text" name="cid" class="form-control">

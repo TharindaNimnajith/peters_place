@@ -28,7 +28,8 @@
         <div class="social-bnr-agileits">
             <ul class="social-icons3">
                 <li id="homebtn">
-                    <button class="btn" onclick="window.location='{{ url('/') }}'"><i class="fa fa-home"></i> Home</button>
+                    <button class="btn" onclick="window.location='{{ url('/') }}'"><i class="fa fa-home"></i> Home
+                    </button>
                 </li>
                 <li id="fb">
                     <a href="https://www.facebook.com/petersplace.hiriketiya/"
@@ -117,9 +118,12 @@
                                     <label id="select_label">Room Type</label>
 
                                     <select name="rtype" class="form-control">
-                                        <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
-                                        <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
-                                        <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
+                                        <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom
+                                        </option>
+                                        <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom
+                                        </option>
+                                        <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom
+                                        </option>
                                     </select>
                                 </div>
 

@@ -38,13 +38,13 @@ Route::get('/welcome', function () {
 Route::get('/room_management', function () {
     $data = App\room::all();
 
-    return view('room_management') -> with('rooms', $data);
+    return view('room_management')->with('rooms', $data);
 });
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
 
-    return view('room_type_management') -> with('room_types', $data);
+    return view('room_type_management')->with('room_types', $data);
 });
 
 Route::get('/room_reports', function () {
@@ -54,7 +54,7 @@ Route::get('/room_reports', function () {
 Route::get('/room_reservation_management', function () {
     $data = App\reserve::all();
 
-    return view('room_reservation_management') -> with('reservations', $data);;
+    return view('room_reservation_management')->with('reservations', $data);
 });
 
 Route::post('/reserve_online', 'RoomController@reserve_online');
@@ -67,7 +67,7 @@ Route::post('/edit_room', 'RoomController@');
 
 Route::post('/search_room', 'RoomController@');
 
-Route::post('/delete_room', 'RoomController@');
+Route::post('/rooms/{id}', 'RoomController@delete_room');
 
 Route::post('/add_room_type', 'RoomController@add_room_type');
 
@@ -91,4 +91,4 @@ Route::post('/delete_room_reservation', 'RoomController@');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index') -> name('home');
+Route::get('/home', 'HomeController@index')->name('home');

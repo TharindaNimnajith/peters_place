@@ -44,13 +44,13 @@
                     @foreach ($errors -> all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                    @endforeach
+                @endforeach
             </div>
         @endif
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-                <!--
+            <!--
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
@@ -64,10 +64,10 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <!--
+                <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                     -->
-                    
+
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>

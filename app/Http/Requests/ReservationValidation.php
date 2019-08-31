@@ -28,40 +28,40 @@ class ReservationValidation extends FormRequest
             'lname' => 'required|string|max:20|alpha',
             'phone' => 'required|numeric|phone_number|digits:10',
             'rtype' => 'exists:room_types,t_id',
-            'cin'   => 'required|after_or_equal:today',
-            'cout'  => 'required|after:cin',
-            
-            'r_no'  => 'exists:rooms,room_no'
+            'cin' => 'required|after_or_equal:today',
+            'cout' => 'required|after:cin',
+
+            'r_no' => 'exists:rooms,room_no'
         ];
     }
 
     public function messages()
     {
         return [
-            'fname.string'       => 'ERROR: First name must be a string!',
-            'fname.required'     => 'ERROR: First name field is required!',
-            'fname.max'          => 'ERROR: First name is too long. Limit to only 20 characters!',
-            'fname.alpha'        => 'ERROR: First name should contain letters only',
+            'fname.string' => 'ERROR: First name must be a string!',
+            'fname.required' => 'ERROR: First name field is required!',
+            'fname.max' => 'ERROR: First name is too long. Limit to only 20 characters!',
+            'fname.alpha' => 'ERROR: First name should contain letters only',
 
-            'lname.alpha'        => 'ERROR: Last name should contain letters only',
-            'lname.string'       => 'ERROR: Last name must be a string!',
-            'lname.required'     => 'ERROR: Last name field is required!',
-            'lname.max'          => 'ERROR: Last name is too long. Limit to only 20 characters!',
+            'lname.alpha' => 'ERROR: Last name should contain letters only',
+            'lname.string' => 'ERROR: Last name must be a string!',
+            'lname.required' => 'ERROR: Last name field is required!',
+            'lname.max' => 'ERROR: Last name is too long. Limit to only 20 characters!',
 
-            'phone.numeric'      => 'ERROR: Phone number must be numeric!',
-            'phone.required'     => 'ERROR: Phone number field is required!',
+            'phone.numeric' => 'ERROR: Phone number must be numeric!',
+            'phone.required' => 'ERROR: Phone number field is required!',
             'phone.phone_number' => 'ERROR: Invalid phone number format!',
-            'phone.digits'       => 'ERROR: Phone number should have only 10 digits!',
+            'phone.digits' => 'ERROR: Phone number should have only 10 digits!',
 
-            'rtype.exists'       => 'ERROR: Selected room type does not exist!',
+            'rtype.exists' => 'ERROR: Selected room type does not exist!',
 
-            'cin.required'       => 'ERROR: Check in field is required!',
+            'cin.required' => 'ERROR: Check in field is required!',
             'cin.after_or_equal' => 'ERROR: Check in date must be today or a date after today!',
 
-            'cout.required'      => 'ERROR: Check out field is required!',
-            'cout.after'         => 'ERROR: Check out date must be a date after check in date!',
+            'cout.required' => 'ERROR: Check out field is required!',
+            'cout.after' => 'ERROR: Check out date must be a date after check in date!',
 
-            'r_no.exists'        => 'ERROR: Selected room does not exist!'
+            'r_no.exists' => 'ERROR: Selected room does not exist!'
         ];
     }
 }

@@ -44,13 +44,13 @@
                     @foreach ($errors -> all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                    @endforeach
+                @endforeach
             </div>
         @endif
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-                <!--
+            <!--
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
@@ -64,10 +64,10 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <!--
+                <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                     -->
-                    
+
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
             </div>
@@ -114,28 +114,28 @@
 
             <tbody>
             @foreach ($room_types as $room_type)
-            <tr>
-                <td>{{ $room_type -> t_id }}</td>
-                <td>{{ $room_type -> name }}</td>
-                <td>{{ $room_type -> base_price }}</td>
-                <td></td>
-                <td></td>
+                <tr>
+                    <td>{{ $room_type -> t_id }}</td>
+                    <td>{{ $room_type -> name }}</td>
+                    <td>{{ $room_type -> base_price }}</td>
+                    <td></td>
+                    <td></td>
 
-                <td>
-                    <a href="#viewRoomTypeModal" class="view" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                    </a>
+                    <td>
+                        <a href="#viewRoomTypeModal" class="view" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                        </a>
 
-                    <a href="#editRoomTypeModal" class="edit" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                    </a>
+                        <a href="#editRoomTypeModal" class="edit" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                        </a>
 
-                    <a href="#deleteRoomTypeModal" class="delete" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                    </a>
-                </td>
-            </tr>
-            @endforeach 
+                        <a href="#deleteRoomTypeModal" class="delete" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
 

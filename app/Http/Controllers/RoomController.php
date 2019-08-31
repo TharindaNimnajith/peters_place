@@ -44,16 +44,16 @@ class RoomController extends Controller
      */
     public function add_room(RoomValidation $request)
     {
-        $validatedData = $request -> validated();
+        $validatedData = $request->validated();
 
         $room = new room([
-            'room_no'     => $request -> get('r_no'),
-            'floor'       => $request -> get('floor'),
-            'description' => $request -> get('desc'),
-            't_id'        => $request -> get('roomtype')
+            'room_no' => $request->get('r_no'),
+            'floor' => $request->get('floor'),
+            'description' => $request->get('desc'),
+            't_id' => $request->get('roomtype')
         ]);
 
-        $room -> save();
+        $room->save();
 
         $data = room::all();
         //dd($data);
@@ -61,7 +61,7 @@ class RoomController extends Controller
         //return redirect() -> back() -> with('success', 'A new room has been added successfully!');
         //return view('room_management') -> with('rooms', $data) -> with('success', 'A new room has been added successfully!');
 
-        return redirect() -> back() -> with('rooms', $data) -> with('success', 'A new room has been added successfully!');
+        return redirect()->back()->with('rooms', $data)->with('success', 'A new room has been added successfully!');
     }
 
     /**
@@ -72,22 +72,22 @@ class RoomController extends Controller
      */
     public function add_room_type(RoomTypeValidation $request)
     {
-        $validatedData = $request -> validated();
+        $validatedData = $request->validated();
 
         $room_type = new room_type([
-            't_id'        => $request -> get('t_id'),
-            'name'        => $request -> get('t_name'),
-            'description' => $request -> get('desc'),
-            'base_price'  => $request -> get('price')
+            't_id' => $request->get('t_id'),
+            'name' => $request->get('t_name'),
+            'description' => $request->get('desc'),
+            'base_price' => $request->get('price')
         ]);
 
-        $room_type -> save();
+        $room_type->save();
 
         $data = room_type::all();
 
         //return redirect() -> back() -> with('success', 'A new room type has been added successfully!');
 
-        return redirect() -> back() -> with('room_types', $data) -> with('success', 'A new room type has been added successfully!');
+        return redirect()->back()->with('room_types', $data)->with('success', 'A new room type has been added successfully!');
     }
 
     /**
@@ -98,31 +98,31 @@ class RoomController extends Controller
      */
     public function reserve_online(ReservationValidation $request)
     {
-        $validatedData = $request -> validated();
+        $validatedData = $request->validated();
 
         $customer = new customer([
-            'fname' => $request -> get('fname'),
-            'lname' => $request -> get('lname'),
-            'phone' => $request -> get('phone')
+            'fname' => $request->get('fname'),
+            'lname' => $request->get('lname'),
+            'phone' => $request->get('phone')
         ]);
 
-        $customer -> save();
+        $customer->save();
 
-        $maxValue = DB::table('customers') -> max('cid');
+        $maxValue = DB::table('customers')->max('cid');
 
         $reserve = new reserve([
-            't_id'      => $request -> get('rtype'),
-            'check_in'  => $request -> get('cin'),
-            'check_out' => $request -> get('cout'),
-            'room_no'   => 200,
-            'cid'       => $maxValue
+            't_id' => $request->get('rtype'),
+            'check_in' => $request->get('cin'),
+            'check_out' => $request->get('cout'),
+            'room_no' => 200,
+            'cid' => $maxValue
         ]);
 
-        $reserve -> save();
+        $reserve->save();
 
         //return redirect() -> to('/'.'#reservation') -> with('success', 'Your room has been reserved successfully!');
-        
-        return redirect() -> back() -> with('success', 'Your room has been reserved successfully!');
+
+        return redirect()->back()->with('success', 'Your room has been reserved successfully!');
     }
 
     /**
@@ -133,33 +133,33 @@ class RoomController extends Controller
      */
     public function add_reservation(ReservationValidation $request)
     {
-        $validatedData = $request -> validated();
+        $validatedData = $request->validated();
 
         $customer = new customer([
-            'fname' => $request -> get('fname'),
-            'lname' => $request -> get('lname'),
-            'phone' => $request -> get('phone')
+            'fname' => $request->get('fname'),
+            'lname' => $request->get('lname'),
+            'phone' => $request->get('phone')
         ]);
 
-        $customer -> save();
+        $customer->save();
 
-        $maxValue = DB::table('customers') -> max('cid');
+        $maxValue = DB::table('customers')->max('cid');
 
         $reserve = new reserve([
-            't_id'      => $request -> get('rtype'),
-            'check_in'  => $request -> get('cin'),
-            'check_out' => $request -> get('cout'),
-            'room_no'   => $request -> get('r_no'),
-            'cid'       => $maxValue
+            't_id' => $request->get('rtype'),
+            'check_in' => $request->get('cin'),
+            'check_out' => $request->get('cout'),
+            'room_no' => $request->get('r_no'),
+            'cid' => $maxValue
         ]);
 
-        $reserve -> save();
+        $reserve->save();
 
         $data = reserve::all();
 
         //return redirect() -> back() -> with('success', 'Room has been reserved successfully!');
 
-        return redirect() -> back() -> with('reservations', $data) -> with('success', 'Room has been reserved successfully!');
+        return redirect()->back()->with('reservations', $data)->with('success', 'Room has been reserved successfully!');
     }
 
     /**
@@ -202,8 +202,13 @@ class RoomController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete_room($id)
     {
-        //
+        //$id = $request -> input('id');
+
+        $room = room::where('room_no', $id);
+        $room->delete();
+
+        return redirect()->back()->with('success', 'Room has been deleted successfully!');;
     }
 }

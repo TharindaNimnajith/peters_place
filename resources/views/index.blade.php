@@ -19,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css?family=Federo&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/>
-    
+
     <script src="{{ URL::asset('js/modernizr-2.6.2.min.js') }}"></script>
     <script src="{{ URL::asset('js/jquery-2.1.4.min.js') }}"></script>
     <script src="{{ URL::asset('js/jqBootstrapValidation.js') }}"></script>
@@ -188,7 +188,8 @@
                         <li class="menu__item"><a href="#about" class="menu__link scroll">About Us</a></li>
                         <li class="menu__item"><a href="#gallery" class="menu__link scroll">Gallery</a></li>
                         <li class="menu__item"><a href="#rooms" class="menu__link scroll">Accomodation</a></li>
-                        <li class="menu__item"><a href="{{ url('/online_reservation') }}">Room Reservation</a></li>>
+                        <li class="menu__item"><a href="{{ url('/online_reservation') }}">Room Reservation</a></li>
+                        >
                         <li class="menu__item"><a href="#contact" class="menu__link scroll">Contact Us</a></li>
                     </ul>
                 </nav>
@@ -210,7 +211,8 @@
                                 <p>Welcome to our hotel</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +228,8 @@
                                 <p>Come & enjoy precious moments with us</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +245,8 @@
                                 <p>Get accommodation today</p>
 
                                 <div class="agileits_w3layouts_more menu__item">
-                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn More</a>
+                                    <a href="#" class="menu__link" data-toggle="modal" data-target="#myModal">Learn
+                                        More</a>
                                 </div>
                             </div>
                         </div>

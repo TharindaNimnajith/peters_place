@@ -14,17 +14,17 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table -> increments('cid');
+            $table->increments('cid');
 
-            $table -> string('fname', 20);
-            $table -> string('lname', 20);
-            $table -> string('nic', 12) -> nullable();
-            $table -> string('email') -> nullable();
-            $table -> char('phone', 10) -> nullable();
-            $table -> string('address') -> nullable();
+            $table->string('fname', 20);
+            $table->string('lname', 20);
+            $table->string('nic', 12)->nullable();
+            $table->string('email')->nullable();
+            $table->char('phone', 10)->nullable();
+            $table->string('address')->nullable();
 
-            $table -> timestamps();
-            $table -> softDeletes();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

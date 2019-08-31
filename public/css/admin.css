@@ -1,3 +1,11 @@
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+
 .alert-danger li {
     margin-left: 40px;
 }

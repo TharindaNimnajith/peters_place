@@ -44,13 +44,13 @@
                     @foreach ($errors -> all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                    @endforeach
+                @endforeach
             </div>
         @endif
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-                <!--
+            <!--
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
@@ -64,7 +64,7 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                    <!--
+                <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                     -->
 
@@ -113,29 +113,49 @@
             </thead>
 
             <tbody>
-            @foreach ($rooms as $room)              
-            <tr>
-                <td>{{ $room -> room_no }}</td>
-                <td>{{ $room -> floor }}</td>
-                <td>{{ $room -> t_id }}</td>
-                <td>{{ $room -> availability }}</td>
-                <td>{{ $room -> status }}</td>
+            @foreach ($rooms as $room)
+                <tr>
+                    <td>{{ $room -> room_no }}</td>
+                    <td>{{ $room -> floor }}</td>
+                    <td>{{ $room -> t_id }}</td>
 
-                <td>
-                    <a href="#viewRoomModal" class="view" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                    </a>
+                    <td>
+                        @if($room -> availability)
+                            <label class="green">Available</label>
 
-                    <a href="#editRoomModal" class="edit" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                    </a>
+                        @else
+                            <label class="red">Not Available</label>
 
-                    <a href="#deleteRoomModal" class="delete" data-toggle="modal">
-                        <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                    </a>
-                </td>
-            </tr>
-            @endforeach 
+                        @endif
+                    </td>
+
+                    <td>
+                        @if($room -> status)
+                            <label class="green">Clean</label>
+
+                        @else
+                            <label class="red">Not Clean</label>
+
+                        @endif
+                    </td>
+
+                    <td>
+                        <a href="#viewRoomModal" class="view" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                        </a>
+
+                        <a href="#editRoomModal" class="edit" data-toggle="modal">
+                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                        </a>
+
+                        <a class="delete" role="button" data-toggle="modal" data-toggle="modal"
+                           data-target="#deleteRoomModal"
+                           data-id="{{ $room->room_no }}" data-url="{{ url('rooms', $room->room_no) }}">
+                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
 
@@ -449,9 +469,11 @@
 <div id="deleteRoomModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="/delete_room">
+            <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
-                
+
+                <input type="hidden" value="{{ $room -> room_no }}" name="id">
+
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -470,5 +492,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // For A Delete Record Popup
+        $('.delete').click(function () {
+            var id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+
+            $("#deleteForm", 'input').val(id);
+            $("#deleteForm").attr("action", url);
+        });
+    });
+</script>
 </body>
 </html>

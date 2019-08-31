@@ -14,23 +14,23 @@ class CreateReservesTable extends Migration
     public function up()
     {
         Schema::create('reserves', function (Blueprint $table) {
-            $table -> increments('r_id');
+            $table->increments('r_id');
 
-            $table -> integer('cid') -> unsigned();
-            $table -> foreign('cid') -> references('cid') -> on('customers');
+            $table->integer('cid')->unsigned();
+            $table->foreign('cid')->references('cid')->on('customers');
 
-            $table -> integer('room_no');
-            $table -> foreign('room_no') -> references('room_no') -> on('rooms');
+            $table->integer('room_no');
+            $table->foreign('room_no')->references('room_no')->on('rooms');
 
-            $table -> integer('t_id');
-            $table -> foreign('t_id') -> references('t_id') -> on('room_types');
+            $table->integer('t_id');
+            $table->foreign('t_id')->references('t_id')->on('room_types');
 
-            $table -> timestamp('resereved_date_time') -> useCurrent();
-            $table -> date('check_in');
-            $table -> date('check_out');
+            $table->timestamp('resereved_date_time')->useCurrent();
+            $table->date('check_in');
+            $table->date('check_out');
 
-            $table -> timestamps();
-            $table -> softDeletes();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
