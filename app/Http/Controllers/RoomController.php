@@ -55,7 +55,13 @@ class RoomController extends Controller
 
         $room -> save();
 
-        return redirect() -> back() -> with('success', 'A new room has been added successfully!');
+        $data = room::all();
+        //dd($data);
+
+        //return redirect() -> back() -> with('success', 'A new room has been added successfully!');
+        //return view('room_management') -> with('rooms', $data) -> with('success', 'A new room has been added successfully!');
+
+        return redirect() -> back() -> with('rooms', $data) -> with('success', 'A new room has been added successfully!');
     }
 
     /**
@@ -77,7 +83,11 @@ class RoomController extends Controller
 
         $room_type -> save();
 
-        return redirect() -> back() -> with('success', 'A new room type has been added successfully!');
+        $data = room_type::all();
+
+        //return redirect() -> back() -> with('success', 'A new room type has been added successfully!');
+
+        return redirect() -> back() -> with('room_types', $data) -> with('success', 'A new room type has been added successfully!');
     }
 
     /**
@@ -139,13 +149,17 @@ class RoomController extends Controller
             't_id'      => $request -> get('rtype'),
             'check_in'  => $request -> get('cin'),
             'check_out' => $request -> get('cout'),
-            'room_no'   => 200,
+            'room_no'   => $request -> get('r_no'),
             'cid'       => $maxValue
         ]);
 
         $reserve -> save();
 
-        return redirect() -> back() -> with('success', 'Room has been reserved successfully!');
+        $data = reserve::all();
+
+        //return redirect() -> back() -> with('success', 'Room has been reserved successfully!');
+
+        return redirect() -> back() -> with('reservations', $data) -> with('success', 'Room has been reserved successfully!');
     }
 
     /**

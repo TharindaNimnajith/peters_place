@@ -118,17 +118,18 @@
             </thead>
 
             <tbody>
+            @foreach ($reservations as $reservation)    
             <tr>
-                <td>1</td>
-                <td>1</td>
-                <td>Tharinda</td>
-                <td>Nimnajith</td>
-                <td>0712089046</td>
-                <td>Single Bedroom</td>
-                <td>100</td>
-                <td>27/08/2019</td>
-                <td>28/08/2019</td>
-                <td>29/08/2019</td>
+                <td>{{ $reservation -> r_id }}</td>
+                <td>{{ $reservation -> cid }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ $reservation -> t_id }}</td>
+                <td>{{ $reservation -> room_no }}</td>
+                <td>{{ $reservation -> resereved_date_time }}</td>
+                <td>{{ $reservation -> check_in }}</td>
+                <td>{{ $reservation -> check_out }}</td>
 
                 <td>
                     <a href="#viewReservationModal" class="view" data-toggle="modal">
@@ -144,6 +145,7 @@
                     </a>
                 </td>
             </tr>
+            @endforeach 
             </tbody>
         </table>
 

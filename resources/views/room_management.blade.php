@@ -113,12 +113,13 @@
             </thead>
 
             <tbody>
+            @foreach ($rooms as $room)              
             <tr>
-                <td>101</td>
-                <td>1</td>
-                <td>Single</td>
-                <td>Available</td>
-                <td>Clean</td>
+                <td>{{ $room -> room_no }}</td>
+                <td>{{ $room -> floor }}</td>
+                <td>{{ $room -> t_id }}</td>
+                <td>{{ $room -> availability }}</td>
+                <td>{{ $room -> status }}</td>
 
                 <td>
                     <a href="#viewRoomModal" class="view" data-toggle="modal">
@@ -134,6 +135,7 @@
                     </a>
                 </td>
             </tr>
+            @endforeach 
             </tbody>
         </table>
 

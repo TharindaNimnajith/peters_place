@@ -36,11 +36,15 @@ Route::get('/welcome', function () {
 });
 
 Route::get('/room_management', function () {
-    return view('room_management');
+    $data = App\room::all();
+
+    return view('room_management') -> with('rooms', $data);
 });
 
 Route::get('/room_type_management', function () {
-    return view('room_type_management');
+    $data = App\room_type::all();
+
+    return view('room_type_management') -> with('room_types', $data);
 });
 
 Route::get('/room_reports', function () {
@@ -48,7 +52,9 @@ Route::get('/room_reports', function () {
 });
 
 Route::get('/room_reservation_management', function () {
-    return view('room_reservation_management');
+    $data = App\reserve::all();
+
+    return view('room_reservation_management') -> with('reservations', $data);;
 });
 
 Route::post('/reserve_online', 'RoomController@reserve_online');

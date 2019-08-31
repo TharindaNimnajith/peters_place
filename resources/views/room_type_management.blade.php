@@ -113,12 +113,13 @@
             </thead>
 
             <tbody>
+            @foreach ($room_types as $room_type)
             <tr>
-                <td>1</td>
-                <td>Single Bedroom</td>
-                <td>2500.00</td>
-                <td>3</td>
-                <td>2</td>
+                <td>{{ $room_type -> t_id }}</td>
+                <td>{{ $room_type -> name }}</td>
+                <td>{{ $room_type -> base_price }}</td>
+                <td></td>
+                <td></td>
 
                 <td>
                     <a href="#viewRoomTypeModal" class="view" data-toggle="modal">
@@ -134,6 +135,7 @@
                     </a>
                 </td>
             </tr>
+            @endforeach 
             </tbody>
         </table>
 
