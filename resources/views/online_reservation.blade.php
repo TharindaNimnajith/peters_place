@@ -59,16 +59,16 @@
     <div class="container" id="contain">
         <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
 
-        @if (session() -> has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success">
                 {{ session() -> get('success') }}
             </div>
         @endif
 
-        @if ($errors -> any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors -> all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                 @endforeach

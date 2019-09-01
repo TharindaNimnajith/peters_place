@@ -32,16 +32,16 @@
 <body>
 <div class="container">
     <div class="navigation">
-        @if (session() -> has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success">
-                {{ session() -> get('success') }}
+                {{ session()->get('success') }}
             </div>
         @endif
 
-        @if ($errors -> any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors -> all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                 @endforeach
@@ -54,7 +54,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
-                -->
+            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li class="active"><a href="#">Rooms</a></li>
@@ -66,7 +66,7 @@
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    -->
+                -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -115,12 +115,12 @@
             <tbody>
             @foreach ($rooms as $room)
                 <tr>
-                    <td>{{ $room -> room_no }}</td>
-                    <td>{{ $room -> floor }}</td>
-                    <td>{{ $room -> t_id }}</td>
+                    <td>{{ $room->room_no }}</td>
+                    <td>{{ $room->floor }}</td>
+                    <td>{{ $room->t_id }}</td>
 
                     <td>
-                        @if($room -> availability)
+                        @if($room->availability)
                             <label class="green">Available</label>
 
                         @else
@@ -130,7 +130,7 @@
                     </td>
 
                     <td>
-                        @if($room -> status)
+                        @if($room->status)
                             <label class="green">Clean</label>
 
                         @else
@@ -148,9 +148,8 @@
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                         </a>
 
-                        <a class="delete" role="button" data-toggle="modal" data-toggle="modal"
-                           data-target="#deleteRoomModal"
-                           data-id="{{ $room->room_no }}" data-url="{{ url('rooms', $room->room_no) }}">
+                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomModal"
+                        data-id="{{ $room->room_no }}" data-url="{{ url('rooms', $room->room_no) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -472,7 +471,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $room -> room_no }}" name="id">
+                <input type="hidden" value="{{ $room->room_no }}" name="id">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room</h4>

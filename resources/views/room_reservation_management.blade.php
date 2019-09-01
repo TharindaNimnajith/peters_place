@@ -32,16 +32,16 @@
 <body>
 <div class="container">
     <div class="navigation">
-        @if (session() -> has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success">
-                {{ session() -> get('success') }}
+                {{ session()->get('success') }}
             </div>
         @endif
 
-        @if ($errors -> any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors -> all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                 @endforeach
@@ -54,7 +54,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
-                -->
+            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>
@@ -66,7 +66,7 @@
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    -->
+                -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -120,16 +120,16 @@
             <tbody>
             @foreach ($reservations as $reservation)
                 <tr>
-                    <td>{{ $reservation -> r_id }}</td>
-                    <td>{{ $reservation -> cid }}</td>
+                    <td>{{ $reservation->r_id }}</td>
+                    <td>{{ $reservation->cid }}</td>
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td>{{ $reservation -> t_id }}</td>
-                    <td>{{ $reservation -> room_no }}</td>
-                    <td>{{ $reservation -> resereved_date_time }}</td>
-                    <td>{{ $reservation -> check_in }}</td>
-                    <td>{{ $reservation -> check_out }}</td>
+                    <td>{{ $reservation->t_id }}</td>
+                    <td>{{ $reservation->room_no }}</td>
+                    <td>{{ $reservation->resereved_date_time }}</td>
+                    <td>{{ $reservation->check_in }}</td>
+                    <td>{{ $reservation->check_out }}</td>
 
                     <td>
                         <a href="#viewReservationModal" class="view" data-toggle="modal">
@@ -140,7 +140,8 @@
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                         </a>
 
-                        <a href="#deleteReservationModal" class="delete" data-toggle="modal">
+                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteReservationModal"
+                           data-id="{{ $reservation->r_id }}" data-url="{{ url('reserves', $reservation->r_id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -433,8 +434,10 @@
 <div id="deleteReservationModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="/delete_room_reservation">
+            <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
+
+                <input type="hidden" value="{{ $reservation->r_id }}" name="id"> 
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Reservation</h4>
@@ -454,5 +457,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // For A Delete Record Popup
+        $('.delete').click(function () {
+            var id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+
+            $("#deleteForm", 'input').val(id);
+            $("#deleteForm").attr("action", url);
+        });
+    });
+</script>
 </body>
 </html>

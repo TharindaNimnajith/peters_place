@@ -36,6 +36,8 @@ class RoomController extends Controller
         //
     }
 
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -64,6 +66,7 @@ class RoomController extends Controller
         return redirect()->back()->with('rooms', $data)->with('success', 'A new room has been added successfully!');
     }
 
+
     /**
      * Store a newly created resource in storage.
      *
@@ -89,6 +92,8 @@ class RoomController extends Controller
 
         return redirect()->back()->with('room_types', $data)->with('success', 'A new room type has been added successfully!');
     }
+
+
 
     /**
      * Store a newly created resource in storage.
@@ -124,6 +129,7 @@ class RoomController extends Controller
 
         return redirect()->back()->with('success', 'Your room has been reserved successfully!');
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -162,6 +168,8 @@ class RoomController extends Controller
         return redirect()->back()->with('reservations', $data)->with('success', 'Room has been reserved successfully!');
     }
 
+
+
     /**
      * Display the specified resource.
      *
@@ -196,6 +204,8 @@ class RoomController extends Controller
         //
     }
 
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -209,6 +219,40 @@ class RoomController extends Controller
         $room = room::where('room_no', $id);
         $room->delete();
 
-        return redirect()->back()->with('success', 'Room has been deleted successfully!');;
+        return redirect()->back()->with('success', 'Room has been deleted successfully!');
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete_room_type($id)
+    {
+        //$id = $request -> input('id');
+
+        $room_type = room_type::where('t_id', $id);
+        $room_type->delete();
+
+        return redirect()->back()->with('success', 'Room type has been deleted successfully!');
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete_room_reservation($id)
+    {
+        //$id = $request -> input('id');
+
+        $reserve = reserve::where('r_id', $id);
+        $reserve->delete();
+
+        return redirect()->back()->with('success', 'Room reservation has been deleted successfully!');
     }
 }

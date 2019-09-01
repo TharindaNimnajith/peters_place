@@ -32,16 +32,16 @@
 <body>
 <div class="container">
     <div class="navigation">
-        @if (session() -> has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success">
-                {{ session() -> get('success') }}
+                {{ session()->get('success') }}
             </div>
         @endif
 
-        @if ($errors -> any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors -> all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                 @endforeach
@@ -54,7 +54,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
-                -->
+            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>
@@ -66,7 +66,7 @@
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    -->
+                -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -115,9 +115,9 @@
             <tbody>
             @foreach ($room_types as $room_type)
                 <tr>
-                    <td>{{ $room_type -> t_id }}</td>
-                    <td>{{ $room_type -> name }}</td>
-                    <td>{{ $room_type -> base_price }}</td>
+                    <td>{{ $room_type->t_id }}</td>
+                    <td>{{ $room_type->name }}</td>
+                    <td>{{ $room_type->base_price }}</td>
                     <td></td>
                     <td></td>
 
@@ -130,7 +130,8 @@
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                         </a>
 
-                        <a href="#deleteRoomTypeModal" class="delete" data-toggle="modal">
+                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomTypeModal"
+                           data-id="{{ $room_type->t_id }}" data-url="{{ url('room_types', $room_type->t_id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -330,8 +331,10 @@
 <div id="deleteRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="post" action="/delete_room_type">
+            <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
+
+                <input type="hidden" value="{{ $room_type->t_id }}" name="id">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room Type</h4>
@@ -351,5 +354,18 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // For A Delete Record Popup
+        $('.delete').click(function () {
+            var id = $(this).attr('data-id');
+            var url = $(this).attr('data-url');
+
+            $("#deleteForm", 'input').val(id);
+            $("#deleteForm").attr("action", url);
+        });
+    });
+</script>
 </body>
 </html>

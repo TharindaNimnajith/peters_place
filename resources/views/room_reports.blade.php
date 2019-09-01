@@ -32,16 +32,16 @@
 <body>
 <div class="container">
     <div class="navigation">
-        @if (session() -> has('success'))
+        @if (session()->has('success'))
             <div class="alert alert-success">
-                {{ session() -> get('success') }}
+                {{ session()->get('success') }}
             </div>
         @endif
 
-        @if ($errors -> any())
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul>
-                    @foreach ($errors -> all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
                 @endforeach
@@ -54,7 +54,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
                 </div>
-                -->
+            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>
@@ -66,7 +66,7 @@
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                    -->
+                -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
