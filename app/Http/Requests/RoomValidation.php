@@ -26,7 +26,7 @@ class RoomValidation extends FormRequest
         return [
             'r_no' => 'required|unique:rooms,room_no|numeric',
             'desc' => 'required|max:100|string',
-            'roomtype' => 'exists:room_types,t_id'
+            'roomtype' => 'exists:room_types,id'
         ];
     }
 

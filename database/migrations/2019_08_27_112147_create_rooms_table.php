@@ -19,11 +19,11 @@ class CreateRoomsTable extends Migration
 
             $table->integer('floor');
             $table->boolean('availability')->default(1);
-            $table->boolean('status')->default(1);
+            $table->integer('status')->default(1);
             $table->string('description')->nullable();
 
             $table->integer('t_id');
-            $table->foreign('t_id')->references('t_id')->on('room_types');
+            $table->foreign('t_id')->references('id')->on('room_types');
 
             $table->timestamps();
             $table->softDeletes();

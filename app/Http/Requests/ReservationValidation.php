@@ -27,7 +27,7 @@ class ReservationValidation extends FormRequest
             'fname' => 'required|string|max:20|alpha',
             'lname' => 'required|string|max:20|alpha',
             'phone' => 'required|numeric|phone_number|digits:10',
-            'rtype' => 'exists:room_types,t_id',
+            'rtype' => 'exists:room_types,id',
             'cin' => 'required|after_or_equal:today',
             'cout' => 'required|after:cin',
 

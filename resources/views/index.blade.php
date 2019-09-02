@@ -189,7 +189,6 @@
                         <li class="menu__item"><a href="#gallery" class="menu__link scroll">Gallery</a></li>
                         <li class="menu__item"><a href="#rooms" class="menu__link scroll">Accomodation</a></li>
                         <li class="menu__item"><a href="{{ url('/online_reservation') }}">Room Reservation</a></li>
-                        >
                         <li class="menu__item"><a href="#contact" class="menu__link scroll">Contact Us</a></li>
                     </ul>
                 </nav>

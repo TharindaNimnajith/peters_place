@@ -7,6 +7,8 @@ use App\room_type;
 use App\customer;
 use App\reserve;
 
+use Validator;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,28 +18,6 @@ use App\Http\Requests\ReservationValidation;
 
 class RoomController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-
-
     /**
      * Store a newly created resource in storage.
      *
@@ -52,16 +32,12 @@ class RoomController extends Controller
             'room_no' => $request->get('r_no'),
             'floor' => $request->get('floor'),
             'description' => $request->get('desc'),
-            't_id' => $request->get('roomtype')
+            't_id' => $request->get('roomtype'),
         ]);
 
         $room->save();
 
         $data = room::all();
-        //dd($data);
-
-        //return redirect() -> back() -> with('success', 'A new room has been added successfully!');
-        //return view('room_management') -> with('rooms', $data) -> with('success', 'A new room has been added successfully!');
 
         return redirect()->back()->with('rooms', $data)->with('success', 'A new room has been added successfully!');
     }
@@ -78,7 +54,7 @@ class RoomController extends Controller
         $validatedData = $request->validated();
 
         $room_type = new room_type([
-            't_id' => $request->get('t_id'),
+            'id' => $request->get('t_id'),
             'name' => $request->get('t_name'),
             'description' => $request->get('desc'),
             'base_price' => $request->get('price')
@@ -87,8 +63,6 @@ class RoomController extends Controller
         $room_type->save();
 
         $data = room_type::all();
-
-        //return redirect() -> back() -> with('success', 'A new room type has been added successfully!');
 
         return redirect()->back()->with('room_types', $data)->with('success', 'A new room type has been added successfully!');
     }
@@ -124,8 +98,6 @@ class RoomController extends Controller
         ]);
 
         $reserve->save();
-
-        //return redirect() -> to('/'.'#reservation') -> with('success', 'Your room has been reserved successfully!');
 
         return redirect()->back()->with('success', 'Your room has been reserved successfully!');
     }
@@ -163,45 +135,7 @@ class RoomController extends Controller
 
         $data = reserve::all();
 
-        //return redirect() -> back() -> with('success', 'Room has been reserved successfully!');
-
         return redirect()->back()->with('reservations', $data)->with('success', 'Room has been reserved successfully!');
-    }
-
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
     }
 
 
@@ -214,8 +148,6 @@ class RoomController extends Controller
      */
     public function delete_room($id)
     {
-        //$id = $request -> input('id');
-
         $room = room::where('room_no', $id);
         $room->delete();
 
@@ -231,9 +163,7 @@ class RoomController extends Controller
      */
     public function delete_room_type($id)
     {
-        //$id = $request -> input('id');
-
-        $room_type = room_type::where('t_id', $id);
+        $room_type = room_type::where('id', $id);
         $room_type->delete();
 
         return redirect()->back()->with('success', 'Room type has been deleted successfully!');
@@ -248,11 +178,107 @@ class RoomController extends Controller
      */
     public function delete_room_reservation($id)
     {
-        //$id = $request -> input('id');
-
         $reserve = reserve::where('r_id', $id);
         $reserve->delete();
 
         return redirect()->back()->with('success', 'Room reservation has been deleted successfully!');
+    }
+
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function view_room_type($id)
+    {
+        $details = room_type::find($id);
+        //dd($details);
+        return view('view_room_type')->with('details', $details);
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+
+    /**
+     * Store a newly created resource in storage.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+
+     /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
     }
 }

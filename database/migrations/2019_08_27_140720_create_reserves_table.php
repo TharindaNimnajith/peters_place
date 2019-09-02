@@ -23,7 +23,7 @@ class CreateReservesTable extends Migration
             $table->foreign('room_no')->references('room_no')->on('rooms');
 
             $table->integer('t_id');
-            $table->foreign('t_id')->references('t_id')->on('room_types');
+            $table->foreign('t_id')->references('id')->on('room_types');
 
             $table->timestamp('resereved_date_time')->useCurrent();
             $table->date('check_in');

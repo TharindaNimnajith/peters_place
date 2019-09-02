@@ -7,6 +7,14 @@
 
     <title>Peter's Place || Room Type Management</title>
 
+    <!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
+      
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+    -->
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
 
@@ -30,6 +38,7 @@
 </head>
 
 <body>
+       
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))
@@ -115,14 +124,14 @@
             <tbody>
             @foreach ($room_types as $room_type)
                 <tr>
-                    <td>{{ $room_type->t_id }}</td>
+                    <td>{{ $room_type->id }}</td>
                     <td>{{ $room_type->name }}</td>
                     <td>{{ $room_type->base_price }}</td>
                     <td></td>
                     <td></td>
 
                     <td>
-                        <a href="#viewRoomTypeModal" class="view" data-toggle="modal">
+                        <a href="/view_type/{{ $room_type->id }}" class="view">
                             <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
                         </a>
 
@@ -131,7 +140,7 @@
                         </a>
 
                         <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomTypeModal"
-                           data-id="{{ $room_type->t_id }}" data-url="{{ url('room_types', $room_type->t_id) }}">
+                            data-id="{{ $room_type->id }}" data-url="{{ url('room_types', $room_type->id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -190,7 +199,7 @@
 <!-- Edit Modal HTML -->
 <div id="editRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content">              
             <form method="post" action="/edit_room_type">
                 {{ csrf_field() }}
 
@@ -225,62 +234,11 @@
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                     <input type="submit" class="btn btn-info" value="Save">
                 </div>
-            </form>
+            </form>         
         </div>
     </div>
 </div>
 
-<!-- View Modal HTML -->
-<div id="viewRoomTypeModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/view_room_type">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">View Room Type</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Room Type ID</label>
-                        <input type="text" name="t_id" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room Type Name</label>
-                        <input type="text" name="t_name" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" name="desc" disabled></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Base Price (LKR)</label>
-                        <input type="text" name="price" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Total Room Count</label>
-                        <input type="text" name="tot" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Available Room Count</label>
-                        <input type="text" name="av_cnt" class="form-control" disabled>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <!-- Search Modal HTML -->
 <div id="searchRoomTypeModal" class="modal fade">
@@ -334,7 +292,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $room_type->t_id }}" name="id">
+                <input type="hidden" value="{{ $room_type->id }}" name="id">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room Type</h4>

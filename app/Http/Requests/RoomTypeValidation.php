@@ -24,7 +24,7 @@ class RoomTypeValidation extends FormRequest
     public function rules()
     {
         return [
-            't_id' => 'required|unique:room_types,t_id|numeric',
+            't_id' => 'required|unique:room_types,id|numeric',
             'desc' => 'required|max:100|string',
             't_name' => 'required|unique:room_types,name|max:100|string',
             'price' => 'required|numeric'

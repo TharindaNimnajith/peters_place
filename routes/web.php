@@ -11,7 +11,8 @@
 |
 */
 
-
+use App\Http\Controllers\Controller;
+use App\Http\Controllers\RoomController;
 
 Route::get('/', function () {
     return view('index');
@@ -63,25 +64,25 @@ Route::post('/room_types/{id}', 'RoomController@delete_room_type');
 Route::post('/reserves/{id}', 'RoomController@delete_room_reservation');
 
 
-Route::post('/view_room', 'RoomController@');
+//Route::post('/rooms/{id}', 'RoomController@view_room');
 
-Route::post('/view_room_type', 'RoomController@');
+Route::get('/view_type/{id}', 'RoomController@view_room_type');
 
-Route::post('/view_room_reservation', 'RoomController@');
-
-
-Route::post('/edit_room', 'RoomController@');
-
-Route::post('/edit_room_type', 'RoomController@');
-
-Route::post('/edit_room_reservation', 'RoomController@');
+//Route::post('/reserves/{id}', 'RoomController@view_room_reservation');
 
 
-Route::post('/search_room', 'RoomController@');
+//Route::post('/rooms/{id}', 'RoomController@edit_room');
 
-Route::post('/search_room_type', 'RoomController@');
+//Route::post('/room_types/{id}', 'RoomController@edit_room_type');
 
-Route::post('/search_room_reservation', 'RoomController@');
+//Route::post('/reserves/{id}', 'RoomController@edit_room_reservation');
+
+
+//Route::post('/search_room', 'RoomController@search_room');
+
+//Route::post('/search_room_type', 'RoomController@search_room_type');
+
+//Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
 

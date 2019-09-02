@@ -125,17 +125,21 @@
 
                         @else
                             <label class="red">Not Available</label>
-
+                            
                         @endif
                     </td>
 
                     <td>
-                        @if($room->status)
+                        @if($room->status == 1)
                             <label class="green">Clean</label>
+                        @endif
 
-                        @else
+                        @if($room->status == 2)
                             <label class="red">Not Clean</label>
+                        @endif
 
+                        @if($room->status == 3)
+                            <label>Out of Service</label>
                         @endif
                     </td>
 
