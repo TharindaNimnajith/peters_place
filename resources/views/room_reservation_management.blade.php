@@ -120,7 +120,7 @@
             <tbody>
             @foreach ($reservations as $reservation)
                 <tr>
-                    <td>{{ $reservation->r_id }}</td>
+                    <td>{{ $reservation->id }}</td>
                     <td>{{ $reservation->cid }}</td>
                     <td></td>
                     <td></td>
@@ -141,7 +141,7 @@
                         </a>
 
                         <a class="delete" role="button" data-toggle="modal" data-target="#deleteReservationModal"
-                           data-id="{{ $reservation->r_id }}" data-url="{{ url('reserves', $reservation->r_id) }}">
+                           data-id="{{ $reservation->id }}" data-url="{{ url('reserves', $reservation->id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -437,7 +437,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $reservation->r_id }}" name="id"> 
+                <input type="hidden" value="{{ $reservation->id }}" name="id">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Reservation</h4>

@@ -11,7 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
-      
+
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
     -->
 
@@ -38,7 +38,7 @@
 </head>
 
 <body>
-       
+
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))
@@ -140,7 +140,7 @@
                         </a>
 
                         <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomTypeModal"
-                            data-id="{{ $room_type->id }}" data-url="{{ url('room_types', $room_type->id) }}">
+                           data-id="{{ $room_type->id }}" data-url="{{ url('room_types', $room_type->id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -199,7 +199,7 @@
 <!-- Edit Modal HTML -->
 <div id="editRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
-        <div class="modal-content">              
+        <div class="modal-content">
             <form method="post" action="/edit_room_type">
                 {{ csrf_field() }}
 
@@ -234,7 +234,7 @@
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                     <input type="submit" class="btn btn-info" value="Save">
                 </div>
-            </form>         
+            </form>
         </div>
     </div>
 </div>

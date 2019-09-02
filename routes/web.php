@@ -11,9 +11,6 @@
 |
 */
 
-use App\Http\Controllers\Controller;
-use App\Http\Controllers\RoomController;
-
 Route::get('/', function () {
     return view('index');
 });
@@ -46,7 +43,6 @@ Route::get('/room_reports', function () {
 });
 
 
-
 Route::post('/reserve_online', 'RoomController@reserve_online');
 
 Route::post('/add_room_reservation', 'RoomController@add_reservation');
@@ -64,7 +60,7 @@ Route::post('/room_types/{id}', 'RoomController@delete_room_type');
 Route::post('/reserves/{id}', 'RoomController@delete_room_reservation');
 
 
-//Route::post('/rooms/{id}', 'RoomController@view_room');
+Route::get('/view_room/{id}', 'RoomController@view_room');
 
 Route::get('/view_type/{id}', 'RoomController@view_room_type');
 
@@ -83,7 +79,6 @@ Route::get('/view_type/{id}', 'RoomController@view_room_type');
 //Route::post('/search_room_type', 'RoomController@search_room_type');
 
 //Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
-
 
 
 Route::get('/home', function () {

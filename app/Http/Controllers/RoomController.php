@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\customer;
+use App\Http\Requests\ReservationValidation;
+use App\Http\Requests\RoomTypeValidation;
+use App\Http\Requests\RoomValidation;
+use App\reserve;
 use App\room;
 use App\room_type;
-use App\customer;
-use App\reserve;
-
-use Validator;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
-use App\Http\Requests\RoomValidation;
-use App\Http\Requests\RoomTypeValidation;
-use App\Http\Requests\ReservationValidation;
+use Validator;
 
 class RoomController extends Controller
 {
@@ -29,7 +26,7 @@ class RoomController extends Controller
         $validatedData = $request->validated();
 
         $room = new room([
-            'room_no' => $request->get('r_no'),
+            'id' => $request->get('r_no'),
             'floor' => $request->get('floor'),
             'description' => $request->get('desc'),
             't_id' => $request->get('roomtype'),
@@ -66,7 +63,6 @@ class RoomController extends Controller
 
         return redirect()->back()->with('room_types', $data)->with('success', 'A new room type has been added successfully!');
     }
-
 
 
     /**
@@ -139,7 +135,6 @@ class RoomController extends Controller
     }
 
 
-
     /**
      * Remove the specified resource from storage.
      *
@@ -148,7 +143,7 @@ class RoomController extends Controller
      */
     public function delete_room($id)
     {
-        $room = room::where('room_no', $id);
+        $room = room::where('id', $id);
         $room->delete();
 
         return redirect()->back()->with('success', 'Room has been deleted successfully!');
@@ -178,12 +173,11 @@ class RoomController extends Controller
      */
     public function delete_room_reservation($id)
     {
-        $reserve = reserve::where('r_id', $id);
+        $reserve = reserve::where('id', $id);
         $reserve->delete();
 
         return redirect()->back()->with('success', 'Room reservation has been deleted successfully!');
     }
-
 
 
     /**
@@ -195,8 +189,20 @@ class RoomController extends Controller
     public function view_room_type($id)
     {
         $details = room_type::find($id);
-        //dd($details);
         return view('view_room_type')->with('details', $details);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function view_room($id)
+    {
+        $details = room::find($id);
+        return view('view_room')->with('details', $details);
     }
 
 
@@ -224,7 +230,7 @@ class RoomController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
@@ -234,7 +240,7 @@ class RoomController extends Controller
     }
 
 
-     /**
+    /**
      * Display the specified resource.
      *
      * @param int $id

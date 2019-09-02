@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(100);
 
-        Validator::extend('phone_number', function($attribute, $value, $parameters) {
+        Validator::extend('phone_number', function ($attribute, $value, $parameters) {
             return substr($value, 0, 1) == '0';
         });
     }

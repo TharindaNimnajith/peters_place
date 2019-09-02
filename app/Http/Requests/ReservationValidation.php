@@ -31,7 +31,7 @@ class ReservationValidation extends FormRequest
             'cin' => 'required|after_or_equal:today',
             'cout' => 'required|after:cin',
 
-            'r_no' => 'exists:rooms,room_no'
+            'r_no' => 'exists:rooms,id'
         ];
     }
 

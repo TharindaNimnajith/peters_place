@@ -14,13 +14,13 @@ class CreateReservesTable extends Migration
     public function up()
     {
         Schema::create('reserves', function (Blueprint $table) {
-            $table->increments('r_id');
+            $table->increments('id');
 
             $table->integer('cid')->unsigned();
             $table->foreign('cid')->references('cid')->on('customers');
 
             $table->integer('room_no');
-            $table->foreign('room_no')->references('room_no')->on('rooms');
+            $table->foreign('room_no')->references('id')->on('rooms');
 
             $table->integer('t_id');
             $table->foreign('t_id')->references('id')->on('room_types');

@@ -115,7 +115,7 @@
             <tbody>
             @foreach ($rooms as $room)
                 <tr>
-                    <td>{{ $room->room_no }}</td>
+                    <td>{{ $room->id }}</td>
                     <td>{{ $room->floor }}</td>
                     <td>{{ $room->t_id }}</td>
 
@@ -125,7 +125,7 @@
 
                         @else
                             <label class="red">Not Available</label>
-                            
+
                         @endif
                     </td>
 
@@ -144,7 +144,7 @@
                     </td>
 
                     <td>
-                        <a href="#viewRoomModal" class="view" data-toggle="modal">
+                        <a href="/view_room/{{ $room->id }}" class="view">
                             <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
                         </a>
 
@@ -153,7 +153,7 @@
                         </a>
 
                         <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomModal"
-                        data-id="{{ $room->room_no }}" data-url="{{ url('rooms', $room->room_no) }}">
+                           data-id="{{ $room->id }}" data-url="{{ url('rooms', $room->id) }}">
                             <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                         </a>
                     </td>
@@ -304,90 +304,6 @@
     </div>
 </div>
 
-<!-- View Modal HTML -->
-<div id="viewRoomModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/view_room">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">View Room</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room Type</label>
-
-                        <select name="roomtype" class="form-control" disabled>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Floor</label>
-
-                        <select name="floor" class="form-control" disabled>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" name="desc" disabled></textarea>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="row2">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Availability</label>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="available" value="1" disabled>Available</label>
-                                </div>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="available" value="0" disabled>Not Available</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Status</label>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="1" disabled>Clean</label>
-                                </div>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="0" disabled>Not Clean</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <!-- Search Modal HTML -->
 <div id="searchRoomModal" class="modal fade">
     <div class="modal-dialog">
@@ -475,7 +391,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $room->room_no }}" name="id">
+                <input type="hidden" value="{{ $room->id }}" name="id">
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room</h4>

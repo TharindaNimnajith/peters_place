@@ -32,7 +32,7 @@ return [
          * Perform a search which starts with the given keyword.
          * SQL: column LIKE "keyword%"
          */
-        'starts_with'    => false,
+        'starts_with' => false,
     ],
 
     /*
@@ -45,10 +45,10 @@ return [
      * This is where you can register your custom dataTables builder.
      */
     'engines' => [
-        'eloquent'                    => \Yajra\DataTables\EloquentDataTable::class,
-        'query'                       => \Yajra\DataTables\QueryDataTable::class,
-        'collection'                  => \Yajra\DataTables\CollectionDataTable::class,
-        'resource'                    => \Yajra\DataTables\ApiResourceDataTable::class,
+        'eloquent' => \Yajra\DataTables\EloquentDataTable::class,
+        'query' => \Yajra\DataTables\QueryDataTable::class,
+        'collection' => \Yajra\DataTables\CollectionDataTable::class,
+        'resource' => \Yajra\DataTables\ApiResourceDataTable::class,
     ],
 
     /*
@@ -115,7 +115,7 @@ return [
      * JsonResponse header and options config.
      */
     'json' => [
-        'header'  => [],
+        'header' => [],
         'options' => 0,
     ],
 

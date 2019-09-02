@@ -24,7 +24,7 @@ class RoomValidation extends FormRequest
     public function rules()
     {
         return [
-            'r_no' => 'required|unique:rooms,room_no|numeric',
+            'r_no' => 'required|unique:rooms,id|numeric',
             'desc' => 'required|max:100|string',
             'roomtype' => 'exists:room_types,id'
         ];

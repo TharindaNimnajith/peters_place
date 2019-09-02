@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class reserve extends Model
 {
     protected $fillable = [
-        'r_id',
+        'id',
         'cid',
         'room_no',
         't_id',
