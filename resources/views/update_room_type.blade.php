@@ -33,7 +33,7 @@
 <div class="model">
     <div class="model-dialog">
         <div class="model-content">
-            <form method="post" action="/edit_room_type" class="form-control-static" id="viewform">
+            <form method="post" action="/edit_room_type" class="form-control-static" id="updateroomform">
                 {{ csrf_field() }}
 
                 <div class="model-header">
@@ -63,17 +63,6 @@
                         <label>Base Price (LKR)</label>
                         <input type="text" name="price" class="form-control" value="{{ $details->base_price }}">
                     </div>
-
-                    <div class="form-group">
-                        <label>Total Room Count</label>
-                        <input type="text" name="tot" class="form-control">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Available Room Count</label>
-                        <input type="text" name="av_cnt" class="form-control">
-                    </div>
-                </div>
 
                 <div class="model-footer">
                     <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"

@@ -30,30 +30,21 @@
 </head>
 
 <body id="viewbody">
-<div class="model">
-    <div class="model-dialog">
+<div class="model" id="model1">
+    <div class="model-dialog" id="model1-dialog">
         <div class="model-content">
-            <form method="post" action="/edit_room_reservation" class="form-control-static" id="viewform">
+            <form method="post" action="/edit_room_reservation" class="form-control-static" id="resform">
                 {{ csrf_field() }}
 
                 <div class="model-header">
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
                             onclick="window.location='/room_reservation_management';">&times;
                     </button>
-                    <h4 class="model-title">Update Room Reservation</h4>
+                    <h4 class="model-title" id="title2">Update Room Reservation</h4>
                 </div>
 
-                <div class="model-body">
-                    <div class="form-group">
-                        <label>Reservation ID</label>
-                        <input type="text" name="rid" class="form-control" value="{{ $details->id }}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Customer ID</label>
-                        <input type="text" name="cid" class="form-control" value="{{ $details->cid }}">
-                    </div>
-
+                <div class="model-body" id="body">
+                    <div class="col-md-6" id="col1">
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" class="form-control" value="">
@@ -96,16 +87,12 @@
                             </select>
                         @endif
                     </div>
-
+                    </div>
+                    <div class="col-md-6" id="col2">
+                        <br/><br/><br/>
                     <div class="form-group">
                         <label>Room No</label>
                         <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}">
-                    </div>
-
-                    <div class="form-group">
-                        <br/>
-                        <label>Reserved Date Time</label>
-                        <input name="cin" type="text" class="form-control" value="{{ $details->resereved_date_time }}">
                     </div>
 
                     <div class="form-group">
@@ -120,8 +107,10 @@
                         <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}">
                     </div>
                 </div>
+                </div>
 
-                <div class="model-footer">
+                <div class="model-footer" id="foot">
+
                     <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
                            onclick="window.location='/room_reservation_management';">
                     <input type="submit" class="btn btn-info" value="Save">
