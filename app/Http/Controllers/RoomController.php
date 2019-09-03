@@ -220,6 +220,45 @@ class RoomController extends Controller
 
 
     /**
+     * Update the specified resource in storage.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function update_room_type($id)
+    {
+        $details = room_type::find($id);
+        return view('update_room_type')->with('details', $details);
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function update_room($id)
+    {
+        $details = room::find($id);
+        return view('update_room')->with('details', $details);
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function update_room_reservation($id)
+    {
+        $details = reserve::find($id);
+        return view('update_room_reservation')->with('details', $details);
+    }
+
+
+    /**
      * Display a listing of the resource.
      *
      * @return Response

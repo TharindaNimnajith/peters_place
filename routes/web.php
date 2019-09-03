@@ -67,11 +67,18 @@ Route::get('/view_type/{id}', 'RoomController@view_room_type');
 Route::get('/view_reserves/{id}', 'RoomController@view_room_reservation');
 
 
-//Route::post('/rooms/{id}', 'RoomController@edit_room');
+Route::get('/update_room/{id}', 'RoomController@update_room');
 
-//Route::post('/room_types/{id}', 'RoomController@edit_room_type');
+Route::get('/update_room_type/{id}', 'RoomController@update_room_type');
 
-//Route::post('/reserves/{id}', 'RoomController@edit_room_reservation');
+Route::get('/update_room_reservation/{id}', 'RoomController@update_room_reservation');
+
+
+Route::post('/edit_room', 'RoomController@edit_room');
+
+Route::post('/edit_room_type', 'RoomController@edit_room_type');
+
+Route::post('/edit_room_reservation', 'RoomController@edit_room_reservation');
 
 
 //Route::post('/search_room', 'RoomController@search_room');

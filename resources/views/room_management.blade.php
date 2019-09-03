@@ -148,7 +148,7 @@
                             <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
                         </a>
 
-                        <a href="#editRoomModal" class="edit" data-toggle="modal">
+                        <a href="/update_room/{{ $room->id }}" class="edit">
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                         </a>
 
@@ -213,91 +213,6 @@
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                     <input type="submit" class="btn btn-success" value="Add">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal HTML -->
-<div id="editRoomModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/edit_room">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Room</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room Type</label>
-
-                        <select name="roomtype" class="form-control" required>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Floor</label>
-
-                        <select name="floor" class="form-control" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" name="desc"></textarea>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="row2">
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Availability</label>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="available" value="1">Available</label>
-                                </div>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="available" value="0">Not Available</label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-6">
-                            <div class="form-group">
-                                <label>Status</label>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="1">Clean</label>
-                                </div>
-
-                                <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="0">Not Clean</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
                 </div>
             </form>
         </div>

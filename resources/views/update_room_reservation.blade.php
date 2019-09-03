@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Peter's Place || View Room Reservation</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"/>
+
+    <link href="{{ URL::asset('css/admin.css') }}" rel="stylesheet"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Activate tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+</head>
+
+<body id="viewbody">
+<div class="model">
+    <div class="model-dialog">
+        <div class="model-content">
+            <form method="post" action="/edit_room_reservation" class="form-control-static" id="viewform">
+                {{ csrf_field() }}
+
+                <div class="model-header">
+                    <button type="button" class="close" data-dismiss="model" aria-hidden="true"
+                            onclick="window.location='/room_reservation_management';">&times;
+                    </button>
+                    <h4 class="model-title">Update Room Reservation</h4>
+                </div>
+
+                <div class="model-body">
+                    <div class="form-group">
+                        <label>Reservation ID</label>
+                        <input type="text" name="rid" class="form-control" value="{{ $details->id }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Customer ID</label>
+                        <input type="text" name="cid" class="form-control" value="{{ $details->cid }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="fname" class="form-control" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="lname" class="form-control" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" class="form-control" value="">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Room Type</label>
+
+                        @if ($details->t_id == '1')
+                            <select name="roomtype" class="form-control">
+                                <option value="1" selected>Single</option>
+                                <option value="2">Double</option>
+                                <option value="3">Family</option>
+                            </select>
+                        @endif
+
+                        @if ($details->t_id == '2')
+                            <select name="roomtype" class="form-control">
+                                <option value="1">Single</option>
+                                <option value="2" selected>Double</option>
+                                <option value="3">Family</option>
+                            </select>
+                        @endif
+
+                        @if ($details->t_id == '3')
+                            <select name="roomtype" class="form-control">
+                                <option value="1">Single</option>
+                                <option value="2">Double</option>
+                                <option value="3" selected>Family</option>
+                            </select>
+                        @endif
+                    </div>
+
+                    <div class="form-group">
+                        <label>Room No</label>
+                        <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}">
+                    </div>
+
+                    <div class="form-group">
+                        <br/>
+                        <label>Reserved Date Time</label>
+                        <input name="cin" type="text" class="form-control" value="{{ $details->resereved_date_time }}">
+                    </div>
+
+                    <div class="form-group">
+                        <br/>
+                        <label>Check In</label>
+                        <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}">
+                    </div>
+
+                    <div class="form-group">
+                        <br/>
+                        <label>Check Out</label>
+                        <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}">
+                    </div>
+                </div>
+
+                <div class="model-footer">
+                    <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
+                           onclick="window.location='/room_reservation_management';">
+                    <input type="submit" class="btn btn-info" value="Save">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

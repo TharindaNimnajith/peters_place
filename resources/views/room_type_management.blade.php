@@ -135,7 +135,7 @@
                             <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
                         </a>
 
-                        <a href="#editRoomTypeModal" class="edit" data-toggle="modal">
+                        <a href="/update_room_type/{{ $room_type->id }}" class="edit">
                             <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                         </a>
 
