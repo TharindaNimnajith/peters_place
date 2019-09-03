@@ -10,16 +10,16 @@ use App\reserve;
 use App\room;
 use App\room_type;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Validator;
 
 class RoomController extends Controller
 {
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function add_room(RoomValidation $request)
     {
@@ -43,8 +43,8 @@ class RoomController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function add_room_type(RoomTypeValidation $request)
     {
@@ -68,8 +68,8 @@ class RoomController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function reserve_online(ReservationValidation $request)
     {
@@ -102,8 +102,8 @@ class RoomController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function add_reservation(ReservationValidation $request)
     {
@@ -139,7 +139,7 @@ class RoomController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function delete_room($id)
     {
@@ -154,7 +154,7 @@ class RoomController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function delete_room_type($id)
     {
@@ -169,7 +169,7 @@ class RoomController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function delete_room_reservation($id)
     {
@@ -184,7 +184,7 @@ class RoomController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function view_room_type($id)
     {
@@ -197,7 +197,7 @@ class RoomController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function view_room($id)
     {
@@ -207,9 +207,22 @@ class RoomController extends Controller
 
 
     /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function view_room_reservation($id)
+    {
+        $details = reserve::find($id);
+        return view('view_room_reservation')->with('details', $details);
+    }
+
+
+    /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function index()
     {
@@ -220,7 +233,7 @@ class RoomController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -231,8 +244,8 @@ class RoomController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -244,7 +257,7 @@ class RoomController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -256,7 +269,7 @@ class RoomController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit($id)
     {
@@ -267,9 +280,9 @@ class RoomController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -281,7 +294,7 @@ class RoomController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy($id)
     {

@@ -64,7 +64,7 @@ Route::get('/view_room/{id}', 'RoomController@view_room');
 
 Route::get('/view_type/{id}', 'RoomController@view_room_type');
 
-//Route::post('/reserves/{id}', 'RoomController@view_room_reservation');
+Route::get('/view_reserves/{id}', 'RoomController@view_room_reservation');
 
 
 //Route::post('/rooms/{id}', 'RoomController@edit_room');

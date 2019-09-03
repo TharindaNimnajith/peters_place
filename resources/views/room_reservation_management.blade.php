@@ -132,7 +132,7 @@
                     <td>{{ $reservation->check_out }}</td>
 
                     <td>
-                        <a href="#viewReservationModal" class="view" data-toggle="modal">
+                        <a href="/view_reserves/{{ $reservation->id }}" class="view">
                             <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
                         </a>
 
@@ -280,80 +280,6 @@
                 <div class="modal-footer">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                     <input type="submit" class="btn btn-info" value="Save">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- View Modal HTML -->
-<div id="viewReservationModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/view_room_reservation">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">View Reservation</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Reservation ID</label>
-                        <input type="text" name="rid" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Customer ID</label>
-                        <input type="text" name="cid" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room Type</label>
-
-                        <select name="rtype" class="form-control" disabled>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <br/>
-                        <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" disabled>
-                    </div>
-
-                    <div class="form-group">
-                        <br/>
-                        <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" disabled>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                 </div>
             </form>
         </div>

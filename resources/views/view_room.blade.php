@@ -38,7 +38,8 @@
 
                 <div class="model-header">
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
-                            onclick="window.location='/room_management';">&times;</button>
+                            onclick="window.location='/room_management';">&times;
+                    </button>
                     <h4 class="model-title">View Room</h4>
                 </div>
 
@@ -88,10 +89,12 @@
 
                                 <div class="radio">
                                     @if($details->availability == '0')
-                                        <label><input type="radio" name="available" value="0" checked disabled>Not Available</label>
+                                        <label><input type="radio" name="available" value="0" checked disabled>Not
+                                            Available</label>
 
                                     @else
-                                        <label><input type="radio" name="available" value="0" disabled>Not Available</label>
+                                        <label><input type="radio" name="available" value="0" disabled>Not
+                                            Available</label>
 
                                     @endif
                                 </div>
@@ -104,7 +107,8 @@
 
                                 <div class="radio">
                                     @if($details->status == '1')
-                                        <label><input type="radio" name="status_btn" value="1" checked disabled>Clean</label>
+                                        <label><input type="radio" name="status_btn" value="1" checked
+                                                      disabled>Clean</label>
 
                                     @else
                                         <label><input type="radio" name="status_btn" value="1" disabled>Clean</label>
@@ -114,20 +118,24 @@
 
                                 <div class="radio">
                                     @if($details->status == '2')
-                                        <label><input type="radio" name="status_btn" value="2" checked disabled>Not Clean</label>
+                                        <label><input type="radio" name="status_btn" value="2" checked disabled>Not
+                                            Clean</label>
 
                                     @else
-                                        <label><input type="radio" name="status_btn" value="2" disabled>Not Clean</label>
+                                        <label><input type="radio" name="status_btn" value="2" disabled>Not
+                                            Clean</label>
 
                                     @endif
                                 </div>
 
                                 <div class="radio">
                                     @if($details->status == '3')
-                                        <label><input type="radio" name="status_btn" value="3" checked disabled>Out of Service</label>
+                                        <label><input type="radio" name="status_btn" value="3" checked disabled>Out of
+                                            Service</label>
 
                                     @else
-                                        <label><input type="radio" name="status_btn" value="3" disabled>Out of Service</label>
+                                        <label><input type="radio" name="status_btn" value="3" disabled>Out of
+                                            Service</label>
 
                                     @endif
                                 </div>
