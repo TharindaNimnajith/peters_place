@@ -30,6 +30,22 @@
 </head>
 
 <body id="viewbody">
+@if (session()->has('success'))
+    <div class="alert alert-success">
+        {{ session()->get('success') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+        </ul>
+        @endforeach
+    </div>
+@endif
+
 <div class="model" id="model1">
     <div class="model-dialog" id="model1-dialog">
         <div class="model-content">
@@ -45,6 +61,8 @@
 
                 <div class="model-body" id="body">
                     <div class="col-md-6" id="col1">
+                        <input type="hidden" name="id" value="{{ $details->id }}"/>
+
                         <div class="form-group">
                             <label>First Name</label>
                             <input type="text" name="fname" class="form-control" value="">

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\customer;
 use App\Http\Requests\ReservationValidation;
+use App\Http\Requests\RoomReservationUpdateValidation;
+use App\Http\Requests\RoomTypeUpdateValidation;
 use App\Http\Requests\RoomTypeValidation;
+use App\Http\Requests\RoomUpdateValidation;
 use App\Http\Requests\RoomValidation;
 use App\reserve;
 use App\room;
@@ -18,7 +21,7 @@ class RoomController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param RoomValidation $request
      * @return Response
      */
     public function add_room(RoomValidation $request)
@@ -36,14 +39,17 @@ class RoomController extends Controller
 
         $data = room::all();
 
-        return redirect()->back()->with('rooms', $data)->with('success', 'A new room has been added successfully!');
+        return redirect()
+            ->back()
+            ->with('rooms', $data)
+            ->with('success', 'A new room has been added successfully!');
     }
 
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param RoomTypeValidation $request
      * @return Response
      */
     public function add_room_type(RoomTypeValidation $request)
@@ -61,14 +67,17 @@ class RoomController extends Controller
 
         $data = room_type::all();
 
-        return redirect()->back()->with('room_types', $data)->with('success', 'A new room type has been added successfully!');
+        return redirect()
+            ->back()
+            ->with('room_types', $data)
+            ->with('success', 'A new room type has been added successfully!');
     }
 
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param ReservationValidation $request
      * @return Response
      */
     public function reserve_online(ReservationValidation $request)
@@ -95,14 +104,16 @@ class RoomController extends Controller
 
         $reserve->save();
 
-        return redirect()->back()->with('success', 'Your room has been reserved successfully!');
+        return redirect()
+            ->back()
+            ->with('success', 'Your room has been reserved successfully!');
     }
 
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param ReservationValidation $request
      * @return Response
      */
     public function add_reservation(ReservationValidation $request)
@@ -131,7 +142,10 @@ class RoomController extends Controller
 
         $data = reserve::all();
 
-        return redirect()->back()->with('reservations', $data)->with('success', 'Room has been reserved successfully!');
+        return redirect()
+            ->back()
+            ->with('reservations', $data)
+            ->with('success', 'Room has been reserved successfully!');
     }
 
 
@@ -146,7 +160,9 @@ class RoomController extends Controller
         $room = room::where('id', $id);
         $room->delete();
 
-        return redirect()->back()->with('success', 'Room has been deleted successfully!');
+        return redirect()
+            ->back()
+            ->with('success', 'Room has been deleted successfully!');
     }
 
 
@@ -161,7 +177,9 @@ class RoomController extends Controller
         $room_type = room_type::where('id', $id);
         $room_type->delete();
 
-        return redirect()->back()->with('success', 'Room type has been deleted successfully!');
+        return redirect()
+            ->back()
+            ->with('success', 'Room type has been deleted successfully!');
     }
 
 
@@ -176,7 +194,9 @@ class RoomController extends Controller
         $reserve = reserve::where('id', $id);
         $reserve->delete();
 
-        return redirect()->back()->with('success', 'Room reservation has been deleted successfully!');
+        return redirect()
+            ->back()
+            ->with('success', 'Room reservation has been deleted successfully!');
     }
 
 
@@ -189,7 +209,9 @@ class RoomController extends Controller
     public function view_room_type($id)
     {
         $details = room_type::find($id);
-        return view('view_room_type')->with('details', $details);
+
+        return view('view_room_type')
+            ->with('details', $details);
     }
 
 
@@ -202,7 +224,9 @@ class RoomController extends Controller
     public function view_room($id)
     {
         $details = room::find($id);
-        return view('view_room')->with('details', $details);
+
+        return view('view_room')
+            ->with('details', $details);
     }
 
 
@@ -215,7 +239,9 @@ class RoomController extends Controller
     public function view_room_reservation($id)
     {
         $details = reserve::find($id);
-        return view('view_room_reservation')->with('details', $details);
+
+        return view('view_room_reservation')
+            ->with('details', $details);
     }
 
 
@@ -228,7 +254,9 @@ class RoomController extends Controller
     public function update_room_type($id)
     {
         $details = room_type::find($id);
-        return view('update_room_type')->with('details', $details);
+
+        return view('update_room_type')
+            ->with('details', $details);
     }
 
 
@@ -241,7 +269,9 @@ class RoomController extends Controller
     public function update_room($id)
     {
         $details = room::find($id);
-        return view('update_room')->with('details', $details);
+
+        return view('update_room')
+            ->with('details', $details);
     }
 
 
@@ -254,14 +284,147 @@ class RoomController extends Controller
     public function update_room_reservation($id)
     {
         $details = reserve::find($id);
-        return view('update_room_reservation')->with('details', $details);
+
+        return view('update_room_reservation')
+            ->with('details', $details);
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param RoomUpdateValidation $request
+     * @return void
+     */
+    public function edit_room(RoomUpdateValidation $request)
+    {
+        //dd($request);
+
+        $validatedData = $request->validated();
+
+        $id = $request->id;
+        $roomtype = $request->roomtype;
+        $floor = $request->floor;
+        $desc = $request->desc;
+        $available = $request->available;
+        $status_btn = $request->status_btn;
+
+        //dd($id);
+
+        $updateDetails = [
+            'floor' => $floor,
+            'availability' => $available,
+            'status' => $status_btn,
+            'description' => $desc,
+            't_id' => $roomtype
+        ];
+
+        DB::table('rooms')
+            ->where('id', $id)
+            ->update($updateDetails);
+
+        $data = room::all();
+
+        return redirect()
+            ->to('room_management')
+            ->with('rooms', $data)
+            ->with('success', 'The room has been updated successfully!');
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param RoomTypeUpdateValidation $request
+     * @return void
+     */
+    public function edit_room_type(RoomTypeUpdateValidation $request)
+    {
+        //dd($request);
+
+        $validatedData = $request->validated();
+
+        $id = $request->id;
+        $t_name = $request->t_name;
+        $desc = $request->desc;
+        $price = $request->price;
+
+        //dd($id);
+
+        $updateDetails = [
+            'name' => $t_name,
+            'description' => $desc,
+            'base_price' => $price
+        ];
+
+        DB::table('room_types')
+            ->where('id', $id)
+            ->update($updateDetails);
+
+        $data = room_type::all();
+
+        return redirect()
+            ->to('room_type_management')
+            ->with('room_types', $data)
+            ->with('success', 'The room type has been updated successfully!');
+    }
+
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param RoomReservationUpdateValidation $request
+     * @return void
+     */
+    public function edit_room_reservation(RoomReservationUpdateValidation $request)
+    {
+        //dd($request);
+
+        $validatedData = $request->validated();
+
+        $id = $request->id;
+        $fname = $request->fname;
+        $lname = $request->lname;
+        $phone = $request->phone;
+        $roomtype = $request->roomtype;
+        $r_no = $request->r_no;
+        $cin = $request->cin;
+        $cout = $request->cout;
+
+        //dd($id);
+
+        $updateDetails = [
+            't_id' => $roomtype,
+            'room_no' => $r_no,
+            'check_in' => $cin,
+            'check_out' => $cout
+        ];
+
+        /*
+        $updateDetails2 = [
+            'fname' => $fname,
+            'lname' => $lname,
+            'phone' => $phone
+        ];
+        */
+
+        DB::table('reserves')
+            ->where('id', $id)
+            ->update($updateDetails);
+
+        $data = reserve::all();
+
+        return redirect()
+            ->to('room_reservation_management')
+            ->with('reservations', $data)
+            ->with('success', 'The reservation has been updated successfully!');
     }
 
 
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return void
      */
     public function index()
     {
@@ -272,7 +435,7 @@ class RoomController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return void
      */
     public function create()
     {
@@ -284,7 +447,7 @@ class RoomController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Response
+     * @return void
      */
     public function store(Request $request)
     {
@@ -296,7 +459,7 @@ class RoomController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return Response
+     * @return void
      */
     public function show($id)
     {
@@ -308,7 +471,7 @@ class RoomController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return Response
+     * @return void
      */
     public function edit($id)
     {
@@ -321,7 +484,7 @@ class RoomController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @return Response
+     * @return void
      */
     public function update(Request $request, $id)
     {
@@ -333,7 +496,7 @@ class RoomController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return Response
+     * @return void
      */
     public function destroy($id)
     {
