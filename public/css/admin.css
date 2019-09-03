@@ -434,7 +434,19 @@ table.table td i {
 }
 
 .form-group label {
-    margin-top: 10px;
+    margin-top: 15px;
+}
+
+#clbl input {
+    margin-top: -10px;
+}
+
+#addReservationModal .form-group label {
+    margin-top: 0;
+}
+
+#searchReservationModal .form-group label {
+    margin-top: -5px;
 }
 
 .radio {

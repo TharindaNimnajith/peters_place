@@ -46,64 +46,68 @@
                 <div class="model-body" id="body">
                     <div class="col-md-6" id="col1">
                         <br/>
-                    <div class="form-group">
-                        <label>Reservation ID</label>
-                        <input type="text" name="rid" class="form-control" value="{{ $details->id }}" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>Reservation ID</label>
+                            <input type="text" name="rid" class="form-control" value="{{ $details->id }}" disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Customer ID</label>
-                        <input type="text" name="cid" class="form-control" value="{{ $details->cid }}" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>Customer ID</label>
+                            <input type="text" name="cid" class="form-control" value="{{ $details->cid }}" disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" value="" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="fname" class="form-control" value="" disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" value="" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lname" class="form-control" value="" disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" value="" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" class="form-control" value="" disabled>
+                        </div>
                     </div>
                     <div class="col-md-6" id="col2">
 
                         <div class="form-group" id="rt">
-                        <label>Room Type</label>
+                            <label>Room Type</label>
 
-                        <select name="rtype" class="form-control" disabled>
-                            <option value="{{ $details->t_id }}" selected>{{ $details->t_id }}</option>
-                        </select>
-                    </div>
+                            <select name="rtype" class="form-control" disabled>
+                                <option value="{{ $details->t_id }}" selected>{{ $details->t_id }}</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}" disabled>
-                    </div>
+                        <div class="form-group">
+                            <label>Room No</label>
+                            <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}"
+                                   disabled>
+                        </div>
 
-                    <div class="form-group">
+                        <div class="form-group">
 
-                        <label>Reserved Date Time</label>
-                        <input name="cin" type="text" class="form-control" value="{{ $details->resereved_date_time }}"
-                               disabled>
-                    </div>
+                            <label>Reserved Date Time</label>
+                            <input name="cin" type="text" class="form-control"
+                                   value="{{ $details->resereved_date_time }}"
+                                   disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}" disabled>
-                    </div>
+                        <div class="form-group">
+                            <br/>
+                            <label>Check In</label>
+                            <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}"
+                                   disabled>
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}" disabled>
-                    </div>
+                        <div class="form-group">
+                            <br/>
+                            <label>Check Out</label>
+                            <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}"
+                                   disabled>
+                        </div>
                     </div>
                 </div>
 

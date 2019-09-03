@@ -64,11 +64,11 @@
                         <input type="text" name="price" class="form-control" value="{{ $details->base_price }}">
                     </div>
 
-                <div class="model-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
-                           onclick="window.location='/room_type_management';">
-                    <input type="submit" class="btn btn-info" value="Save">
-                </div>
+                    <div class="model-footer">
+                        <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
+                               onclick="window.location='/room_type_management';">
+                        <input type="submit" class="btn btn-info" value="Save">
+                    </div>
             </form>
         </div>
     </div>

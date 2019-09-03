@@ -12,7 +12,7 @@
 */
 
 Route::get('/', function () {
-    return view('index');
+    return view('peters_place');
 });
 
 Route::get('/online_reservation', function () {
@@ -107,3 +107,19 @@ Route::get('/welcome', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::get('customer', 'postcontroller@index');
+Route::get('/search1', 'postcontroller@search');
+Route::delete('/deleteall1', 'postcontroller@deleteAll');
+Route::resource('posts', 'postcontroller');
+
+Route::get('accoms', 'accomcontroller@index');
+Route::get('/search2', 'accomcontroller@search');
+Route::delete('/deleteall2', 'accomcontroller@deleteAll');
+Route::resource('accoms', 'accomcontroller');
+
+Route::get('u', 'utilitycontroller@index');
+Route::get('/search3', 'utilitycontroller@search');
+Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
+Route::resource('utilities', 'utilitycontroller');

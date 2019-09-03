@@ -45,68 +45,68 @@
 
                 <div class="model-body" id="body">
                     <div class="col-md-6" id="col1">
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" value="">
-                    </div>
+                        <div class="form-group">
+                            <label>First Name</label>
+                            <input type="text" name="fname" class="form-control" value="">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" value="">
-                    </div>
+                        <div class="form-group">
+                            <label>Last Name</label>
+                            <input type="text" name="lname" class="form-control" value="">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" value="">
-                    </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" name="phone" class="form-control" value="">
+                        </div>
 
-                    <div class="form-group">
-                        <label>Room Type</label>
+                        <div class="form-group">
+                            <label>Room Type</label>
 
-                        @if ($details->t_id == '1')
-                            <select name="roomtype" class="form-control">
-                                <option value="1" selected>Single</option>
-                                <option value="2">Double</option>
-                                <option value="3">Family</option>
-                            </select>
-                        @endif
+                            @if ($details->t_id == '1')
+                                <select name="roomtype" class="form-control">
+                                    <option value="1" selected>Single</option>
+                                    <option value="2">Double</option>
+                                    <option value="3">Family</option>
+                                </select>
+                            @endif
 
-                        @if ($details->t_id == '2')
-                            <select name="roomtype" class="form-control">
-                                <option value="1">Single</option>
-                                <option value="2" selected>Double</option>
-                                <option value="3">Family</option>
-                            </select>
-                        @endif
+                            @if ($details->t_id == '2')
+                                <select name="roomtype" class="form-control">
+                                    <option value="1">Single</option>
+                                    <option value="2" selected>Double</option>
+                                    <option value="3">Family</option>
+                                </select>
+                            @endif
 
-                        @if ($details->t_id == '3')
-                            <select name="roomtype" class="form-control">
-                                <option value="1">Single</option>
-                                <option value="2">Double</option>
-                                <option value="3" selected>Family</option>
-                            </select>
-                        @endif
-                    </div>
+                            @if ($details->t_id == '3')
+                                <select name="roomtype" class="form-control">
+                                    <option value="1">Single</option>
+                                    <option value="2">Double</option>
+                                    <option value="3" selected>Family</option>
+                                </select>
+                            @endif
+                        </div>
                     </div>
                     <div class="col-md-6" id="col2">
                         <br/><br/><br/>
-                    <div class="form-group">
-                        <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}">
-                    </div>
+                        <div class="form-group">
+                            <label>Room No</label>
+                            <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}">
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}">
-                    </div>
+                        <div class="form-group">
+                            <br/>
+                            <label>Check In</label>
+                            <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}">
+                        </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}">
+                        <div class="form-group">
+                            <br/>
+                            <label>Check Out</label>
+                            <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}">
+                        </div>
                     </div>
-                </div>
                 </div>
 
                 <div class="model-footer" id="foot">

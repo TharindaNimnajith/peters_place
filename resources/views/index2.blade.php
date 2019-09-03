@@ -33,14 +33,14 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h1>Customer Details</h1>
+            <h1>Utility Details</h1>
             <br>
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search1" method="get">
+            <form action="/search3" method="get">
                 <div class="input-group">
-                    <input type="search" name="search1" class="form-control">
+                    <input type="search" name="search3" class="form-control">
                     <span class="input-group-prepend">
 					<button type="submit" class="btn btn-primary">Search</button>
 				</span>
@@ -48,42 +48,38 @@
             </form>
         </div>
         <div class="col-md-2 text-right">
-            <a href="{{ action('postcontroller@create') }}" class="btn btn-primary">Add Data</a>
+            <a href="{{ action('utilitycontroller@create') }}" class="btn btn-primary">Add Data</a>
         </div>
     </div>
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall1" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall3" type="submit" class="btn btn-danger">Delete All Selected</button>
         <br>
         <br>
         <table class="table table-bordered">
             <thead>
-            <tr style="background-color:#4D6D9A">
-                <th><input type="checkbox" class="selectall"></th>
-                <th style="width: 60px">First Name</th>
-                <th style="width: 80px">Last Name</th>
-                <th style="width: 60px">NIC</th>
-                <th style="width: 60px">E mail</th>
-                <th style="width: 60px">Phone Number</th>
-                <th style="width: 80px">Address</th>
-                <th style="width: 500px">Action</th>
+            <tr>
+                <th width="230">ID</th>
+                <th width="230">Type</th>
+                <th width="230">Date</th>
+                <th width="230">Amount</th>
             </tr>
             </thead>
             <tbody>
-            @foreach($posts as $post)
+            @foreach($utilities as $utility)
                 <tr>
-                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $post->id}}"></td>
-                    <td>{{ $post->fname }}</td>
-                    <td>{{ $post->lname }}</td>
-                    <td>{{ $post->nic }}</td>
-                    <td>{{ $post->email }}</td>
-                    <td>{{ $post->phone }}</td>
-                    <td>{{ $post->address }}</td>
+                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $utility->id}}"></td>
+                    <td>{{ $utility->id }}</td>
+                    <td>{{ $utility->type }}</td>
+                    <td>{{ $utility->date }}</td>
+                    <td>{{ $utility->amount }}</td>
+
                     <td>
-                        <a href="{{ action('postcontroller@edit', $post->id) }}" class="btn btn-warning">Edit</a>
-                        <button formaction="{{ action('postcontroller@destroy', $post->id)}}" type="submit"
-                                class="btn btn-danger">Delete
+                        <a href="{{ action('utilitycontroller@edit', $utility->id) }}"
+                           class="btn btn-warning">UPDATE</a>
+                        <button formaction="{{ action('utilitycontroller@destroy', $utility->id)}}" type="submit"
+                                class="btn btn-danger">DELETE
                         </button>
 
                     </td>

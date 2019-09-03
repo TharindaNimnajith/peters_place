@@ -197,89 +197,22 @@
                         <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                     </div>
 
-                    <div class="form-group">
-                        <br/>
+                    <div class="form-group" id="clbl">
+
                         <label>Check In</label>
                         <input name="cin" type="date" class="form-control" value="{{ old('cin') }}">
                     </div>
 
-                    <div class="form-group">
-                        <br/>
+                    <div class="form-group" id="clbl">
+
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control" value="{{ old('cout') }}">
                     </div>
                 </div>
 
-                <div class="modal-footer">
+                <div class="modal-footer" id="footres">
                     <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
                     <input type="submit" class="btn btn-success" value="Add">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Edit Modal HTML -->
-<div id="editReservationModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/edit_room_reservation">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Reservation</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>First Name</label>
-                            <input type="text" name="fname" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Last Name</label>
-                            <input type="text" name="lname" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="text" name="phone" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Room Type</label>
-
-                            <select name="rtype" class="form-control" required>
-                                <option value="1">Single Bedroom</option>
-                                <option value="2">Double Bedroom</option>
-                                <option value="3">Family Bedroom</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Room No</label>
-                            <input type="text" name="r_no" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <br/>
-                            <label>Check In</label>
-                            <input name="cin" type="date" class="form-control" required>
-                        </div>
-
-                        <div class="form-group">
-                            <br/>
-                            <label>Check Out</label>
-                            <input name="cout" type="date" class="form-control" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
                 </div>
             </form>
         </div>

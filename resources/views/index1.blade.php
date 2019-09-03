@@ -21,7 +21,7 @@
     </nav>
 </div>
 
-@extends('layout')
+@extends('layout1')
 
 @section('content')
 
@@ -33,14 +33,14 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h1>Customer Details</h1>
+            <h1>Accommodation Details</h1>
             <br>
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search1" method="get">
+            <form action="/search2" method="get">
                 <div class="input-group">
-                    <input type="search" name="search1" class="form-control">
+                    <input type="search" name="search2" class="form-control">
                     <span class="input-group-prepend">
 					<button type="submit" class="btn btn-primary">Search</button>
 				</span>
@@ -48,41 +48,47 @@
             </form>
         </div>
         <div class="col-md-2 text-right">
-            <a href="{{ action('postcontroller@create') }}" class="btn btn-primary">Add Data</a>
+            <a href="{{ action('accomcontroller@create') }}" class="btn btn-primary">Add Data</a>
         </div>
     </div>
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall1" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall2" type="submit" class="btn btn-danger">Delete All Selected</button>
         <br>
         <br>
         <table class="table table-bordered">
             <thead>
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
-                <th style="width: 60px">First Name</th>
-                <th style="width: 80px">Last Name</th>
-                <th style="width: 60px">NIC</th>
-                <th style="width: 60px">E mail</th>
-                <th style="width: 60px">Phone Number</th>
-                <th style="width: 80px">Address</th>
-                <th style="width: 500px">Action</th>
+                <th style="width: 60px">Arrival</th>
+                <th style="width: 80px">Departure</th>
+                <th style="width: 60px">Adults</th>
+                <th style="width: 60px">Kids</th>
+                <th style="width: 60px">Room Type</th>
+                <th style="width: 80px">Room No</th>
+                <th style="width: 80px">Food Service</th>
+                <th style="width: 80px">Payment</th>
+                <th style="width: 80px">NIC</th>
+                <th style="width: 200px">Action</th>
             </tr>
             </thead>
             <tbody>
-            @foreach($posts as $post)
+            @foreach($accoms as $accom)
                 <tr>
-                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $post->id}}"></td>
-                    <td>{{ $post->fname }}</td>
-                    <td>{{ $post->lname }}</td>
-                    <td>{{ $post->nic }}</td>
-                    <td>{{ $post->email }}</td>
-                    <td>{{ $post->phone }}</td>
-                    <td>{{ $post->address }}</td>
+                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $accom->id}}"></td>
+                    <td>{{ $accom->arrival_date }}</td>
+                    <td>{{ $accom->deparure_date }}</td>
+                    <td>{{ $accom->adults }}</td>
+                    <td>{{ $accom->kids }}</td>
+                    <td>{{ $accom->room_type }}</td>
+                    <td>{{ $accom->room_no }}</td>
+                    <td>{{ $accom->food_ser }}</td>
+                    <td>{{ $accom->payment }}</td>
+                    <td>{{ $accom->nic }}</td>
                     <td>
-                        <a href="{{ action('postcontroller@edit', $post->id) }}" class="btn btn-warning">Edit</a>
-                        <button formaction="{{ action('postcontroller@destroy', $post->id)}}" type="submit"
+                        <a href="{{ action('accomcontroller@edit', $accom->id) }}" class="btn btn-warning">Edit</a>
+                        <button formaction="{{ action('accomcontroller@destroy', $accom->id)}}" type="submit"
                                 class="btn btn-danger">Delete
                         </button>
 

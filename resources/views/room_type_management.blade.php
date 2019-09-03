@@ -196,50 +196,6 @@
     </div>
 </div>
 
-<!-- Edit Modal HTML -->
-<div id="editRoomTypeModal" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form method="post" action="/edit_room_type">
-                {{ csrf_field() }}
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Room Type</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label>Room Type ID</label>
-                        <input type="text" name="t_id" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Room Type Name</label>
-                        <input type="text" name="t_name" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea class="form-control" name="desc"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Base Price (LKR)</label>
-                        <input type="text" name="price" class="form-control" required>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                    <input type="submit" class="btn btn-info" value="Save">
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
 <!-- Search Modal HTML -->
 <div id="searchRoomTypeModal" class="modal fade">
     <div class="modal-dialog">
