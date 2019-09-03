@@ -17,7 +17,7 @@ class CreateReservesTable extends Migration
             $table->increments('id');
 
             $table->integer('cid')->unsigned();
-            $table->foreign('cid')->references('cid')->on('customers');
+            $table->foreign('cid')->references('id')->on('customers');
 
             $table->integer('room_no');
             $table->foreign('room_no')->references('id')->on('rooms');

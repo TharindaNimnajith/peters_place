@@ -9,13 +9,18 @@
     width: 50%;
 }
 
+.radio {
+    text-align: left;
+    margin-left: 30px;
+}
+
 #viewform {
     border: solid #00074b;
     border-radius: 5px;
     background: whitesmoke;
 }
 
-#viewform input, #viewform textarea {
+#viewform input, #viewform textarea, #viewform select {
     text-align: center;
 }
 

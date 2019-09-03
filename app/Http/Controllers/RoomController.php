@@ -83,7 +83,7 @@ class RoomController extends Controller
 
         $customer->save();
 
-        $maxValue = DB::table('customers')->max('cid');
+        $maxValue = DB::table('customers')->max('id');
 
         $reserve = new reserve([
             't_id' => $request->get('rtype'),
@@ -117,7 +117,7 @@ class RoomController extends Controller
 
         $customer->save();
 
-        $maxValue = DB::table('customers')->max('cid');
+        $maxValue = DB::table('customers')->max('id');
 
         $reserve = new reserve([
             't_id' => $request->get('rtype'),

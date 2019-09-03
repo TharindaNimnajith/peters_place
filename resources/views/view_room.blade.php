@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-    <title>Peter's Place || View Room Type</title>
+    <title>Peter's Place || View Room</title>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
@@ -52,9 +52,7 @@
                         <label>Room Type</label>
 
                         <select name="roomtype" class="form-control" disabled>
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
+                            <option value="{{ $details->t_id }}" selected>{{ $details->t_id }}</option>
                         </select>
                     </div>
 
@@ -62,15 +60,13 @@
                         <label>Floor</label>
 
                         <select name="floor" class="form-control" disabled>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
+                            <option value="{{ $details->floor }}" selected>{{ $details->floor }}</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="desc" disabled></textarea>
+                        <textarea class="form-control" name="desc" disabled>{{ $details->description }}</textarea>
                     </div>
                 </div>
 
@@ -81,11 +77,23 @@
                                 <label>Availability</label>
 
                                 <div class="radio">
-                                    <label><input type="radio" name="available" value="1" disabled>Available</label>
+                                    @if($details->availability == '1')
+                                        <label><input type="radio" name="available" value="1" checked disabled>Available</label>
+
+                                    @else
+                                        <label><input type="radio" name="available" value="1" disabled>Available</label>
+
+                                    @endif
                                 </div>
 
                                 <div class="radio">
-                                    <label><input type="radio" name="available" value="0" disabled>Not Available</label>
+                                    @if($details->availability == '0')
+                                        <label><input type="radio" name="available" value="0" checked disabled>Not Available</label>
+
+                                    @else
+                                        <label><input type="radio" name="available" value="0" disabled>Not Available</label>
+
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -95,11 +103,33 @@
                                 <label>Status</label>
 
                                 <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="1" disabled>Clean</label>
+                                    @if($details->status == '1')
+                                        <label><input type="radio" name="status_btn" value="1" checked disabled>Clean</label>
+
+                                    @else
+                                        <label><input type="radio" name="status_btn" value="1" disabled>Clean</label>
+
+                                    @endif
                                 </div>
 
                                 <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="0" disabled>Not Clean</label>
+                                    @if($details->status == '2')
+                                        <label><input type="radio" name="status_btn" value="2" checked disabled>Not Clean</label>
+
+                                    @else
+                                        <label><input type="radio" name="status_btn" value="2" disabled>Not Clean</label>
+
+                                    @endif
+                                </div>
+
+                                <div class="radio">
+                                    @if($details->status == '3')
+                                        <label><input type="radio" name="status_btn" value="3" checked disabled>Out of Service</label>
+
+                                    @else
+                                        <label><input type="radio" name="status_btn" value="3" disabled>Out of Service</label>
+
+                                    @endif
                                 </div>
                             </div>
                         </div>
