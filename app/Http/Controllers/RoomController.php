@@ -435,16 +435,23 @@ class RoomController extends Controller
         $availability = $request->available;
         $status = $request->status_btn;
 
-        $data = DB::table('rooms')
-            ->orWhere('id', 'like', '%' . $id . '%')
-            ->orWhere('floor', 'like', '%' . $floor . '%')
-            ->orWhere('availability', 'like', '%' . $availability . '%')
-            ->orWhere('status', 'like', '%' . $status . '%')
+        $data = DB::table('rooms')->orWhere('id', $id)
+            //->orWhere('floor', 'like', '%' . $floor . '%')
+            ->orWhere('availability', $availability)
+            ->orWhere('status', $status)
             ->paginate(5);
 
-        return redirect()
-            ->to('room_management')
-            ->with('rooms', $data);
+        return view('room_management', ['rooms' => $data]);
+
+        /*
+        $data = DB::table('rooms')->where('id', $id)->get();
+            //->orWhere('floor', 'like', '%' . $floor . '%')
+            //->orWhere('availability', 'like', '%' . $availability . '%')
+            //->orWhere('status', 'like', '%' . $status . '%')
+            //->paginate(5);
+
+        return view('room_management', ['rooms' => $data]);
+        */
     }
 
 

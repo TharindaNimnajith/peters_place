@@ -232,11 +232,13 @@
                 </div>
 
                 <div class="modal-body">
+
                     <div class="form-group">
                         <label>Room No</label>
                         <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <label>Room Type</label>
 
@@ -256,6 +258,7 @@
                             <option value="3">3</option>
                         </select>
                     </div>
+                -->
                 </div>
 
                 <div class="row">
