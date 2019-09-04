@@ -67,12 +67,13 @@
 
                     <div class="form-group">
                         <label>Total Room Count</label>
-                        <input type="text" name="tot" class="form-control" disabled>
+                        <input type="text" name="tot" class="form-control" value="{{ $details->total }}" disabled>
                     </div>
 
                     <div class="form-group">
                         <label>Available Room Count</label>
-                        <input type="text" name="av_cnt" class="form-control" disabled>
+                        <input type="text" name="av_cnt" class="form-control" value="{{ $details->available }}"
+                               disabled>
                     </div>
                 </div>
 

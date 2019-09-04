@@ -14,7 +14,7 @@ class CreateAccomsTable extends Migration
     public function up()
     {
         Schema::create('accoms', function (Blueprint $table) {
-            //$table->integer('id')->unique()->autoIncrement();
+            $table->integer('id');
 
             $table->date('arrival_date');
             $table->date('deparure_date');
@@ -22,13 +22,10 @@ class CreateAccomsTable extends Migration
             $table->integer('adults');
             $table->integer('kids');
 
-            //$table->string('room_type');
-            $table->integer('room_type');
-            $table->foreign('room_type')->references('id')->on('room_types');
+            $table->string('room_type');
 
             $table->integer('room_no');
             $table->primary('room_no');
-            $table->foreign('room_no')->references('id')->on('rooms');
 
             $table->string('food_ser');
             $table->string('payment');

@@ -18,6 +18,8 @@ class CreateRoomTypesTable extends Migration
             $table->primary('id');
 
             $table->string('name', 20);
+            $table->integer('total')->default(0);
+            $table->integer('available')->default(0);;
             $table->string('description')->nullable();
             $table->double('base_price');
 

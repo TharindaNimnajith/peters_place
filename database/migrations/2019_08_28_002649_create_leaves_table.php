@@ -22,7 +22,7 @@ class CreateLeavesTable extends Migration
                 $table->date('leaving_date')->nullable();
                 $table->integer('nof_days')->nullable();
                 $table->string("leve_type");
-                $table->foreign("leve_type")->references("leve_type")->on("leave_types");
+                //$table->foreign("leve_type")->references("leve_type")->on("leave_types");
                 $table->timestamps();
 
             });

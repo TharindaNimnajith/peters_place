@@ -127,8 +127,8 @@
                     <td>{{ $room_type->id }}</td>
                     <td>{{ $room_type->name }}</td>
                     <td>{{ $room_type->base_price }}</td>
-                    <td></td>
-                    <td></td>
+                    <td>{{ $room_type->total }}</td>
+                    <td>{{ $room_type->available }}</td>
 
                     <td>
                         <a href="/view_type/{{ $room_type->id }}" class="view">
