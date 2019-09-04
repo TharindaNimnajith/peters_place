@@ -422,6 +422,91 @@ class RoomController extends Controller
 
 
     /**
+     * Search the specified resource in storage.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function search_room(Request $request)
+    {
+        $id = $request->r_no;
+        $t_id = $request->roomtype;
+        $floor = $request->floor;
+        $availability = $request->available;
+        $status = $request->status_btn;
+
+        $data = DB::table('rooms')
+            ->orWhere('id', 'like', '%' . $id . '%')
+            ->orWhere('floor', 'like', '%' . $floor . '%')
+            ->orWhere('availability', 'like', '%' . $availability . '%')
+            ->orWhere('status', 'like', '%' . $status . '%')
+            ->paginate(5);
+
+        return redirect()
+            ->to('room_management')
+            ->with('rooms', $data);
+    }
+
+
+    /**
+     * Search the specified resource in storage.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function search_room_type(Request $request)
+    {
+        $id = $request->t_id;
+        $name = $request->t_name;
+        $availability = $request->available;
+
+        $data = DB::table('room_types')
+            ->orWhere('id', 'like', '%' . $id . '%')
+            ->orWhere('name', 'like', '%' . $name . '%')
+            //->orWhere('availability', 'like', '%' . $availability . '%')
+            ->paginate(5);
+
+        return redirect()
+            ->to('room_type_management')
+            ->with('rooms', $data);
+    }
+
+
+    /**
+     * Search the specified resource in storage.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function search_room_reservation(Request $request)
+    {
+        $id = $request->id;
+        $cid = $request->cid;
+        $fname = $request->fname;
+        $lname = $request->lname;
+        $roomtype = $request->rtype;
+        $r_no = $request->r_no;
+        $cin = $request->cin;
+        $cout = $request->cout;
+
+        $data = DB::table('reserves')
+            ->orWhere('id', 'like', '%' . $id . '%')
+            ->orWhere('cid', 'like', '%' . $cid . '%')
+            //->orWhere('fname', 'like', '%' . $fname . '%')
+            //->orWhere('lname', 'like', '%' . $lname . '%')
+            ->orWhere('room_no', 'like', '%' . $r_no . '%')
+            ->orWhere('t_id', 'like', '%' . $roomtype . '%')
+            ->orWhere('check_in', 'like', '%' . $cin . '%')
+            ->orWhere('check_out', 'like', '%' . $cout . '%')
+            ->paginate(5);
+
+        return redirect()
+            ->to('room_management')
+            ->with('rooms', $data);
+    }
+
+
+    /**
      * Display a listing of the resource.
      *
      * @return void

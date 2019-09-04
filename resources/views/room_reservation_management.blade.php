@@ -234,7 +234,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Reservation ID</label>
-                        <input type="text" name="cid" class="form-control">
+                        <input type="text" name="id" class="form-control">
                     </div>
 
                     <div class="form-group">

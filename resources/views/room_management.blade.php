@@ -234,7 +234,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control">
+                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                     </div>
 
                     <div class="form-group">
@@ -283,7 +283,11 @@
                                 </div>
 
                                 <div class="radio">
-                                    <label><input type="radio" name="status_btn" value="0">Not Clean</label>
+                                    <label><input type="radio" name="status_btn" value="2">Not Clean</label>
+                                </div>
+
+                                <div class="radio">
+                                    <label><input type="radio" name="status_btn" value="3">Out of Service</label>
                                 </div>
                             </div>
                         </div>
