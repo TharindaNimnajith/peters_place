@@ -66,7 +66,7 @@
 
                     <div class="form-group">
                         <label for="email">Event Time:</label>
-                        <input type="text" class="form-control" name="event_time"/>
+                        <input type="time" class="form-control" name="event_time"/>
                     </div>
                     <div class="form-group">
                         <label for="city">Category:</label>
