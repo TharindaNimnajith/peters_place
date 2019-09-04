@@ -116,7 +116,7 @@ class EventMenuController extends Controller
             'salads' => 'required',
             'deserts' => 'required',
             'beverages' => 'required',
-            'price' => 'required'
+            'price' => 'required|integer'
 
         ]);
 
