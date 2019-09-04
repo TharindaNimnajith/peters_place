@@ -41,7 +41,7 @@
     <!--MAIN SECTION-->
     <div class="row">
         <div class="col-sm-8 offset-sm-2">
-            <center><h2>Update Event</h2></center>
+            <center><h2>Update staff</h2></center>
 
             @if ($errors->any())
                 <div class="alert alert-danger">

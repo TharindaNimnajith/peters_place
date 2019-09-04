@@ -56,7 +56,7 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <center><h2>Events</h2></center>
+            <center><h2>Items</h2></center>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -99,7 +99,7 @@
             <!--MAIN SECTION-->
 
             <div>
-                <a href="/create" class="btn btn-primary">Add new event</a>
+                <a href="/create" class="btn btn-primary">Add items</a>
             </div>
 
         </div>

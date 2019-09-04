@@ -58,7 +58,7 @@
             <br>
             <br>
             <br>
-            <center><h2>Menus</h2></center>
+            <center><h2>Event Staff</h2></center>
             <table class="table table-striped table-dark">
                 <thead>
                 <tr>
