@@ -219,6 +219,7 @@
                         <input type="text" name="t_name" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <label>Availability</label>
 
@@ -230,6 +231,7 @@
                             <label><input type="radio" name="available" value="0">Not Available</label>
                         </div>
                     </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">

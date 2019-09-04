@@ -108,8 +108,6 @@ Route::get('/report1', function () {
 });
 
 
-
-
 Route::get('accoms', 'accomcontroller@index');
 
 Route::get('/search2', 'accomcontroller@search');

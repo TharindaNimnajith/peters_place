@@ -435,8 +435,8 @@ class RoomController extends Controller
         $availability = $request->available;
         $status = $request->status_btn;
 
-        $data = DB::table('rooms')->orWhere('id', $id)
-            //->orWhere('floor', 'like', '%' . $floor . '%')
+        $data = DB::table('rooms')
+            ->orWhere('id', $id)
             ->orWhere('availability', $availability)
             ->orWhere('status', $status)
             ->paginate(5);
@@ -467,15 +467,33 @@ class RoomController extends Controller
         $name = $request->t_name;
         $availability = $request->available;
 
-        $data = DB::table('room_types')
-            ->orWhere('id', 'like', '%' . $id . '%')
-            ->orWhere('name', 'like', '%' . $name . '%')
-            //->orWhere('availability', 'like', '%' . $availability . '%')
-            ->paginate(5);
+        //dd($id);
 
-        return redirect()
-            ->to('room_type_management')
-            ->with('rooms', $data);
+        if ($id == null) {
+            $data = DB::table('room_types')
+                ->orWhere('name', 'like', '%' . $name . '%')
+                ->paginate(5);
+        } else {
+            $data = DB::table('room_types')
+                ->orWhere('id', $id)
+                ->paginate(5);
+        }
+
+        /*
+        $data = DB::table('room_types')
+            ->orWhere('id', $id)
+            ->orWhere('name', 'like', '%' . $name . '%')
+            ->paginate(5);
+        */
+
+        /*
+        if(is_null($data)) {
+            $request->session()->flash('no_id', 'No results!');
+            return redirect()->back();
+        }
+        */
+
+        return view('room_type_management', ['room_types' => $data]);
     }
 
 
@@ -496,20 +514,48 @@ class RoomController extends Controller
         $cin = $request->cin;
         $cout = $request->cout;
 
+        /*
         $data = DB::table('reserves')
-            ->orWhere('id', 'like', '%' . $id . '%')
-            ->orWhere('cid', 'like', '%' . $cid . '%')
+            ->orWhere('id', $id)
+            ->orWhere('cid', $cid)
             //->orWhere('fname', 'like', '%' . $fname . '%')
             //->orWhere('lname', 'like', '%' . $lname . '%')
-            ->orWhere('room_no', 'like', '%' . $r_no . '%')
-            ->orWhere('t_id', 'like', '%' . $roomtype . '%')
+            ->orWhere('room_no', $r_no)
+            ->orWhere('t_id', $roomtype)
             ->orWhere('check_in', 'like', '%' . $cin . '%')
             ->orWhere('check_out', 'like', '%' . $cout . '%')
             ->paginate(5);
+        */
 
-        return redirect()
-            ->to('room_management')
-            ->with('rooms', $data);
+        if ($id != null) {
+            $data = DB::table('reserves')
+                ->orWhere('id', $id)
+                ->paginate(5);
+        } else if ($cid != null) {
+            $data = DB::table('reserves')
+                ->orWhere('cid', $cid)
+                ->paginate(5);
+        } else if ($r_no != null) {
+            $data = DB::table('reserves')
+                ->orWhere('room_no', $r_no)
+                ->paginate(5);
+        } else if ($roomtype != null) {
+            $data = DB::table('reserves')
+                ->orWhere('t_id', $roomtype)
+                ->paginate(5);
+        }
+        /* else if($cin != null) {
+               $data = DB::table('reserves')
+                   ->orWhere('check_in', $cin)
+                   ->paginate(5);
+           }
+           else if($cout != null) {
+               $data = DB::table('reserves')
+                   ->orWhere('check_out', $cout)
+                   ->paginate(5);
+           } */
+
+        return view('room_reservation_management', ['reservations' => $data]);
     }
 
 

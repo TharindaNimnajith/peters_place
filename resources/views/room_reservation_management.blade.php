@@ -242,6 +242,7 @@
                         <input type="text" name="cid" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" class="form-control">
@@ -251,6 +252,7 @@
                         <label>Last Name</label>
                         <input type="text" name="lname" class="form-control">
                     </div>
+                    -->
 
                     <div class="form-group">
                         <label>Room Type</label>
@@ -267,6 +269,7 @@
                         <input type="text" name="r_no" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <br/>
                         <label>Check In</label>
@@ -278,6 +281,7 @@
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control">
                     </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">
