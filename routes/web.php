@@ -24,8 +24,10 @@ Route::get('/online_reservation', function () {
 
 Route::get('/room_management', function () {
     $data = App\room::all();
+    //$data1 = App\room_type::all();
 
     return view('room_management')->with('rooms', $data);
+    //return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
 });
 
 Route::get('/room_type_management', function () {

@@ -3,12 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/room_type.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/room_type.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_27_111118_create_room_types_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_27_111118_create_room_types_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_31_092122_create_posts_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_31_092122_create_posts_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_01_081538_create_accoms_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_09_01_081538_create_accoms_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomJController.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Roomj.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -187,7 +187,7 @@
       <workItem from="1567597897321" duration="163000" />
       <workItem from="1567612886344" duration="123000" />
       <workItem from="1567615271432" duration="255000" />
-      <workItem from="1567624087368" duration="4539000" />
+      <workItem from="1567624087368" duration="8785000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -322,7 +322,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567624733715</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="room_type changes - Tharinda Nimnajith">
+      <created>1567628917203</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1567628917203</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -363,7 +370,8 @@
     <MESSAGE value="update uis with styling - Tharinda Nimnajith" />
     <MESSAGE value="integration - Tharinda Nimnajith" />
     <MESSAGE value="search - Tharinda Nimnajith" />
-    <option name="LAST_COMMIT_MESSAGE" value="search - Tharinda Nimnajith" />
+    <MESSAGE value="room_type changes - Tharinda Nimnajith" />
+    <option name="LAST_COMMIT_MESSAGE" value="room_type changes - Tharinda Nimnajith" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

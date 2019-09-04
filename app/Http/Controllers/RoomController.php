@@ -37,12 +37,28 @@ class RoomController extends Controller
 
         $room->save();
 
-        $data = room::all();
+        //$data = room::with('room_type')->get();
+        //$data = room::with('room_type:id,name')->get();
 
+        //$data = room::all();
+
+        $data = DB::table('rooms')
+            ->join('room_types', 'rooms.t_id', '=', 'room_types.id')
+            ->get();
+
+        $data1 = DB::table('room_types')
+            ->join('rooms', 'rooms.t_id', '=', 'room_types.id')
+            ->get();
+
+        /*
         return redirect()
             ->back()
             ->with('rooms', $data)
             ->with('success', 'A new room has been added successfully!');
+        */
+
+        //return view('room_management', ['rooms' => $data, 'data1' => $data1])->with('success', 'A new room has been added successfully!');
+        return redirect()->back()->with(['rooms' => $data, 'dat' => $data1])->with('success', 'A new room has been added successfully!');
     }
 
 
