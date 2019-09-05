@@ -196,8 +196,8 @@
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="{{url('/E')}}"> <img src="https://img.icons8.com/metro/26/000000/file.png">ADD
-                            Leave</a>
+                    <li class="my"><a href="{{url('/home')}}"> <img
+                                src="https://img.icons8.com/metro/26/000000/file.png">HOME</a>
                     </li>
                 </ul>
             </div>
