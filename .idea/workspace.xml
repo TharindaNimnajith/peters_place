@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomJController.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Roomj.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -188,6 +184,7 @@
       <workItem from="1567612886344" duration="123000" />
       <workItem from="1567615271432" duration="255000" />
       <workItem from="1567624087368" duration="8785000" />
+      <workItem from="1567661292800" duration="1021000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
