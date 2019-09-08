@@ -30,7 +30,6 @@ class EmployeeValidate extends FormRequest
             'NIC' => 'unique:employees,NIC|required|string|min:10|max:12',
             'Address' => 'required|string',
             'DOB' => 'required|date',
-            'category' => 'required',
             'salary' => 'required|integer',
             'joindate' => 'required|date_format:Y-m-d|before:today',
             'tp' => 'min:10',
@@ -42,6 +41,9 @@ class EmployeeValidate extends FormRequest
     {
         return [
             'NIC.unique' => 'please enter numrtic method only',
+            'NIC.max' => 'please add Valid NIC no ',
+            'NIC.min' => 'please add Valid NIC no ',
+            'tp.min' => 'please add Valid Telephone No  ',
             'Rno' => 'please enter numeric value for registation no',
 
         ];

@@ -17,7 +17,6 @@ class Employee extends Model
         'NIC',
         'Address',
         'DOB',
-        'category',
         'salary',
         'joindate',
         'tp',

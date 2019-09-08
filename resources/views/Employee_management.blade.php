@@ -225,7 +225,6 @@
                         <th><b>Rrgistaion NO</b></th>
                         <th><b>Type</b></th>
                         <th><b>Name</b></th>
-                        <th><b>Category</b></th>
                         <th><b>Email</b></th>
                         <th><b>Telephone No</b></th>
                     </tr>
@@ -240,13 +239,12 @@
                             <th><b>{{$row['id']}}</b></th>
                             <td>{{$row->type}}</td>
                             <td>{{$row->name}}</td>
-                            <td>{{$row->category}}</td>
                             <td>{{$row->Email}}</td>
                             <td>{{$row->tp}}</td>
                             <td><a href="/show/{{$row->id}} " class="btn btn-warning btn-sm"
                                    style="margin-top:4px">View</a></td>
                             <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm" style="margin-top:4px"
-                                   onclick="myFunction()">Delect</a>
+                                   onclick="return confirm('Are you sure?')">Delect</a>
                             </td>
 
                     </tr>
@@ -260,13 +258,9 @@
 
 <script>
     function myFunction() {
-        var retVal = confirm("Do you want to delect  ?");
-        if (retVal == true) {
-            document.write("User wants to continue!");
-            return true;
-        } else {
-            document.write("User does not want to continue!");
-            return false;
+        function myFunction() {
+            if (!confirm("Are You Sure to delete this"))
+                event.preventDefault();
         }
     }
 </script>

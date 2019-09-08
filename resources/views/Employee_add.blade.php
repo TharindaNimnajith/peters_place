@@ -215,40 +215,40 @@
                     <div class="image-upload">
                         <label for="file-input">
                             <img src="https://img.icons8.com/wired/64/000000/add-image.png ">
-                            <input type="file" onkeypress="return tabE(this,event)" name="image" id="image"/>
+                            <input type="file" onkeypress="return tabE(this,event)" name="image" id="image"
+                                   value="{{ old('image') }}"/>
                         </label>
                     </div>
                     <p></p>
-                    <div class="form-group row">
-                        <label for="nic" class="col-4 col-form-label">Registation NO</label>
-                        <div class="col-5">
-                            <input id="Rno" name="Rno" onkeypress="return tabE(this,event)" placeholder="1001"
-                                   type="text" class="form-control"
-                                   required="required">
-                        </div>
-                    </div>
+
                     <div class="form-group row">
                         <label for="Employee_type" class="col-4 col-form-label">Employee Type</label>
                         <div class="col-5">
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="normal" checked>NORMAL<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="admin">
-                            ADMIN<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type"
+                                   value="Room Service" {{ old('type') }} >Room Service<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Kitchen Staff">Kitchen
+                            Staff<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Waitress">Waitress<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Cleaners">Cleaners<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Manager">Manager<br>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="name" class="col-4 col-form-label">Full Name</label>
                         <div class="col-5">
                             <input id="name" name="name" onkeypress="return tabE(this,event)" placeholder="Sman Kumara"
+                                   minlength="3"
                                    type="text" class="form-control"
-                                   required="required">
+                                   required="required" value="{{ old('name') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="nic" class="col-4 col-form-label">National ID NO</label>
                         <div class="col-5">
                             <input id="NIC" name="NIC" onkeypress="return tabE(this,event)" placeholder="975200430V"
+                                   minlength="10"
                                    type="text" class="form-control"
-                                   required="required">
+                                   required="required" value="{{ old('NIC') }}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -256,7 +256,7 @@
                         <div class="col-5">
                             <input id="Address" onkeypress="return tabE(this,event)" name="Address"
                                    placeholder="214,Horana RD,Kesbawa." type="text"
-                                   class="form-control" required="required">
+                                   class="form-control" required="required" value="{{ old('Address') }}">
                         </div>
                     </div>
 
@@ -264,13 +264,14 @@
                         <label for="dob" class="col-4 col-form-label">Date of Birth</label>
                         <div class="col-5">
                             <input id="DOB" onkeypress="return tabE(this,event)" name="DOB" placeholder="1998.10.05"
-                                   type="date" class="form-control">
+                                   type="date" class="form-control" value="{{ old('DOB') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="DOB" class="col-4 col-form-label">Gender</label>
                         <div class="col-5">
-                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Male">
+                            <input type="radio" onkeypress="return tabE(this,event)" name="gender"
+                                   value="Male" {{ old('name') }}>
                             Male<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Female">
                             Female<br>
@@ -282,18 +283,7 @@
                         <div class="col-5">
                             <input id="joindate" onkeypress="return tabE(this,event)" name="joindate"
                                    placeholder="2005.10.05" type="date"
-                                   class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-group row">
-                        <label for="category" class="col-4 col-form-label">Category</label>
-                        <div class="col-5">
-                            <select id="category" name="category" required="required" class="custom-select">
-                                <option value="Room Service">Room Service</option>
-                                <option value="Kitchen Staff">Kitchen Staff</option>
-                                <option value="Waitress">Waitress</option>
-                            </select>
+                                   class="form-control" value="{{ old('joindate') }}">
                         </div>
                     </div>
 
@@ -302,7 +292,7 @@
                         <div class="col-5">
                             <input id="salary" name="salary" onkeypress="return tabE(this,event)" placeholder="20000"
                                    type="text" class="form-control"
-                                   required="required">
+                                   required="required" value="{{ old('salary') }}">
                         </div>
                     </div>
 
@@ -313,7 +303,7 @@
                         <div class="col-5">
                             <input id="Email" name="Email" onkeypress="return tabE(this,event)"
                                    placeholder="peaterplace@gmail.com" type="email"
-                                   class="form-control" required="required">
+                                   class="form-control" required="required" value="{{ old('email') }}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -325,7 +315,7 @@
                                 </div>
                                 <input id="tp" name="tp" onkeypress="return tabE(this,event)"
                                        placeholder="011 x xxx xxx" type="number" class="form-control"
-                                       required="required">
+                                       required="required" minlength="10" value="{{ old('tp') }}">
                             </div>
                         </div>
                     </div>
@@ -335,7 +325,7 @@
                         <label for="remark" class="col-4 col-form-label">Remark</label>
                         <div class="col-8">
                             <input id="remark" onkeypress="return tabE(this,event)" name="remark" type="text"
-                                   class="form-control">
+                                   class="form-control" value="{{ old('remark') }}">
                         </div>
                     </div>
 

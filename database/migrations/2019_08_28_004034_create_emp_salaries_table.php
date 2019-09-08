@@ -14,10 +14,10 @@ class CreateEmpSalariesTable extends Migration
     public function up()
     {
         Schema::create('emp_salaries', function (Blueprint $table) {
-            $table->integer('id');
+            $table->integer('id')->primary();
             $table->string('type');
             $table->string('name');
-            $table->string('month')->primary();
+            $table->string('month');
             $table->integer('salary');
             $table->timestamps();
         });

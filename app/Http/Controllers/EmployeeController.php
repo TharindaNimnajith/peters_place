@@ -37,7 +37,7 @@ class EmployeeController extends Controller
     public function search(Request $request)
     {
         $search = $request->get('search');
-        $employeeD = Employee::where('id', 'like', '%' . $search . '%')->orWhere('name', 'like', '%' . $search . '%')->orWhere('category', 'like', '%' . $search . '%')->get();
+        $employeeD = Employee::where('id', 'like', '%' . $search . '%')->orWhere('name', 'like', '%' . $search . '%')->orWhere('type', 'like', '%' . $search . '%')->get();
         return View('Employee_management', compact("employeeD"));//->with('employeeD',$empdata);
     }
 
@@ -90,11 +90,9 @@ class EmployeeController extends Controller
                 'NIC' => $request->get('NIC'),
                 'Address' => $request->get('Address'),
                 'DOB' => $request->get('DOB'),
-                'category' => $request->get('category'),
                 'salary' => $request->get('salary'),
                 'joindate' => $request->get('joindate'),
                 'tp' => $request->get('tp'),
-                'tp2' => $request->get('tp2'),
                 'Email' => $request->get("Email"),
                 'attendence' => $request->get(''),
                 'remark' => $request->get("remrk"),
@@ -112,7 +110,6 @@ class EmployeeController extends Controller
                 'NIC' => $request->get('NIC'),
                 'Address' => $request->get('Address'),
                 'DOB' => $request->get('DOB'),
-                'category' => $request->get('category'),
                 'salary' => $request->get(''),
                 'joindate' => $request->get('joindate'),
                 'tp' => $request->get('tp'),
@@ -159,7 +156,7 @@ class EmployeeController extends Controller
 
             $data->image = $filename;
             $data->name = $request->get('name');
-            $data->category = $request->get('category');
+
             $data->DOB = $request->get('dob');
             $data->gender = $request->get('gender');
             $data->joindate = $request->get('joindate');
@@ -177,7 +174,6 @@ class EmployeeController extends Controller
             //$validatedData = $request->validated();
 
             $data->name = $request->get('name');
-            $data->category = $request->get('category');
             $data->DOB = $request->get('dob');
             $data->gender = $request->get('gender');
             $data->joindate = $request->get('joindate');
@@ -199,60 +195,61 @@ class EmployeeController extends Controller
      * @param int $id
      * @return Response
      */
-    public
-    function update(Request $request, $id)
-    {
-        $empdata = Employee::find($id);
-        return view('Employee_view')->with('row', $empdata);
-
-        //$validatedData = $request->validated();
-
-
-        if ($request->hasfile('image')) {
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension(); // getting image extension
-            $filename = time() . '.' . $extension;
-            $file->move('uploads/appsetting/', $filename);
-
-            $empdata->image = $filename;
-            $empdata->name = $request->get('name');
-            $empdata->category = $request->get('category');
-            $empdata->DOB = $request->get('dob');
-            $empdata->gender = $request->get('gender');
-            $empdata->joindate = $request->get('joindate');
-            $empdata->tp = $request->get('tp');
-            $empdata->Email = $request->get('email');
-            $empdata->salary = $request->get('salary');
-            $empdata->remark = $request->get('remark');
-            $empdata->save();
-
-            //$empdata = DB::table('employees')->where('id', $pp)->get();
-            //dd($empdata);
-            return view('Employee_view')->with('row', $empdata);
-            //return redirect()->to('Emanagement')->with('rows', $empdata);
-        } else {
-            //$validatedData = $request->validated();
-
-            $empdata->name = $request->get('name');
-            $empdata->category = $request->get('category');
-            $empdata->DOB = $request->get('dob');
-            $empdata->gender = $request->get('gender');
-            $empdata->joindate = $request->get('joindate');
-            $empdata->tp = $request->get('tp');
-            $empdata->Email = $request->get('email');
-            $empdata->salary = $request->get('salary');
-            $empdata->remark = $request->get('remark');
-            $empdata->save();
-
-            // $empdata = DB::table('employees')->where('id', $pp)->get();
-            //dd($empdata);
-            //
-            return view('Employee_view')->with('row', $empdata);
-            //return redirect()->to('Emanagement')->with('rows', $empdata);
-        }
-
-
-    }
+//    public
+//    function update(Request $request, $id)
+//    {
+//        $empdata = Employee::find($id);
+//        return view('Employee_view')->with('row', $empdata);
+//
+//        //$validatedData = $request->validated();
+//
+//
+//        if ($request->hasfile('image')) {
+//            $file = $request->file('image');
+//            $extension = $file->getClientOriginalExtension(); // getting image extension
+//            $filename = time() . '.' . $extension;
+//            $file->move('uploads/appsetting/', $filename);
+//
+//            $empdata->image = $filename;
+//            $empdata->name = $request->get('name');
+//
+//            $empdata->DOB = $request->get('dob');
+//            $empdata->gender = $request->get('gender');
+//            $empdata->joindate = $request->get('joindate');
+//            $empdata->tp = $request->get('tp');
+//            $empdata->Email = $request->get('email');
+//            $empdata->salary = $request->get('salary');
+//            $empdata->remark = $request->get('remark');
+//            $empdata->save();
+//
+//            //$empdata = DB::table('employees')->where('id', $pp)->get();
+//            //dd($empdata);
+//            return view('Employee_view')->with('row', $empdata);
+//            //return redirect()->to('Emanagement')->with('rows', $empdata);
+//        } else {
+//            //$validatedData = $request->validated();
+//
+//            $empdata->name = $request->get('name');
+//
+//
+//            $empdata->DOB = $request->get('dob');
+//            $empdata->gender = $request->get('gender');
+//            $empdata->joindate = $request->get('joindate');
+//            $empdata->tp = $request->get('tp');
+//            $empdata->Email = $request->get('email');
+//            $empdata->salary = $request->get('salary');
+//            $empdata->remark = $request->get('remark');
+//            $empdata->save();
+//
+//            // $empdata = DB::table('employees')->where('id', $pp)->get();
+//            //dd($empdata);
+//            //
+//            return view('Employee_view')->with('row', $empdata);
+//            //return redirect()->to('Emanagement')->with('rows', $empdata);
+//        }
+//
+//
+//    }
 
 
     /**
