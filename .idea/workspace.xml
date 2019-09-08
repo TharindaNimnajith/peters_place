@@ -2,31 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/newstst.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2019_09_05_013927_create_newststs_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/css/home.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567657000.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/foundite/1567659093.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/VerificationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/frontaddtask.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/frontaddtask.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/AdminD.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/AdminD.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Tasks.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Tasks.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/index1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index1.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/statusList.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/statusList.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/welcome.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -207,7 +185,7 @@
       <workItem from="1567615271432" duration="255000" />
       <workItem from="1567624087368" duration="9051000" />
       <workItem from="1567643505703" duration="11031000" />
-      <workItem from="1567952207999" duration="251000" />
+      <workItem from="1567952207999" duration="2156000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -356,7 +334,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567633227002</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="test">
+      <created>1567952539804</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1567952539804</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -399,7 +384,8 @@
     <MESSAGE value="search - Tharinda Nimnajith" />
     <MESSAGE value="room_type changes - Tharinda Nimnajith" />
     <MESSAGE value="join table - Tharinda Nimnajith" />
-    <option name="LAST_COMMIT_MESSAGE" value="join table - Tharinda Nimnajith" />
+    <MESSAGE value="test" />
+    <option name="LAST_COMMIT_MESSAGE" value="test" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

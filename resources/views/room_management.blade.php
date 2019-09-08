@@ -117,8 +117,6 @@
                 <tr>
                     <td>{{ $room->id }}</td>
                     <td>{{ $room->floor }}</td>
-
-
                     <td>{{ $room->t_id }}</td>
 
                     <td>
