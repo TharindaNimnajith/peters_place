@@ -109,7 +109,7 @@
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search2" method="get">
+            <form action="/search4" method="get">
                 <div class="input-group">
                     <input type="search" name="search2" class="form-control">
                     <span class="input-group-prepend">

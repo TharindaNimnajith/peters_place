@@ -4,7 +4,7 @@
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|/
+|
 | Here is where you can register web routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
@@ -24,10 +24,10 @@ Route::get('/online_reservation', function () {
 
 Route::get('/room_management', function () {
     $data = App\room::all();
-    //$data1 = App\room_type::all();
+    $data1 = App\room_type::all();
 
-    return view('room_management')->with('rooms', $data);
-    //return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
+    //return view('room_management')->with('rooms', $data);
+    return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
 });
 
 Route::get('/room_type_management', function () {
@@ -112,7 +112,7 @@ Route::get('/report1', function () {
 
 Route::get('accoms', 'accomcontroller@index');
 
-Route::get('/search2', 'accomcontroller@search');
+Route::get('/search4', 'accomcontroller@search');
 
 Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 
@@ -174,7 +174,7 @@ Route::get('/List', 'frontaddtask@Listsearch');
 
 Route::get('/List', 'frontaddtask@retrive');
 
-Route::get('/search', 'frontaddtask@statusSearch');
+Route::get('/search5', 'frontaddtask@statusSearch');
 
 Route::get('/Update', 'frontaddtask@supdate');
 
@@ -317,8 +317,8 @@ Auth::routes();
 
 Route::group(['middleware' => ['web', 'auth']], function () {
 
-    Route::get('/hr', function () {
-        return view('welcome');
+    Route::get('/home', function () {
+        return view('AdminD');
     });
 
     Route::get('/home', function () {

@@ -96,7 +96,7 @@
 
         .my-custom-scrollbar {
             position: relative;
-            height: 510px;
+            height: 700px;
             overflow: auto;
 
         }
@@ -140,9 +140,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
-            <div class="container-fluid" style="margin-top: 150px">
+            <div class="container-fluid" style="margin-top: 200px;">
                 <a href="{{url('/Emanagement') }}">
-                    <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
+                    <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:10px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
                             <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT

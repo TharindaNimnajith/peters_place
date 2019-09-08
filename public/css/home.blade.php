@@ -2,6 +2,7 @@
 <html>
 <head><title>PetersPlace</title>
 
+    <link rel="stylesheet" type="text/css" href="./form.css">
     <link rel="stylesheet" type="text/css" href="home.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>

@@ -50,11 +50,23 @@ class RoomController extends Controller
             ->join('rooms', 'rooms.t_id', '=', 'room_types.id')
             ->get();
 
+        //$id = room_type->id;
+
         /*
         return redirect()
             ->back()
             ->with('rooms', $data)
             ->with('success', 'A new room has been added successfully!');
+        */
+
+        /*
+        $updateDetails = [
+            'total' => 'total' +  1,
+        ];
+
+        DB::table('room_types')
+            ->where('id', $id)
+            ->update($updateDetails);
         */
 
         //return view('room_management', ['rooms' => $data, 'data1' => $data1])->with('success', 'A new room has been added successfully!');
@@ -119,7 +131,25 @@ class RoomController extends Controller
         ]);
 
         $reserve->save();
+        /*
+                $data = DB::table('reserves')
+                    ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
+                    ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
+                    ->join('reserves', 'reserves.cid', '=', 'customers.id')
+                    ->get();
 
+                $data1 = DB::table('customers')
+                    ->join('reserves', 'reserves.cid', '=', 'customers.id')
+                    ->get();
+
+                $data2 = DB::table('rooms')
+                    ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
+                    ->get();
+
+                $data3 = DB::table('room_types')
+                    ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
+                    ->get();
+        */
         return redirect()
             ->back()
             ->with('success', 'Your room has been reserved successfully!');
@@ -560,6 +590,7 @@ class RoomController extends Controller
                 ->orWhere('t_id', $roomtype)
                 ->paginate(5);
         }
+
         /* else if($cin != null) {
                $data = DB::table('reserves')
                    ->orWhere('check_in', $cin)

@@ -23,7 +23,7 @@
                                                 <thead class="thead-dark">
                                                 <tr class="btn" style="">
                                                     <th class="text-center" scope="row"
-                                                        style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                                                        style="width:300px ; height:10px">HR MANAGEMENT
                                                     </th>
                                                 </tr>
 
@@ -31,34 +31,74 @@
                                             </table>
                                         </a>
 
-                                        <a href="{{url('/Eleave') }}">
-                                            <table class="table" style="width:300px ; margin-left: 0px ">
+                                        <a href="{{url('/room_management') }}">
+                                            <table class="table"
+                                                   style="width:300px ; margin-left: 0px; margin-top:-40px;">
                                                 <thead class="thead-dark">
                                                 <tr class="btn">
                                                     <th class="text-center" scope="row" style="width:300px;height:10px">
-                                                        LEAVE MANAGEMENT
+                                                        ROOM MANAGEMENT
                                                     </th>
                                                 </tr>
                                                 </thead>
                                             </table>
                                         </a>
-                                        <a href="{{url('/Eattendence')}}">
+                                        <a href="{{url('/customer')}}">
                                             <table class="table" style="width:300px;margin-left: 0px">
                                                 <thead class="thead-dark">
                                                 <tr class="btn">
                                                     <th class="text-center" scope="row" style="width:300px;height:10px">
-                                                        DAILY ATTENDANCE
+                                                        FRONT OFFICE
                                                     </th>
                                                 </tr>
                                                 </thead>
                                             </table>
                                         </a>
-                                        <a href="{{url('/Esalary')}}">
+                                        <a href="{{url('/u')}}">
                                             <table class="table" style="width:300px;margin-left: 0px">
                                                 <thead class="thead-dark">
                                                 <tr class="btn">
                                                     <th class="text-center" scope="row" style="width:300px;height:10px">
-                                                        SALARY MANAGEMENT
+                                                        FINANCIAL MANAGEMENT
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                            </table>
+                                        </a>
+
+                                        <a href="{{url('/eventh')}}">
+                                            <table class="table" style="width:300px;margin-left: 0px">
+                                                <thead class="thead-dark">
+                                                <tr class="btn">
+                                                    <th class="text-center" scope="row" style="width:300px;height:10px">
+                                                        EVENT MANAGEMENT
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                            </table>
+                                        </a>
+
+                                        <a href="{{url('/vie2')}}">
+                                            <table class="table" style="width:300px;margin-left: 0px">
+                                                <thead class="thead-dark">
+                                                <tr class="btn">
+                                                    <th class="text-center" scope="row" style="width:300px;height:10px">
+                                                        HOUSEKEEPING MANAGEMENT
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                            </table>
+                                        </a>
+
+                                        <a href="{{url('/supplier')}}">
+                                            <table class="table" style="width:300px;margin-left: 0px">
+                                                <thead class="thead-dark">
+                                                <tr class="btn">
+                                                    <th class="text-center" scope="row" style="width:300px;height:10px">
+                                                        SUPPLIER MANAGEMENT
                                                     </th>
                                                 </tr>
                                                 </thead>

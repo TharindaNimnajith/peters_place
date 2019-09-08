@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\foundite;
+use App\newstst;
 use App\Status;
 use App\Taskadd;
 use DB;
@@ -29,6 +30,7 @@ class frontaddtask extends Controller
 
     public function taskslist()
     {
+
 
 
         $data = Taskadd::all();
@@ -71,6 +73,7 @@ class frontaddtask extends Controller
         return view('Tasks')->with('Tasks', $rget);
 
 
+
     }
 
     public function deletetask($id)
@@ -78,7 +81,6 @@ class frontaddtask extends Controller
         $task = Taskadd::find($id);
 
         $task->delete();
-
         return redirect()->back();
     }
 
@@ -88,7 +90,7 @@ class frontaddtask extends Controller
 
         return view('statusList');
 
-        $data = Status::all();
+        $data = newststs::all();
 
         return view('statusList')->with('statusList', $data);
 
@@ -98,7 +100,8 @@ class frontaddtask extends Controller
     public function retrive()
     {
 
-        $dataa = DB::table('statuses')->orderBy('room_no', 'floor', 'status')->get();
+        $dataa = newstst::all();
+
 
         return view('statusList', ['sty' => $dataa]);
     }
@@ -108,10 +111,13 @@ class frontaddtask extends Controller
     {
         $gat = $request->get('search');
 
-        $sty = DB::table('statuses')->where('room_no', 'like', '%' . $gat . '%')->paginate(5);
+        $sty = DB::table('newststs')->where('rmn', 'like', '%' . $gat . '%')->paginate(5);
 
 
         return view('statusList', ['sty' => $sty]);
+
+
+
 
 
     }
@@ -123,12 +129,14 @@ class frontaddtask extends Controller
         return view('StatutsUpdate');
 
 
+
     }
 
     public function retriveupdate()
     {
 
-        $datup = DB::table('statuses')->orderBy('room_no', 'floor', 'availability', 'status')->get();
+
+        $datup = Status::all();
 
         return view('StatutsUpdate', ['up' => $datup]);
     }
@@ -151,6 +159,7 @@ class frontaddtask extends Controller
             'Description' => 'required',
 
         ]);
+
 
 
         $foundite = new foundite();
