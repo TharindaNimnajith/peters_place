@@ -12,7 +12,6 @@
     <style>
 
 
-
     </style>
 </head>
 <body>
@@ -37,7 +36,7 @@
         <div class="container">
             <div class="jumbotron">
                 <form method="post" action="/saved">
-        {{csrf_field()}}
+                    {{csrf_field()}}
                     <div class="form-group">
                         <label> Room Number: </label>
                         <input type="text" name="RoomNo" class="form-control" placeholder="Enter Room number">
@@ -67,7 +66,7 @@
                     <br/>
 
                     <input type="submit" value="Assign" name="btnSubmit" class="btn btn-warning">
-    </form>
+                </form>
             </div>
         </div>
 </body>

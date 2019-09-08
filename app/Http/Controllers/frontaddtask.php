@@ -32,7 +32,6 @@ class frontaddtask extends Controller
     {
 
 
-
         $data = Taskadd::all();
 
         return view('Tasks')->with('AssingTask', $data);
@@ -71,7 +70,6 @@ class frontaddtask extends Controller
 
 
         return view('Tasks')->with('Tasks', $rget);
-
 
 
     }
@@ -117,9 +115,6 @@ class frontaddtask extends Controller
         return view('statusList', ['sty' => $sty]);
 
 
-
-
-
     }
 
 
@@ -127,7 +122,6 @@ class frontaddtask extends Controller
     {
 
         return view('StatutsUpdate');
-
 
 
     }
@@ -159,7 +153,6 @@ class frontaddtask extends Controller
             'Description' => 'required',
 
         ]);
-
 
 
         $foundite = new foundite();
