@@ -2,29 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567952700.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567952878.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953205.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953483.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953900.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954023.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954089.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954186.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.styleci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.styleci.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Employee.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Employee.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EmployeeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/artisan" beforeDir="false" afterPath="$PROJECT_DIR$/artisan" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_000207_create_employees_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_000207_create_employees_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/phpunit.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.php" beforeDir="false" afterPath="$PROJECT_DIR$/server.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webpack.mix.js" beforeDir="false" afterPath="$PROJECT_DIR$/webpack.mix.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -206,7 +192,8 @@
       <workItem from="1567624087368" duration="8785000" />
       <workItem from="1567661292800" duration="1021000" />
       <workItem from="1567663046667" duration="1795000" />
-      <workItem from="1567948061510" duration="6212000" />
+      <workItem from="1567948061510" duration="6570000" />
+      <workItem from="1568043478961" duration="1287000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -348,7 +335,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567628917203</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe">
+      <created>1567954641055</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1567954641055</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -390,7 +384,8 @@
     <MESSAGE value="integration - Tharinda Nimnajith" />
     <MESSAGE value="search - Tharinda Nimnajith" />
     <MESSAGE value="room_type changes - Tharinda Nimnajith" />
-    <option name="LAST_COMMIT_MESSAGE" value="room_type changes - Tharinda Nimnajith" />
+    <MESSAGE value="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
