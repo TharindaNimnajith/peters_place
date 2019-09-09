@@ -21,7 +21,7 @@
 @endforeach
 
 
-<form action="/search" method="get">
+<form action="/search5" method="get">
     {{csrf_field()}}
 
     <h1>Housekeeping Status</h1><br/><br/>
@@ -50,9 +50,9 @@
     <tr>
 
         <th scope="col">RoomNo</th>
-        <th scope="col">RoomType</th>
+        <th scope="col">Floor</th>
 
-        <th scope="col">Status</th>
+        <th scope="col"> Housekeeping Status</th>
 
     </tr>
     </thead>
@@ -62,9 +62,9 @@
 
         <tbody>
         <tr>
-            <td>{{$stat->room_no}}</td>
-            <td> {{$stat->floor}}</td>
-            <td>{{$stat->status}}</td>
+            <td>{{$stat->rmn}}</td>
+            <td> {{$stat->flr}}</td>
+            <td>{{$stat->sts}}</td>
 
 
         </tr>
