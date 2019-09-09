@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567952700.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567952878.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953205.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953483.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567953900.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954023.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954089.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/uploads/appsetting/1567954186.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -193,7 +183,7 @@
       <workItem from="1567661292800" duration="1021000" />
       <workItem from="1567663046667" duration="1795000" />
       <workItem from="1567948061510" duration="6570000" />
-      <workItem from="1568043478961" duration="1287000" />
+      <workItem from="1568043478961" duration="1594000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -342,7 +332,14 @@
       <option name="project" value="LOCAL" />
       <updated>1567954641055</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe">
+      <created>1568045731592</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1568045731592</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
