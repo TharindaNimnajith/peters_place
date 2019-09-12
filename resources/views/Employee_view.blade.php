@@ -237,17 +237,26 @@
                         </div>
                         <p></p>
 
-                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Registation No</b></label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Employee ID</b></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="inputEmail3" name="Rno" value="{{$row->id}}"
                                    readonly>
                         </div>
 
+
                         <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Employee Type</b></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputEmail3" name="type"
+                            <input type="text" class="form-control" id="inputEmail3"
                                    value="{{$row->type}}" readonly>
-                        </div>
+                            <select id="category" name="gender" required="required" class="custom-select">
+                                <option value="{{$row->type}}">{{$row->type}}</option>
+                                <option value="Room Service">Room Service</option>
+                                <option value="Kitchen Staff">Kitchen Staff</option>
+                                <option value="Waitress">Waitress</option>
+                                <option value="Cleaners">Cleaners</option>
+                                <option value="Manager">Manager</option>
+                            </select>
+                            <p></p>
 
                         <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Name</b></label>
                         <div class="col-sm-8">
@@ -255,18 +264,6 @@
                                    value="{{$row->name}}">
                         </div>
 
-
-                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Employee Category</b></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputEmail3"
-                                   value="{{$row->category}}" readonly>
-                            <select id="category" name="category" required="required" class="custom-select">
-                                <option value="{{$row->category}}">{{$row->category}}</option>
-                                <option value="Room Service">Room Service</option>
-                                <option value="Kitchen Staff">Kitchen Staff</option>
-                                <option value="Waitress">Waitress</option>
-                            </select>
-                        </div>
 
                         <p></p>
 
@@ -284,7 +281,7 @@
                             <select id="category" name="gender" required="required" class="custom-select">
                                 <option value="{{$row->gender}}">{{$row->gender}}</option>
                                 <option value="Male">Male</option>
-                                <option value="Femail">Female</option>
+                                <option value="Female">Female</option>
                             </select>
                             <p></p>
 
