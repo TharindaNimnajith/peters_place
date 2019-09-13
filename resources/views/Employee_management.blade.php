@@ -145,9 +145,10 @@
             <div class="container-fluid" style="margin-top: 150px">
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
-                        <thead class="thead-dark">
+                        <thead class="thead-dark" style="">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row"
+                                style="width:300px ; height:10px ; background-color:#264348"><b>EMPLOYEE MANAGEMENT</b>
                             </th>
                         </tr>
 
@@ -168,7 +169,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">
+                                ATTENDANCE
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -244,7 +247,7 @@
                             <td><a href="/show/{{$row->id}} " class="btn btn-warning btn-sm"
                                    style="margin-top:4px">View</a></td>
                             <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm" style="margin-top:4px"
-                                   onclick="return confirm('Are you sure?')">Delect</a>
+                                   onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                             </td>
 
                     </tr>
@@ -257,12 +260,7 @@
 </div>
 
 <script>
-    function myFunction() {
-        function myFunction() {
-            if (!confirm("Are You Sure to delete this"))
-                event.preventDefault();
-        }
-    }
+
 </script>
 </body>
 

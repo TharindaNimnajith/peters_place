@@ -207,8 +207,9 @@
 
             <p></p>
             <b>
-                <P style="color:red">PLEASE INSERT IMAGE FILE</P>
+                <h4><b><u>Add New Employee To Peater's Place</u></b></h4>
             </b>
+            `<p></p>
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
                 <form class="form-group" method="post" action="/AddEmployee" enctype="multipart/form-data">
                     {{ csrf_field() }}
@@ -225,12 +226,18 @@
                         <label for="Employee_type" class="col-4 col-form-label">Employee Type</label>
                         <div class="col-5">
                             <input type="radio" onkeypress="return tabE(this,event)" name="type"
-                                   value="Room Service" {{ old('type') }} >Room Service<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Kitchen Staff">Kitchen
+                                   value="Room Service" @if(old('type') ==  "Room Service") checked="checked" @endif >Room
+                            Service<br>
+
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Kitchen Staff"
+                                   @if(old('type') ==  "Kitchen Staff") checked="checked" @endif >Kitchen
                             Staff<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Waitress">Waitress<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Cleaners">Cleaners<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Manager">Manager<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Waitress"
+                                   @if(old('type') ==  "Waitress") checked="checked" @endif >Waitress<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Cleaners"
+                                   @if(old('type') ==  "Cleaners") checked="checked" @endif >Cleaners<br>
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Manager"
+                                   @if(old('type') ==  "Manager") checked="checked" @endif >Manager<br>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -271,11 +278,13 @@
                         <label for="DOB" class="col-4 col-form-label">Gender</label>
                         <div class="col-5">
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender"
-                                   value="Male" {{ old('name') }}>
+                                   value="Male" @if(old('type') ==  "Male") checked="checked" @endif >
                             Male<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Female">
+                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Female"
+                                   @if(old('type') ==  "Female") checked="checked" @endif >
                             Female<br>
-                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Other"> Other
+                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Other"
+                                   @if(old('type') ==  "Other") checked="checked" @endif > Other
                         </div>
                     </div>
                     <div class="form-group row">
@@ -303,7 +312,7 @@
                         <div class="col-5">
                             <input id="Email" name="Email" onkeypress="return tabE(this,event)"
                                    placeholder="peaterplace@gmail.com" type="email"
-                                   class="form-control" required="required" value="{{ old('email') }}">
+                                   class="form-control" required="required" value="{{ old('Email') }}">
                         </div>
                     </div>
                     <div class="form-group row">

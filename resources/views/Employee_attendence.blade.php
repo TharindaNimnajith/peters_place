@@ -166,7 +166,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px;background-color:#264348"><b>ATTENDANCE</b></th>
                         </tr>
                         </thead>
                     </table>
@@ -287,7 +288,7 @@
                                 <td>{{$row['type']}}</td>
                                 <td>{{$row['name']}}</td>
                                 <td><a href="/destroya/{{$row->id}} " class="btn btn-danger btn-sm"
-                                       style="margin-top:4px">Delect</a>
+                                       style="margin-top:4px">Delete</a>
                                 </td>
                                 <form method="post" action="/storeA">
                                     {{ csrf_field() }}

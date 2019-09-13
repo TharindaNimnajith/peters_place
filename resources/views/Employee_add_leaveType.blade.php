@@ -267,7 +267,8 @@
 
                                         <td style="text-align:center"><a href="/des/{{$row['leve_type']}} "
                                                                          class="btn btn-danger btn-sm"
-                                                                         style="margin-top:4px">Delect</a>
+                                                                         style="margin-top:4px"
+                                                                         onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
