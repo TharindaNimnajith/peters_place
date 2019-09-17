@@ -143,6 +143,10 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;" src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark" style="">
@@ -191,7 +195,7 @@
         </div>
 
         <div class="col-9">
-            <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
+            <div class="container-fluid" style="width: 2000px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
                                 src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
@@ -199,9 +203,10 @@
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="{{url('/home')}}"> <img
-                                src="https://img.icons8.com/metro/26/000000/file.png">HOME</a>
+                    <li class="my"><a href="{{url('/Edelete')}}"> <img
+                                src="https://img.icons8.com/metro/26/000000/file.png">REMOVED EMPLOYEE</a>
                     </li>
+
                 </ul>
             </div>
             <p></p>

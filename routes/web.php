@@ -243,6 +243,9 @@ Route::get('/task3/destroy/{id}', 'TaskController@destroy3');
 Route::get('/search', 'TaskController@search');
 //jima
 
+
+//------------HR management----------------
+
 Route::get('/Eadd', function () {
     return view('Employee_add');
 });
@@ -271,6 +274,10 @@ Route::get('/Eaddleave', function () {
     return view('Employee_add_leaveType');
 });
 
+Route::get('/Edelete', function () {
+    return view('EmpDelete');
+});
+
 //Route::post('/addLeave' , 'LeaveTypeController@leave');
 
 Route::post('/addLeave', 'LeaveTypeController@save');
@@ -280,6 +287,7 @@ Route::get('/des/{id}', 'LeaveTypeController@destroy');
 Route::post('/AddEmployee', 'EmployeeController@store');
 Route::get('/Emanagement', 'EmployeeController@index');
 Route::get('/search', 'EmployeeController@search');
+Route::get('/Edelete', 'EmployeeController@showDeleteEmp');
 
 Route::get('/show/{id}', 'EmployeeController@show');
 //Route::post('/getid','EmployeeController@getid');

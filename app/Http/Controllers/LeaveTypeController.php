@@ -126,9 +126,10 @@ class LeaveTypeController extends Controller
      * @return Response
      */
     public
-    function destroy($leve_type)
+    function destroy($id)
     {
-        $empdata = LeaveType::find($leve_type);
+        $empdata = LeaveType::find($id);
+
         $empdata->delete();
         return redirect()->back();
     }

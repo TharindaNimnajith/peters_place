@@ -226,16 +226,16 @@
 
                             <thead>
                             <tr>
-                                <th>Registation No</th>
-                                <th>Type</th>
-                                <th>Name</th>
+                                <th><b>Employee ID</b></th>
+                                <th><b>Type</b></th>
+                                <th><b>Name</b></th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             @foreach($employeeD as $row)
                                 <tr>
-                                    <td>{{$row['id']}}</td>
+                                    <td><b>{{$row['id']}}</b></td>
                                     <td>{{$row['type']}}</td>
                                     <td>{{$row['name']}}</td>
                                     <form method="post" action="/store">
@@ -262,16 +262,16 @@
                         <div class=" container-fluid
                     " style="margin-top: 20px">
 
-                    <table class="table table-bordered" style="margin-left: -2ch">
+                    <table class="table table-bordered" style="margin-left: 0ch">
                         <thead>
                         <tr>
                             <td colspan="4"><h6><b>Daily Attendance List </b></h6></td>
                         </tr>
                         <tr>
-                            <th>Date</th>
-                            <th>Registation NO</th>
-                            <th>type</th>
-                            <th>Name</th>
+                            <th><b>Date</b></th>
+                            <th><b>Employee ID</b></th>
+                            <th><b>type</b></th>
+                            <th><b>Name</b></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -283,8 +283,8 @@
                                 $month = date('M', $timestamp);
                                 $dates = date('d', $timestamp);
                                 $date = date('d', $timestamp) . ' ' . date('M', $timestamp);?>
-                                <td>{{$date}}</td>
-                                <td>{{$row['id']}}</td>
+                                <td><b style="color: #c51f1a">{{$date}}</b></td>
+                                <td><b>{{$row['id']}}</b></td>
                                 <td>{{$row['type']}}</td>
                                 <td>{{$row['name']}}</td>
                                 <td><a href="/destroya/{{$row->id}} " class="btn btn-danger btn-sm"

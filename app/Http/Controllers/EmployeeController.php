@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DeleteEmployee;
 use App\Employee;
 use App\Http\Requests\EmployeeValidate;
 use App\Http\Requests\viewValidate;
@@ -11,12 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
-//
-//    public function attendence(){
-//        $employeeD = Employee::all();
-//        return View('Employee_attendence', compact('employeeD'));
-//    }
-
     public function getid(Request $request)
     {
         $a = $request->get('id');
@@ -24,14 +19,6 @@ class EmployeeController extends Controller
         $empdata = DB::table('employees')->where('id', $a)->get();
         //dd($empdata);
         return View('Employee_view')->with('rows', $empdata);
-
-//        foreach($empdata as $row){
-//            if($row->id==$a){
-//
-//                return view('Employee_view',compact('row'));
-//
-//            }
-        //}
     }
 
     public function search(Request $request)
@@ -262,8 +249,22 @@ class EmployeeController extends Controller
     function destroy($id)
     {
         $empdata = Employee::find($id);
+        $deleteEmployee = new DeleteEmployee([
+            'empid' => $empdata->id,
+            'name' => $empdata->name,
+            'email' => $empdata->Email,
+            'tp' => $empdata->tp
+        ]);
+        $deleteEmployee->save();
+
         $empdata->delete();
 
         return redirect()->back();
+    }
+
+    public function showDeleteEmp()
+    {
+        $empdata = DeleteEmployee::all();
+        return View('EmpDelete')->with('employeeD', $empdata);
     }
 }
