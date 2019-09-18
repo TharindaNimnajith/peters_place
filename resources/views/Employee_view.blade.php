@@ -121,20 +121,6 @@
 
 <body>
 
-<!-- Grid row pic zoom hover code -->
-
-
-<!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
-
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
-            </div>
-
--->
-
-
 <!--table navigation-->
 
 <div class="container-fluid">
@@ -187,20 +173,8 @@
         </div>
 
         <div class="col-9">
-
-            <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
-                <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
-                    <li class="my"><a href={{url('/Eadd')}}><img
-                                src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
-                            Employee</a>
-                    </li>
-                    <li class="my"><a href="#contact"><img src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
-                    </li>
-                </ul>
-            </div>
             <div class="container">
+                <!--find errors-->
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="list-group">
@@ -213,6 +187,15 @@
                 @endif
             </div>
             <p></p>
+
+            <!--print pdf form-->
+
+            <form method="post" action="/EmployeeDetailsPdf" enctype="multipart/form-data">
+                {{csrf_field()}}
+                <input type="text" class="form-control" id="inputEmail3" name="Rno" value="{{$row->id}}"
+                       readonly hidden>
+                <input type="submit" class="btn btn-secondary btn-sm" value="DOWNLOAD PDF">
+            </form>
 
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
                 <div class="container-fluid" style="margin-top: 20px">
@@ -234,6 +217,7 @@
                                  style="margin-:100px"/>
                             <p></p>
                             <h3>Employee ID = {{$row->id}}</h3>
+
                         </div>
                         <p></p>
 
@@ -328,7 +312,9 @@
                                        value="Update">
                             </div>
                         </div>
+                        </div>
                     </form>
+
 
                 </div>
             </div>

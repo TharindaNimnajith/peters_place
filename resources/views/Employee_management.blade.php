@@ -223,6 +223,7 @@
 
 
             <p></p>
+            <a href='pdfview'>Download PDF</a>
             <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-bottom: 10px">
                 <!-- Search form -->
 
@@ -254,6 +255,7 @@
                             <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm" style="margin-top:4px"
                                    onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                             </td>
+                        <!-- <td>  <a href="EmployeeDetailsPdf/{{$row->id}}">Print</a></td> -->
 
                     </tr>
                     @endforeach

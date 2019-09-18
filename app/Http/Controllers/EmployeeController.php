@@ -6,6 +6,7 @@ use App\DeleteEmployee;
 use App\Employee;
 use App\Http\Requests\EmployeeValidate;
 use App\Http\Requests\viewValidate;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -119,6 +120,7 @@ class EmployeeController extends Controller
      */
     public function show($id)
     {
+
         $empdata = Employee::find($id);
         return view('Employee_view')->with('row', $empdata);
 
@@ -267,4 +269,27 @@ class EmployeeController extends Controller
         $empdata = DeleteEmployee::all();
         return View('EmpDelete')->with('employeeD', $empdata);
     }
+
+    public function pdfview(Request $request)
+    {
+        $items = DB::table("employees")->get();
+        view()->share('items', $items);
+        $pdf = PDF::loadView('pdfview');
+        return $pdf->download('pdfview.pdf');
+
+
+    }
+
+    public function EmployeeDetailsPdf(Request $request)
+    {
+
+        $id = $request->Rno;
+        $data = Employee::find($id);
+        view()->share('row', $data);
+        $pdf = PDF::loadView('EmployeeDetailsPdf');
+        return $pdf->download('EmployeeDetailsPdf.pdf');
+
+
+    }
+
 }

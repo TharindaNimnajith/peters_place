@@ -338,3 +338,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         }
     });
 });
+
+Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
+
+Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
