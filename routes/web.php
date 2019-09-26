@@ -27,6 +27,8 @@ Route::get('/room_management', function () {
     $data1 = App\room_type::all();
 
     //return view('room_management')->with('rooms', $data);
+    //return view('room_management');
+
     return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
 });
 
@@ -38,8 +40,9 @@ Route::get('/room_type_management', function () {
 
 Route::get('/room_reservation_management', function () {
     $data = App\reserve::all();
+    $data1 = App\customer::all();
 
-    return view('room_reservation_management')->with('reservations', $data);
+    return view('room_reservation_management')->with(['reservations' => $data, 'dat' => $data1]);
 });
 
 Route::get('/room_reports', function () {

@@ -395,6 +395,7 @@
             font-weight: normal;
         }
     </style>
+
     <script type="text/javascript">
         $(document).ready(function () {
             // Activate tooltip

@@ -122,9 +122,15 @@
                 <tr>
                     <td>{{ $reservation->id }}</td>
                     <td>{{ $reservation->cid }}</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+
+                    @foreach($dat as $customer_data)
+                        @if($customer_data->id == $reservation->cid)
+                            <td>{{ $customer_data->fname }}</td>
+                            <td>{{ $customer_data->lname }}</td>
+                            <td>{{ $customer_data->phone }}</td>
+                        @endif
+                    @endforeach
+
                     <td>{{ $reservation->t_id }}</td>
                     <td>{{ $reservation->room_no }}</td>
                     <td>{{ $reservation->resereved_date_time }}</td>
