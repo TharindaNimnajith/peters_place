@@ -50,11 +50,9 @@
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-            <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Admin Home</a>
                 </div>
-            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>

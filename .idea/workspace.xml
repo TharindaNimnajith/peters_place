@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/public/uploads/foundite/1568262903.jpg" afterDir="false" />
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="tharinda">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Theme/paper-dashboard-master/assets/css/bootstrap.min.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/Theme/paper-dashboard-master/assets/css/bootstrap.min.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Theme/paper-dashboard-master/assets/css/paper-dashboard.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/Theme/paper-dashboard-master/assets/css/paper-dashboard.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/css/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/admin.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/room_reports.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reports.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/view_room.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -200,7 +202,7 @@
       <workItem from="1568258190133" duration="3854000" />
       <workItem from="1568368889010" duration="5000" />
       <workItem from="1569479233599" duration="100000" />
-      <workItem from="1569479576561" duration="6278000" />
+      <workItem from="1569479576561" duration="23929000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -377,7 +379,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568258914668</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="tharinda">
+      <created>1569487897373</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1569487897373</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -424,7 +433,8 @@
     <MESSAGE value="test1" />
     <MESSAGE value="test3" />
     <MESSAGE value="itp" />
-    <option name="LAST_COMMIT_MESSAGE" value="itp" />
+    <MESSAGE value="tharinda" />
+    <option name="LAST_COMMIT_MESSAGE" value="tharinda" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

@@ -53,7 +53,7 @@
                         <label>Room Type</label>
 
                         <select name="roomtype" class="form-control" disabled>
-                            <option value="{{ $details->t_id }}" selected>{{ $details->t_id }}</option>
+                            <option value="{{ $details->t_id }}" selected>{{ $rt_details->name }}</option>
                         </select>
                     </div>
 

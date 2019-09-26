@@ -33,13 +33,13 @@
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert">
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -50,11 +50,9 @@
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-            <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Admin Home</a>
                 </div>
-            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>
@@ -123,15 +121,20 @@
                     <td>{{ $reservation->id }}</td>
                     <td>{{ $reservation->cid }}</td>
 
-                    @foreach($dat as $customer_data)
-                        @if($customer_data->id == $reservation->cid)
+                    @foreach ($dat as $customer_data)
+                        @if ($customer_data->id == $reservation->cid)
                             <td>{{ $customer_data->fname }}</td>
                             <td>{{ $customer_data->lname }}</td>
                             <td>{{ $customer_data->phone }}</td>
                         @endif
                     @endforeach
 
-                    <td>{{ $reservation->t_id }}</td>
+                    @foreach ($rt as $rtype)
+                        @if ($rtype->id == $reservation->t_id)
+                            <td>{{ $rtype->name }}</td>
+                        @endif
+                    @endforeach
+
                     <td>{{ $reservation->room_no }}</td>
                     <td>{{ $reservation->resereved_date_time }}</td>
                     <td>{{ $reservation->check_in }}</td>
@@ -155,6 +158,12 @@
             @endforeach
             </tbody>
         </table>
+
+        @if(!isset($reservation))
+            <div class="alert alert-info" role="alert">
+                No Records!
+            </div>
+        @endif
 
         <div class="clearfix"></div>
     </div>
@@ -306,7 +315,9 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $reservation->id }}" name="id">
+                @if(isset($reservation))
+                    <input type="hidden" value="{{ $reservation->id }}" name="id">
+                @endif
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Reservation</h4>

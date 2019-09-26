@@ -65,17 +65,17 @@
 
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" name="fname" class="form-control" value="">
+                            <input type="text" name="fname" class="form-control" value="{{ $cust_details->fname }}">
                         </div>
 
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" name="lname" class="form-control" value="">
+                            <input type="text" name="lname" class="form-control" value="{{ $cust_details->lname }}">
                         </div>
 
                         <div class="form-group">
                             <label>Phone Number</label>
-                            <input type="text" name="phone" class="form-control" value="">
+                            <input type="text" name="phone" class="form-control" value="{{ $cust_details->phone }}">
                         </div>
 
                         <div class="form-group">

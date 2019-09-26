@@ -33,13 +33,13 @@
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert">
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -50,11 +50,9 @@
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-            <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Admin Home</a>
                 </div>
-            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li class="active"><a href="#">Rooms</a></li>
@@ -117,10 +115,15 @@
                 <tr>
                     <td>{{ $room->id }}</td>
                     <td>{{ $room->floor }}</td>
-                    <td>{{ $room->t_id }}</td>
+
+                    @foreach ($dat as $d)
+                        @if ($d->id == $room->t_id)
+                            <td>{{ $d->name }}</td>
+                        @endif
+                    @endforeach
 
                     <td>
-                        @if($room->availability)
+                        @if ($room->availability)
                             <label class="green">Available</label>
 
                         @else
@@ -130,15 +133,15 @@
                     </td>
 
                     <td>
-                        @if($room->status == 1)
+                        @if ($room->status == 1)
                             <label class="green">Clean</label>
                         @endif
 
-                        @if($room->status == 2)
+                        @if ($room->status == 2)
                             <label class="red">Not Clean</label>
                         @endif
 
-                        @if($room->status == 3)
+                        @if ($room->status == 3)
                             <label>Out of Service</label>
                         @endif
                     </td>
@@ -161,6 +164,12 @@
             @endforeach
             </tbody>
         </table>
+
+        @if(!isset($room))
+            <div class="alert alert-info" role="alert">
+                No Records!
+            </div>
+        @endif
 
         <div class="clearfix"></div>
     </div>
@@ -313,7 +322,9 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $room->id }}" name="id">
+                @if(isset($room))
+                    <input type="hidden" value="{{ $room->id }}" name="id">
+                @endif
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room</h4>

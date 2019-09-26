@@ -42,13 +42,13 @@
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert">
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -59,11 +59,9 @@
 
         <nav class="navbar navbar-inverse">
             <div class="container-fluid">
-            <!--
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ url('/home') }}">Home</a>
+                    <a class="navbar-brand" href="{{ url('/home') }}">Admin Home</a>
                 </div>
-            -->
 
                 <ul class="nav navbar-nav" id="nav-topics">
                     <li><a href="{{ url('/room_management') }}">Rooms</a></li>
@@ -148,6 +146,12 @@
             @endforeach
             </tbody>
         </table>
+
+        @if(!isset($room_type))
+            <div class="alert alert-info" role="alert">
+                No Records!
+            </div>
+        @endif
 
         <div class="clearfix"></div>
     </div>
@@ -250,7 +254,9 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                <input type="hidden" value="{{ $room_type->id }}" name="id">
+                @if(isset($room_type))
+                    <input type="hidden" value="{{ $room_type->id }}" name="id">
+                @endif
 
                 <div class="modal-header">
                     <h4 class="modal-title">Delete Room Type</h4>

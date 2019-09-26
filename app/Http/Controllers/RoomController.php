@@ -50,6 +50,8 @@ class RoomController extends Controller
             ->join('rooms', 'rooms.t_id', '=', 'room_types.id')
             ->get();
 
+        //dd($data);
+
         //$id = room_type->id;
 
         /*
@@ -69,8 +71,13 @@ class RoomController extends Controller
             ->update($updateDetails);
         */
 
-        //return view('room_management', ['rooms' => $data, 'data1' => $data1])->with('success', 'A new room has been added successfully!');
-        return redirect()->back()->with(['rooms' => $data, 'dat' => $data1])->with('success', 'A new room has been added successfully!');
+        //return view('room_management', ['rooms' => $data, 'data1' => $data1])
+        //->with('success', 'A new room has been added successfully!');
+
+        return redirect()
+            ->back()
+            ->with(['rooms' => $data, 'dat' => $data1])
+            ->with('success', 'A new room has been added successfully!');
     }
 
 
@@ -271,8 +278,16 @@ class RoomController extends Controller
     {
         $details = room::find($id);
 
+        $type_id = $details->t_id;
+
+        $rt_details = room_type::where('id', $type_id)->first();
+
+        /*
         return view('view_room')
             ->with('details', $details);
+        */
+
+        return view('view_room', ['details' => $details, 'rt_details' => $rt_details]);
     }
 
 
@@ -286,8 +301,30 @@ class RoomController extends Controller
     {
         $details = reserve::find($id);
 
+        $cid = $details->cid;
+        //dd($cid);
+
+        $type_id = $details->t_id;
+
+        //$cust_details = customer::where('id', $cid)->get();
+
+        $cust_details = customer::where('id', $cid)->first();
+
+        //dd($cust_details);
+        //dd($cust_details->fname);
+        //dd($cust_details[model]);
+
+        $rt_details = room_type::where('id', $type_id)->first();
+
+        //dd($rt_details);
+
+        /*
         return view('view_room_reservation')
-            ->with('details', $details);
+            ->with('details', $details)
+            ->with('cust_details', $cust_details);
+        */
+
+        return view('view_room_reservation', ['details' => $details, 'cust_details' => $cust_details, 'rt_details' => $rt_details]);
     }
 
 
@@ -331,8 +368,19 @@ class RoomController extends Controller
     {
         $details = reserve::find($id);
 
+        $cid = $details->cid;
+        $type_id = $details->t_id;
+
+        $cust_details = customer::where('id', $cid)->first();
+
+        $rt_details = room_type::where('id', $type_id)->first();
+
+        /*
         return view('update_room_reservation')
             ->with('details', $details);
+        */
+
+        return view('update_room_reservation', ['details' => $details, 'cust_details' => $cust_details, 'rt_details' => $rt_details]);
     }
 
 
@@ -490,10 +538,14 @@ class RoomController extends Controller
         return view('room_management', ['rooms' => $data]);
 
         /*
-        $data = DB::table('rooms')->where('id', $id)->get();
+        $data = DB::table('rooms')
+            ->where('id', $id)
+            ->get();
+
             //->orWhere('floor', 'like', '%' . $floor . '%')
             //->orWhere('availability', 'like', '%' . $availability . '%')
             //->orWhere('status', 'like', '%' . $status . '%')
+
             //->paginate(5);
 
         return view('room_management', ['rooms' => $data]);
@@ -534,8 +586,11 @@ class RoomController extends Controller
 
         /*
         if(is_null($data)) {
-            $request->session()->flash('no_id', 'No results!');
-            return redirect()->back();
+            $request->session()
+                ->flash('no_id', 'No results!');
+
+            return redirect()
+                ->back();
         }
         */
 
@@ -564,12 +619,15 @@ class RoomController extends Controller
         $data = DB::table('reserves')
             ->orWhere('id', $id)
             ->orWhere('cid', $cid)
+
             //->orWhere('fname', 'like', '%' . $fname . '%')
             //->orWhere('lname', 'like', '%' . $lname . '%')
+
             ->orWhere('room_no', $r_no)
             ->orWhere('t_id', $roomtype)
             ->orWhere('check_in', 'like', '%' . $cin . '%')
             ->orWhere('check_out', 'like', '%' . $cout . '%')
+
             ->paginate(5);
         */
 
@@ -591,16 +649,21 @@ class RoomController extends Controller
                 ->paginate(5);
         }
 
-        /* else if($cin != null) {
-               $data = DB::table('reserves')
-                   ->orWhere('check_in', $cin)
-                   ->paginate(5);
-           }
-           else if($cout != null) {
-               $data = DB::table('reserves')
-                   ->orWhere('check_out', $cout)
-                   ->paginate(5);
-           } */
+        /*
+        else if ($cin != null) {
+            $data = DB::table('reserves')
+                ->orWhere('check_in', $cin)
+                ->paginate(5);
+        }
+        */
+
+        /*
+        else if ($cout != null) {
+            $data = DB::table('reserves')
+                ->orWhere('check_out', $cout)
+                ->paginate(5);
+        }
+        */
 
         return view('room_reservation_management', ['reservations' => $data]);
     }

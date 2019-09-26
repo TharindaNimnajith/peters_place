@@ -29,6 +29,7 @@
     </script>
 </head>
 
+
 <body id="viewbody">
 <div class="model" id="model1">
     <div class="model-dialog" id="model1-dialog">
@@ -58,26 +59,29 @@
 
                         <div class="form-group">
                             <label>First Name</label>
-                            <input type="text" name="fname" class="form-control" value="" disabled>
+                            <input type="text" name="fname" class="form-control" value="{{ $cust_details->fname }}"
+                                   disabled>
                         </div>
 
                         <div class="form-group">
                             <label>Last Name</label>
-                            <input type="text" name="lname" class="form-control" value="" disabled>
+                            <input type="text" name="lname" class="form-control" value="{{ $cust_details->lname }}"
+                                   disabled>
                         </div>
 
                         <div class="form-group">
                             <label>Phone Number</label>
-                            <input type="text" name="phone" class="form-control" value="" disabled>
+                            <input type="text" name="phone" class="form-control" value="{{ $cust_details->phone }}"
+                                   disabled>
                         </div>
                     </div>
-                    <div class="col-md-6" id="col2">
 
+                    <div class="col-md-6" id="col2">
                         <div class="form-group" id="rt">
                             <label>Room Type</label>
 
                             <select name="rtype" class="form-control" disabled>
-                                <option value="{{ $details->t_id }}" selected>{{ $details->t_id }}</option>
+                                <option value="{{ $details->t_id }}" selected>{{ $rt_details->name }}</option>
                             </select>
                         </div>
 
