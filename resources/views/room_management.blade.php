@@ -196,10 +196,21 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
+                    <!--
                         <select name="roomtype" class="form-control">
                             <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
                             <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
                             <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
+                        </select>
+                        -->
+
+                        <select name="roomtype" class="form-control">
+                            @foreach ($dat as $item)
+                                @if (isset($item))
+                                    <option value="{{ $item->id }}"
+                                            @if (old('roomtype') == "{{ $item->id }}") selected @endif>{{ $item->name }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
 

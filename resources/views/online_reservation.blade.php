@@ -10,6 +10,23 @@
     <link href="{{ URL::asset('css/style.css') }}" rel="stylesheet" media="all"/>
     <link href="{{ URL::asset('css/font-awesome.css') }}" rel="stylesheet"/>
 
+    <style>
+        #t {
+            margin-top: 4%;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /*
+        #f {
+            margin-top: 2.5%;
+        }
+        */
+
+        #f label {
+            margin-top: 2%;
+        }
+    </style>
+
     <!--Materialize CSS-->
 
     <!--Compiled and minified CSS-->
@@ -31,6 +48,7 @@
                     <button class="btn" onclick="window.location='{{ url('/') }}'"><i class="fa fa-home"></i> Home
                     </button>
                 </li>
+
                 <li id="fb">
                     <a href="https://www.facebook.com/petersplace.hiriketiya/"
                        class="fa fa-facebook icon-border facebook" target=_blank></a>
@@ -57,16 +75,16 @@
 
 <div class="page">
     <div class="container" id="contain">
-        <h3 class="title-w3-agileits title-black-wthree">Room Reservation</h3>
+        <h3 class="title-w3-agileits title-black-wthree" id="t">Room Reservation</h3>
 
         @if (session()->has('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="alert alert-danger">
+            <div class="alert alert-danger" role="alert">
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -81,14 +99,14 @@
             <div class="form-border">
                 <div class="row" id="res_row">
                     <div class="col-md-6 col-sm-6">
-                        <div class="panel panel-primary">
+                        <div class="panel panel-primary" id="f">
                             <div class="panel-heading">
                                 PERSONAL INFORMATION
                             </div>
 
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <label>First Name</label>
+                                    <label id="label1">First Name</label>
                                     <input name="fname" type="text" class="form-control" value="{{ old('fname') }}"/>
                                     <br/>
                                 </div>
@@ -117,6 +135,7 @@
                                 <div class="form-group">
                                     <label id="select_label">Room Type</label>
 
+                                <!--
                                     <select name="rtype" class="form-control">
                                         <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom
                                         </option>
@@ -124,6 +143,16 @@
                                         </option>
                                         <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom
                                         </option>
+                                    </select>
+                                    -->
+
+                                    <select name="rtype" class="form-control">
+                                        @foreach ($rt as $item)
+                                            @if (isset($item))
+                                                <option value="{{ $item->id }}"
+                                                        @if (old('rtype') == '{{ $item->id }}') selected @endif>{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
                                     </select>
                                 </div>
 

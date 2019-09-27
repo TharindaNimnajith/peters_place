@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="tharinda">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_reports.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reports.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/view_room.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-    </list>
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +190,7 @@
       <workItem from="1568258190133" duration="3854000" />
       <workItem from="1568368889010" duration="5000" />
       <workItem from="1569479233599" duration="100000" />
-      <workItem from="1569479576561" duration="23929000" />
+      <workItem from="1569479576561" duration="23961000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -386,7 +374,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569487897373</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="tharinda">
+      <created>1569516299441</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1569516299441</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
