@@ -191,6 +191,7 @@
       <workItem from="1568368889010" duration="5000" />
       <workItem from="1569479233599" duration="100000" />
       <workItem from="1569479576561" duration="23961000" />
+      <workItem from="1569561776082" duration="113000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -381,7 +382,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569516299441</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="tharinda">
+      <created>1569561852025</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1569561852026</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
