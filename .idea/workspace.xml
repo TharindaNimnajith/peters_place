@@ -2,9 +2,48 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/EmpSalary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/EmpSalary.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/EventT.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/EventT.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Exceptions/Handler.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Handler.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Hall.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Hall.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Auth/ResetPasswordController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Auth/ResetPasswordController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventItemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventItemController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventTController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventTController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LeaveController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LeaveController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LeaveTypeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LeaveTypeController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/accomcontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/accomcontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/expenditurecontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/expenditurecontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/RedirectIfAuthenticated.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/RoomReservationUpdateValidation.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/RoomReservationUpdateValidation.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/viewValidate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/viewValidate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Leave.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Leave.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/accom.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/accom.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/foundite.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/foundite.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/room_type.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/room_type.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/supplier.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/supplier.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_27_111118_create_room_types_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_27_111118_create_room_types_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_27_112147_create_rooms_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_27_112147_create_rooms_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_27_135123_create_customers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_27_135123_create_customers_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_27_140720_create_reserves_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_27_140720_create_reserves_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_123124_create_expenditures_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_123124_create_expenditures_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_144322_create_leave_types_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_144322_create_leave_types_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_30_042512_create_attendences_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_30_042512_create_attendences_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_04_044452_create_suppliers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_09_04_044452_create_suppliers_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/CreatesApplication.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/CreatesApplication.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -202,7 +241,8 @@
       <workItem from="1569479576561" duration="23961000" />
       <workItem from="1569561776082" duration="113000" />
       <workItem from="1569562196107" duration="1163000" />
-      <workItem from="1569563421882" duration="1928000" />
+      <workItem from="1569563421882" duration="2434000" />
+      <workItem from="1569567768156" duration="1068000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -428,7 +468,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569564166418</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="tharinda">
+      <created>1569565376801</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1569565376801</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
