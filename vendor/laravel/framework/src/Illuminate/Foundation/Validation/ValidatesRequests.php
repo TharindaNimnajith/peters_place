@@ -30,6 +30,16 @@ trait ValidatesRequests
     }
 
     /**
+     * Get a validation factory instance.
+     *
+     * @return Factory
+     */
+    protected function getValidationFactory()
+    {
+        return app(Factory::class);
+    }
+
+    /**
      * Validate the given request with the given rules.
      *
      * @param string $errorBag
@@ -70,15 +80,5 @@ trait ValidatesRequests
         return $this->getValidationFactory()->make(
             $request->all(), $rules, $messages, $customAttributes
         )->validate();
-    }
-
-    /**
-     * Get a validation factory instance.
-     *
-     * @return Factory
-     */
-    protected function getValidationFactory()
-    {
-        return app(Factory::class);
     }
 }

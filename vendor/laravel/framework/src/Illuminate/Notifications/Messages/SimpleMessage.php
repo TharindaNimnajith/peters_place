@@ -185,25 +185,6 @@ class SimpleMessage
     }
 
     /**
-     * Get an array representation of the message.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return [
-            'level' => $this->level,
-            'subject' => $this->subject,
-            'greeting' => $this->greeting,
-            'salutation' => $this->salutation,
-            'introLines' => $this->introLines,
-            'outroLines' => $this->outroLines,
-            'actionText' => $this->actionText,
-            'actionUrl' => $this->actionUrl,
-        ];
-    }
-
-    /**
      * Format the given line of text.
      *
      * @param Htmlable|string|array $line
@@ -220,5 +201,24 @@ class SimpleMessage
         }
 
         return trim(implode(' ', array_map('trim', preg_split('/\\r\\n|\\r|\\n/', $line))));
+    }
+
+    /**
+     * Get an array representation of the message.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'level' => $this->level,
+            'subject' => $this->subject,
+            'greeting' => $this->greeting,
+            'salutation' => $this->salutation,
+            'introLines' => $this->introLines,
+            'outroLines' => $this->outroLines,
+            'actionText' => $this->actionText,
+            'actionUrl' => $this->actionUrl,
+        ];
     }
 }

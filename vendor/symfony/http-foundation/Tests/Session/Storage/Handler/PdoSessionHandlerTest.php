@@ -11,14 +11,8 @@
 
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
-use InvalidArgumentException;
-use PDO;
-use PDOException;
 use PHPUnit\Framework\TestCase;
-use ReflectionMethod;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler;
-use function is_callable;
 
 /**
  * @requires extension pdo_sqlite
@@ -29,18 +23,28 @@ class PdoSessionHandlerTest extends TestCase
     private $dbFile;
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testWrongPdoErrMode()
     {
         $pdo = $this->getMemorySqlitePdo();
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_SILENT);
 
         $storage = new PdoSessionHandler($pdo);
     }
 
+    protected function getMemorySqlitePdo()
+    {
+        $pdo = new \PDO('sqlite::memory:');
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $storage = new PdoSessionHandler($pdo);
+        $storage->createTable();
+
+        return $pdo;
+    }
+
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testInexistentTable()
     {
@@ -52,7 +56,7 @@ class PdoSessionHandlerTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testCreateTableTwice()
     {
@@ -76,6 +80,13 @@ class PdoSessionHandlerTest extends TestCase
         $data = $storage->read('id');
         $storage->close();
         $this->assertSame('data', $data, 'Written value can be read back correctly');
+    }
+
+    protected function getPersistentSqliteDsn()
+    {
+        $this->dbFile = tempnam(sys_get_temp_dir(), 'sf_sqlite_sessions');
+
+        return 'sqlite:' . $this->dbFile;
     }
 
     public function testWithLazySavePathConnection()
@@ -131,6 +142,15 @@ class PdoSessionHandlerTest extends TestCase
         $this->assertSame($content, $result);
     }
 
+    private function createStream($content)
+    {
+        $stream = tmpfile();
+        fwrite($stream, $content);
+        fseek($stream, 0);
+
+        return $stream;
+    }
+
     public function testReadLockedConvertsStreamToString()
     {
         if (filter_var(ini_get('session.use_strict_mode'), FILTER_VALIDATE_BOOLEAN)) {
@@ -156,7 +176,7 @@ class PdoSessionHandlerTest extends TestCase
 
         $insertStmt->expects($this->once())->method('execute')
             ->willReturnCallback(function () use (&$exception) {
-                throw $exception = new PDOException('', '23');
+                throw $exception = new \PDOException('', '23');
             });
 
         $storage = new PdoSessionHandler($pdo);
@@ -281,7 +301,7 @@ class PdoSessionHandlerTest extends TestCase
     {
         $storage = new PdoSessionHandler($this->getMemorySqlitePdo());
 
-        $method = new ReflectionMethod($storage, 'getConnection');
+        $method = new \ReflectionMethod($storage, 'getConnection');
         $method->setAccessible(true);
 
         $this->assertInstanceOf('\PDO', $method->invoke($storage));
@@ -291,7 +311,7 @@ class PdoSessionHandlerTest extends TestCase
     {
         $storage = new PdoSessionHandler('sqlite::memory:');
 
-        $method = new ReflectionMethod($storage, 'getConnection');
+        $method = new \ReflectionMethod($storage, 'getConnection');
         $method->setAccessible(true);
 
         $this->assertInstanceOf('\PDO', $method->invoke($storage));
@@ -332,23 +352,6 @@ class PdoSessionHandlerTest extends TestCase
         yield ['mssql://localhost:56/test', 'sqlsrv:server=localhost,56;Database=test'];
     }
 
-    protected function getMemorySqlitePdo()
-    {
-        $pdo = new PDO('sqlite::memory:');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $storage = new PdoSessionHandler($pdo);
-        $storage->createTable();
-
-        return $pdo;
-    }
-
-    protected function getPersistentSqliteDsn()
-    {
-        $this->dbFile = tempnam(sys_get_temp_dir(), 'sf_sqlite_sessions');
-
-        return 'sqlite:' . $this->dbFile;
-    }
-
     protected function tearDown()
     {
         // make sure the temporary database file is deleted when it has been created (even when a test fails)
@@ -357,18 +360,9 @@ class PdoSessionHandlerTest extends TestCase
         }
         parent::tearDown();
     }
-
-    private function createStream($content)
-    {
-        $stream = tmpfile();
-        fwrite($stream, $content);
-        fseek($stream, 0);
-
-        return $stream;
-    }
 }
 
-class MockPdo extends PDO
+class MockPdo extends \PDO
 {
     public $prepareResult;
     private $driverName;
@@ -377,16 +371,16 @@ class MockPdo extends PDO
     public function __construct($driverName = null, $errorMode = null)
     {
         $this->driverName = $driverName;
-        $this->errorMode = null !== $errorMode ?: PDO::ERRMODE_EXCEPTION;
+        $this->errorMode = null !== $errorMode ?: \PDO::ERRMODE_EXCEPTION;
     }
 
     public function getAttribute($attribute)
     {
-        if (PDO::ATTR_ERRMODE === $attribute) {
+        if (\PDO::ATTR_ERRMODE === $attribute) {
             return $this->errorMode;
         }
 
-        if (PDO::ATTR_DRIVER_NAME === $attribute) {
+        if (\PDO::ATTR_DRIVER_NAME === $attribute) {
             return $this->driverName;
         }
 
@@ -395,7 +389,7 @@ class MockPdo extends PDO
 
     public function prepare($statement, $driverOptions = [])
     {
-        return is_callable($this->prepareResult)
+        return \is_callable($this->prepareResult)
             ? ($this->prepareResult)($statement, $driverOptions)
             : $this->prepareResult;
     }

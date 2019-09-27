@@ -246,6 +246,36 @@ class Builder
     }
 
     /**
+     * Creates a subquery and parse it.
+     *
+     * @param Closure|Builder|string $query
+     * @return array
+     */
+    protected function createSub($query)
+    {
+        // If the given query is a Closure, we will execute it while passing in a new
+        // query instance to the Closure. This will give the developer a chance to
+        // format and work with the query before we cast it to a raw SQL string.
+        if ($query instanceof Closure) {
+            $callback = $query;
+
+            $callback($query = $this->forSubQuery());
+        }
+
+        return $this->parseSub($query);
+    }
+
+    /**
+     * Create a new query instance for a sub-query.
+     *
+     * @return Builder
+     */
+    protected function forSubQuery()
+    {
+        return $this->newQuery();
+    }
+
+    /**
      * Get a new instance of the query builder.
      *
      * @return Builder
@@ -253,6 +283,23 @@ class Builder
     public function newQuery()
     {
         return new static($this->connection, $this->grammar, $this->processor);
+    }
+
+    /**
+     * Parse the subquery into SQL and bindings.
+     *
+     * @param mixed $query
+     * @return array
+     */
+    protected function parseSub($query)
+    {
+        if ($query instanceof self || $query instanceof EloquentBuilder) {
+            return [$query->toSql(), $query->getBindings()];
+        } elseif (is_string($query)) {
+            return [$query, []];
+        } else {
+            throw new InvalidArgumentException;
+        }
     }
 
     /**
@@ -451,6 +498,19 @@ class Builder
     }
 
     /**
+     * Get a new join clause.
+     *
+     * @param Builder $parentQuery
+     * @param string $type
+     * @param string $table
+     * @return JoinClause
+     */
+    protected function newJoinClause(self $parentQuery, $type, $table)
+    {
+        return new JoinClause($parentQuery, $type, $table);
+    }
+
+    /**
      * Add a "join where" clause to the query.
      *
      * @param string $table
@@ -637,6 +697,21 @@ class Builder
     }
 
     /**
+     * Determine if the given operator and value combination is legal.
+     *
+     * Prevents using Null values with invalid operators.
+     *
+     * @param string $operator
+     * @param mixed $value
+     * @return bool
+     */
+    protected function invalidOperatorAndValue($operator, $value)
+    {
+        return is_null($value) && in_array($operator, $this->operators) &&
+            !in_array($operator, ['=', '<>', '!=']);
+    }
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param string|array|Closure $column
@@ -717,6 +792,27 @@ class Builder
     }
 
     /**
+     * Add an array of where clauses to the query.
+     *
+     * @param array $column
+     * @param string $boolean
+     * @param string $method
+     * @return $this
+     */
+    protected function addArrayOfWheres($column, $boolean, $method = 'where')
+    {
+        return $this->whereNested(function ($query) use ($column, $method, $boolean) {
+            foreach ($column as $key => $value) {
+                if (is_numeric($key) && is_array($value)) {
+                    $query->{$method}(...array_values($value));
+                } else {
+                    $query->$method($key, '=', $value, $boolean);
+                }
+            }
+        }, $boolean);
+    }
+
+    /**
      * Add a nested where statement to the query.
      *
      * @param Closure $callback
@@ -781,6 +877,45 @@ class Builder
     public function getRawBindings()
     {
         return $this->bindings;
+    }
+
+    /**
+     * Determine if the given operator is supported.
+     *
+     * @param string $operator
+     * @return bool
+     */
+    protected function invalidOperator($operator)
+    {
+        return !in_array(strtolower($operator), $this->operators, true) &&
+            !in_array(strtolower($operator), $this->grammar->getOperators(), true);
+    }
+
+    /**
+     * Add a full sub-select to the query.
+     *
+     * @param string $column
+     * @param string $operator
+     * @param Closure $callback
+     * @param string $boolean
+     * @return $this
+     */
+    protected function whereSub($column, $operator, Closure $callback, $boolean)
+    {
+        $type = 'Sub';
+
+        // Once we have the query instance we can simply execute it so it can add all
+        // of the sub-select's conditions to itself, and then we can cache it off
+        // in the array of where clauses for the "main" parent query instance.
+        call_user_func($callback, $query = $this->forSubQuery());
+
+        $this->wheres[] = compact(
+            'type', 'column', 'operator', 'query', 'boolean'
+        );
+
+        $this->addBinding($query->getBindings(), 'where');
+
+        return $this;
     }
 
     /**
@@ -934,6 +1069,19 @@ class Builder
         $this->addBinding($this->cleanBindings($values), 'where');
 
         return $this;
+    }
+
+    /**
+     * Remove all of the expressions from a list of bindings.
+     *
+     * @param array $bindings
+     * @return array
+     */
+    protected function cleanBindings(array $bindings)
+    {
+        return array_values(array_filter($bindings, function ($binding) {
+            return !$binding instanceof Expression;
+        }));
     }
 
     /**
@@ -1128,6 +1276,27 @@ class Builder
         }
 
         return $this->addDateBasedWhere('Date', $column, $operator, $value, $boolean);
+    }
+
+    /**
+     * Add a date based (year, month, day, time) statement to the query.
+     *
+     * @param string $type
+     * @param string $column
+     * @param string $operator
+     * @param mixed $value
+     * @param string $boolean
+     * @return $this
+     */
+    protected function addDateBasedWhere($type, $column, $operator, $value, $boolean = 'and')
+    {
+        $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
+
+        if (!$value instanceof Expression) {
+            $this->addBinding($value, 'where');
+        }
+
+        return $this;
     }
 
     /**
@@ -1737,6 +1906,21 @@ class Builder
     }
 
     /**
+     * Get an array with all orders with a given column removed.
+     *
+     * @param string $column
+     * @return array
+     */
+    protected function removeExistingOrdersFor($column)
+    {
+        return Collection::make($this->orders)
+            ->reject(function ($order) use ($column) {
+                return isset($order['column'])
+                    ? $order['column'] === $column : false;
+            })->values()->all();
+    }
+
+    /**
      * Alias to set the "limit" value of the query.
      *
      * @param int $value
@@ -1917,6 +2101,22 @@ class Builder
     }
 
     /**
+     * Run a pagination count query.
+     *
+     * @param array $columns
+     * @return array
+     */
+    protected function runPaginationCountQuery($columns = ['*'])
+    {
+        $without = $this->unions ? ['orders', 'limit', 'offset'] : ['columns', 'orders', 'limit', 'offset'];
+
+        return $this->cloneWithout($without)
+            ->cloneWithoutBindings($this->unions ? ['order'] : ['select', 'order'])
+            ->setAggregate('count', $this->withoutSelectAliases($columns))
+            ->get()->all();
+    }
+
+    /**
      * Execute the query as a "select" statement.
      *
      * @param array|string $columns
@@ -1927,6 +2127,62 @@ class Builder
         return collect($this->onceWithColumns(Arr::wrap($columns), function () {
             return $this->processor->processSelect($this, $this->runSelect());
         }));
+    }
+
+    /**
+     * Execute the given callback while selecting the given columns.
+     *
+     * After running the callback, the columns are reset to the original value.
+     *
+     * @param array $columns
+     * @param callable $callback
+     * @return mixed
+     */
+    protected function onceWithColumns($columns, $callback)
+    {
+        $original = $this->columns;
+
+        if (is_null($original)) {
+            $this->columns = $columns;
+        }
+
+        $result = $callback();
+
+        $this->columns = $original;
+
+        return $result;
+    }
+
+    /**
+     * Run the query as a "select" statement against the connection.
+     *
+     * @return array
+     */
+    protected function runSelect()
+    {
+        return $this->connection->select(
+            $this->toSql(), $this->getBindings(), !$this->useWritePdo
+        );
+    }
+
+    /**
+     * Set the aggregate property without running the query.
+     *
+     * @param string $function
+     * @param array $columns
+     * @return $this
+     */
+    protected function setAggregate($function, $columns)
+    {
+        $this->aggregate = compact('function', 'columns');
+
+        if (empty($this->groups)) {
+            $this->orders = null;
+
+            $this->bindings['order'] = [];
+        }
+
+        return $this;
     }
 
     /**
@@ -1957,6 +2213,20 @@ class Builder
                 $clone->{$property} = null;
             }
         });
+    }
+
+    /**
+     * Remove the column aliases since they will break count queries.
+     *
+     * @param array $columns
+     * @return array
+     */
+    protected function withoutSelectAliases(array $columns)
+    {
+        return array_map(function ($column) {
+            return is_string($column) && ($aliasPosition = stripos($column, ' as ')) !== false
+                ? substr($column, 0, $aliasPosition) : $column;
+        }, $columns);
     }
 
     /**
@@ -2147,6 +2417,67 @@ class Builder
         return is_array($queryResult[0])
             ? $this->pluckFromArrayColumn($queryResult, $column, $key)
             : $this->pluckFromObjectColumn($queryResult, $column, $key);
+    }
+
+    /**
+     * Strip off the table name or alias from a column identifier.
+     *
+     * @param string $column
+     * @return string|null
+     */
+    protected function stripTableForPluck($column)
+    {
+        return is_null($column) ? $column : last(preg_split('~\.| ~', $column));
+    }
+
+    /**
+     * Retrieve column values from rows represented as arrays.
+     *
+     * @param array $queryResult
+     * @param string $column
+     * @param string $key
+     * @return Collection
+     */
+    protected function pluckFromArrayColumn($queryResult, $column, $key)
+    {
+        $results = [];
+
+        if (is_null($key)) {
+            foreach ($queryResult as $row) {
+                $results[] = $row[$column];
+            }
+        } else {
+            foreach ($queryResult as $row) {
+                $results[$row[$key]] = $row[$column];
+            }
+        }
+
+        return collect($results);
+    }
+
+    /**
+     * Retrieve column values from rows represented as objects.
+     *
+     * @param array $queryResult
+     * @param string $column
+     * @param string $key
+     * @return Collection
+     */
+    protected function pluckFromObjectColumn($queryResult, $column, $key)
+    {
+        $results = [];
+
+        if (is_null($key)) {
+            foreach ($queryResult as $row) {
+                $results[] = $row->$column;
+            }
+        } else {
+            foreach ($queryResult as $row) {
+                $results[$row->$key] = $row->$column;
+            }
+        }
+
+        return collect($results);
     }
 
     /**
@@ -2620,337 +2951,6 @@ class Builder
         }
 
         return $this;
-    }
-
-    /**
-     * Creates a subquery and parse it.
-     *
-     * @param Closure|Builder|string $query
-     * @return array
-     */
-    protected function createSub($query)
-    {
-        // If the given query is a Closure, we will execute it while passing in a new
-        // query instance to the Closure. This will give the developer a chance to
-        // format and work with the query before we cast it to a raw SQL string.
-        if ($query instanceof Closure) {
-            $callback = $query;
-
-            $callback($query = $this->forSubQuery());
-        }
-
-        return $this->parseSub($query);
-    }
-
-    /**
-     * Create a new query instance for a sub-query.
-     *
-     * @return Builder
-     */
-    protected function forSubQuery()
-    {
-        return $this->newQuery();
-    }
-
-    /**
-     * Parse the subquery into SQL and bindings.
-     *
-     * @param mixed $query
-     * @return array
-     */
-    protected function parseSub($query)
-    {
-        if ($query instanceof self || $query instanceof EloquentBuilder) {
-            return [$query->toSql(), $query->getBindings()];
-        } elseif (is_string($query)) {
-            return [$query, []];
-        } else {
-            throw new InvalidArgumentException;
-        }
-    }
-
-    /**
-     * Get a new join clause.
-     *
-     * @param Builder $parentQuery
-     * @param string $type
-     * @param string $table
-     * @return JoinClause
-     */
-    protected function newJoinClause(self $parentQuery, $type, $table)
-    {
-        return new JoinClause($parentQuery, $type, $table);
-    }
-
-    /**
-     * Determine if the given operator and value combination is legal.
-     *
-     * Prevents using Null values with invalid operators.
-     *
-     * @param string $operator
-     * @param mixed $value
-     * @return bool
-     */
-    protected function invalidOperatorAndValue($operator, $value)
-    {
-        return is_null($value) && in_array($operator, $this->operators) &&
-            !in_array($operator, ['=', '<>', '!=']);
-    }
-
-    /**
-     * Add an array of where clauses to the query.
-     *
-     * @param array $column
-     * @param string $boolean
-     * @param string $method
-     * @return $this
-     */
-    protected function addArrayOfWheres($column, $boolean, $method = 'where')
-    {
-        return $this->whereNested(function ($query) use ($column, $method, $boolean) {
-            foreach ($column as $key => $value) {
-                if (is_numeric($key) && is_array($value)) {
-                    $query->{$method}(...array_values($value));
-                } else {
-                    $query->$method($key, '=', $value, $boolean);
-                }
-            }
-        }, $boolean);
-    }
-
-    /**
-     * Determine if the given operator is supported.
-     *
-     * @param string $operator
-     * @return bool
-     */
-    protected function invalidOperator($operator)
-    {
-        return !in_array(strtolower($operator), $this->operators, true) &&
-            !in_array(strtolower($operator), $this->grammar->getOperators(), true);
-    }
-
-    /**
-     * Add a full sub-select to the query.
-     *
-     * @param string $column
-     * @param string $operator
-     * @param Closure $callback
-     * @param string $boolean
-     * @return $this
-     */
-    protected function whereSub($column, $operator, Closure $callback, $boolean)
-    {
-        $type = 'Sub';
-
-        // Once we have the query instance we can simply execute it so it can add all
-        // of the sub-select's conditions to itself, and then we can cache it off
-        // in the array of where clauses for the "main" parent query instance.
-        call_user_func($callback, $query = $this->forSubQuery());
-
-        $this->wheres[] = compact(
-            'type', 'column', 'operator', 'query', 'boolean'
-        );
-
-        $this->addBinding($query->getBindings(), 'where');
-
-        return $this;
-    }
-
-    /**
-     * Remove all of the expressions from a list of bindings.
-     *
-     * @param array $bindings
-     * @return array
-     */
-    protected function cleanBindings(array $bindings)
-    {
-        return array_values(array_filter($bindings, function ($binding) {
-            return !$binding instanceof Expression;
-        }));
-    }
-
-    /**
-     * Add a date based (year, month, day, time) statement to the query.
-     *
-     * @param string $type
-     * @param string $column
-     * @param string $operator
-     * @param mixed $value
-     * @param string $boolean
-     * @return $this
-     */
-    protected function addDateBasedWhere($type, $column, $operator, $value, $boolean = 'and')
-    {
-        $this->wheres[] = compact('column', 'type', 'boolean', 'operator', 'value');
-
-        if (!$value instanceof Expression) {
-            $this->addBinding($value, 'where');
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get an array with all orders with a given column removed.
-     *
-     * @param string $column
-     * @return array
-     */
-    protected function removeExistingOrdersFor($column)
-    {
-        return Collection::make($this->orders)
-            ->reject(function ($order) use ($column) {
-                return isset($order['column'])
-                    ? $order['column'] === $column : false;
-            })->values()->all();
-    }
-
-    /**
-     * Run a pagination count query.
-     *
-     * @param array $columns
-     * @return array
-     */
-    protected function runPaginationCountQuery($columns = ['*'])
-    {
-        $without = $this->unions ? ['orders', 'limit', 'offset'] : ['columns', 'orders', 'limit', 'offset'];
-
-        return $this->cloneWithout($without)
-            ->cloneWithoutBindings($this->unions ? ['order'] : ['select', 'order'])
-            ->setAggregate('count', $this->withoutSelectAliases($columns))
-            ->get()->all();
-    }
-
-    /**
-     * Execute the given callback while selecting the given columns.
-     *
-     * After running the callback, the columns are reset to the original value.
-     *
-     * @param array $columns
-     * @param callable $callback
-     * @return mixed
-     */
-    protected function onceWithColumns($columns, $callback)
-    {
-        $original = $this->columns;
-
-        if (is_null($original)) {
-            $this->columns = $columns;
-        }
-
-        $result = $callback();
-
-        $this->columns = $original;
-
-        return $result;
-    }
-
-    /**
-     * Run the query as a "select" statement against the connection.
-     *
-     * @return array
-     */
-    protected function runSelect()
-    {
-        return $this->connection->select(
-            $this->toSql(), $this->getBindings(), !$this->useWritePdo
-        );
-    }
-
-    /**
-     * Set the aggregate property without running the query.
-     *
-     * @param string $function
-     * @param array $columns
-     * @return $this
-     */
-    protected function setAggregate($function, $columns)
-    {
-        $this->aggregate = compact('function', 'columns');
-
-        if (empty($this->groups)) {
-            $this->orders = null;
-
-            $this->bindings['order'] = [];
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove the column aliases since they will break count queries.
-     *
-     * @param array $columns
-     * @return array
-     */
-    protected function withoutSelectAliases(array $columns)
-    {
-        return array_map(function ($column) {
-            return is_string($column) && ($aliasPosition = stripos($column, ' as ')) !== false
-                ? substr($column, 0, $aliasPosition) : $column;
-        }, $columns);
-    }
-
-    /**
-     * Strip off the table name or alias from a column identifier.
-     *
-     * @param string $column
-     * @return string|null
-     */
-    protected function stripTableForPluck($column)
-    {
-        return is_null($column) ? $column : last(preg_split('~\.| ~', $column));
-    }
-
-    /**
-     * Retrieve column values from rows represented as arrays.
-     *
-     * @param array $queryResult
-     * @param string $column
-     * @param string $key
-     * @return Collection
-     */
-    protected function pluckFromArrayColumn($queryResult, $column, $key)
-    {
-        $results = [];
-
-        if (is_null($key)) {
-            foreach ($queryResult as $row) {
-                $results[] = $row[$column];
-            }
-        } else {
-            foreach ($queryResult as $row) {
-                $results[$row[$key]] = $row[$column];
-            }
-        }
-
-        return collect($results);
-    }
-
-    /**
-     * Retrieve column values from rows represented as objects.
-     *
-     * @param array $queryResult
-     * @param string $column
-     * @param string $key
-     * @return Collection
-     */
-    protected function pluckFromObjectColumn($queryResult, $column, $key)
-    {
-        $results = [];
-
-        if (is_null($key)) {
-            foreach ($queryResult as $row) {
-                $results[] = $row->$column;
-            }
-        } else {
-            foreach ($queryResult as $row) {
-                $results[$row->$key] = $row->$column;
-            }
-        }
-
-        return collect($results);
     }
 
     /**

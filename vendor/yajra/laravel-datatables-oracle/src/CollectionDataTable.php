@@ -2,10 +2,7 @@
 
 namespace Yajra\DataTables;
 
-use Closure;
-use Exception;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -15,14 +12,14 @@ class CollectionDataTable extends DataTableAbstract
     /**
      * Collection object.
      *
-     * @var Collection
+     * @var \Illuminate\Support\Collection
      */
     public $collection;
 
     /**
      * Collection object.
      *
-     * @var Collection
+     * @var \Illuminate\Support\Collection
      */
     public $original;
 
@@ -36,7 +33,7 @@ class CollectionDataTable extends DataTableAbstract
     /**
      * CollectionEngine constructor.
      *
-     * @param Collection $collection
+     * @param \Illuminate\Support\Collection $collection
      */
     public function __construct(Collection $collection)
     {
@@ -45,6 +42,17 @@ class CollectionDataTable extends DataTableAbstract
         $this->collection = $collection;
         $this->original = $collection;
         $this->columns = array_keys($this->serialize($collection->first()));
+    }
+
+    /**
+     * Serialize collection.
+     *
+     * @param mixed $collection
+     * @return mixed|null
+     */
+    protected function serialize($collection)
+    {
+        return $collection instanceof Arrayable ? $collection->toArray() : (array)$collection;
     }
 
     /**
@@ -61,7 +69,7 @@ class CollectionDataTable extends DataTableAbstract
     /**
      * Factory method, create and return an instance for the DataTable engine.
      *
-     * @param array|Collection $source
+     * @param array|\Illuminate\Support\Collection $source
      * @return CollectionDataTable|DataTableAbstract
      */
     public static function create($source)
@@ -144,7 +152,7 @@ class CollectionDataTable extends DataTableAbstract
      * Organizes works.
      *
      * @param bool $mDataSupport
-     * @return JsonResponse
+     * @return \Illuminate\Http\JsonResponse
      */
     public function make($mDataSupport = true)
     {
@@ -165,7 +173,7 @@ class CollectionDataTable extends DataTableAbstract
             }
 
             return $this->render($this->collection->values()->all());
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             return $this->errorResponse($exception);
         }
     }
@@ -191,6 +199,24 @@ class CollectionDataTable extends DataTableAbstract
     }
 
     /**
+     * Revert transformed DT_RowIndex back to it's original values.
+     *
+     * @param bool $mDataSupport
+     */
+    private function revertIndexColumn($mDataSupport)
+    {
+        if ($this->columnDef['index']) {
+            $index = $mDataSupport ? config('datatables.index_column', 'DT_RowIndex') : 0;
+            $start = (int)$this->request->input('start');
+            $this->collection->transform(function ($data) use ($index, &$start) {
+                $data[$index] = ++$start;
+
+                return $data;
+            });
+        }
+    }
+
+    /**
      * Define the offset of the first item of the collection with respect to
      * the FULL dataset the collection was sliced from. It effectively allows the
      * collection to be "pre-sliced".
@@ -203,17 +229,6 @@ class CollectionDataTable extends DataTableAbstract
         $this->offset = $offset;
 
         return $this;
-    }
-
-    /**
-     * Serialize collection.
-     *
-     * @param mixed $collection
-     * @return mixed|null
-     */
-    protected function serialize($collection)
-    {
-        return $collection instanceof Arrayable ? $collection->toArray() : (array)$collection;
     }
 
     /**
@@ -279,7 +294,7 @@ class CollectionDataTable extends DataTableAbstract
      * Get array sorter closure.
      *
      * @param array $criteria
-     * @return Closure
+     * @return \Closure
      */
     protected function getSorter(array $criteria)
     {
@@ -319,23 +334,5 @@ class CollectionDataTable extends DataTableAbstract
     protected function resolveCallbackParameter()
     {
         return $this;
-    }
-
-    /**
-     * Revert transformed DT_RowIndex back to it's original values.
-     *
-     * @param bool $mDataSupport
-     */
-    private function revertIndexColumn($mDataSupport)
-    {
-        if ($this->columnDef['index']) {
-            $index = $mDataSupport ? config('datatables.index_column', 'DT_RowIndex') : 0;
-            $start = (int)$this->request->input('start');
-            $this->collection->transform(function ($data) use ($index, &$start) {
-                $data[$index] = ++$start;
-
-                return $data;
-            });
-        }
     }
 }

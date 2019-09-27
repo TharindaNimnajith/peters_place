@@ -67,6 +67,19 @@ class EloquentUserProvider implements UserProvider
     }
 
     /**
+     * Get a new query builder for the model instance.
+     *
+     * @param Model|null $model
+     * @return Builder
+     */
+    protected function newModelQuery($model = null)
+    {
+        return is_null($model)
+            ? $this->createModel()->newQuery()
+            : $model->newQuery();
+    }
+
+    /**
      * Retrieve a user by their unique identifier and "remember me" token.
      *
      * @param mixed $identifier
@@ -203,18 +216,5 @@ class EloquentUserProvider implements UserProvider
         $this->model = $model;
 
         return $this;
-    }
-
-    /**
-     * Get a new query builder for the model instance.
-     *
-     * @param Model|null $model
-     * @return Builder
-     */
-    protected function newModelQuery($model = null)
-    {
-        return is_null($model)
-            ? $this->createModel()->newQuery()
-            : $model->newQuery();
     }
 }

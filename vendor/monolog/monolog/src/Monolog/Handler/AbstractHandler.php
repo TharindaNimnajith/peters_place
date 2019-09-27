@@ -112,6 +112,16 @@ abstract class AbstractHandler implements HandlerInterface, ResettableInterface
     }
 
     /**
+     * Gets the default formatter.
+     *
+     * @return FormatterInterface
+     */
+    protected function getDefaultFormatter()
+    {
+        return new LineFormatter();
+    }
+
+    /**
      * Gets minimum logging level at which this handler will be triggered.
      *
      * @return int
@@ -186,15 +196,5 @@ abstract class AbstractHandler implements HandlerInterface, ResettableInterface
                 $processor->reset();
             }
         }
-    }
-
-    /**
-     * Gets the default formatter.
-     *
-     * @return FormatterInterface
-     */
-    protected function getDefaultFormatter()
-    {
-        return new LineFormatter();
     }
 }

@@ -174,6 +174,64 @@ class CliTestDoxPrinter extends ResultPrinter
         parent::endTest($test, $time);
     }
 
+    private function formatTestResultMessage(
+        string $symbol,
+        string $resultMessage,
+        float $time,
+        bool $alwaysVerbose = false
+    ): string
+    {
+        $additionalInformation = $this->getFormattedAdditionalInformation($resultMessage, $alwaysVerbose);
+        $msg = sprintf(
+            " %s %s%s\n%s",
+            $symbol,
+            $this->testMethod,
+            $this->verbose ? ' ' . $this->getFormattedRuntime($time) : '',
+            $additionalInformation
+        );
+
+        $this->lastFlushedTestWasVerbose = !empty($additionalInformation);
+
+        return $msg;
+    }
+
+    private function getFormattedAdditionalInformation(string $resultMessage, bool $verbose): string
+    {
+        if ($resultMessage === '') {
+            return '';
+        }
+
+        if (!($this->verbose || $verbose)) {
+            return '';
+        }
+
+        return sprintf(
+            "   │\n%s\n",
+            implode(
+                "\n",
+                array_map(
+                    function (string $text) {
+                        return sprintf('   │ %s', $text);
+                    },
+                    explode("\n", $resultMessage)
+                )
+            )
+        );
+    }
+
+    private function getFormattedRuntime(float $time): string
+    {
+        if ($time > 5) {
+            return $this->formatWithColor('fg-red', sprintf('[%.2f ms]', $time * 1000));
+        }
+
+        if ($time > 1) {
+            return $this->formatWithColor('fg-yellow', sprintf('[%.2f ms]', $time * 1000));
+        }
+
+        return sprintf('[%.2f ms]', $time * 1000);
+    }
+
     public function bufferTestResult(Test $test, string $msg): void
     {
         $this->outputBuffer[$this->testIndex] = [
@@ -186,10 +244,88 @@ class CliTestDoxPrinter extends ResultPrinter
         ];
     }
 
+    private function flushOutputBuffer(): void
+    {
+        if ($this->testFlushIndex === $this->testIndex) {
+            return;
+        }
+
+        if ($this->testFlushIndex > 0) {
+            $prevResult = $this->getTestResultByName($this->originalExecutionOrder[$this->testFlushIndex - 1]);
+        } else {
+            $prevResult = $this->getEmptyTestResult();
+        }
+
+        do {
+            $flushed = false;
+            $result = $this->getTestResultByName($this->originalExecutionOrder[$this->testFlushIndex]);
+
+            if (!empty($result)) {
+                $this->writeBufferTestResult($prevResult, $result);
+                $this->testFlushIndex++;
+                $prevResult = $result;
+                $flushed = true;
+            }
+        } while ($flushed && $this->testFlushIndex < $this->testIndex);
+    }
+
+    private function getTestResultByName(string $testName): array
+    {
+        foreach ($this->outputBuffer as $result) {
+            if ($result['testName'] === $testName) {
+                return $result;
+            }
+        }
+
+        return [];
+    }
+
+    private function getEmptyTestResult(): array
+    {
+        return [
+            'className' => '',
+            'testName' => '',
+            'message' => '',
+            'failed' => '',
+            'verbose' => '',
+        ];
+    }
+
+    private function writeBufferTestResult(array $prevResult, array $result): void
+    {
+        // Write spacer line for new suite headers and after verbose messages
+        if ($prevResult['testName'] !== '' &&
+            ($prevResult['verbose'] === true || $prevResult['className'] !== $result['className'])) {
+            $this->write("\n");
+        }
+
+        // Write suite header
+        if ($prevResult['className'] !== $result['className']) {
+            $this->write($result['className'] . "\n");
+        }
+
+        // Write the test result itself
+        $this->write($result['message']);
+    }
+
     public function writeTestResult(string $msg): void
     {
         $msg = $this->formatTestSuiteHeader($this->lastClassName, $this->className, $msg);
         $this->write($msg);
+    }
+
+    private function formatTestSuiteHeader(?string $lastClassName, string $className, string $msg): string
+    {
+        if ($lastClassName === null || $className !== $lastClassName) {
+            return sprintf(
+                "%s%s\n%s",
+                ($this->lastClassName !== '') ? "\n" : '',
+                $className,
+                $msg
+            );
+        }
+
+        return $msg;
     }
 
     public function addError(Test $test, Throwable $t, float $time): void
@@ -278,142 +414,6 @@ class CliTestDoxPrinter extends ResultPrinter
     protected function printHeader(): void
     {
         $this->write("\n" . Timer::resourceUsage() . "\n\n");
-    }
-
-    private function formatTestResultMessage(
-        string $symbol,
-        string $resultMessage,
-        float $time,
-        bool $alwaysVerbose = false
-    ): string
-    {
-        $additionalInformation = $this->getFormattedAdditionalInformation($resultMessage, $alwaysVerbose);
-        $msg = sprintf(
-            " %s %s%s\n%s",
-            $symbol,
-            $this->testMethod,
-            $this->verbose ? ' ' . $this->getFormattedRuntime($time) : '',
-            $additionalInformation
-        );
-
-        $this->lastFlushedTestWasVerbose = !empty($additionalInformation);
-
-        return $msg;
-    }
-
-    private function getFormattedAdditionalInformation(string $resultMessage, bool $verbose): string
-    {
-        if ($resultMessage === '') {
-            return '';
-        }
-
-        if (!($this->verbose || $verbose)) {
-            return '';
-        }
-
-        return sprintf(
-            "   │\n%s\n",
-            implode(
-                "\n",
-                array_map(
-                    function (string $text) {
-                        return sprintf('   │ %s', $text);
-                    },
-                    explode("\n", $resultMessage)
-                )
-            )
-        );
-    }
-
-    private function getFormattedRuntime(float $time): string
-    {
-        if ($time > 5) {
-            return $this->formatWithColor('fg-red', sprintf('[%.2f ms]', $time * 1000));
-        }
-
-        if ($time > 1) {
-            return $this->formatWithColor('fg-yellow', sprintf('[%.2f ms]', $time * 1000));
-        }
-
-        return sprintf('[%.2f ms]', $time * 1000);
-    }
-
-    private function flushOutputBuffer(): void
-    {
-        if ($this->testFlushIndex === $this->testIndex) {
-            return;
-        }
-
-        if ($this->testFlushIndex > 0) {
-            $prevResult = $this->getTestResultByName($this->originalExecutionOrder[$this->testFlushIndex - 1]);
-        } else {
-            $prevResult = $this->getEmptyTestResult();
-        }
-
-        do {
-            $flushed = false;
-            $result = $this->getTestResultByName($this->originalExecutionOrder[$this->testFlushIndex]);
-
-            if (!empty($result)) {
-                $this->writeBufferTestResult($prevResult, $result);
-                $this->testFlushIndex++;
-                $prevResult = $result;
-                $flushed = true;
-            }
-        } while ($flushed && $this->testFlushIndex < $this->testIndex);
-    }
-
-    private function getTestResultByName(string $testName): array
-    {
-        foreach ($this->outputBuffer as $result) {
-            if ($result['testName'] === $testName) {
-                return $result;
-            }
-        }
-
-        return [];
-    }
-
-    private function getEmptyTestResult(): array
-    {
-        return [
-            'className' => '',
-            'testName' => '',
-            'message' => '',
-            'failed' => '',
-            'verbose' => '',
-        ];
-    }
-
-    private function writeBufferTestResult(array $prevResult, array $result): void
-    {
-        // Write spacer line for new suite headers and after verbose messages
-        if ($prevResult['testName'] !== '' &&
-            ($prevResult['verbose'] === true || $prevResult['className'] !== $result['className'])) {
-            $this->write("\n");
-        }
-
-        // Write suite header
-        if ($prevResult['className'] !== $result['className']) {
-            $this->write($result['className'] . "\n");
-        }
-
-        // Write the test result itself
-        $this->write($result['message']);
-    }
-
-    private function formatTestSuiteHeader(?string $lastClassName, string $className, string $msg): string
-    {
-        if ($lastClassName === null || $className !== $lastClassName) {
-            return sprintf(
-                "%s%s\n%s",
-                ($this->lastClassName !== '') ? "\n" : '',
-                $className,
-                $msg
-            );
-        }
-
-        return $msg;
     }
 
     private function printNonSuccessfulTestsSummary(int $numberOfExecutedTests): void

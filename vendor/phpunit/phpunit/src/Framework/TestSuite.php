@@ -232,6 +232,96 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
         $this->testCase = true;
     }
 
+    /**
+     * Adds a test to the suite.
+     *
+     * @param array $groups
+     */
+    public function addTest(Test $test, $groups = []): void
+    {
+        $class = new ReflectionClass($test);
+
+        if (!$class->isAbstract()) {
+            $this->tests[] = $test;
+            $this->numTests = -1;
+
+            if ($test instanceof self && empty($groups)) {
+                $groups = $test->getGroups();
+            }
+
+            if (empty($groups)) {
+                $groups = ['default'];
+            }
+
+            foreach ($groups as $group) {
+                if (!isset($this->groups[$group])) {
+                    $this->groups[$group] = [$test];
+                } else {
+                    $this->groups[$group][] = $test;
+                }
+            }
+
+            if ($test instanceof TestCase) {
+                $test->setGroups($groups);
+            }
+        }
+    }
+
+    /**
+     * Returns the test groups of the suite.
+     */
+    public function getGroups(): array
+    {
+        return array_keys($this->groups);
+    }
+
+    /**
+     * @param string $message
+     */
+    protected static function warning($message): WarningTestCase
+    {
+        return new WarningTestCase($message);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function addTestMethod(ReflectionClass $class, ReflectionMethod $method): void
+    {
+        if (!$this->isTestMethod($method)) {
+            return;
+        }
+
+        $name = $method->getName();
+
+        if (!$method->isPublic()) {
+            $this->addTest(
+                self::warning(
+                    sprintf(
+                        'Test method "%s" in test class "%s" is not public.',
+                        $name,
+                        $class->getName()
+                    )
+                )
+            );
+
+            return;
+        }
+
+        $test = self::createTest($class, $name);
+
+        if ($test instanceof TestCase || $test instanceof DataProviderTestSuite) {
+            $test->setDependencies(
+                \PHPUnit\Util\Test::getDependencies($class->getName(), $name)
+            );
+        }
+
+        $this->addTest(
+            $test,
+            \PHPUnit\Util\Test::getGroups($class->getName(), $name)
+        );
+    }
+
     public static function isTestMethod(ReflectionMethod $method): bool
     {
         if (strpos($method->name, 'test') === 0) {
@@ -436,14 +526,6 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
     }
 
     /**
-     * @param string $message
-     */
-    protected static function warning($message): WarningTestCase
-    {
-        return new WarningTestCase($message);
-    }
-
-    /**
      * @param string $class
      * @param string $methodName
      * @param string $message
@@ -461,49 +543,6 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
     protected static function skipTest($class, $methodName, $message): SkippedTestCase
     {
         return new SkippedTestCase($class, $methodName, $message);
-    }
-
-    /**
-     * Adds a test to the suite.
-     *
-     * @param array $groups
-     */
-    public function addTest(Test $test, $groups = []): void
-    {
-        $class = new ReflectionClass($test);
-
-        if (!$class->isAbstract()) {
-            $this->tests[] = $test;
-            $this->numTests = -1;
-
-            if ($test instanceof self && empty($groups)) {
-                $groups = $test->getGroups();
-            }
-
-            if (empty($groups)) {
-                $groups = ['default'];
-            }
-
-            foreach ($groups as $group) {
-                if (!isset($this->groups[$group])) {
-                    $this->groups[$group] = [$test];
-                } else {
-                    $this->groups[$group][] = $test;
-                }
-            }
-
-            if ($test instanceof TestCase) {
-                $test->setGroups($groups);
-            }
-        }
-    }
-
-    /**
-     * Returns the test groups of the suite.
-     */
-    public function getGroups(): array
-    {
-        return array_keys($this->groups);
     }
 
     /**
@@ -816,6 +855,22 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
     }
 
     /**
+     * Creates a default TestResult object.
+     */
+    protected function createResult(): TestResult
+    {
+        return new TestResult;
+    }
+
+    /**
+     * Template Method that is called before the tests
+     * of this test suite are run.
+     */
+    protected function setUp(): void
+    {
+    }
+
+    /**
      * Mark the test suite as skipped.
      *
      * @param string $message
@@ -833,6 +888,14 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
     public function tests(): array
     {
         return $this->tests;
+    }
+
+    /**
+     * Template Method that is called after the tests
+     * of this test suite have finished running.
+     */
+    protected function tearDown(): void
+    {
     }
 
     public function setRunTestInSeparateProcess(bool $runTestInSeparateProcess): void
@@ -915,68 +978,5 @@ class TestSuite implements IteratorAggregate, SelfDescribing, Test
                 $test->injectFilter($filter);
             }
         }
-    }
-
-    /**
-     * @throws Exception
-     */
-    protected function addTestMethod(ReflectionClass $class, ReflectionMethod $method): void
-    {
-        if (!$this->isTestMethod($method)) {
-            return;
-        }
-
-        $name = $method->getName();
-
-        if (!$method->isPublic()) {
-            $this->addTest(
-                self::warning(
-                    sprintf(
-                        'Test method "%s" in test class "%s" is not public.',
-                        $name,
-                        $class->getName()
-                    )
-                )
-            );
-
-            return;
-        }
-
-        $test = self::createTest($class, $name);
-
-        if ($test instanceof TestCase || $test instanceof DataProviderTestSuite) {
-            $test->setDependencies(
-                \PHPUnit\Util\Test::getDependencies($class->getName(), $name)
-            );
-        }
-
-        $this->addTest(
-            $test,
-            \PHPUnit\Util\Test::getGroups($class->getName(), $name)
-        );
-    }
-
-    /**
-     * Creates a default TestResult object.
-     */
-    protected function createResult(): TestResult
-    {
-        return new TestResult;
-    }
-
-    /**
-     * Template Method that is called before the tests
-     * of this test suite are run.
-     */
-    protected function setUp(): void
-    {
-    }
-
-    /**
-     * Template Method that is called after the tests
-     * of this test suite have finished running.
-     */
-    protected function tearDown(): void
-    {
     }
 }

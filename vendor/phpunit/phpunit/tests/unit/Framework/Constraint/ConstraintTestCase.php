@@ -32,6 +32,18 @@ abstract class ConstraintTestCase extends TestCase
         ));
     }
 
+    /**
+     * Returns the class name of the constraint.
+     */
+    final protected function className(): string
+    {
+        return preg_replace(
+            '/Test$/',
+            '',
+            static::class
+        );
+    }
+
     final public function testIsSelfDescribing(): void
     {
         $className = $this->className();
@@ -43,17 +55,5 @@ abstract class ConstraintTestCase extends TestCase
             $className,
             SelfDescribing::class
         ));
-    }
-
-    /**
-     * Returns the class name of the constraint.
-     */
-    final protected function className(): string
-    {
-        return preg_replace(
-            '/Test$/',
-            '',
-            static::class
-        );
     }
 }

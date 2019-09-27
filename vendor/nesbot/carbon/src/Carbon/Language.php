@@ -78,34 +78,6 @@ class Language implements JsonSerializable
     }
 
     /**
-     * Get the list of the known regions.
-     *
-     * @return array
-     */
-    public static function regions()
-    {
-        if (!static::$regionsNames) {
-            static::$regionsNames = include __DIR__ . '/List/regions.php';
-        }
-
-        return static::$regionsNames;
-    }
-
-    /**
-     * Get the list of the known languages.
-     *
-     * @return array
-     */
-    public static function all()
-    {
-        if (!static::$languagesNames) {
-            static::$languagesNames = include __DIR__ . '/List/languages.php';
-        }
-
-        return static::$languagesNames;
-    }
-
-    /**
      * Returns the code of the locale "en"/"fr".
      *
      * @return string
@@ -156,6 +128,20 @@ class Language implements JsonSerializable
     public function getRegionName(): ?string
     {
         return $this->region ? (static::regions()[$this->region] ?? $this->region) : null;
+    }
+
+    /**
+     * Get the list of the known regions.
+     *
+     * @return array
+     */
+    public static function regions()
+    {
+        if (!static::$regionsNames) {
+            static::$regionsNames = include __DIR__ . '/List/regions.php';
+        }
+
+        return static::$regionsNames;
     }
 
     /**
@@ -229,6 +215,20 @@ class Language implements JsonSerializable
         }
 
         return $this->names;
+    }
+
+    /**
+     * Get the list of the known languages.
+     *
+     * @return array
+     */
+    public static function all()
+    {
+        if (!static::$languagesNames) {
+            static::$languagesNames = include __DIR__ . '/List/languages.php';
+        }
+
+        return static::$languagesNames;
     }
 
     /**

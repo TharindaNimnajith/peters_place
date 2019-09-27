@@ -78,6 +78,33 @@ class ConfigPaths
         return self::getDirNames([$xdg->getHomeConfigDir()]);
     }
 
+    private static function getDirNames(array $baseDirs)
+    {
+        $dirs = array_map(function ($dir) {
+            return strtr($dir, '\\', '/') . '/psysh';
+        }, $baseDirs);
+
+        // Add ~/.psysh
+        if ($home = getenv('HOME')) {
+            $dirs[] = strtr($home, '\\', '/') . '/.psysh';
+        }
+
+        // Add some Windows specific ones :)
+        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
+            if ($appData = getenv('APPDATA')) {
+                // AppData gets preference
+                array_unshift($dirs, strtr($appData, '\\', '/') . '/PsySH');
+            }
+
+            $dir = strtr(getenv('HOMEDRIVE') . '/' . getenv('HOMEPATH'), '\\', '/') . '/.psysh';
+            if (!in_array($dir, $dirs)) {
+                $dirs[] = $dir;
+            }
+        }
+
+        return $dirs;
+    }
+
     /**
      * Find real config files in config directories.
      *
@@ -108,6 +135,21 @@ class ConfigPaths
         $xdg = new Xdg();
 
         return self::getDirNames($xdg->getConfigDirs());
+    }
+
+    private static function getRealFiles(array $dirNames, array $fileNames)
+    {
+        $files = [];
+        foreach ($dirNames as $dir) {
+            foreach ($fileNames as $name) {
+                $file = $dir . '/' . $name;
+                if (@is_file($file)) {
+                    $files[] = $file;
+                }
+            }
+        }
+
+        return $files;
     }
 
     /**
@@ -210,47 +252,5 @@ class ConfigPaths
         touch($file);
 
         return $file;
-    }
-
-    private static function getDirNames(array $baseDirs)
-    {
-        $dirs = array_map(function ($dir) {
-            return strtr($dir, '\\', '/') . '/psysh';
-        }, $baseDirs);
-
-        // Add ~/.psysh
-        if ($home = getenv('HOME')) {
-            $dirs[] = strtr($home, '\\', '/') . '/.psysh';
-        }
-
-        // Add some Windows specific ones :)
-        if (defined('PHP_WINDOWS_VERSION_MAJOR')) {
-            if ($appData = getenv('APPDATA')) {
-                // AppData gets preference
-                array_unshift($dirs, strtr($appData, '\\', '/') . '/PsySH');
-            }
-
-            $dir = strtr(getenv('HOMEDRIVE') . '/' . getenv('HOMEPATH'), '\\', '/') . '/.psysh';
-            if (!in_array($dir, $dirs)) {
-                $dirs[] = $dir;
-            }
-        }
-
-        return $dirs;
-    }
-
-    private static function getRealFiles(array $dirNames, array $fileNames)
-    {
-        $files = [];
-        foreach ($dirNames as $dir) {
-            foreach ($fileNames as $name) {
-                $file = $dir . '/' . $name;
-                if (@is_file($file)) {
-                    $files[] = $file;
-                }
-            }
-        }
-
-        return $files;
     }
 }

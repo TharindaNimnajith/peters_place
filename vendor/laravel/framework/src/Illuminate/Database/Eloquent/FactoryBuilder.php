@@ -219,49 +219,6 @@ class FactoryBuilder
     }
 
     /**
-     * Run after making callbacks on a collection of models.
-     *
-     * @param \Illuminate\Support\Collection $models
-     * @return void
-     */
-    public function callAfterMaking($models)
-    {
-        $this->callAfter($this->afterMaking, $models);
-    }
-
-    /**
-     * Run after creating callbacks on a collection of models.
-     *
-     * @param \Illuminate\Support\Collection $models
-     * @return void
-     */
-    public function callAfterCreating($models)
-    {
-        $this->callAfter($this->afterCreating, $models);
-    }
-
-    /**
-     * Create an array of raw attribute arrays.
-     *
-     * @param array $attributes
-     * @return mixed
-     */
-    public function raw(array $attributes = [])
-    {
-        if ($this->amount === null) {
-            return $this->getRawAttributes($attributes);
-        }
-
-        if ($this->amount < 1) {
-            return [];
-        }
-
-        return array_map(function () use ($attributes) {
-            return $this->getRawAttributes($attributes);
-        }, range(1, $this->amount));
-    }
-
-    /**
      * Make an instance of the model with the given attributes.
      *
      * @param array $attributes
@@ -394,6 +351,17 @@ class FactoryBuilder
     }
 
     /**
+     * Run after making callbacks on a collection of models.
+     *
+     * @param \Illuminate\Support\Collection $models
+     * @return void
+     */
+    public function callAfterMaking($models)
+    {
+        $this->callAfter($this->afterMaking, $models);
+    }
+
+    /**
      * Call after callbacks for each model and state.
      *
      * @param array $afterCallbacks
@@ -445,5 +413,37 @@ class FactoryBuilder
 
             $model->save();
         });
+    }
+
+    /**
+     * Run after creating callbacks on a collection of models.
+     *
+     * @param \Illuminate\Support\Collection $models
+     * @return void
+     */
+    public function callAfterCreating($models)
+    {
+        $this->callAfter($this->afterCreating, $models);
+    }
+
+    /**
+     * Create an array of raw attribute arrays.
+     *
+     * @param array $attributes
+     * @return mixed
+     */
+    public function raw(array $attributes = [])
+    {
+        if ($this->amount === null) {
+            return $this->getRawAttributes($attributes);
+        }
+
+        if ($this->amount < 1) {
+            return [];
+        }
+
+        return array_map(function () use ($attributes) {
+            return $this->getRawAttributes($attributes);
+        }, range(1, $this->amount));
     }
 }

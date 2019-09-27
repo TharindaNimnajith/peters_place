@@ -151,6 +151,17 @@ class ResponseFactory implements FactoryContract
     }
 
     /**
+     * Convert the string to ASCII characters that are equivalent to the given name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function fallbackName($name)
+    {
+        return str_replace('%', '', Str::ascii($name));
+    }
+
+    /**
      * Create a new file download response.
      *
      * @param SplFileInfo|string $file
@@ -250,16 +261,5 @@ class ResponseFactory implements FactoryContract
     public function redirectToIntended($default = '/', $status = 302, $headers = [], $secure = null)
     {
         return $this->redirector->intended($default, $status, $headers, $secure);
-    }
-
-    /**
-     * Convert the string to ASCII characters that are equivalent to the given name.
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function fallbackName($name)
-    {
-        return str_replace('%', '', Str::ascii($name));
     }
 }

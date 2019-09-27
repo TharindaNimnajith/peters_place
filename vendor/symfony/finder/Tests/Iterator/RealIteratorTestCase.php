@@ -11,13 +11,6 @@
 
 namespace Symfony\Component\Finder\Tests\Iterator;
 
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use function is_array;
-use function is_string;
-use function strlen;
-use const DIRECTORY_SEPARATOR;
-
 abstract class RealIteratorTestCase extends IteratorTestCase
 {
     protected static $tmpDir;
@@ -25,7 +18,7 @@ abstract class RealIteratorTestCase extends IteratorTestCase
 
     public static function setUpBeforeClass()
     {
-        self::$tmpDir = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . 'symfony_finder';
+        self::$tmpDir = realpath(sys_get_temp_dir()) . \DIRECTORY_SEPARATOR . 'symfony_finder';
 
         self::$files = [
             '.git/',
@@ -60,7 +53,7 @@ abstract class RealIteratorTestCase extends IteratorTestCase
         }
 
         foreach (self::$files as $file) {
-            if (DIRECTORY_SEPARATOR === $file[strlen($file) - 1]) {
+            if (\DIRECTORY_SEPARATOR === $file[\strlen($file) - 1]) {
                 mkdir($file);
             } else {
                 touch($file);
@@ -76,11 +69,40 @@ abstract class RealIteratorTestCase extends IteratorTestCase
         touch(self::toAbsolute('test.php'), strtotime('2005-10-15'));
     }
 
+    protected static function toAbsolute($files = null)
+    {
+        /*
+         * Without the call to setUpBeforeClass() property can be null.
+         */
+        if (!self::$tmpDir) {
+            self::$tmpDir = realpath(sys_get_temp_dir()) . \DIRECTORY_SEPARATOR . 'symfony_finder';
+        }
+
+        if (\is_array($files)) {
+            $f = [];
+            foreach ($files as $file) {
+                if (\is_array($file)) {
+                    $f[] = self::toAbsolute($file);
+                } else {
+                    $f[] = self::$tmpDir . \DIRECTORY_SEPARATOR . str_replace('/', \DIRECTORY_SEPARATOR, $file);
+                }
+            }
+
+            return $f;
+        }
+
+        if (\is_string($files)) {
+            return self::$tmpDir . \DIRECTORY_SEPARATOR . str_replace('/', \DIRECTORY_SEPARATOR, $files);
+        }
+
+        return self::$tmpDir;
+    }
+
     public static function tearDownAfterClass()
     {
-        $paths = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(self::$tmpDir, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
+        $paths = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator(self::$tmpDir, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($paths as $path) {
@@ -96,40 +118,11 @@ abstract class RealIteratorTestCase extends IteratorTestCase
         }
     }
 
-    protected static function toAbsolute($files = null)
-    {
-        /*
-         * Without the call to setUpBeforeClass() property can be null.
-         */
-        if (!self::$tmpDir) {
-            self::$tmpDir = realpath(sys_get_temp_dir()) . DIRECTORY_SEPARATOR . 'symfony_finder';
-        }
-
-        if (is_array($files)) {
-            $f = [];
-            foreach ($files as $file) {
-                if (is_array($file)) {
-                    $f[] = self::toAbsolute($file);
-                } else {
-                    $f[] = self::$tmpDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $file);
-                }
-            }
-
-            return $f;
-        }
-
-        if (is_string($files)) {
-            return self::$tmpDir . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $files);
-        }
-
-        return self::$tmpDir;
-    }
-
     protected static function toAbsoluteFixtures($files)
     {
         $f = [];
         foreach ($files as $file) {
-            $f[] = realpath(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'Fixtures' . DIRECTORY_SEPARATOR . $file);
+            $f[] = realpath(__DIR__ . \DIRECTORY_SEPARATOR . '..' . \DIRECTORY_SEPARATOR . 'Fixtures' . \DIRECTORY_SEPARATOR . $file);
         }
 
         return $f;

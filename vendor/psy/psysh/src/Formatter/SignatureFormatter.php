@@ -86,18 +86,6 @@ class SignatureFormatter implements Formatter
     }
 
     /**
-     * Print the signature name.
-     *
-     * @param Reflector $reflector
-     *
-     * @return string Formatted name
-     */
-    public static function formatName(Reflector $reflector)
-    {
-        return $reflector->getName();
-    }
-
-    /**
      * Format a function signature.
      *
      * @param ReflectionFunction $reflector
@@ -112,6 +100,18 @@ class SignatureFormatter implements Formatter
             self::formatName($reflector),
             implode(', ', self::formatFunctionParams($reflector))
         );
+    }
+
+    /**
+     * Print the signature name.
+     *
+     * @param Reflector $reflector
+     *
+     * @return string Formatted name
+     */
+    public static function formatName(Reflector $reflector)
+    {
+        return $reflector->getName();
     }
 
     /**

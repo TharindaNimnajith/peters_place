@@ -36,6 +36,13 @@ class RavenHandlerTest extends TestCase
         $this->assertInstanceOf('Monolog\Handler\RavenHandler', $handler);
     }
 
+    protected function getRavenClient()
+    {
+        $dsn = 'http://43f6017361224d098402974103bfc53d:a6a0538fc2934ba2bed32e08741b2cd3@marca.python.live.cheggnet.com:9000/1';
+
+        return new MockRavenClient($dsn);
+    }
+
     public function testDebug()
     {
         $ravenClient = $this->getRavenClient();
@@ -46,6 +53,13 @@ class RavenHandlerTest extends TestCase
 
         $this->assertEquals($ravenClient::DEBUG, $ravenClient->lastData['level']);
         $this->assertContains($record['message'], $ravenClient->lastData['message']);
+    }
+
+    protected function getHandler($ravenClient)
+    {
+        $handler = new RavenHandler($ravenClient);
+
+        return $handler;
     }
 
     public function testWarning()
@@ -150,6 +164,11 @@ class RavenHandlerTest extends TestCase
         $this->assertEquals($record['message'], $ravenClient->lastData['message']);
     }
 
+    private function methodThatThrowsAnException()
+    {
+        throw new Exception('This is an exception');
+    }
+
     public function testHandleBatch()
     {
         $records = $this->getMultipleRecords();
@@ -233,24 +252,5 @@ class RavenHandlerTest extends TestCase
         $record = $this->getRecord(Logger::INFO, 'test', array('release' => $localRelease));
         $handler->handle($record);
         $this->assertEquals($localRelease, $ravenClient->lastData['release']);
-    }
-
-    protected function getRavenClient()
-    {
-        $dsn = 'http://43f6017361224d098402974103bfc53d:a6a0538fc2934ba2bed32e08741b2cd3@marca.python.live.cheggnet.com:9000/1';
-
-        return new MockRavenClient($dsn);
-    }
-
-    protected function getHandler($ravenClient)
-    {
-        $handler = new RavenHandler($ravenClient);
-
-        return $handler;
-    }
-
-    private function methodThatThrowsAnException()
-    {
-        throw new Exception('This is an exception');
     }
 }

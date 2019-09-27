@@ -55,6 +55,19 @@ class ViewServiceProvider extends ServiceProvider
     }
 
     /**
+     * Create a new Factory Instance.
+     *
+     * @param EngineResolver $resolver
+     * @param ViewFinderInterface $finder
+     * @param Dispatcher $events
+     * @return Factory
+     */
+    protected function createFactory($resolver, $finder, $events)
+    {
+        return new Factory($resolver, $finder, $events);
+    }
+
+    /**
      * Register the view finder implementation.
      *
      * @return void
@@ -133,18 +146,5 @@ class ViewServiceProvider extends ServiceProvider
         $resolver->register('blade', function () {
             return new CompilerEngine($this->app['blade.compiler']);
         });
-    }
-
-    /**
-     * Create a new Factory Instance.
-     *
-     * @param EngineResolver $resolver
-     * @param ViewFinderInterface $finder
-     * @param Dispatcher $events
-     * @return Factory
-     */
-    protected function createFactory($resolver, $finder, $events)
-    {
-        return new Factory($resolver, $finder, $events);
     }
 }

@@ -42,17 +42,6 @@ class InsightOpsHandlerTest extends TestCase
         $this->assertRegexp('/testToken \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] test.CRITICAL: Critical write test/', $content);
     }
 
-    public function testWriteBatchContent()
-    {
-        $this->createHandler();
-        $this->handler->handleBatch($this->getMultipleRecords());
-
-        fseek($this->resource, 0);
-        $content = fread($this->resource, 1024);
-
-        $this->assertRegexp('/(testToken \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] .* \[\] \[\]\n){3}/', $content);
-    }
-
     private function createHandler()
     {
         $useSSL = extension_loaded('openssl');
@@ -77,5 +66,16 @@ class InsightOpsHandlerTest extends TestCase
         $this->handler->expects($this->any())
             ->method('closeSocket')
             ->will($this->returnValue(true));
+    }
+
+    public function testWriteBatchContent()
+    {
+        $this->createHandler();
+        $this->handler->handleBatch($this->getMultipleRecords());
+
+        fseek($this->resource, 0);
+        $content = fread($this->resource, 1024);
+
+        $this->assertRegexp('/(testToken \[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] .* \[\] \[\]\n){3}/', $content);
     }
 }

@@ -124,16 +124,6 @@ class StreamHandler extends AbstractProcessingHandler
         }
     }
 
-    /**
-     * Write to stream
-     * @param resource $stream
-     * @param array $record
-     */
-    protected function streamWrite($stream, array $record)
-    {
-        fwrite($stream, (string)$record['formatted']);
-    }
-
     private function createDir()
     {
         // Do not try to create dir if it has already been tried.
@@ -171,6 +161,16 @@ class StreamHandler extends AbstractProcessingHandler
         }
 
         return;
+    }
+
+    /**
+     * Write to stream
+     * @param resource $stream
+     * @param array $record
+     */
+    protected function streamWrite($stream, array $record)
+    {
+        fwrite($stream, (string)$record['formatted']);
     }
 
     private function customErrorHandler($code, $msg)

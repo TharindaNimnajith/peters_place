@@ -42,6 +42,23 @@ class Config
     }
 
     /**
+     * Try to retrieve a default setting from a config fallback.
+     *
+     * @param string $key
+     * @param mixed $default
+     *
+     * @return mixed config setting or default when not found
+     */
+    protected function getDefault($key, $default)
+    {
+        if (!$this->fallback) {
+            return $default;
+        }
+
+        return $this->fallback->get($key, $default);
+    }
+
+    /**
      * Check if an item exists by key.
      *
      * @param string $key
@@ -86,22 +103,5 @@ class Config
         $this->fallback = $fallback;
 
         return $this;
-    }
-
-    /**
-     * Try to retrieve a default setting from a config fallback.
-     *
-     * @param string $key
-     * @param mixed $default
-     *
-     * @return mixed config setting or default when not found
-     */
-    protected function getDefault($key, $default)
-    {
-        if (!$this->fallback) {
-            return $default;
-        }
-
-        return $this->fallback->get($key, $default);
     }
 }

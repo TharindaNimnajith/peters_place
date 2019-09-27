@@ -961,6 +961,26 @@ class Command
         }
     }
 
+    private function exitWithErrorMessage(string $message): void
+    {
+        $this->printVersionString();
+
+        print $message . PHP_EOL;
+
+        exit(TestRunner::FAILURE_EXIT);
+    }
+
+    private function printVersionString(): void
+    {
+        if ($this->versionStringPrinted) {
+            return;
+        }
+
+        print Version::getVersionString() . PHP_EOL . PHP_EOL;
+
+        $this->versionStringPrinted = true;
+    }
+
     /**
      * Show the help message.
      */
@@ -1075,6 +1095,43 @@ Miscellaneous Options:
 EOT;
     }
 
+    private function handleOrderByOption(string $value): void
+    {
+        foreach (explode(',', $value) as $order) {
+            switch ($order) {
+                case 'default':
+                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_DEFAULT;
+                    $this->arguments['executionOrderDefects'] = TestSuiteSorter::ORDER_DEFAULT;
+                    $this->arguments['resolveDependencies'] = false;
+
+                    break;
+
+                case 'reverse':
+                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_REVERSED;
+
+                    break;
+
+                case 'random':
+                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_RANDOMIZED;
+
+                    break;
+
+                case 'defects':
+                    $this->arguments['executionOrderDefects'] = TestSuiteSorter::ORDER_DEFECTS_FIRST;
+
+                    break;
+
+                case 'depends':
+                    $this->arguments['resolveDependencies'] = true;
+
+                    break;
+
+                default:
+                    $this->exitWithErrorMessage("unrecognized --order-by option: $order");
+            }
+        }
+    }
+
     protected function handleVersionCheck(): void
     {
         $this->printVersionString();
@@ -1156,6 +1213,45 @@ EOT;
         }
     }
 
+    private function handleExtensions(string $directory): void
+    {
+        $facade = new FileIteratorFacade;
+
+        foreach ($facade->getFilesAsArray($directory, '.phar') as $file) {
+            if (!file_exists('phar://' . $file . '/manifest.xml')) {
+                $this->arguments['notLoadedExtensions'][] = $file . ' is not an extension for PHPUnit';
+
+                continue;
+            }
+
+            try {
+                $applicationName = new ApplicationName('phpunit/phpunit');
+                $version = new PharIoVersion(Version::series());
+                $manifest = ManifestLoader::fromFile('phar://' . $file . '/manifest.xml');
+
+                if (!$manifest->isExtensionFor($applicationName)) {
+                    $this->arguments['notLoadedExtensions'][] = $file . ' is not an extension for PHPUnit';
+
+                    continue;
+                }
+
+                if (!$manifest->isExtensionFor($applicationName, $version)) {
+                    $this->arguments['notLoadedExtensions'][] = $file . ' is not compatible with this version of PHPUnit';
+
+                    continue;
+                }
+            } catch (ManifestException $e) {
+                $this->arguments['notLoadedExtensions'][] = $file . ': ' . $e->getMessage();
+
+                continue;
+            }
+
+            require $file;
+
+            $this->arguments['loadedExtensions'][] = $manifest->getName() . ' ' . $manifest->getVersion()->getVersionString();
+        }
+    }
+
     /**
      * Handles the loading of the PHPUnit\Util\Printer implementation.
      *
@@ -1232,102 +1328,6 @@ EOT;
     protected function createRunner(): TestRunner
     {
         return new TestRunner($this->arguments['loader']);
-    }
-
-    private function exitWithErrorMessage(string $message): void
-    {
-        $this->printVersionString();
-
-        print $message . PHP_EOL;
-
-        exit(TestRunner::FAILURE_EXIT);
-    }
-
-    private function printVersionString(): void
-    {
-        if ($this->versionStringPrinted) {
-            return;
-        }
-
-        print Version::getVersionString() . PHP_EOL . PHP_EOL;
-
-        $this->versionStringPrinted = true;
-    }
-
-    private function handleOrderByOption(string $value): void
-    {
-        foreach (explode(',', $value) as $order) {
-            switch ($order) {
-                case 'default':
-                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_DEFAULT;
-                    $this->arguments['executionOrderDefects'] = TestSuiteSorter::ORDER_DEFAULT;
-                    $this->arguments['resolveDependencies'] = false;
-
-                    break;
-
-                case 'reverse':
-                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_REVERSED;
-
-                    break;
-
-                case 'random':
-                    $this->arguments['executionOrder'] = TestSuiteSorter::ORDER_RANDOMIZED;
-
-                    break;
-
-                case 'defects':
-                    $this->arguments['executionOrderDefects'] = TestSuiteSorter::ORDER_DEFECTS_FIRST;
-
-                    break;
-
-                case 'depends':
-                    $this->arguments['resolveDependencies'] = true;
-
-                    break;
-
-                default:
-                    $this->exitWithErrorMessage("unrecognized --order-by option: $order");
-            }
-        }
-    }
-
-    private function handleExtensions(string $directory): void
-    {
-        $facade = new FileIteratorFacade;
-
-        foreach ($facade->getFilesAsArray($directory, '.phar') as $file) {
-            if (!file_exists('phar://' . $file . '/manifest.xml')) {
-                $this->arguments['notLoadedExtensions'][] = $file . ' is not an extension for PHPUnit';
-
-                continue;
-            }
-
-            try {
-                $applicationName = new ApplicationName('phpunit/phpunit');
-                $version = new PharIoVersion(Version::series());
-                $manifest = ManifestLoader::fromFile('phar://' . $file . '/manifest.xml');
-
-                if (!$manifest->isExtensionFor($applicationName)) {
-                    $this->arguments['notLoadedExtensions'][] = $file . ' is not an extension for PHPUnit';
-
-                    continue;
-                }
-
-                if (!$manifest->isExtensionFor($applicationName, $version)) {
-                    $this->arguments['notLoadedExtensions'][] = $file . ' is not compatible with this version of PHPUnit';
-
-                    continue;
-                }
-            } catch (ManifestException $e) {
-                $this->arguments['notLoadedExtensions'][] = $file . ': ' . $e->getMessage();
-
-                continue;
-            }
-
-            require $file;
-
-            $this->arguments['loadedExtensions'][] = $manifest->getName() . ' ' . $manifest->getVersion()->getVersionString();
-        }
     }
 
     private function handleListGroups(TestSuite $suite, bool $exit): int

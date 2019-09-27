@@ -11,19 +11,12 @@
 
 namespace Symfony\Component\Mime\Part;
 
-use ReflectionProperty;
 use Symfony\Component\Mime\Encoder\Base64ContentEncoder;
 use Symfony\Component\Mime\Encoder\ContentEncoderInterface;
 use Symfony\Component\Mime\Encoder\EightBitContentEncoder;
 use Symfony\Component\Mime\Encoder\QpContentEncoder;
 use Symfony\Component\Mime\Exception\InvalidArgumentException;
 use Symfony\Component\Mime\Header\Headers;
-use TypeError;
-use function get_class;
-use function gettype;
-use function is_object;
-use function is_resource;
-use function is_string;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -48,8 +41,8 @@ class TextPart extends AbstractPart
     {
         parent::__construct();
 
-        if (!is_string($body) && !is_resource($body)) {
-            throw new TypeError(sprintf('The body of "%s" must be a string or a resource (got "%s").', self::class, is_object($body) ? get_class($body) : gettype($body)));
+        if (!\is_string($body) && !\is_resource($body)) {
+            throw new \TypeError(sprintf('The body of "%s" must be a string or a resource (got "%s").', self::class, \is_object($body) ? \get_class($body) : \gettype($body)));
         }
 
         $this->body = $body;
@@ -64,6 +57,15 @@ class TextPart extends AbstractPart
             }
             $this->encoding = $encoding;
         }
+    }
+
+    private function chooseEncoding(): string
+    {
+        if (null === $this->charset) {
+            return 'base64';
+        }
+
+        return 'quoted-printable';
     }
 
     /**
@@ -95,9 +97,22 @@ class TextPart extends AbstractPart
         return $this->getEncoder()->encodeString($this->getBody(), $this->charset);
     }
 
+    private function getEncoder(): ContentEncoderInterface
+    {
+        if ('8bit' === $this->encoding) {
+            return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new EightBitContentEncoder());
+        }
+
+        if ('quoted-printable' === $this->encoding) {
+            return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new QpContentEncoder());
+        }
+
+        return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new Base64ContentEncoder());
+    }
+
     public function getBody(): string
     {
-        if (!is_resource($this->body)) {
+        if (!\is_resource($this->body)) {
             return $this->body;
         }
 
@@ -110,7 +125,7 @@ class TextPart extends AbstractPart
 
     public function bodyToIterable(): iterable
     {
-        if (is_resource($this->body)) {
+        if (\is_resource($this->body)) {
             if (stream_get_meta_data($this->body)['seekable'] ?? false) {
                 rewind($this->body);
             }
@@ -156,7 +171,7 @@ class TextPart extends AbstractPart
     public function __sleep()
     {
         // convert resources to strings for serialization
-        if (is_resource($this->body)) {
+        if (\is_resource($this->body)) {
             $this->body = $this->getBody();
         }
 
@@ -167,31 +182,9 @@ class TextPart extends AbstractPart
 
     public function __wakeup()
     {
-        $r = new ReflectionProperty(AbstractPart::class, 'headers');
+        $r = new \ReflectionProperty(AbstractPart::class, 'headers');
         $r->setAccessible(true);
         $r->setValue($this, $this->_headers);
         unset($this->_headers);
-    }
-
-    private function chooseEncoding(): string
-    {
-        if (null === $this->charset) {
-            return 'base64';
-        }
-
-        return 'quoted-printable';
-    }
-
-    private function getEncoder(): ContentEncoderInterface
-    {
-        if ('8bit' === $this->encoding) {
-            return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new EightBitContentEncoder());
-        }
-
-        if ('quoted-printable' === $this->encoding) {
-            return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new QpContentEncoder());
-        }
-
-        return self::$encoders[$this->encoding] ?? (self::$encoders[$this->encoding] = new Base64ContentEncoder());
     }
 }

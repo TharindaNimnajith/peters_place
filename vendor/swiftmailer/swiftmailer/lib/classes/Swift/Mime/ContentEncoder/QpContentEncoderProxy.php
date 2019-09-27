@@ -71,6 +71,14 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     }
 
     /**
+     * @return Swift_Mime_ContentEncoder
+     */
+    private function getEncoder()
+    {
+        return 'utf-8' === $this->charset ? $this->nativeEncoder : $this->safeEncoder;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
@@ -84,13 +92,5 @@ class Swift_Mime_ContentEncoder_QpContentEncoderProxy implements Swift_Mime_Cont
     public function encodeString($string, $firstLineOffset = 0, $maxLineLength = 0)
     {
         return $this->getEncoder()->encodeString($string, $firstLineOffset, $maxLineLength);
-    }
-
-    /**
-     * @return Swift_Mime_ContentEncoder
-     */
-    private function getEncoder()
-    {
-        return 'utf-8' === $this->charset ? $this->nativeEncoder : $this->safeEncoder;
     }
 }

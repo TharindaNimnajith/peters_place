@@ -61,6 +61,19 @@ class DatabaseUserProvider implements UserProvider
     }
 
     /**
+     * Get the generic user.
+     *
+     * @param mixed $user
+     * @return GenericUser|null
+     */
+    protected function getGenericUser($user)
+    {
+        if (!is_null($user)) {
+            return new GenericUser((array)$user);
+        }
+    }
+
+    /**
      * Retrieve a user by their unique identifier and "remember me" token.
      *
      * @param mixed $identifier
@@ -142,18 +155,5 @@ class DatabaseUserProvider implements UserProvider
         return $this->hasher->check(
             $credentials['password'], $user->getAuthPassword()
         );
-    }
-
-    /**
-     * Get the generic user.
-     *
-     * @param mixed $user
-     * @return GenericUser|null
-     */
-    protected function getGenericUser($user)
-    {
-        if (!is_null($user)) {
-            return new GenericUser((array)$user);
-        }
     }
 }

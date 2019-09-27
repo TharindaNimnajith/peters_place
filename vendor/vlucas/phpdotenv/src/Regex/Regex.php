@@ -23,22 +23,6 @@ class Regex
     }
 
     /**
-     * Perform a preg replace callback, wrapping up the result.
-     *
-     * @param string $pattern
-     * @param callable $callback
-     * @param string $subject
-     *
-     * @return Result
-     */
-    public static function replaceCallback($pattern, callable $callback, $subject)
-    {
-        return self::pregAndWrap(function ($subject) use ($pattern, $callback) {
-            return preg_replace_callback($pattern, $callback, $subject);
-        }, $subject);
-    }
-
-    /**
      * Perform a preg operation, wrapping up the result.
      *
      * @param callable $operation
@@ -81,5 +65,21 @@ class Regex
                 );
             })
             ->getOrElse('PREG_ERROR');
+    }
+
+    /**
+     * Perform a preg replace callback, wrapping up the result.
+     *
+     * @param string $pattern
+     * @param callable $callback
+     * @param string $subject
+     *
+     * @return Result
+     */
+    public static function replaceCallback($pattern, callable $callback, $subject)
+    {
+        return self::pregAndWrap(function ($subject) use ($pattern, $callback) {
+            return preg_replace_callback($pattern, $callback, $subject);
+        }, $subject);
     }
 }

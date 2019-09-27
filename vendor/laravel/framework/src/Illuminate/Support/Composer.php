@@ -61,19 +61,6 @@ class Composer
     }
 
     /**
-     * Set the working path used by the class.
-     *
-     * @param string $path
-     * @return $this
-     */
-    public function setWorkingPath($path)
-    {
-        $this->workingPath = realpath($path);
-
-        return $this;
-    }
-
-    /**
      * Get the composer command for the environment.
      *
      * @return array
@@ -106,5 +93,18 @@ class Composer
     protected function getProcess(array $command)
     {
         return (new Process($command, $this->workingPath))->setTimeout(null);
+    }
+
+    /**
+     * Set the working path used by the class.
+     *
+     * @param string $path
+     * @return $this
+     */
+    public function setWorkingPath($path)
+    {
+        $this->workingPath = realpath($path);
+
+        return $this;
     }
 }

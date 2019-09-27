@@ -366,45 +366,6 @@ class Company extends \Faker\Provider\Company
     );
 
     /**
-     * Generates a siren number (9 digits) that passes the Luhn check.
-     *
-     * @see http://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_entreprises
-     * @return string
-     */
-    public static function siren($formatted = true)
-    {
-        $siren = self::numerify('%#######');
-        $siren .= Luhn::computeCheckDigit($siren);
-        if ($formatted) {
-            $siren = substr($siren, 0, 3) . ' ' . substr($siren, 3, 3) . ' ' . substr($siren, 6, 3);
-        }
-
-        return $siren;
-    }
-
-    /**
-     * Validates a french catch phrase.
-     *
-     * @param string $catchPhrase The catch phrase to validate.
-     *
-     * @return boolean (true if valid, false otherwise)
-     */
-    protected static function isCatchPhraseValid($catchPhrase)
-    {
-        foreach (static::$wordsWhichShouldNotAppearTwice as $word) {
-            // Fastest way to check if a piece of word does not appear twice.
-            $beginPos = strpos($catchPhrase, $word);
-            $endPos = strrpos($catchPhrase, $word);
-
-            if ($beginPos !== false && $beginPos != $endPos) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Returns a random catch phrase noun.
      *
      * @return string
@@ -454,6 +415,28 @@ class Company extends \Faker\Provider\Company
     }
 
     /**
+     * Validates a french catch phrase.
+     *
+     * @param string $catchPhrase The catch phrase to validate.
+     *
+     * @return boolean (true if valid, false otherwise)
+     */
+    protected static function isCatchPhraseValid($catchPhrase)
+    {
+        foreach (static::$wordsWhichShouldNotAppearTwice as $word) {
+            // Fastest way to check if a piece of word does not appear twice.
+            $beginPos = strpos($catchPhrase, $word);
+            $endPos = strrpos($catchPhrase, $word);
+
+            if ($beginPos !== false && $beginPos != $endPos) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Generates a siret number (14 digits) that passes the Luhn check.
      *
      * @see http://fr.wikipedia.org/wiki/Syst%C3%A8me_d'identification_du_r%C3%A9pertoire_des_%C3%A9tablissements
@@ -470,5 +453,22 @@ class Company extends \Faker\Provider\Company
         }
 
         return $siret;
+    }
+
+    /**
+     * Generates a siren number (9 digits) that passes the Luhn check.
+     *
+     * @see http://fr.wikipedia.org/wiki/Syst%C3%A8me_d%27identification_du_r%C3%A9pertoire_des_entreprises
+     * @return string
+     */
+    public static function siren($formatted = true)
+    {
+        $siren = self::numerify('%#######');
+        $siren .= Luhn::computeCheckDigit($siren);
+        if ($formatted) {
+            $siren = substr($siren, 0, 3) . ' ' . substr($siren, 3, 3) . ' ' . substr($siren, 6, 3);
+        }
+
+        return $siren;
     }
 }

@@ -121,6 +121,40 @@ class DynamoDbStore implements Store, LockProvider
     }
 
     /**
+     * Determine if the given item is expired.
+     *
+     * @param array $item
+     * @param DateTimeInterface|null $expiration
+     * @return bool
+     */
+    protected function isExpired(array $item, $expiration = null)
+    {
+        $expiration = $expiration ?: Carbon::now();
+
+        return isset($item[$this->expirationAttribute]) &&
+            $expiration->getTimestamp() >= $item[$this->expirationAttribute]['N'];
+    }
+
+    /**
+     * Unserialize the value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function unserialize($value)
+    {
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
+            return (int)$value;
+        }
+
+        if (is_numeric($value)) {
+            return (float)$value;
+        }
+
+        return unserialize($value);
+    }
+
+    /**
      * Retrieve multiple items from the cache by key.
      *
      * Items not found in the cache will have a null value.
@@ -201,6 +235,41 @@ class DynamoDbStore implements Store, LockProvider
         ]);
 
         return true;
+    }
+
+    /**
+     * Get the UNIX timestamp for the given number of seconds.
+     *
+     * @param int $seconds
+     * @return int
+     */
+    protected function toTimestamp($seconds)
+    {
+        return $seconds > 0
+            ? $this->availableAt($seconds)
+            : Carbon::now()->getTimestamp();
+    }
+
+    /**
+     * Get the DynamoDB type for the given value.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function type($value)
+    {
+        return is_numeric($value) ? 'N' : 'S';
+    }
+
+    /**
+     * Serialize the value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function serialize($value)
+    {
+        return is_numeric($value) ? (string)$value : serialize($value);
     }
 
     /**
@@ -453,74 +522,5 @@ class DynamoDbStore implements Store, LockProvider
     public function setPrefix($prefix)
     {
         $this->prefix = !empty($prefix) ? $prefix . ':' : '';
-    }
-
-    /**
-     * Determine if the given item is expired.
-     *
-     * @param array $item
-     * @param DateTimeInterface|null $expiration
-     * @return bool
-     */
-    protected function isExpired(array $item, $expiration = null)
-    {
-        $expiration = $expiration ?: Carbon::now();
-
-        return isset($item[$this->expirationAttribute]) &&
-            $expiration->getTimestamp() >= $item[$this->expirationAttribute]['N'];
-    }
-
-    /**
-     * Unserialize the value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function unserialize($value)
-    {
-        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
-            return (int)$value;
-        }
-
-        if (is_numeric($value)) {
-            return (float)$value;
-        }
-
-        return unserialize($value);
-    }
-
-    /**
-     * Get the UNIX timestamp for the given number of seconds.
-     *
-     * @param int $seconds
-     * @return int
-     */
-    protected function toTimestamp($seconds)
-    {
-        return $seconds > 0
-            ? $this->availableAt($seconds)
-            : Carbon::now()->getTimestamp();
-    }
-
-    /**
-     * Get the DynamoDB type for the given value.
-     *
-     * @param mixed $value
-     * @return string
-     */
-    protected function type($value)
-    {
-        return is_numeric($value) ? 'N' : 'S';
-    }
-
-    /**
-     * Serialize the value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function serialize($value)
-    {
-        return is_numeric($value) ? (string)$value : serialize($value);
     }
 }

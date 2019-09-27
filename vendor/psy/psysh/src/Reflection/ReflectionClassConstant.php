@@ -79,26 +79,6 @@ class ReflectionClassConstant implements Reflector
     }
 
     /**
-     * Get a ReflectionClassConstant instance.
-     *
-     * In PHP >= 7.1, this will return a \ReflectionClassConstant from the
-     * standard reflection library. For older PHP, it will return this polyfill.
-     *
-     * @param string|object $class
-     * @param string $name
-     *
-     * @return ReflectionClassConstant|\ReflectionClassConstant
-     */
-    public static function create($class, $name)
-    {
-        if (class_exists('\\ReflectionClassConstant')) {
-            return new \ReflectionClassConstant($class, $name);
-        }
-
-        return new self($class, $name);
-    }
-
-    /**
      * Gets the value of the constant.
      *
      * @return mixed
@@ -116,6 +96,26 @@ class ReflectionClassConstant implements Reflector
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get a ReflectionClassConstant instance.
+     *
+     * In PHP >= 7.1, this will return a \ReflectionClassConstant from the
+     * standard reflection library. For older PHP, it will return this polyfill.
+     *
+     * @param string|object $class
+     * @param string $name
+     *
+     * @return ReflectionClassConstant|\ReflectionClassConstant
+     */
+    public static function create($class, $name)
+    {
+        if (class_exists('\\ReflectionClassConstant')) {
+            return new \ReflectionClassConstant($class, $name);
+        }
+
+        return new self($class, $name);
     }
 
     /**

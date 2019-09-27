@@ -81,136 +81,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Compile a delete statement into SQL.
-     *
-     * @param Builder $query
-     * @return string
-     */
-    public function compileDelete(Builder $query)
-    {
-        $table = $this->wrapTable($query->from);
-
-        $where = is_array($query->wheres) ? $this->compileWheres($query) : '';
-
-        return isset($query->joins)
-            ? $this->compileDeleteWithJoins($query, $table, $where)
-            : trim("delete from {$table} {$where}");
-    }
-
-    /**
-     * Wrap a table in keyword identifiers.
-     *
-     * @param Expression|string $table
-     * @return string
-     */
-    public function wrapTable($table)
-    {
-        if (!$this->isExpression($table)) {
-            return $this->wrapTableValuedFunction(parent::wrapTable($table));
-        }
-
-        return $this->getValue($table);
-    }
-
-    /**
-     * Compile a truncate table statement into SQL.
-     *
-     * @param Builder $query
-     * @return array
-     */
-    public function compileTruncate(Builder $query)
-    {
-        return ['truncate table ' . $this->wrapTable($query->from) => []];
-    }
-
-    /**
-     * Compile an update statement into SQL.
-     *
-     * @param Builder $query
-     * @param array $values
-     * @return string
-     */
-    public function compileUpdate(Builder $query, $values)
-    {
-        [$table, $alias] = $this->parseUpdateTable($query->from);
-
-        // Each one of the columns in the update statements needs to be wrapped in the
-        // keyword identifiers, also a place-holder needs to be created for each of
-        // the values in the list of bindings so we can make the sets statements.
-        $columns = collect($values)->map(function ($value, $key) {
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
-
-        // If the query has any "join" clauses, we will setup the joins on the builder
-        // and compile them so we can attach them to this update, as update queries
-        // can get join statements to attach to other tables when they're needed.
-        $joins = '';
-
-        if (isset($query->joins)) {
-            $joins = ' ' . $this->compileJoins($query, $query->joins);
-        }
-
-        // Of course, update queries may also be constrained by where clauses so we'll
-        // need to compile the where clauses and attach it to the query so only the
-        // intended records are updated by the SQL statements we generate to run.
-        $where = $this->compileWheres($query);
-
-        if (!empty($joins)) {
-            return trim("update {$alias} set {$columns} from {$table}{$joins} {$where}");
-        }
-
-        return trim("update {$table}{$joins} set $columns $where");
-    }
-
-    /**
-     * Prepare the bindings for an update statement.
-     *
-     * @param array $bindings
-     * @param array $values
-     * @return array
-     */
-    public function prepareBindingsForUpdate(array $bindings, array $values)
-    {
-        $cleanBindings = Arr::except($bindings, 'select');
-
-        return array_values(
-            array_merge($values, Arr::flatten($cleanBindings))
-        );
-    }
-
-    /**
-     * Compile the SQL statement to define a savepoint.
-     *
-     * @param string $name
-     * @return string
-     */
-    public function compileSavepoint($name)
-    {
-        return 'SAVE TRANSACTION ' . $name;
-    }
-
-    /**
-     * Compile the SQL statement to execute a savepoint rollback.
-     *
-     * @param string $name
-     * @return string
-     */
-    public function compileSavepointRollBack($name)
-    {
-        return 'ROLLBACK TRANSACTION ' . $name;
-    }
-
-    /**
-     * Get the format for database stored dates.
-     *
-     * @return string
-     */
-    public function getDateFormat()
-    {
-        return 'Y-m-d H:i:s.v';
-    }
-
-    /**
      * Create a full ANSI offset clause for the query.
      *
      * @param Builder $query
@@ -286,6 +156,38 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
+     * Compile a delete statement into SQL.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    public function compileDelete(Builder $query)
+    {
+        $table = $this->wrapTable($query->from);
+
+        $where = is_array($query->wheres) ? $this->compileWheres($query) : '';
+
+        return isset($query->joins)
+            ? $this->compileDeleteWithJoins($query, $table, $where)
+            : trim("delete from {$table} {$where}");
+    }
+
+    /**
+     * Wrap a table in keyword identifiers.
+     *
+     * @param Expression|string $table
+     * @return string
+     */
+    public function wrapTable($table)
+    {
+        if (!$this->isExpression($table)) {
+            return $this->wrapTableValuedFunction(parent::wrapTable($table));
+        }
+
+        return $this->getValue($table);
+    }
+
+    /**
      * Wrap a table in keyword identifiers.
      *
      * @param string $table
@@ -319,6 +221,56 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
+     * Compile a truncate table statement into SQL.
+     *
+     * @param Builder $query
+     * @return array
+     */
+    public function compileTruncate(Builder $query)
+    {
+        return ['truncate table ' . $this->wrapTable($query->from) => []];
+    }
+
+    /**
+     * Compile an update statement into SQL.
+     *
+     * @param Builder $query
+     * @param array $values
+     * @return string
+     */
+    public function compileUpdate(Builder $query, $values)
+    {
+        [$table, $alias] = $this->parseUpdateTable($query->from);
+
+        // Each one of the columns in the update statements needs to be wrapped in the
+        // keyword identifiers, also a place-holder needs to be created for each of
+        // the values in the list of bindings so we can make the sets statements.
+        $columns = collect($values)->map(function ($value, $key) {
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+
+        // If the query has any "join" clauses, we will setup the joins on the builder
+        // and compile them so we can attach them to this update, as update queries
+        // can get join statements to attach to other tables when they're needed.
+        $joins = '';
+
+        if (isset($query->joins)) {
+            $joins = ' ' . $this->compileJoins($query, $query->joins);
+        }
+
+        // Of course, update queries may also be constrained by where clauses so we'll
+        // need to compile the where clauses and attach it to the query so only the
+        // intended records are updated by the SQL statements we generate to run.
+        $where = $this->compileWheres($query);
+
+        if (!empty($joins)) {
+            return trim("update {$alias} set {$columns} from {$table}{$joins} {$where}");
+        }
+
+        return trim("update {$table}{$joins} set $columns $where");
+    }
+
+    /**
      * Get the table and alias for the given table.
      *
      * @param string $table
@@ -333,6 +285,54 @@ class SqlServerGrammar extends Grammar
         }
 
         return [$table, $alias];
+    }
+
+    /**
+     * Prepare the bindings for an update statement.
+     *
+     * @param array $bindings
+     * @param array $values
+     * @return array
+     */
+    public function prepareBindingsForUpdate(array $bindings, array $values)
+    {
+        $cleanBindings = Arr::except($bindings, 'select');
+
+        return array_values(
+            array_merge($values, Arr::flatten($cleanBindings))
+        );
+    }
+
+    /**
+     * Compile the SQL statement to define a savepoint.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function compileSavepoint($name)
+    {
+        return 'SAVE TRANSACTION ' . $name;
+    }
+
+    /**
+     * Compile the SQL statement to execute a savepoint rollback.
+     *
+     * @param string $name
+     * @return string
+     */
+    public function compileSavepointRollBack($name)
+    {
+        return 'ROLLBACK TRANSACTION ' . $name;
+    }
+
+    /**
+     * Get the format for database stored dates.
+     *
+     * @return string
+     */
+    public function getDateFormat()
+    {
+        return 'Y-m-d H:i:s.v';
     }
 
     /**

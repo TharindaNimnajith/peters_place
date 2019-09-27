@@ -71,39 +71,6 @@ class FileLoader implements Loader
     }
 
     /**
-     * Add a new namespace to the loader.
-     *
-     * @param string $namespace
-     * @param string $hint
-     * @return void
-     */
-    public function addNamespace($namespace, $hint)
-    {
-        $this->hints[$namespace] = $hint;
-    }
-
-    /**
-     * Add a new JSON path to the loader.
-     *
-     * @param string $path
-     * @return void
-     */
-    public function addJsonPath($path)
-    {
-        $this->jsonPaths[] = $path;
-    }
-
-    /**
-     * Get an array of all the registered namespaces.
-     *
-     * @return array
-     */
-    public function namespaces()
-    {
-        return $this->hints;
-    }
-
-    /**
      * Load a locale from the given JSON file path.
      *
      * @param string $locale
@@ -183,5 +150,38 @@ class FileLoader implements Loader
         }
 
         return $lines;
+    }
+
+    /**
+     * Add a new namespace to the loader.
+     *
+     * @param string $namespace
+     * @param string $hint
+     * @return void
+     */
+    public function addNamespace($namespace, $hint)
+    {
+        $this->hints[$namespace] = $hint;
+    }
+
+    /**
+     * Add a new JSON path to the loader.
+     *
+     * @param string $path
+     * @return void
+     */
+    public function addJsonPath($path)
+    {
+        $this->jsonPaths[] = $path;
+    }
+
+    /**
+     * Get an array of all the registered namespaces.
+     *
+     * @return array
+     */
+    public function namespaces()
+    {
+        return $this->hints;
     }
 }

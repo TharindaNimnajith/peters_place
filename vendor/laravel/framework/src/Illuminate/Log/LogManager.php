@@ -72,6 +72,25 @@ class LogManager implements LoggerInterface
     }
 
     /**
+     * Create an aggregate log driver instance.
+     *
+     * @param array $config
+     * @return LoggerInterface
+     */
+    protected function createStackDriver(array $config)
+    {
+        $handlers = collect($config['channels'])->flatMap(function ($channel) {
+            return $this->channel($channel)->getHandlers();
+        })->all();
+
+        if ($config['ignore_exceptions'] ?? false) {
+            $handlers = [new WhatFailureGroupHandler($handlers)];
+        }
+
+        return new Monolog($this->parseChannel($config), $handlers);
+    }
+
+    /**
      * Get a log channel instance.
      *
      * @param string|null $channel
@@ -91,6 +110,164 @@ class LogManager implements LoggerInterface
     public function driver($driver = null)
     {
         return $this->get($driver ?? $this->getDefaultDriver());
+    }
+
+    /**
+     * Attempt to get the log from the local cache.
+     *
+     * @param string $name
+     * @return LoggerInterface
+     */
+    protected function get($name)
+    {
+        try {
+            return $this->channels[$name] ?? with($this->resolve($name), function ($logger) use ($name) {
+                    return $this->channels[$name] = $this->tap($name, new Logger($logger, $this->app['events']));
+                });
+        } catch (Throwable $e) {
+            return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
+                $logger->emergency('Unable to create configured logger. Using emergency logger.', [
+                    'exception' => $e,
+                ]);
+            });
+        }
+    }
+
+    /**
+     * Resolve the given log instance by name.
+     *
+     * @param string $name
+     * @return LoggerInterface
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function resolve($name)
+    {
+        $config = $this->configurationFor($name);
+
+        if (is_null($config)) {
+            throw new InvalidArgumentException("Log [{$name}] is not defined.");
+        }
+
+        if (isset($this->customCreators[$config['driver']])) {
+            return $this->callCustomCreator($config);
+        }
+
+        $driverMethod = 'create' . ucfirst($config['driver']) . 'Driver';
+
+        if (method_exists($this, $driverMethod)) {
+            return $this->{$driverMethod}($config);
+        }
+
+        throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
+    }
+
+    /**
+     * Get the log connection configuration.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function configurationFor($name)
+    {
+        return $this->app['config']["logging.channels.{$name}"];
+    }
+
+    /**
+     * Call a custom driver creator.
+     *
+     * @param array $config
+     * @return mixed
+     */
+    protected function callCustomCreator(array $config)
+    {
+        return $this->customCreators[$config['driver']]($this->app, $config);
+    }
+
+    /**
+     * Apply the configured taps for the logger.
+     *
+     * @param string $name
+     * @param Logger $logger
+     * @return Logger
+     */
+    protected function tap($name, Logger $logger)
+    {
+        foreach ($this->configurationFor($name)['tap'] ?? [] as $tap) {
+            [$class, $arguments] = $this->parseTap($tap);
+
+            $this->app->make($class)->__invoke($logger, ...explode(',', $arguments));
+        }
+
+        return $logger;
+    }
+
+    /**
+     * Parse the given tap class string into a class name and arguments string.
+     *
+     * @param string $tap
+     * @return array
+     */
+    protected function parseTap($tap)
+    {
+        return Str::contains($tap, ':') ? explode(':', $tap, 2) : [$tap, ''];
+    }
+
+    /**
+     * Create an emergency log handler to avoid white screens of death.
+     *
+     * @return LoggerInterface
+     */
+    protected function createEmergencyLogger()
+    {
+        return new Logger(new Monolog('laravel', $this->prepareHandlers([new StreamHandler(
+            $this->app->storagePath() . '/logs/laravel.log', $this->level(['level' => 'debug'])
+        )])), $this->app['events']);
+    }
+
+    /**
+     * Prepare the handlers for usage by Monolog.
+     *
+     * @param array $handlers
+     * @return array
+     */
+    protected function prepareHandlers(array $handlers)
+    {
+        foreach ($handlers as $key => $handler) {
+            $handlers[$key] = $this->prepareHandler($handler);
+        }
+
+        return $handlers;
+    }
+
+    /**
+     * Prepare the handler for usage by Monolog.
+     *
+     * @param HandlerInterface $handler
+     * @param array $config
+     * @return HandlerInterface
+     */
+    protected function prepareHandler(HandlerInterface $handler, array $config = [])
+    {
+        if (!isset($config['formatter'])) {
+            $handler->setFormatter($this->formatter());
+        } elseif ($config['formatter'] !== 'default') {
+            $handler->setFormatter($this->app->make($config['formatter'], $config['formatter_with'] ?? []));
+        }
+
+        return $handler;
+    }
+
+    /**
+     * Get a Monolog formatter instance.
+     *
+     * @return FormatterInterface
+     */
+    protected function formatter()
+    {
+        return tap(new LineFormatter(null, null, true, true), function ($formatter) {
+            $formatter->includeStacktraces();
+        });
     }
 
     /**
@@ -267,183 +444,6 @@ class LogManager implements LoggerInterface
     public function __call($method, $parameters)
     {
         return $this->driver()->$method(...$parameters);
-    }
-
-    /**
-     * Create an aggregate log driver instance.
-     *
-     * @param array $config
-     * @return LoggerInterface
-     */
-    protected function createStackDriver(array $config)
-    {
-        $handlers = collect($config['channels'])->flatMap(function ($channel) {
-            return $this->channel($channel)->getHandlers();
-        })->all();
-
-        if ($config['ignore_exceptions'] ?? false) {
-            $handlers = [new WhatFailureGroupHandler($handlers)];
-        }
-
-        return new Monolog($this->parseChannel($config), $handlers);
-    }
-
-    /**
-     * Attempt to get the log from the local cache.
-     *
-     * @param string $name
-     * @return LoggerInterface
-     */
-    protected function get($name)
-    {
-        try {
-            return $this->channels[$name] ?? with($this->resolve($name), function ($logger) use ($name) {
-                    return $this->channels[$name] = $this->tap($name, new Logger($logger, $this->app['events']));
-                });
-        } catch (Throwable $e) {
-            return tap($this->createEmergencyLogger(), function ($logger) use ($e) {
-                $logger->emergency('Unable to create configured logger. Using emergency logger.', [
-                    'exception' => $e,
-                ]);
-            });
-        }
-    }
-
-    /**
-     * Resolve the given log instance by name.
-     *
-     * @param string $name
-     * @return LoggerInterface
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function resolve($name)
-    {
-        $config = $this->configurationFor($name);
-
-        if (is_null($config)) {
-            throw new InvalidArgumentException("Log [{$name}] is not defined.");
-        }
-
-        if (isset($this->customCreators[$config['driver']])) {
-            return $this->callCustomCreator($config);
-        }
-
-        $driverMethod = 'create' . ucfirst($config['driver']) . 'Driver';
-
-        if (method_exists($this, $driverMethod)) {
-            return $this->{$driverMethod}($config);
-        }
-
-        throw new InvalidArgumentException("Driver [{$config['driver']}] is not supported.");
-    }
-
-    /**
-     * Get the log connection configuration.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function configurationFor($name)
-    {
-        return $this->app['config']["logging.channels.{$name}"];
-    }
-
-    /**
-     * Call a custom driver creator.
-     *
-     * @param array $config
-     * @return mixed
-     */
-    protected function callCustomCreator(array $config)
-    {
-        return $this->customCreators[$config['driver']]($this->app, $config);
-    }
-
-    /**
-     * Apply the configured taps for the logger.
-     *
-     * @param string $name
-     * @param Logger $logger
-     * @return Logger
-     */
-    protected function tap($name, Logger $logger)
-    {
-        foreach ($this->configurationFor($name)['tap'] ?? [] as $tap) {
-            [$class, $arguments] = $this->parseTap($tap);
-
-            $this->app->make($class)->__invoke($logger, ...explode(',', $arguments));
-        }
-
-        return $logger;
-    }
-
-    /**
-     * Parse the given tap class string into a class name and arguments string.
-     *
-     * @param string $tap
-     * @return array
-     */
-    protected function parseTap($tap)
-    {
-        return Str::contains($tap, ':') ? explode(':', $tap, 2) : [$tap, ''];
-    }
-
-    /**
-     * Create an emergency log handler to avoid white screens of death.
-     *
-     * @return LoggerInterface
-     */
-    protected function createEmergencyLogger()
-    {
-        return new Logger(new Monolog('laravel', $this->prepareHandlers([new StreamHandler(
-            $this->app->storagePath() . '/logs/laravel.log', $this->level(['level' => 'debug'])
-        )])), $this->app['events']);
-    }
-
-    /**
-     * Prepare the handlers for usage by Monolog.
-     *
-     * @param array $handlers
-     * @return array
-     */
-    protected function prepareHandlers(array $handlers)
-    {
-        foreach ($handlers as $key => $handler) {
-            $handlers[$key] = $this->prepareHandler($handler);
-        }
-
-        return $handlers;
-    }
-
-    /**
-     * Prepare the handler for usage by Monolog.
-     *
-     * @param HandlerInterface $handler
-     * @param array $config
-     * @return HandlerInterface
-     */
-    protected function prepareHandler(HandlerInterface $handler, array $config = [])
-    {
-        if (!isset($config['formatter'])) {
-            $handler->setFormatter($this->formatter());
-        } elseif ($config['formatter'] !== 'default') {
-            $handler->setFormatter($this->app->make($config['formatter'], $config['formatter_with'] ?? []));
-        }
-
-        return $handler;
-    }
-
-    /**
-     * Get a Monolog formatter instance.
-     *
-     * @return FormatterInterface
-     */
-    protected function formatter()
-    {
-        return tap(new LineFormatter(null, null, true, true), function ($formatter) {
-            $formatter->includeStacktraces();
-        });
     }
 
     /**

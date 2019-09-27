@@ -114,6 +114,19 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
         $this->filter = $filter;
     }
 
+    protected function getSafeMapShareId()
+    {
+        return get_class($this);
+    }
+
+    protected function initSafeMap()
+    {
+        foreach (array_merge(
+                     [0x09, 0x20], range(0x21, 0x3C), range(0x3E, 0x7E)) as $byte) {
+            $this->safeMap[$byte] = chr($byte);
+        }
+    }
+
     public function __sleep()
     {
         return ['charStream', 'filter'];
@@ -206,37 +219,6 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
     }
 
     /**
-     * Updates the charset used.
-     *
-     * @param string $charset
-     */
-    public function charsetChanged($charset)
-    {
-        $this->charStream->setCharacterSet($charset);
-    }
-
-    /**
-     * Make a deep copy of object.
-     */
-    public function __clone()
-    {
-        $this->charStream = clone $this->charStream;
-    }
-
-    protected function getSafeMapShareId()
-    {
-        return get_class($this);
-    }
-
-    protected function initSafeMap()
-    {
-        foreach (array_merge(
-                     [0x09, 0x20], range(0x21, 0x3C), range(0x3E, 0x7E)) as $byte) {
-            $this->safeMap[$byte] = chr($byte);
-        }
-    }
-
-    /**
      * Get the next sequence of bytes to read from the char stream.
      *
      * @param int $size number of bytes to read
@@ -292,5 +274,23 @@ class Swift_Encoder_QpEncoder implements Swift_Encoder
         }
 
         return $string;
+    }
+
+    /**
+     * Updates the charset used.
+     *
+     * @param string $charset
+     */
+    public function charsetChanged($charset)
+    {
+        $this->charStream->setCharacterSet($charset);
+    }
+
+    /**
+     * Make a deep copy of object.
+     */
+    public function __clone()
+    {
+        $this->charStream = clone $this->charStream;
     }
 }

@@ -1,9 +1,8 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
-use PHPUnit\Framework\TestCase;
 
-class Swift_Mime_MimePartAcceptanceTest extends TestCase
+class Swift_Mime_MimePartAcceptanceTest extends \PHPUnit\Framework\TestCase
 {
     private $contentEncoder;
     private $cache;
@@ -23,6 +22,18 @@ class Swift_Mime_MimePartAcceptanceTest extends TestCase
             'foobar',
             $part->toString()
         );
+    }
+
+    protected function createMimePart()
+    {
+        $entity = new Swift_Mime_MimePart(
+            $this->headers,
+            $this->contentEncoder,
+            $this->cache,
+            $this->idGenerator
+        );
+
+        return $entity;
     }
 
     public function testFormatIsSetInHeaders()
@@ -88,18 +99,6 @@ class Swift_Mime_MimePartAcceptanceTest extends TestCase
             "ing\r\n",
             $part->toString()
         );
-    }
-
-    protected function createMimePart()
-    {
-        $entity = new Swift_Mime_MimePart(
-            $this->headers,
-            $this->contentEncoder,
-            $this->cache,
-            $this->idGenerator
-        );
-
-        return $entity;
     }
 
     protected function setUp()

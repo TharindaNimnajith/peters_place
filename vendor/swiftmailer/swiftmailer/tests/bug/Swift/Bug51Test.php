@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Bug51Test extends SwiftMailerTestCase
+class Swift_Bug51Test extends \SwiftMailerTestCase
 {
     private $attachmentFile;
     private $outputFile;
@@ -25,6 +25,34 @@ class Swift_Bug51Test extends SwiftMailerTestCase
                 $emailSource
             );
         }
+    }
+
+    private function createMessageWithRandomAttachment($size, $attachmentPath)
+    {
+        $this->fillFileWithRandomBytes($size, $attachmentPath);
+
+        $message = (new Swift_Message())
+            ->setSubject('test')
+            ->setBody('test')
+            ->setFrom('a@b.c')
+            ->setTo('d@e.f')
+            ->attach(Swift_Attachment::fromPath($attachmentPath));
+
+        return $message;
+    }
+
+    private function fillFileWithRandomBytes($byteCount, $file)
+    {
+        // I was going to use dd with if=/dev/random but this way seems more
+        // cross platform even if a hella expensive!!
+
+        file_put_contents($file, '');
+        $fp = fopen($file, 'wb');
+        for ($i = 0; $i < $byteCount; ++$i) {
+            $byteVal = random_int(0, 255);
+            fwrite($fp, pack('i', $byteVal));
+        }
+        fclose($fp);
     }
 
     public function assertAttachmentFromSourceMatches($attachmentData, $source)
@@ -77,33 +105,5 @@ class Swift_Bug51Test extends SwiftMailerTestCase
     {
         unlink($this->attachmentFile);
         unlink($this->outputFile);
-    }
-
-    private function createMessageWithRandomAttachment($size, $attachmentPath)
-    {
-        $this->fillFileWithRandomBytes($size, $attachmentPath);
-
-        $message = (new Swift_Message())
-            ->setSubject('test')
-            ->setBody('test')
-            ->setFrom('a@b.c')
-            ->setTo('d@e.f')
-            ->attach(Swift_Attachment::fromPath($attachmentPath));
-
-        return $message;
-    }
-
-    private function fillFileWithRandomBytes($byteCount, $file)
-    {
-        // I was going to use dd with if=/dev/random but this way seems more
-        // cross platform even if a hella expensive!!
-
-        file_put_contents($file, '');
-        $fp = fopen($file, 'wb');
-        for ($i = 0; $i < $byteCount; ++$i) {
-            $byteVal = random_int(0, 255);
-            fwrite($fp, pack('i', $byteVal));
-        }
-        fclose($fp);
     }
 }

@@ -34,6 +34,15 @@ class ManifestDocument
         $this->dom = $dom;
     }
 
+    private function ensureCorrectDocumentType(DOMDocument $dom)
+    {
+        $root = $dom->documentElement;
+
+        if ($root->localName !== 'phar' || $root->namespaceURI !== self::XMLNS) {
+            throw new ManifestDocumentException('Not a phar.io manifest document');
+        }
+    }
+
     public static function fromFile($filename)
     {
         if (!file_exists($filename)) {
@@ -72,6 +81,26 @@ class ManifestDocument
         );
     }
 
+    /**
+     * @param $elementName
+     *
+     * @return DOMElement
+     *
+     * @throws ManifestDocumentException
+     */
+    private function fetchElementByName($elementName)
+    {
+        $element = $this->dom->getElementsByTagNameNS(self::XMLNS, $elementName)->item(0);
+
+        if (!$element instanceof DOMElement) {
+            throw new ManifestDocumentException(
+                sprintf('Element %s missing', $elementName)
+            );
+        }
+
+        return $element;
+    }
+
     public function getCopyrightElement()
     {
         return new CopyrightElement(
@@ -96,34 +125,5 @@ class ManifestDocument
         return new BundlesElement(
             $this->fetchElementByName('bundles')
         );
-    }
-
-    private function ensureCorrectDocumentType(DOMDocument $dom)
-    {
-        $root = $dom->documentElement;
-
-        if ($root->localName !== 'phar' || $root->namespaceURI !== self::XMLNS) {
-            throw new ManifestDocumentException('Not a phar.io manifest document');
-        }
-    }
-
-    /**
-     * @param $elementName
-     *
-     * @return DOMElement
-     *
-     * @throws ManifestDocumentException
-     */
-    private function fetchElementByName($elementName)
-    {
-        $element = $this->dom->getElementsByTagNameNS(self::XMLNS, $elementName)->item(0);
-
-        if (!$element instanceof DOMElement) {
-            throw new ManifestDocumentException(
-                sprintf('Element %s missing', $elementName)
-            );
-        }
-
-        return $element;
     }
 }

@@ -148,29 +148,6 @@ class ValidationRuleParser
     }
 
     /**
-     * Merge additional rules into a given attribute(s).
-     *
-     * @param array $results
-     * @param string|array $attribute
-     * @param string|array $rules
-     * @return array
-     */
-    public function mergeRules($results, $attribute, $rules = [])
-    {
-        if (is_array($attribute)) {
-            foreach ((array)$attribute as $innerAttribute => $innerRules) {
-                $results = $this->mergeRulesForAttribute($results, $innerAttribute, $innerRules);
-            }
-
-            return $results;
-        }
-
-        return $this->mergeRulesForAttribute(
-            $results, $attribute, $rules
-        );
-    }
-
-    /**
      * Explode the rules into an array of explicit rules.
      *
      * @param array $rules
@@ -216,6 +193,29 @@ class ValidationRuleParser
         }
 
         return $results;
+    }
+
+    /**
+     * Merge additional rules into a given attribute(s).
+     *
+     * @param array $results
+     * @param string|array $attribute
+     * @param string|array $rules
+     * @return array
+     */
+    public function mergeRules($results, $attribute, $rules = [])
+    {
+        if (is_array($attribute)) {
+            foreach ((array)$attribute as $innerAttribute => $innerRules) {
+                $results = $this->mergeRulesForAttribute($results, $innerAttribute, $innerRules);
+            }
+
+            return $results;
+        }
+
+        return $this->mergeRulesForAttribute(
+            $results, $attribute, $rules
+        );
     }
 
     /**

@@ -13,26 +13,6 @@ use Illuminate\Validation\ValidationException;
 trait ThrottlesLogins
 {
     /**
-     * Get the maximum number of attempts to allow.
-     *
-     * @return int
-     */
-    public function maxAttempts()
-    {
-        return property_exists($this, 'maxAttempts') ? $this->maxAttempts : 5;
-    }
-
-    /**
-     * Get the number of minutes to throttle for.
-     *
-     * @return int
-     */
-    public function decayMinutes()
-    {
-        return property_exists($this, 'decayMinutes') ? $this->decayMinutes : 1;
-    }
-
-    /**
      * Determine if the user has too many failed login attempts.
      *
      * @param Request $request
@@ -67,6 +47,16 @@ trait ThrottlesLogins
     }
 
     /**
+     * Get the maximum number of attempts to allow.
+     *
+     * @return int
+     */
+    public function maxAttempts()
+    {
+        return property_exists($this, 'maxAttempts') ? $this->maxAttempts : 5;
+    }
+
+    /**
      * Increment the login attempts for the user.
      *
      * @param Request $request
@@ -77,6 +67,16 @@ trait ThrottlesLogins
         $this->limiter()->hit(
             $this->throttleKey($request), $this->decayMinutes() * 60
         );
+    }
+
+    /**
+     * Get the number of minutes to throttle for.
+     *
+     * @return int
+     */
+    public function decayMinutes()
+    {
+        return property_exists($this, 'decayMinutes') ? $this->decayMinutes : 1;
     }
 
     /**

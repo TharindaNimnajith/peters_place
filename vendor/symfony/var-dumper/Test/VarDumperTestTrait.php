@@ -13,7 +13,6 @@ namespace Symfony\Component\VarDumper\Test;
 
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
-use function is_string;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -25,9 +24,13 @@ trait VarDumperTestTrait
         $this->assertSame($this->prepareExpectation($expected, $filter), $this->getDump($data, null, $filter), $message);
     }
 
-    public function assertDumpMatchesFormat($expected, $data, $filter = 0, $message = '')
+    private function prepareExpectation($expected, $filter)
     {
-        $this->assertStringMatchesFormat($this->prepareExpectation($expected, $filter), $this->getDump($data, null, $filter), $message);
+        if (!\is_string($expected)) {
+            $expected = $this->getDump($expected, null, $filter);
+        }
+
+        return rtrim($expected);
     }
 
     protected function getDump($data, $key = null, $filter = 0)
@@ -48,12 +51,8 @@ trait VarDumperTestTrait
         return rtrim($dumper->dump($data, true));
     }
 
-    private function prepareExpectation($expected, $filter)
+    public function assertDumpMatchesFormat($expected, $data, $filter = 0, $message = '')
     {
-        if (!is_string($expected)) {
-            $expected = $this->getDump($expected, null, $filter);
-        }
-
-        return rtrim($expected);
+        $this->assertStringMatchesFormat($this->prepareExpectation($expected, $filter), $this->getDump($data, null, $filter), $message);
     }
 }

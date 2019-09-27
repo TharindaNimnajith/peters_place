@@ -146,6 +146,30 @@ class Ftp extends AbstractFtpAdapter
     }
 
     /**
+     * Login.
+     *
+     * @throws RuntimeException
+     */
+    protected function login()
+    {
+        set_error_handler(function () {
+        });
+        $isLoggedIn = ftp_login(
+            $this->connection,
+            $this->getUsername(),
+            $this->getPassword()
+        );
+        restore_error_handler();
+
+        if (!$isLoggedIn) {
+            $this->disconnect();
+            throw new RuntimeException(
+                'Could not login with connection: ' . $this->getHost() . '::' . $this->getPort() . ', username: ' . $this->getUsername()
+            );
+        }
+    }
+
+    /**
      * Disconnect from the FTP server.
      */
     public function disconnect()
@@ -155,6 +179,68 @@ class Ftp extends AbstractFtpAdapter
         }
 
         $this->connection = null;
+    }
+
+    /**
+     * Set the connection to UTF-8 mode.
+     */
+    protected function setUtf8Mode()
+    {
+        if ($this->utf8) {
+            $response = ftp_raw($this->connection, "OPTS UTF8 ON");
+            if (substr($response[0], 0, 3) !== '200') {
+                throw new RuntimeException(
+                    'Could not set UTF-8 mode for connection: ' . $this->getHost() . '::' . $this->getPort()
+                );
+            }
+        }
+    }
+
+    /**
+     * Set the connections to passive mode.
+     *
+     * @throws RuntimeException
+     */
+    protected function setConnectionPassiveMode()
+    {
+        if (is_bool($this->ignorePassiveAddress) && defined('FTP_USEPASVADDRESS')) {
+            ftp_set_option($this->connection, FTP_USEPASVADDRESS, !$this->ignorePassiveAddress);
+        }
+
+        if (!ftp_pasv($this->connection, $this->passive)) {
+            throw new RuntimeException(
+                'Could not set passive mode for connection: ' . $this->getHost() . '::' . $this->getPort()
+            );
+        }
+    }
+
+    /**
+     * Set the connection root.
+     */
+    protected function setConnectionRoot()
+    {
+        $root = $this->getRoot();
+        $connection = $this->connection;
+
+        if ($root && !ftp_chdir($connection, $root)) {
+            throw new RuntimeException('Root is invalid or does not exist: ' . $this->getRoot());
+        }
+
+        // Store absolute path for further reference.
+        // This is needed when creating directories and
+        // initial root was a relative path, else the root
+        // would be relative to the chdir'd path.
+        $this->root = ftp_pwd($connection);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isPureFtpdServer()
+    {
+        $response = ftp_raw($this->connection, 'HELP');
+
+        return stripos(implode(' ', $response), 'Pure-FTPd') !== false;
     }
 
     /**
@@ -267,6 +353,65 @@ class Ftp extends AbstractFtpAdapter
 
     /**
      * @inheritdoc
+     *
+     * @param string $directory
+     */
+    protected function listDirectoryContents($directory, $recursive = true)
+    {
+        $directory = str_replace('*', '\\*', $directory);
+
+        if ($recursive && $this->recurseManually) {
+            return $this->listDirectoryContentsRecursive($directory);
+        }
+
+        $options = $recursive ? '-alnR' : '-aln';
+        $listing = $this->ftpRawlist($options, $directory);
+
+        return $listing ? $this->normalizeListing($listing, $directory) : [];
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @param string $directory
+     */
+    protected function listDirectoryContentsRecursive($directory)
+    {
+        $listing = $this->normalizeListing($this->ftpRawlist('-aln', $directory) ?: [], $directory);
+        $output = [];
+
+        foreach ($listing as $item) {
+            $output[] = $item;
+            if ($item['type'] !== 'dir') {
+                continue;
+            }
+            $output = array_merge($output, $this->listDirectoryContentsRecursive($item['path']));
+        }
+
+        return $output;
+    }
+
+    /**
+     * The ftp_rawlist function with optional escaping.
+     *
+     * @param string $options
+     * @param string $path
+     *
+     * @return array
+     */
+    protected function ftpRawlist($options, $path)
+    {
+        $connection = $this->getConnection();
+
+        if ($this->isPureFtpd) {
+            $path = str_replace(' ', '\ ', $path);
+        }
+
+        return ftp_rawlist($connection, $options . ' ' . $path);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function createDir($dirname, Config $config)
     {
@@ -286,6 +431,32 @@ class Ftp extends AbstractFtpAdapter
         $this->setConnectionRoot();
 
         return ['type' => 'dir', 'path' => $dirname];
+    }
+
+    /**
+     * Create a directory.
+     *
+     * @param string $directory
+     * @param resource $connection
+     *
+     * @return bool
+     */
+    protected function createActualDirectory($directory, $connection)
+    {
+        // List the current directory
+        $listing = ftp_nlist($connection, '.') ?: [];
+
+        foreach ($listing as $key => $item) {
+            if (preg_match('~^\./.*~', $item)) {
+                $listing[$key] = substr($item, 2);
+            }
+        }
+
+        if (in_array($directory, $listing, true)) {
+            return true;
+        }
+
+        return (boolean)ftp_mkdir($connection, $directory);
     }
 
     /**
@@ -396,176 +567,5 @@ class Ftp extends AbstractFtpAdapter
 
             return false;
         }
-    }
-
-    /**
-     * Login.
-     *
-     * @throws RuntimeException
-     */
-    protected function login()
-    {
-        set_error_handler(function () {
-        });
-        $isLoggedIn = ftp_login(
-            $this->connection,
-            $this->getUsername(),
-            $this->getPassword()
-        );
-        restore_error_handler();
-
-        if (!$isLoggedIn) {
-            $this->disconnect();
-            throw new RuntimeException(
-                'Could not login with connection: ' . $this->getHost() . '::' . $this->getPort() . ', username: ' . $this->getUsername()
-            );
-        }
-    }
-
-    /**
-     * Set the connection to UTF-8 mode.
-     */
-    protected function setUtf8Mode()
-    {
-        if ($this->utf8) {
-            $response = ftp_raw($this->connection, "OPTS UTF8 ON");
-            if (substr($response[0], 0, 3) !== '200') {
-                throw new RuntimeException(
-                    'Could not set UTF-8 mode for connection: ' . $this->getHost() . '::' . $this->getPort()
-                );
-            }
-        }
-    }
-
-    /**
-     * Set the connections to passive mode.
-     *
-     * @throws RuntimeException
-     */
-    protected function setConnectionPassiveMode()
-    {
-        if (is_bool($this->ignorePassiveAddress) && defined('FTP_USEPASVADDRESS')) {
-            ftp_set_option($this->connection, FTP_USEPASVADDRESS, !$this->ignorePassiveAddress);
-        }
-
-        if (!ftp_pasv($this->connection, $this->passive)) {
-            throw new RuntimeException(
-                'Could not set passive mode for connection: ' . $this->getHost() . '::' . $this->getPort()
-            );
-        }
-    }
-
-    /**
-     * Set the connection root.
-     */
-    protected function setConnectionRoot()
-    {
-        $root = $this->getRoot();
-        $connection = $this->connection;
-
-        if ($root && !ftp_chdir($connection, $root)) {
-            throw new RuntimeException('Root is invalid or does not exist: ' . $this->getRoot());
-        }
-
-        // Store absolute path for further reference.
-        // This is needed when creating directories and
-        // initial root was a relative path, else the root
-        // would be relative to the chdir'd path.
-        $this->root = ftp_pwd($connection);
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isPureFtpdServer()
-    {
-        $response = ftp_raw($this->connection, 'HELP');
-
-        return stripos(implode(' ', $response), 'Pure-FTPd') !== false;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param string $directory
-     */
-    protected function listDirectoryContents($directory, $recursive = true)
-    {
-        $directory = str_replace('*', '\\*', $directory);
-
-        if ($recursive && $this->recurseManually) {
-            return $this->listDirectoryContentsRecursive($directory);
-        }
-
-        $options = $recursive ? '-alnR' : '-aln';
-        $listing = $this->ftpRawlist($options, $directory);
-
-        return $listing ? $this->normalizeListing($listing, $directory) : [];
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param string $directory
-     */
-    protected function listDirectoryContentsRecursive($directory)
-    {
-        $listing = $this->normalizeListing($this->ftpRawlist('-aln', $directory) ?: [], $directory);
-        $output = [];
-
-        foreach ($listing as $item) {
-            $output[] = $item;
-            if ($item['type'] !== 'dir') {
-                continue;
-            }
-            $output = array_merge($output, $this->listDirectoryContentsRecursive($item['path']));
-        }
-
-        return $output;
-    }
-
-    /**
-     * The ftp_rawlist function with optional escaping.
-     *
-     * @param string $options
-     * @param string $path
-     *
-     * @return array
-     */
-    protected function ftpRawlist($options, $path)
-    {
-        $connection = $this->getConnection();
-
-        if ($this->isPureFtpd) {
-            $path = str_replace(' ', '\ ', $path);
-        }
-
-        return ftp_rawlist($connection, $options . ' ' . $path);
-    }
-
-    /**
-     * Create a directory.
-     *
-     * @param string $directory
-     * @param resource $connection
-     *
-     * @return bool
-     */
-    protected function createActualDirectory($directory, $connection)
-    {
-        // List the current directory
-        $listing = ftp_nlist($connection, '.') ?: [];
-
-        foreach ($listing as $key => $item) {
-            if (preg_match('~^\./.*~', $item)) {
-                $listing[$key] = substr($item, 2);
-            }
-        }
-
-        if (in_array($directory, $listing, true)) {
-            return true;
-        }
-
-        return (boolean)ftp_mkdir($connection, $directory);
     }
 }

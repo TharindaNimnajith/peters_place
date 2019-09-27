@@ -57,6 +57,53 @@ class ShellInput extends StringInput
     }
 
     /**
+     * Tokenizes a string.
+     *
+     * The version of this on StringInput is good, but doesn't handle code
+     * arguments if they're at all complicated. This does :)
+     *
+     * @param string $input The input to tokenize
+     *
+     * @return array An array of token/rest pairs
+     *
+     * @throws InvalidArgumentException When unable to parse input (should never happen)
+     */
+    private function tokenize($input)
+    {
+        $tokens = [];
+        $length = strlen($input);
+        $cursor = 0;
+        while ($cursor < $length) {
+            if (preg_match('/\s+/A', $input, $match, null, $cursor)) {
+            } elseif (preg_match('/([^="\'\s]+?)(=?)(' . StringInput::REGEX_QUOTED_STRING . '+)/A', $input, $match, null, $cursor)) {
+                $tokens[] = [
+                    $match[1] . $match[2] . stripcslashes(str_replace(['"\'', '\'"', '\'\'', '""'], '', substr($match[3], 1, strlen($match[3]) - 2))),
+                    stripcslashes(substr($input, $cursor)),
+                ];
+            } elseif (preg_match('/' . StringInput::REGEX_QUOTED_STRING . '/A', $input, $match, null, $cursor)) {
+                $tokens[] = [
+                    stripcslashes(substr($match[0], 1, strlen($match[0]) - 2)),
+                    stripcslashes(substr($input, $cursor)),
+                ];
+            } elseif (preg_match('/' . StringInput::REGEX_STRING . '/A', $input, $match, null, $cursor)) {
+                $tokens[] = [
+                    stripcslashes($match[1]),
+                    stripcslashes(substr($input, $cursor)),
+                ];
+            } else {
+                // should never happen
+                // @codeCoverageIgnoreStart
+                throw new InvalidArgumentException(sprintf('Unable to parse input near "... %s ..."', substr($input, $cursor, 10)));
+                // @codeCoverageIgnoreEnd
+            }
+
+            $cursor += strlen($match[0]);
+        }
+
+        return $tokens;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @throws InvalidArgumentException if $definition has CodeArgument before the final argument position
@@ -109,53 +156,6 @@ class ShellInput extends StringInput
                 $this->parseShellArgument($token, $rest);
             }
         }
-    }
-
-    /**
-     * Tokenizes a string.
-     *
-     * The version of this on StringInput is good, but doesn't handle code
-     * arguments if they're at all complicated. This does :)
-     *
-     * @param string $input The input to tokenize
-     *
-     * @return array An array of token/rest pairs
-     *
-     * @throws InvalidArgumentException When unable to parse input (should never happen)
-     */
-    private function tokenize($input)
-    {
-        $tokens = [];
-        $length = strlen($input);
-        $cursor = 0;
-        while ($cursor < $length) {
-            if (preg_match('/\s+/A', $input, $match, null, $cursor)) {
-            } elseif (preg_match('/([^="\'\s]+?)(=?)(' . StringInput::REGEX_QUOTED_STRING . '+)/A', $input, $match, null, $cursor)) {
-                $tokens[] = [
-                    $match[1] . $match[2] . stripcslashes(str_replace(['"\'', '\'"', '\'\'', '""'], '', substr($match[3], 1, strlen($match[3]) - 2))),
-                    stripcslashes(substr($input, $cursor)),
-                ];
-            } elseif (preg_match('/' . StringInput::REGEX_QUOTED_STRING . '/A', $input, $match, null, $cursor)) {
-                $tokens[] = [
-                    stripcslashes(substr($match[0], 1, strlen($match[0]) - 2)),
-                    stripcslashes(substr($input, $cursor)),
-                ];
-            } elseif (preg_match('/' . StringInput::REGEX_STRING . '/A', $input, $match, null, $cursor)) {
-                $tokens[] = [
-                    stripcslashes($match[1]),
-                    stripcslashes(substr($input, $cursor)),
-                ];
-            } else {
-                // should never happen
-                // @codeCoverageIgnoreStart
-                throw new InvalidArgumentException(sprintf('Unable to parse input near "... %s ..."', substr($input, $cursor, 10)));
-                // @codeCoverageIgnoreEnd
-            }
-
-            $cursor += strlen($match[0]);
-        }
-
-        return $tokens;
     }
 
     /**

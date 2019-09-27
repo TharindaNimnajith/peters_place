@@ -96,87 +96,6 @@ class Docblock
     }
 
     /**
-     * Whether or not a string begins with a @tag.
-     *
-     * @param string $str
-     *
-     * @return bool
-     */
-    public static function isTagged($str)
-    {
-        return isset($str[1]) && $str[0] === '@' && !preg_match('/[^A-Za-z]/', $str[1]);
-    }
-
-    /**
-     * The tag at the beginning of a string.
-     *
-     * @param string $str
-     *
-     * @return string|null
-     */
-    public static function strTag($str)
-    {
-        if (preg_match('/^@[a-z0-9_]+/', $str, $matches)) {
-            return $matches[0];
-        }
-    }
-
-    /**
-     * Find the length of the docblock prefix.
-     *
-     * @param array $lines
-     *
-     * @return int Prefix length
-     */
-    protected static function prefixLength(array $lines)
-    {
-        // find only lines with interesting things
-        $lines = array_filter($lines, function ($line) {
-            return substr($line, strspn($line, "* \t\n\r\0\x0B"));
-        });
-
-        // if we sort the lines, we only have to compare two items
-        sort($lines);
-
-        $first = reset($lines);
-        $last = end($lines);
-
-        // find the longest common substring
-        $count = min(strlen($first), strlen($last));
-        for ($i = 0; $i < $count; $i++) {
-            if ($first[$i] !== $last[$i]) {
-                return $i;
-            }
-        }
-
-        return $count;
-    }
-
-    /**
-     * The value of a tag.
-     *
-     * @param string $tag
-     *
-     * @return array
-     */
-    public function tag($tag)
-    {
-        return $this->hasTag($tag) ? $this->tags[$tag] : null;
-    }
-
-    /**
-     * Whether or not a docblock contains a given @tag.
-     *
-     * @param string $tag The name of the @tag to check for
-     *
-     * @return bool
-     */
-    public function hasTag($tag)
-    {
-        return is_array($this->tags) && array_key_exists($tag, $this->tags);
-    }
-
-    /**
      * Set and parse the docblock comment.
      *
      * @param string $comment The docblock
@@ -255,5 +174,86 @@ class Docblock
                 }
             }
         }
+    }
+
+    /**
+     * Find the length of the docblock prefix.
+     *
+     * @param array $lines
+     *
+     * @return int Prefix length
+     */
+    protected static function prefixLength(array $lines)
+    {
+        // find only lines with interesting things
+        $lines = array_filter($lines, function ($line) {
+            return substr($line, strspn($line, "* \t\n\r\0\x0B"));
+        });
+
+        // if we sort the lines, we only have to compare two items
+        sort($lines);
+
+        $first = reset($lines);
+        $last = end($lines);
+
+        // find the longest common substring
+        $count = min(strlen($first), strlen($last));
+        for ($i = 0; $i < $count; $i++) {
+            if ($first[$i] !== $last[$i]) {
+                return $i;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Whether or not a string begins with a @tag.
+     *
+     * @param string $str
+     *
+     * @return bool
+     */
+    public static function isTagged($str)
+    {
+        return isset($str[1]) && $str[0] === '@' && !preg_match('/[^A-Za-z]/', $str[1]);
+    }
+
+    /**
+     * The tag at the beginning of a string.
+     *
+     * @param string $str
+     *
+     * @return string|null
+     */
+    public static function strTag($str)
+    {
+        if (preg_match('/^@[a-z0-9_]+/', $str, $matches)) {
+            return $matches[0];
+        }
+    }
+
+    /**
+     * The value of a tag.
+     *
+     * @param string $tag
+     *
+     * @return array
+     */
+    public function tag($tag)
+    {
+        return $this->hasTag($tag) ? $this->tags[$tag] : null;
+    }
+
+    /**
+     * Whether or not a docblock contains a given @tag.
+     *
+     * @param string $tag The name of the @tag to check for
+     *
+     * @return bool
+     */
+    public function hasTag($tag)
+    {
+        return is_array($this->tags) && array_key_exists($tag, $this->tags);
     }
 }

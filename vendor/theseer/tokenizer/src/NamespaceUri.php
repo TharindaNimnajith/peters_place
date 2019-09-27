@@ -17,11 +17,6 @@ class NamespaceUri
         $this->value = $value;
     }
 
-    public function asString(): string
-    {
-        return $this->value;
-    }
-
     private function ensureValidUri($value)
     {
         if (strpos($value, ':') === false) {
@@ -29,5 +24,10 @@ class NamespaceUri
                 sprintf("Namespace URI '%s' must contain at least one colon", $value)
             );
         }
+    }
+
+    public function asString(): string
+    {
+        return $this->value;
     }
 }

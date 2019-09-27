@@ -77,6 +77,26 @@ class JsonResponse extends BaseJsonResponse
     }
 
     /**
+     * Determine if an error occurred during JSON encoding.
+     *
+     * @param int $jsonError
+     * @return bool
+     */
+    protected function hasValidJson($jsonError)
+    {
+        if ($jsonError === JSON_ERROR_NONE) {
+            return true;
+        }
+
+        return $this->hasEncodingOption(JSON_PARTIAL_OUTPUT_ON_ERROR) &&
+            in_array($jsonError, [
+                JSON_ERROR_RECURSION,
+                JSON_ERROR_INF_OR_NAN,
+                JSON_ERROR_UNSUPPORTED_TYPE,
+            ]);
+    }
+
+    /**
      * Determine if a JSON encoding option is set.
      *
      * @param int $option
@@ -97,25 +117,5 @@ class JsonResponse extends BaseJsonResponse
     public function getData($assoc = false, $depth = 512)
     {
         return json_decode($this->data, $assoc, $depth);
-    }
-
-    /**
-     * Determine if an error occurred during JSON encoding.
-     *
-     * @param int $jsonError
-     * @return bool
-     */
-    protected function hasValidJson($jsonError)
-    {
-        if ($jsonError === JSON_ERROR_NONE) {
-            return true;
-        }
-
-        return $this->hasEncodingOption(JSON_PARTIAL_OUTPUT_ON_ERROR) &&
-            in_array($jsonError, [
-                JSON_ERROR_RECURSION,
-                JSON_ERROR_INF_OR_NAN,
-                JSON_ERROR_UNSUPPORTED_TYPE,
-            ]);
     }
 }

@@ -97,6 +97,25 @@ class HasManyThrough extends Relation
     }
 
     /**
+     * Set the join clause on the query.
+     *
+     * @param Builder|null $query
+     * @return void
+     */
+    protected function performJoin(Builder $query = null)
+    {
+        $query = $query ?: $this->query;
+
+        $farKey = $this->getQualifiedFarKeyName();
+
+        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
+
+        if ($this->throughParentSoftDeletes()) {
+            $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
+        }
+    }
+
+    /**
      * Get the qualified foreign key on the related model.
      *
      * @return string
@@ -201,6 +220,26 @@ class HasManyThrough extends Relation
         }
 
         return $models;
+    }
+
+    /**
+     * Build model dictionary keyed by the relation's foreign key.
+     *
+     * @param Collection $results
+     * @return array
+     */
+    protected function buildDictionary(Collection $results)
+    {
+        $dictionary = [];
+
+        // First we will create a dictionary of models keyed by the foreign key of the
+        // relationship as this will allow us to quickly access all of the related
+        // models without having to do nested looping which will be quite slow.
+        foreach ($results as $result) {
+            $dictionary[$result->laravel_through_key][] = $result;
+        }
+
+        return $dictionary;
     }
 
     /**
@@ -344,6 +383,36 @@ class HasManyThrough extends Relation
         }
 
         return $this->related->newCollection($models);
+    }
+
+    /**
+     * Prepare the query builder for query execution.
+     *
+     * @param array $columns
+     * @return Builder
+     */
+    protected function prepareQueryBuilder($columns = ['*'])
+    {
+        $builder = $this->query->applyScopes();
+
+        return $builder->addSelect(
+            $this->shouldSelect($builder->getQuery()->columns ? [] : $columns)
+        );
+    }
+
+    /**
+     * Set the select clause for the relation query.
+     *
+     * @param array $columns
+     * @return array
+     */
+    protected function shouldSelect(array $columns = ['*'])
+    {
+        if ($columns == ['*']) {
+            $columns = [$this->related->getTable() . '.*'];
+        }
+
+        return array_merge($columns, [$this->getQualifiedFirstKeyName() . ' as laravel_through_key']);
     }
 
     /**
@@ -579,74 +648,5 @@ class HasManyThrough extends Relation
     public function getSecondLocalKeyName()
     {
         return $this->secondLocalKey;
-    }
-
-    /**
-     * Set the join clause on the query.
-     *
-     * @param Builder|null $query
-     * @return void
-     */
-    protected function performJoin(Builder $query = null)
-    {
-        $query = $query ?: $this->query;
-
-        $farKey = $this->getQualifiedFarKeyName();
-
-        $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
-
-        if ($this->throughParentSoftDeletes()) {
-            $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
-        }
-    }
-
-    /**
-     * Build model dictionary keyed by the relation's foreign key.
-     *
-     * @param Collection $results
-     * @return array
-     */
-    protected function buildDictionary(Collection $results)
-    {
-        $dictionary = [];
-
-        // First we will create a dictionary of models keyed by the foreign key of the
-        // relationship as this will allow us to quickly access all of the related
-        // models without having to do nested looping which will be quite slow.
-        foreach ($results as $result) {
-            $dictionary[$result->laravel_through_key][] = $result;
-        }
-
-        return $dictionary;
-    }
-
-    /**
-     * Prepare the query builder for query execution.
-     *
-     * @param array $columns
-     * @return Builder
-     */
-    protected function prepareQueryBuilder($columns = ['*'])
-    {
-        $builder = $this->query->applyScopes();
-
-        return $builder->addSelect(
-            $this->shouldSelect($builder->getQuery()->columns ? [] : $columns)
-        );
-    }
-
-    /**
-     * Set the select clause for the relation query.
-     *
-     * @param array $columns
-     * @return array
-     */
-    protected function shouldSelect(array $columns = ['*'])
-    {
-        if ($columns == ['*']) {
-            $columns = [$this->related->getTable() . '.*'];
-        }
-
-        return array_merge($columns, [$this->getQualifiedFirstKeyName() . ' as laravel_through_key']);
     }
 }

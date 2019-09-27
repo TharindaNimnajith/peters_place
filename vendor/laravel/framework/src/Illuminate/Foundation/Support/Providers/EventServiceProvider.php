@@ -62,6 +62,18 @@ class EventServiceProvider extends ServiceProvider
     }
 
     /**
+     * Get the discovered events for the application.
+     *
+     * @return array
+     */
+    protected function discoveredEvents()
+    {
+        return $this->shouldDiscoverEvents()
+            ? $this->discoverEvents()
+            : [];
+    }
+
+    /**
      * Determine if events and listeners should be automatically discovered.
      *
      * @return bool
@@ -91,28 +103,6 @@ class EventServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the events and handlers.
-     *
-     * @return array
-     */
-    public function listens()
-    {
-        return $this->listen;
-    }
-
-    /**
-     * Get the discovered events for the application.
-     *
-     * @return array
-     */
-    protected function discoveredEvents()
-    {
-        return $this->shouldDiscoverEvents()
-            ? $this->discoverEvents()
-            : [];
-    }
-
-    /**
      * Get the listener directories that should be used to discover events.
      *
      * @return array
@@ -122,5 +112,15 @@ class EventServiceProvider extends ServiceProvider
         return [
             $this->app->path('Listeners'),
         ];
+    }
+
+    /**
+     * Get the events and handlers.
+     *
+     * @return array
+     */
+    public function listens()
+    {
+        return $this->listen;
     }
 }

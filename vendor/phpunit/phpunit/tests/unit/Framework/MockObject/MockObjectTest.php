@@ -669,6 +669,15 @@ class MockObjectTest extends TestCase
         $this->resetMockObjects();
     }
 
+    private function resetMockObjects(): void
+    {
+        $refl = new ReflectionObject($this);
+        $refl = $refl->getParentClass();
+        $prop = $refl->getProperty('mockObjects');
+        $prop->setAccessible(true);
+        $prop->setValue($this, []);
+    }
+
     public function testVerificationOfMethodNameFailsWithParameters(): void
     {
         $mock = $this->getMockBuilder(SomeClass::class)
@@ -1122,14 +1131,5 @@ class MockObjectTest extends TestCase
         $object = $this->getObjectForTrait(TraitWithConstructor::class, ['value']);
 
         $this->assertSame('value', $object->value());
-    }
-
-    private function resetMockObjects(): void
-    {
-        $refl = new ReflectionObject($this);
-        $refl = $refl->getParentClass();
-        $prop = $refl->getProperty('mockObjects');
-        $prop->setAccessible(true);
-        $prop->setValue($this, []);
     }
 }

@@ -41,6 +41,25 @@ trait HasTimestamps
     }
 
     /**
+     * Update the creation and update timestamps.
+     *
+     * @return void
+     */
+    protected function updateTimestamps()
+    {
+        $time = $this->freshTimestamp();
+
+        if (!is_null(static::UPDATED_AT) && !$this->isDirty(static::UPDATED_AT)) {
+            $this->setUpdatedAt($time);
+        }
+
+        if (!$this->exists && !is_null(static::CREATED_AT) &&
+            !$this->isDirty(static::CREATED_AT)) {
+            $this->setCreatedAt($time);
+        }
+    }
+
+    /**
      * Get a fresh timestamp for the model.
      *
      * @return Carbon
@@ -104,24 +123,5 @@ trait HasTimestamps
     public function getUpdatedAtColumn()
     {
         return static::UPDATED_AT;
-    }
-
-    /**
-     * Update the creation and update timestamps.
-     *
-     * @return void
-     */
-    protected function updateTimestamps()
-    {
-        $time = $this->freshTimestamp();
-
-        if (!is_null(static::UPDATED_AT) && !$this->isDirty(static::UPDATED_AT)) {
-            $this->setUpdatedAt($time);
-        }
-
-        if (!$this->exists && !is_null(static::CREATED_AT) &&
-            !$this->isDirty(static::CREATED_AT)) {
-            $this->setCreatedAt($time);
-        }
     }
 }

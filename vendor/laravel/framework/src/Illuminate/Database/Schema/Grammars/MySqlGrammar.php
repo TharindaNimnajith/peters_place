@@ -76,6 +76,73 @@ class MySqlGrammar extends Grammar
     }
 
     /**
+     * Create the main create table clause.
+     *
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param Connection $connection
+     * @return string
+     */
+    protected function compileCreateTable($blueprint, $command, $connection)
+    {
+        return sprintf('%s table %s (%s)',
+            $blueprint->temporary ? 'create temporary' : 'create',
+            $this->wrapTable($blueprint),
+            implode(', ', $this->getColumns($blueprint))
+        );
+    }
+
+    /**
+     * Append the character set specifications to a command.
+     *
+     * @param string $sql
+     * @param Connection $connection
+     * @param Blueprint $blueprint
+     * @return string
+     */
+    protected function compileCreateEncoding($sql, Connection $connection, Blueprint $blueprint)
+    {
+        // First we will set the character set if one has been set on either the create
+        // blueprint itself or on the root configuration for the connection that the
+        // table is being created on. We will add these to the create table query.
+        if (isset($blueprint->charset)) {
+            $sql .= ' default character set ' . $blueprint->charset;
+        } elseif (!is_null($charset = $connection->getConfig('charset'))) {
+            $sql .= ' default character set ' . $charset;
+        }
+
+        // Next we will add the collation to the create table statement if one has been
+        // added to either this create table blueprint or the configuration for this
+        // connection that the query is targeting. We'll add it to this SQL query.
+        if (isset($blueprint->collation)) {
+            $sql .= " collate '{$blueprint->collation}'";
+        } elseif (!is_null($collation = $connection->getConfig('collation'))) {
+            $sql .= " collate '{$collation}'";
+        }
+
+        return $sql;
+    }
+
+    /**
+     * Append the engine specifications to a command.
+     *
+     * @param string $sql
+     * @param Connection $connection
+     * @param Blueprint $blueprint
+     * @return string
+     */
+    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
+    {
+        if (isset($blueprint->engine)) {
+            return $sql . ' engine = ' . $blueprint->engine;
+        } elseif (!is_null($engine = $connection->getConfig('engine'))) {
+            return $sql . ' engine = ' . $engine;
+        }
+
+        return $sql;
+    }
+
+    /**
      * Compile an add column command.
      *
      * @param Blueprint $blueprint
@@ -101,6 +168,25 @@ class MySqlGrammar extends Grammar
         $command->name(null);
 
         return $this->compileKey($blueprint, $command, 'primary key');
+    }
+
+    /**
+     * Compile an index creation command.
+     *
+     * @param Blueprint $blueprint
+     * @param Fluent $command
+     * @param string $type
+     * @return string
+     */
+    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
+    {
+        return sprintf('alter table %s add %s %s%s(%s)',
+            $this->wrapTable($blueprint),
+            $type,
+            $this->wrap($command->index),
+            $command->algorithm ? ' using ' . $command->algorithm : '',
+            $this->columnize($command->columns)
+        );
     }
 
     /**
@@ -421,92 +507,6 @@ class MySqlGrammar extends Grammar
     public function typeMultiPolygon(Fluent $column)
     {
         return 'multipolygon';
-    }
-
-    /**
-     * Create the main create table clause.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @param Connection $connection
-     * @return string
-     */
-    protected function compileCreateTable($blueprint, $command, $connection)
-    {
-        return sprintf('%s table %s (%s)',
-            $blueprint->temporary ? 'create temporary' : 'create',
-            $this->wrapTable($blueprint),
-            implode(', ', $this->getColumns($blueprint))
-        );
-    }
-
-    /**
-     * Append the character set specifications to a command.
-     *
-     * @param string $sql
-     * @param Connection $connection
-     * @param Blueprint $blueprint
-     * @return string
-     */
-    protected function compileCreateEncoding($sql, Connection $connection, Blueprint $blueprint)
-    {
-        // First we will set the character set if one has been set on either the create
-        // blueprint itself or on the root configuration for the connection that the
-        // table is being created on. We will add these to the create table query.
-        if (isset($blueprint->charset)) {
-            $sql .= ' default character set ' . $blueprint->charset;
-        } elseif (!is_null($charset = $connection->getConfig('charset'))) {
-            $sql .= ' default character set ' . $charset;
-        }
-
-        // Next we will add the collation to the create table statement if one has been
-        // added to either this create table blueprint or the configuration for this
-        // connection that the query is targeting. We'll add it to this SQL query.
-        if (isset($blueprint->collation)) {
-            $sql .= " collate '{$blueprint->collation}'";
-        } elseif (!is_null($collation = $connection->getConfig('collation'))) {
-            $sql .= " collate '{$collation}'";
-        }
-
-        return $sql;
-    }
-
-    /**
-     * Append the engine specifications to a command.
-     *
-     * @param string $sql
-     * @param Connection $connection
-     * @param Blueprint $blueprint
-     * @return string
-     */
-    protected function compileCreateEngine($sql, Connection $connection, Blueprint $blueprint)
-    {
-        if (isset($blueprint->engine)) {
-            return $sql . ' engine = ' . $blueprint->engine;
-        } elseif (!is_null($engine = $connection->getConfig('engine'))) {
-            return $sql . ' engine = ' . $engine;
-        }
-
-        return $sql;
-    }
-
-    /**
-     * Compile an index creation command.
-     *
-     * @param Blueprint $blueprint
-     * @param Fluent $command
-     * @param string $type
-     * @return string
-     */
-    protected function compileKey(Blueprint $blueprint, Fluent $command, $type)
-    {
-        return sprintf('alter table %s add %s %s%s(%s)',
-            $this->wrapTable($blueprint),
-            $type,
-            $this->wrap($command->index),
-            $command->algorithm ? ' using ' . $command->algorithm : '',
-            $this->columnize($command->columns)
-        );
     }
 
     /**

@@ -77,6 +77,21 @@ class ShellTest extends TestCase
         $this->assertSame(['_' => null, 'this' => $this], $shell->getScopeVariables());
     }
 
+    private function getConfig(array $config = [])
+    {
+        // Mebbe there's a better way than this?
+        $dir = tempnam(sys_get_temp_dir(), 'psysh_shell_test_');
+        unlink($dir);
+
+        $defaults = [
+            'configDir' => $dir,
+            'dataDir' => $dir,
+            'runtimeDir' => $dir,
+        ];
+
+        return new Configuration(array_merge($defaults, $config));
+    }
+
     /**
      * @expectedException InvalidArgumentException
      */
@@ -111,6 +126,16 @@ class ShellTest extends TestCase
         $this->assertSame(123, $shell->getScopeVariable('two'));
         $this->assertSame($three, $shell->getScopeVariable('three'));
         $this->assertNull($shell->getScopeVariable('_'));
+    }
+
+    private function getOutput()
+    {
+        $stream = fopen('php://memory', 'w+');
+        $this->streams[] = $stream;
+
+        $output = new StreamOutput($stream, StreamOutput::VERBOSITY_NORMAL, false);
+
+        return $output;
     }
 
     public function testIncludes()
@@ -429,30 +454,5 @@ class ShellTest extends TestCase
             ['"q"', false],
             ['"q",', false],
         ];
-    }
-
-    private function getConfig(array $config = [])
-    {
-        // Mebbe there's a better way than this?
-        $dir = tempnam(sys_get_temp_dir(), 'psysh_shell_test_');
-        unlink($dir);
-
-        $defaults = [
-            'configDir' => $dir,
-            'dataDir' => $dir,
-            'runtimeDir' => $dir,
-        ];
-
-        return new Configuration(array_merge($defaults, $config));
-    }
-
-    private function getOutput()
-    {
-        $stream = fopen('php://memory', 'w+');
-        $this->streams[] = $stream;
-
-        $output = new StreamOutput($stream, StreamOutput::VERBOSITY_NORMAL, false);
-
-        return $output;
     }
 }

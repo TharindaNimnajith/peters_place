@@ -2,10 +2,8 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Exception;
 
-use Error;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Throwable;
 
 class HttpExceptionTest extends TestCase
 {
@@ -29,6 +27,11 @@ class HttpExceptionTest extends TestCase
         $this->assertSame([], $exception->getHeaders());
     }
 
+    protected function createException(string $message = null, \Throwable $previous = null, ?int $code = 0, array $headers = [])
+    {
+        return new HttpException(200, $message, $previous, $headers, $code);
+    }
+
     /**
      * @dataProvider headerDataProvider
      */
@@ -50,15 +53,10 @@ class HttpExceptionTest extends TestCase
 
     public function testThrowableIsAllowedForPrevious()
     {
-        $previous = new class('Error of PHP 7+') extends Error
+        $previous = new class('Error of PHP 7+') extends \Error
         {
         };
         $exception = $this->createException(null, $previous);
         $this->assertSame($previous, $exception->getPrevious());
-    }
-
-    protected function createException(string $message = null, Throwable $previous = null, ?int $code = 0, array $headers = [])
-    {
-        return new HttpException(200, $message, $previous, $headers, $code);
     }
 }

@@ -234,42 +234,6 @@ class PhptTestCase implements SelfDescribing, Test
     }
 
     /**
-     * Returns the name of the test case.
-     */
-    public function getName(): string
-    {
-        return $this->toString();
-    }
-
-    /**
-     * Returns a string representation of the test case.
-     */
-    public function toString(): string
-    {
-        return $this->filename;
-    }
-
-    public function usesDataProvider(): bool
-    {
-        return false;
-    }
-
-    public function getNumAssertions(): int
-    {
-        return 1;
-    }
-
-    public function getActualOutput(): string
-    {
-        return $this->output;
-    }
-
-    public function hasOutput(): bool
-    {
-        return !empty($this->output);
-    }
-
-    /**
      * @throws Exception
      */
     private function parse(): array
@@ -627,5 +591,41 @@ class PhptTestCase implements SelfDescribing, Test
 
             $this->phpUtil->runJob($cleanCode, self::SETTINGS);
         }
+    }
+
+    /**
+     * Returns the name of the test case.
+     */
+    public function getName(): string
+    {
+        return $this->toString();
+    }
+
+    /**
+     * Returns a string representation of the test case.
+     */
+    public function toString(): string
+    {
+        return $this->filename;
+    }
+
+    public function usesDataProvider(): bool
+    {
+        return false;
+    }
+
+    public function getNumAssertions(): int
+    {
+        return 1;
+    }
+
+    public function getActualOutput(): string
+    {
+        return $this->output;
+    }
+
+    public function hasOutput(): bool
+    {
+        return !empty($this->output);
     }
 }

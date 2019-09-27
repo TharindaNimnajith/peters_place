@@ -74,6 +74,49 @@ class ArgonHasher extends AbstractHasher implements HasherContract
     }
 
     /**
+     * Get the algorithm that should be used for hashing.
+     *
+     * @return int
+     */
+    protected function algorithm()
+    {
+        return PASSWORD_ARGON2I;
+    }
+
+    /**
+     * Extract the memory cost value from the options array.
+     *
+     * @param array $options
+     * @return int
+     */
+    protected function memory(array $options)
+    {
+        return $options['memory'] ?? $this->memory;
+    }
+
+    /**
+     * Extract the time cost value from the options array.
+     *
+     * @param array $options
+     * @return int
+     */
+    protected function time(array $options)
+    {
+        return $options['time'] ?? $this->time;
+    }
+
+    /**
+     * Extract the threads value from the options array.
+     *
+     * @param array $options
+     * @return int
+     */
+    protected function threads(array $options)
+    {
+        return $options['threads'] ?? $this->threads;
+    }
+
+    /**
      * Check the given plain value against a hash.
      *
      * @param string $value
@@ -143,48 +186,5 @@ class ArgonHasher extends AbstractHasher implements HasherContract
         $this->threads = $threads;
 
         return $this;
-    }
-
-    /**
-     * Get the algorithm that should be used for hashing.
-     *
-     * @return int
-     */
-    protected function algorithm()
-    {
-        return PASSWORD_ARGON2I;
-    }
-
-    /**
-     * Extract the memory cost value from the options array.
-     *
-     * @param array $options
-     * @return int
-     */
-    protected function memory(array $options)
-    {
-        return $options['memory'] ?? $this->memory;
-    }
-
-    /**
-     * Extract the time cost value from the options array.
-     *
-     * @param array $options
-     * @return int
-     */
-    protected function time(array $options)
-    {
-        return $options['time'] ?? $this->time;
-    }
-
-    /**
-     * Extract the threads value from the options array.
-     *
-     * @param array $options
-     * @return int
-     */
-    protected function threads(array $options)
-    {
-        return $options['threads'] ?? $this->threads;
     }
 }

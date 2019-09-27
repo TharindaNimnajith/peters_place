@@ -47,6 +47,18 @@ EOF
         $this->fail();
     }
 
+    /**
+     * Removes spaces in front of newlines
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    private function trimnl($string)
+    {
+        return preg_replace('/[ ]*\n/', "\n", $string);
+    }
+
     public function testConstraintIsType2(): void
     {
         $constraint = Assert::isType('string');
@@ -100,17 +112,5 @@ EOF
         $this->assertFalse($constraint->evaluate('', '', true));
         $this->assertTrue($constraint->evaluate([], '', true));
         $this->assertEquals('is of type "iterable"', $constraint->toString());
-    }
-
-    /**
-     * Removes spaces in front of newlines
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    private function trimnl($string)
-    {
-        return preg_replace('/[ ]*\n/', "\n", $string);
     }
 }

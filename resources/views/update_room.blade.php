@@ -104,7 +104,14 @@
                         @endif
                         -->
 
-
+                        <select name="roomtype" class="form-control">
+                            @foreach ($rt_details as $item)
+                                @if (isset($item))
+                                    <option value="{{ $item->id }}" @if ($details->t_id == $item->id) selected
+                                        @endif>{{ $item->name }}</option>
+                                @endif
+                            @endforeach
+                        </select>
                     </div>
 
                     <div class="form-group">

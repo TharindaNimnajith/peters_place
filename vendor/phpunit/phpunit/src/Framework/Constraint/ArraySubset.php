@@ -96,14 +96,22 @@ class ArraySubset extends Constraint
         }
     }
 
-    /**
-     * Returns a string representation of the constraint.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function toString(): string
+    private function toArray(iterable $other): array
     {
-        return 'has the subset ' . $this->exporter->export($this->subset);
+        if (is_array($other)) {
+            return $other;
+        }
+
+        if ($other instanceof ArrayObject) {
+            return $other->getArrayCopy();
+        }
+
+        if ($other instanceof Traversable) {
+            return iterator_to_array($other);
+        }
+
+        // Keep BC even if we know that array would not be the expected one
+        return (array)$other;
     }
 
     /**
@@ -121,21 +129,13 @@ class ArraySubset extends Constraint
         return 'an array ' . $this->toString();
     }
 
-    private function toArray(iterable $other): array
+    /**
+     * Returns a string representation of the constraint.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function toString(): string
     {
-        if (is_array($other)) {
-            return $other;
-        }
-
-        if ($other instanceof ArrayObject) {
-            return $other->getArrayCopy();
-        }
-
-        if ($other instanceof Traversable) {
-            return iterator_to_array($other);
-        }
-
-        // Keep BC even if we know that array would not be the expected one
-        return (array)$other;
+        return 'has the subset ' . $this->exporter->export($this->subset);
     }
 }

@@ -89,6 +89,20 @@ class CookieJar implements JarContract
     }
 
     /**
+     * Get the path and domain, or the default values.
+     *
+     * @param string $path
+     * @param string $domain
+     * @param bool|null $secure
+     * @param string|null $sameSite
+     * @return array
+     */
+    protected function getPathAndDomain($path, $domain, $secure = null, $sameSite = null)
+    {
+        return [$path ?: $this->path, $domain ?: $this->domain, is_bool($secure) ? $secure : $this->secure, $sameSite ?: $this->sameSite];
+    }
+
+    /**
      * Expire the given cookie.
      *
      * @param string $name
@@ -176,19 +190,5 @@ class CookieJar implements JarContract
     public function getQueuedCookies()
     {
         return $this->queued;
-    }
-
-    /**
-     * Get the path and domain, or the default values.
-     *
-     * @param string $path
-     * @param string $domain
-     * @param bool|null $secure
-     * @param string|null $sameSite
-     * @return array
-     */
-    protected function getPathAndDomain($path, $domain, $secure = null, $sameSite = null)
-    {
-        return [$path ?: $this->path, $domain ?: $this->domain, is_bool($secure) ? $secure : $this->secure, $sameSite ?: $this->sameSite];
     }
 }

@@ -18,6 +18,11 @@ class NodeDumperTest extends TestCase
         $this->assertSame($this->canonicalize($dump), $this->canonicalize($dumper->dump($node)));
     }
 
+    private function canonicalize($string)
+    {
+        return str_replace("\r\n", "\n", $string);
+    }
+
     public function provideTestDump()
     {
         return [
@@ -106,10 +111,5 @@ OUT;
         $this->expectExceptionMessage('Can only dump nodes and arrays.');
         $dumper = new NodeDumper;
         $dumper->dump(new stdClass);
-    }
-
-    private function canonicalize($string)
-    {
-        return str_replace("\r\n", "\n", $string);
     }
 }

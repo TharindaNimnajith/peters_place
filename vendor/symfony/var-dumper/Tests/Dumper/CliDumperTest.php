@@ -11,15 +11,12 @@
 
 namespace Symfony\Component\VarDumper\Tests\Dumper;
 
-use __TwigTemplate_VarDumperFixture_u75a09;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use const PHP_VERSION_ID;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
@@ -134,7 +131,7 @@ EOTXT
         $dumper->setColors(false);
         $cloner = new VarCloner();
 
-        $ex = new RuntimeException('foo');
+        $ex = new \RuntimeException('foo');
 
         $dump = $dumper->dump($cloner->cloneVar($ex)->withRefHandles(false), true);
 
@@ -228,7 +225,7 @@ EOTXT
         $var[] = &$v;
         $var[''] = 2;
 
-        if (PHP_VERSION_ID >= 70200) {
+        if (\PHP_VERSION_ID >= 70200) {
             $this->assertDumpMatchesFormat(
                 <<<'EOTXT'
 array:4 [
@@ -262,7 +259,7 @@ EOTXT
         $var = (object)[1 => 1];
         $var->{1} = 2;
 
-        if (PHP_VERSION_ID >= 70200) {
+        if (\PHP_VERSION_ID >= 70200) {
             $this->assertDumpMatchesFormat(
                 <<<'EOTXT'
 {
@@ -351,7 +348,7 @@ EOTXT
         $out = fopen('php://memory', 'r+b');
 
         require_once __DIR__ . '/../Fixtures/Twig.php';
-        $twig = new __TwigTemplate_VarDumperFixture_u75a09(new Environment(new FilesystemLoader()));
+        $twig = new \__TwigTemplate_VarDumperFixture_u75a09(new Environment(new FilesystemLoader()));
 
         $dumper = new CliDumper();
         $dumper->setColors(false);
@@ -464,6 +461,24 @@ EOTXT
         );
     }
 
+    private function getSpecialVars()
+    {
+        foreach (array_keys($GLOBALS) as $var) {
+            if ('GLOBALS' !== $var) {
+                unset($GLOBALS[$var]);
+            }
+        }
+
+        $var = function &() {
+            $var = [];
+            $var[] = &$var;
+
+            return $var;
+        };
+
+        return [$var(), $GLOBALS, &$GLOBALS];
+    }
+
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
@@ -515,23 +530,5 @@ EOTXT
             ,
             $var
         );
-    }
-
-    private function getSpecialVars()
-    {
-        foreach (array_keys($GLOBALS) as $var) {
-            if ('GLOBALS' !== $var) {
-                unset($GLOBALS[$var]);
-            }
-        }
-
-        $var = function &() {
-            $var = [];
-            $var[] = &$var;
-
-            return $var;
-        };
-
-        return [$var(), $GLOBALS, &$GLOBALS];
     }
 }

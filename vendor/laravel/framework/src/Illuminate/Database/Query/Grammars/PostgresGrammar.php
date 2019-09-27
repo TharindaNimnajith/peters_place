@@ -114,69 +114,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Prepare the bindings for an update statement.
-     *
-     * @param array $bindings
-     * @param array $values
-     * @return array
-     */
-    public function prepareBindingsForUpdate(array $bindings, array $values)
-    {
-        $values = collect($values)->map(function ($value, $column) {
-            return $this->isJsonSelector($column) && !$this->isExpression($value)
-                ? json_encode($value)
-                : $value;
-        })->all();
-
-        $bindingsWithoutWhere = Arr::except($bindings, ['select', 'where']);
-
-        return array_values(
-            array_merge($values, $bindings['where'], Arr::flatten($bindingsWithoutWhere))
-        );
-    }
-
-    /**
-     * Compile a delete statement into SQL.
-     *
-     * @param Builder $query
-     * @return string
-     */
-    public function compileDelete(Builder $query)
-    {
-        $table = $this->wrapTable($query->from);
-
-        return isset($query->joins)
-            ? $this->compileDeleteWithJoins($query, $table)
-            : parent::compileDelete($query);
-    }
-
-    /**
-     * Prepare the bindings for a delete statement.
-     *
-     * @param array $bindings
-     * @return array
-     */
-    public function prepareBindingsForDelete(array $bindings)
-    {
-        $bindingsWithoutWhere = Arr::except($bindings, ['select', 'where']);
-
-        return array_values(
-            array_merge($bindings['where'], Arr::flatten($bindingsWithoutWhere))
-        );
-    }
-
-    /**
-     * Compile a truncate table statement into SQL.
-     *
-     * @param Builder $query
-     * @return array
-     */
-    public function compileTruncate(Builder $query)
-    {
-        return ['truncate ' . $this->wrapTable($query->from) . ' restart identity cascade' => []];
-    }
-
-    /**
      * Compile the columns for the update statement.
      *
      * @param Builder $query
@@ -292,6 +229,43 @@ class PostgresGrammar extends Grammar
     }
 
     /**
+     * Prepare the bindings for an update statement.
+     *
+     * @param array $bindings
+     * @param array $values
+     * @return array
+     */
+    public function prepareBindingsForUpdate(array $bindings, array $values)
+    {
+        $values = collect($values)->map(function ($value, $column) {
+            return $this->isJsonSelector($column) && !$this->isExpression($value)
+                ? json_encode($value)
+                : $value;
+        })->all();
+
+        $bindingsWithoutWhere = Arr::except($bindings, ['select', 'where']);
+
+        return array_values(
+            array_merge($values, $bindings['where'], Arr::flatten($bindingsWithoutWhere))
+        );
+    }
+
+    /**
+     * Compile a delete statement into SQL.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    public function compileDelete(Builder $query)
+    {
+        $table = $this->wrapTable($query->from);
+
+        return isset($query->joins)
+            ? $this->compileDeleteWithJoins($query, $table)
+            : parent::compileDelete($query);
+    }
+
+    /**
      * Compile a delete query that uses joins.
      *
      * @param Builder $query
@@ -307,6 +281,32 @@ class PostgresGrammar extends Grammar
         $where = $this->compileUpdateWheres($query);
 
         return trim("delete from {$table}{$using} {$where}");
+    }
+
+    /**
+     * Prepare the bindings for a delete statement.
+     *
+     * @param array $bindings
+     * @return array
+     */
+    public function prepareBindingsForDelete(array $bindings)
+    {
+        $bindingsWithoutWhere = Arr::except($bindings, ['select', 'where']);
+
+        return array_values(
+            array_merge($bindings['where'], Arr::flatten($bindingsWithoutWhere))
+        );
+    }
+
+    /**
+     * Compile a truncate table statement into SQL.
+     *
+     * @param Builder $query
+     * @return array
+     */
+    public function compileTruncate(Builder $query)
+    {
+        return ['truncate ' . $this->wrapTable($query->from) . ' restart identity cascade' => []];
     }
 
     /**

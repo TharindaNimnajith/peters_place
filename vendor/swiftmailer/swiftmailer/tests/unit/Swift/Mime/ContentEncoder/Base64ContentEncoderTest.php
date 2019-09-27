@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Mime_ContentEncoder_Base64ContentEncoderTest extends SwiftMailerTestCase
+class Swift_Mime_ContentEncoder_Base64ContentEncoderTest extends \SwiftMailerTestCase
 {
     private $encoder;
 
@@ -44,6 +44,16 @@ class Swift_Mime_ContentEncoder_Base64ContentEncoderTest extends SwiftMailerTest
     level QP encoding has been tested.  base64_encode() has been in PHP for
     years.
     */
+
+    private function createOutputByteStream($stub = false)
+    {
+        return $this->getMockery('Swift_OutputByteStream')->shouldIgnoreMissing();
+    }
+
+    private function createInputByteStream($stub = false)
+    {
+        return $this->getMockery('Swift_InputByteStream')->shouldIgnoreMissing();
+    }
 
     public function testPadLength()
     {
@@ -309,15 +319,5 @@ class Swift_Mime_ContentEncoder_Base64ContentEncoderTest extends SwiftMailerTest
     protected function setUp()
     {
         $this->encoder = new Swift_Mime_ContentEncoder_Base64ContentEncoder();
-    }
-
-    private function createOutputByteStream($stub = false)
-    {
-        return $this->getMockery('Swift_OutputByteStream')->shouldIgnoreMissing();
-    }
-
-    private function createInputByteStream($stub = false)
-    {
-        return $this->getMockery('Swift_InputByteStream')->shouldIgnoreMissing();
     }
 }

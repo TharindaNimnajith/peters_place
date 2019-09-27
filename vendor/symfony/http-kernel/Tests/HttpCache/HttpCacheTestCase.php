@@ -11,17 +11,12 @@
 
 namespace Symfony\Component\HttpKernel\Tests\HttpCache;
 
-use Closure;
-use LogicException;
 use PHPUnit\Framework\TestCase;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpCache\Esi;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use function in_array;
 
 class HttpCacheTestCase extends TestCase
 {
@@ -39,29 +34,6 @@ class HttpCacheTestCase extends TestCase
      * @var Store
      */
     protected $store;
-
-    public static function clearDirectory($directory)
-    {
-        if (!is_dir($directory)) {
-            return;
-        }
-
-        $fp = opendir($directory);
-        while (false !== $file = readdir($fp)) {
-            if (!in_array($file, ['.', '..'])) {
-                if (is_link($directory . '/' . $file)) {
-                    unlink($directory . '/' . $file);
-                } elseif (is_dir($directory . '/' . $file)) {
-                    self::clearDirectory($directory . '/' . $file);
-                    rmdir($directory . '/' . $file);
-                } else {
-                    unlink($directory . '/' . $file);
-                }
-            }
-        }
-
-        closedir($fp);
-    }
 
     public function assertHttpKernelIsCalled()
     {
@@ -107,7 +79,7 @@ class HttpCacheTestCase extends TestCase
     public function request($method, $uri = '/', $server = [], $cookies = [], $esi = false, $headers = [])
     {
         if (null === $this->kernel) {
-            throw new LogicException('You must call setNextResponse() before calling request().');
+            throw new \LogicException('You must call setNextResponse() before calling request().');
         }
 
         $this->kernel->reset();
@@ -131,24 +103,24 @@ class HttpCacheTestCase extends TestCase
     public function getMetaStorageValues()
     {
         $values = [];
-        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator(sys_get_temp_dir() . '/http_cache/md', RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(sys_get_temp_dir() . '/http_cache/md', \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
             $values[] = file_get_contents($file);
         }
 
         return $values;
     }
 
-    public function setNextResponse($statusCode = 200, array $headers = [], $body = 'Hello World', Closure $customizer = null)
+    public function setNextResponse($statusCode = 200, array $headers = [], $body = 'Hello World', \Closure $customizer = null)
     {
         $this->kernel = new TestHttpKernel($body, $statusCode, $headers, $customizer);
     }
-
-    // A basic response with 200 status code and a tiny body.
 
     public function setNextResponses($responses)
     {
         $this->kernel = new TestMultipleHttpKernel($responses);
     }
+
+    // A basic response with 200 status code and a tiny body.
 
     public function catchExceptions($catch = true)
     {
@@ -171,6 +143,29 @@ class HttpCacheTestCase extends TestCase
         $this->catch = false;
 
         $this->clearDirectory(sys_get_temp_dir() . '/http_cache');
+    }
+
+    public static function clearDirectory($directory)
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+
+        $fp = opendir($directory);
+        while (false !== $file = readdir($fp)) {
+            if (!\in_array($file, ['.', '..'])) {
+                if (is_link($directory . '/' . $file)) {
+                    unlink($directory . '/' . $file);
+                } elseif (is_dir($directory . '/' . $file)) {
+                    self::clearDirectory($directory . '/' . $file);
+                    rmdir($directory . '/' . $file);
+                } else {
+                    unlink($directory . '/' . $file);
+                }
+            }
+        }
+
+        closedir($fp);
     }
 
     protected function tearDown()

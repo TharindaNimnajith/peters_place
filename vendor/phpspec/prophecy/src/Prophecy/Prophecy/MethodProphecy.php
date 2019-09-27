@@ -170,6 +170,16 @@ class MethodProphecy
         return $this;
     }
 
+    private function bindToObjectProphecy()
+    {
+        if ($this->bound) {
+            return;
+        }
+
+        $this->getObjectProphecy()->addMethodProphecy($this);
+        $this->bound = true;
+    }
+
     /**
      * Returns object prophecy this method prophecy is tied to.
      *
@@ -483,15 +493,5 @@ class MethodProphecy
     public function hasReturnVoid()
     {
         return $this->voidReturnType;
-    }
-
-    private function bindToObjectProphecy()
-    {
-        if ($this->bound) {
-            return;
-        }
-
-        $this->getObjectProphecy()->addMethodProphecy($this);
-        $this->bound = true;
     }
 }

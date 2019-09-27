@@ -191,6 +191,11 @@ EOC;
         );
     }
 
+    private function canonicalize($string)
+    {
+        return str_replace("\r\n", "\n", $string);
+    }
+
     /**
      * @covers \PhpParser\NodeVisitor\NameResolver
      */
@@ -516,10 +521,5 @@ EOC;
         $this->assertFalse($n2->hasAttribute('resolvedName'));
         $this->assertEquals(
             new Name\FullyQualified('Foo\bar'), $n2->getAttribute('namespacedName'));
-    }
-
-    private function canonicalize($string)
-    {
-        return str_replace("\r\n", "\n", $string);
     }
 }

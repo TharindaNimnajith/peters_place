@@ -11,13 +11,7 @@
 
 namespace Symfony\Component\HttpKernel\Tests\DataCollector;
 
-use DateTime;
-use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionMethod;
-use stdClass;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -40,7 +34,7 @@ class RequestDataCollectorTest extends TestCase
      */
     public static function staticControllerMethod()
     {
-        throw new LogicException('Unexpected method call');
+        throw new \LogicException('Unexpected method call');
     }
 
     /**
@@ -48,7 +42,7 @@ class RequestDataCollectorTest extends TestCase
      */
     public static function __callStatic($method, $args)
     {
-        throw new LogicException('Unexpected method call');
+        throw new \LogicException('Unexpected method call');
     }
 
     public function testCollect()
@@ -82,6 +76,31 @@ class RequestDataCollectorTest extends TestCase
         $this->assertSame('application/json', $c->getContentType());
     }
 
+    protected function createRequest($routeParams = ['name' => 'foo'])
+    {
+        $request = Request::create('http://test.com/foo?bar=baz');
+        $request->attributes->set('foo', 'bar');
+        $request->attributes->set('_route', 'foobar');
+        $request->attributes->set('_route_params', $routeParams);
+        $request->attributes->set('resource', fopen(__FILE__, 'r'));
+        $request->attributes->set('object', new \stdClass());
+
+        return $request;
+    }
+
+    protected function createResponse()
+    {
+        $response = new Response();
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('X-Foo-Bar', null);
+        $response->headers->setCookie(new Cookie('foo', 'bar', 1, '/foo', 'localhost', true, true, false, null));
+        $response->headers->setCookie(new Cookie('bar', 'foo', new \DateTime('@946684800'), '/', null, false, true, false, null));
+        $response->headers->setCookie(new Cookie('bazz', 'foo', '2000-12-12', '/', null, false, true, false, null));
+
+        return $response;
+    }
+
     public function testCollectWithoutRouteParams()
     {
         $request = $this->createRequest([]);
@@ -108,12 +127,23 @@ class RequestDataCollectorTest extends TestCase
         $this->assertSame($expected, $c->getController()->getValue(true), sprintf('Testing: %s', $name));
     }
 
+    /**
+     * Inject the given controller callable into the data collector.
+     */
+    protected function injectController($collector, $controller, $request)
+    {
+        $resolver = $this->getMockBuilder('Symfony\\Component\\HttpKernel\\Controller\\ControllerResolverInterface')->getMock();
+        $httpKernel = new HttpKernel(new EventDispatcher(), $resolver, null, $this->getMockBuilder(ArgumentResolverInterface::class)->getMock());
+        $event = new ControllerEvent($httpKernel, $controller, $request, HttpKernelInterface::MASTER_REQUEST);
+        $collector->onKernelController($event);
+    }
+
     public function provideControllerCallables()
     {
         // make sure we always match the line number
-        $r1 = new ReflectionMethod($this, 'testControllerInspection');
-        $r2 = new ReflectionMethod($this, 'staticControllerMethod');
-        $r3 = new ReflectionClass($this);
+        $r1 = new \ReflectionMethod($this, 'testControllerInspection');
+        $r2 = new \ReflectionMethod($this, 'staticControllerMethod');
+        $r3 = new \ReflectionClass($this);
 
         // test name, callable, expected
         return [
@@ -220,6 +250,16 @@ class RequestDataCollectorTest extends TestCase
         $this->assertSame('n/a', $c->getController());
     }
 
+    private function createRequestWithSession()
+    {
+        $request = $this->createRequest();
+        $request->attributes->set('_controller', 'Foo::bar');
+        $request->setSession(new Session(new MockArraySessionStorage()));
+        $request->getSession()->start();
+
+        return $request;
+    }
+
     public function testItAddsRedirectedAttributesWhenRequestContainsSpecificCookie()
     {
         $request = $this->createRequest();
@@ -253,6 +293,17 @@ class RequestDataCollectorTest extends TestCase
         $this->assertFalse($cookie->isSecure());
     }
 
+    private function getCookieByName(Response $response, $name)
+    {
+        foreach ($response->headers->getCookies() as $cookie) {
+            if ($cookie->getName() == $name) {
+                return $cookie;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Cookie named "%s" is not in response', $name));
+    }
+
     public function testItCollectsTheRedirectionAndClearTheCookie()
     {
         $c = new RequestDataCollector();
@@ -277,12 +328,12 @@ class RequestDataCollectorTest extends TestCase
      */
     public function __call($method, $args)
     {
-        throw new LogicException('Unexpected method call');
+        throw new \LogicException('Unexpected method call');
     }
 
     public function __invoke()
     {
-        throw new LogicException('Unexpected method call');
+        throw new \LogicException('Unexpected method call');
     }
 
     /**
@@ -337,62 +388,5 @@ class RequestDataCollectorTest extends TestCase
             ['{ "abc" }', null],
             ['', null],
         ];
-    }
-
-    protected function createRequest($routeParams = ['name' => 'foo'])
-    {
-        $request = Request::create('http://test.com/foo?bar=baz');
-        $request->attributes->set('foo', 'bar');
-        $request->attributes->set('_route', 'foobar');
-        $request->attributes->set('_route_params', $routeParams);
-        $request->attributes->set('resource', fopen(__FILE__, 'r'));
-        $request->attributes->set('object', new stdClass());
-
-        return $request;
-    }
-
-    protected function createResponse()
-    {
-        $response = new Response();
-        $response->setStatusCode(200);
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('X-Foo-Bar', null);
-        $response->headers->setCookie(new Cookie('foo', 'bar', 1, '/foo', 'localhost', true, true, false, null));
-        $response->headers->setCookie(new Cookie('bar', 'foo', new DateTime('@946684800'), '/', null, false, true, false, null));
-        $response->headers->setCookie(new Cookie('bazz', 'foo', '2000-12-12', '/', null, false, true, false, null));
-
-        return $response;
-    }
-
-    /**
-     * Inject the given controller callable into the data collector.
-     */
-    protected function injectController($collector, $controller, $request)
-    {
-        $resolver = $this->getMockBuilder('Symfony\\Component\\HttpKernel\\Controller\\ControllerResolverInterface')->getMock();
-        $httpKernel = new HttpKernel(new EventDispatcher(), $resolver, null, $this->getMockBuilder(ArgumentResolverInterface::class)->getMock());
-        $event = new ControllerEvent($httpKernel, $controller, $request, HttpKernelInterface::MASTER_REQUEST);
-        $collector->onKernelController($event);
-    }
-
-    private function createRequestWithSession()
-    {
-        $request = $this->createRequest();
-        $request->attributes->set('_controller', 'Foo::bar');
-        $request->setSession(new Session(new MockArraySessionStorage()));
-        $request->getSession()->start();
-
-        return $request;
-    }
-
-    private function getCookieByName(Response $response, $name)
-    {
-        foreach ($response->headers->getCookies() as $cookie) {
-            if ($cookie->getName() == $name) {
-                return $cookie;
-            }
-        }
-
-        throw new InvalidArgumentException(sprintf('Cookie named "%s" is not in response', $name));
     }
 }

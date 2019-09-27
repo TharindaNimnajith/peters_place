@@ -99,22 +99,6 @@ class DeepCopy
         return $this->recursiveCopy($object);
     }
 
-    public function addFilter(Filter $filter, Matcher $matcher)
-    {
-        $this->filters[] = [
-            'matcher' => $matcher,
-            'filter' => $filter,
-        ];
-    }
-
-    public function prependFilter(Filter $filter, Matcher $matcher)
-    {
-        array_unshift($this->filters, [
-            'matcher' => $matcher,
-            'filter' => $filter,
-        ]);
-    }
-
     private function recursiveCopy($var)
     {
         // Matches Type Filter
@@ -285,5 +269,21 @@ class DeepCopy
 
         // Copy the property
         $property->setValue($object, $this->recursiveCopy($propertyValue));
+    }
+
+    public function addFilter(Filter $filter, Matcher $matcher)
+    {
+        $this->filters[] = [
+            'matcher' => $matcher,
+            'filter' => $filter,
+        ];
+    }
+
+    public function prependFilter(Filter $filter, Matcher $matcher)
+    {
+        array_unshift($this->filters, [
+            'matcher' => $matcher,
+            'filter' => $filter,
+        ]);
     }
 }

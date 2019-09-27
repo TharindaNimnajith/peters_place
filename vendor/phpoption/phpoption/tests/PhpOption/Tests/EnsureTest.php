@@ -5,14 +5,13 @@ namespace PhpOption\Tests;
 use PhpOption\None;
 use PhpOption\Option;
 use PhpOption\Some;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Tests for Option::ensure() method
  *
  * @covers Option::ensure
  */
-class EnsureTest extends PHPUnit_Framework_TestCase
+class EnsureTest extends \PHPUnit_Framework_TestCase
 {
     public function testMixedValue()
     {
@@ -21,6 +20,13 @@ class EnsureTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $option->get());
         $this->assertFalse($this->ensure(null)->isDefined());
         $this->assertFalse($this->ensure(1, 1)->isDefined());
+    }
+
+    protected function ensure($value, $noneValue = null)
+    {
+        $option = Option::ensure($value, $noneValue);
+        $this->assertInstanceOf('PhpOption\Option', $option);
+        return $option;
     }
 
     public function testReturnValue()
@@ -66,12 +72,5 @@ class EnsureTest extends PHPUnit_Framework_TestCase
         });
         $this->assertTrue($option->isDefined());
         $this->assertInstanceOf('Closure', $option->get());
-    }
-
-    protected function ensure($value, $noneValue = null)
-    {
-        $option = Option::ensure($value, $noneValue);
-        $this->assertInstanceOf('PhpOption\Option', $option);
-        return $option;
     }
 }

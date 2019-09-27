@@ -40,6 +40,11 @@ class MergeOperationTest extends AbstractOperationTest
         );
     }
 
+    protected function createOperation(MessageCatalogueInterface $source, MessageCatalogueInterface $target)
+    {
+        return new MergeOperation($source, $target);
+    }
+
     public function testGetResultFromSingleDomain()
     {
         $this->assertEquals(
@@ -88,10 +93,5 @@ class MergeOperationTest extends AbstractOperationTest
                 $rightCatalogue
             )->getResult()
         );
-    }
-
-    protected function createOperation(MessageCatalogueInterface $source, MessageCatalogueInterface $target)
-    {
-        return new MergeOperation($source, $target);
     }
 }

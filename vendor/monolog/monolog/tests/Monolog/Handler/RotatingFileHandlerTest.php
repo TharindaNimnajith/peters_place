@@ -137,6 +137,21 @@ class RotatingFileHandlerTest extends TestCase
         }
     }
 
+    private function assertErrorWasTriggered($code, $message)
+    {
+        if (empty($this->lastError)) {
+            $this->fail(
+                sprintf(
+                    'Failed asserting that error with code `%d` and message `%s` was triggered',
+                    $code,
+                    $message
+                )
+            );
+        }
+        $this->assertEquals($code, $this->lastError['code'], sprintf('Expected an error with code %d to be triggered, got `%s` instead', $code, $this->lastError['code']));
+        $this->assertEquals($message, $this->lastError['message'], sprintf('Expected an error with message `%d` to be triggered, got `%s` instead', $message, $this->lastError['message']));
+    }
+
     public function dateFormatProvider()
     {
         return array(
@@ -226,20 +241,5 @@ class RotatingFileHandlerTest extends TestCase
             unlink($file);
         }
         restore_error_handler();
-    }
-
-    private function assertErrorWasTriggered($code, $message)
-    {
-        if (empty($this->lastError)) {
-            $this->fail(
-                sprintf(
-                    'Failed asserting that error with code `%d` and message `%s` was triggered',
-                    $code,
-                    $message
-                )
-            );
-        }
-        $this->assertEquals($code, $this->lastError['code'], sprintf('Expected an error with code %d to be triggered, got `%s` instead', $code, $this->lastError['code']));
-        $this->assertEquals($message, $this->lastError['message'], sprintf('Expected an error with message `%d` to be triggered, got `%s` instead', $message, $this->lastError['message']));
     }
 }

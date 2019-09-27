@@ -28,6 +28,20 @@ class Error extends RuntimeException
     }
 
     /**
+     * Updates the exception message after a change to rawMessage or rawLine.
+     */
+    protected function updateMessage()
+    {
+        $this->message = $this->rawMessage;
+
+        if (-1 === $this->getStartLine()) {
+            $this->message .= ' on unknown line';
+        } else {
+            $this->message .= ' on line ' . $this->getStartLine();
+        }
+    }
+
+    /**
      * Gets the line the error starts in.
      *
      * @return int Error start line
@@ -134,6 +148,28 @@ class Error extends RuntimeException
     }
 
     /**
+     * Converts a file offset into a column.
+     *
+     * @param string $code Source code that $pos indexes into
+     * @param int $pos 0-based position in $code
+     *
+     * @return int 1-based column (relative to start of line)
+     */
+    private function toColumn(string $code, int $pos): int
+    {
+        if ($pos > strlen($code)) {
+            throw new RuntimeException('Invalid position information');
+        }
+
+        $lineStartPos = strrpos($code, "\n", $pos - strlen($code));
+        if (false === $lineStartPos) {
+            $lineStartPos = -1;
+        }
+
+        return $pos - $lineStartPos;
+    }
+
+    /**
      * Gets the line the error ends in.
      *
      * @return int Error end line
@@ -156,41 +192,5 @@ class Error extends RuntimeException
         }
 
         return $this->toColumn($code, $this->attributes['endFilePos']);
-    }
-
-    /**
-     * Updates the exception message after a change to rawMessage or rawLine.
-     */
-    protected function updateMessage()
-    {
-        $this->message = $this->rawMessage;
-
-        if (-1 === $this->getStartLine()) {
-            $this->message .= ' on unknown line';
-        } else {
-            $this->message .= ' on line ' . $this->getStartLine();
-        }
-    }
-
-    /**
-     * Converts a file offset into a column.
-     *
-     * @param string $code Source code that $pos indexes into
-     * @param int $pos 0-based position in $code
-     *
-     * @return int 1-based column (relative to start of line)
-     */
-    private function toColumn(string $code, int $pos): int
-    {
-        if ($pos > strlen($code)) {
-            throw new RuntimeException('Invalid position information');
-        }
-
-        $lineStartPos = strrpos($code, "\n", $pos - strlen($code));
-        if (false === $lineStartPos) {
-            $lineStartPos = -1;
-        }
-
-        return $pos - $lineStartPos;
     }
 }

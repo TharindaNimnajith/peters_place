@@ -49,6 +49,36 @@ class Validator
     }
 
     /**
+     * Assert that the callback returns true for each variable.
+     *
+     * @param callable $callback
+     * @param string $message
+     *
+     * @return Validator
+     * @throws ValidationException
+     *
+     */
+    protected function assertCallback(callable $callback, $message = 'failed callback assertion')
+    {
+        $failing = [];
+
+        foreach ($this->variables as $variable) {
+            if ($callback($this->loader->getEnvironmentVariable($variable)) === false) {
+                $failing[] = sprintf('%s %s', $variable, $message);
+            }
+        }
+
+        if (count($failing) > 0) {
+            throw new ValidationException(sprintf(
+                'One or more environment variables failed assertions: %s.',
+                implode(', ', $failing)
+            ));
+        }
+
+        return $this;
+    }
+
+    /**
      * Assert that each variable is not empty.
      *
      * @return Validator
@@ -120,35 +150,5 @@ class Validator
             },
             sprintf('is not one of [%s]', implode(', ', $choices))
         );
-    }
-
-    /**
-     * Assert that the callback returns true for each variable.
-     *
-     * @param callable $callback
-     * @param string $message
-     *
-     * @return Validator
-     * @throws ValidationException
-     *
-     */
-    protected function assertCallback(callable $callback, $message = 'failed callback assertion')
-    {
-        $failing = [];
-
-        foreach ($this->variables as $variable) {
-            if ($callback($this->loader->getEnvironmentVariable($variable)) === false) {
-                $failing[] = sprintf('%s %s', $variable, $message);
-            }
-        }
-
-        if (count($failing) > 0) {
-            throw new ValidationException(sprintf(
-                'One or more environment variables failed assertions: %s.',
-                implode(', ', $failing)
-            ));
-        }
-
-        return $this;
     }
 }

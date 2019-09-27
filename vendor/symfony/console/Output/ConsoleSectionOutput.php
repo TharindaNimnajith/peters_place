@@ -72,40 +72,6 @@ class ConsoleSectionOutput extends StreamOutput
         parent::doWrite($this->popStreamContentUntilCurrentSection($lines), false);
     }
 
-    public function getContent(): string
-    {
-        return implode('', $this->content);
-    }
-
-    /**
-     * @internal
-     */
-    public function addContent(string $input)
-    {
-        foreach (explode(PHP_EOL, $input) as $lineContent) {
-            $this->lines += ceil($this->getDisplayLength($lineContent) / $this->terminal->getWidth()) ?: 1;
-            $this->content[] = $lineContent;
-            $this->content[] = PHP_EOL;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doWrite($message, $newline)
-    {
-        if (!$this->isDecorated()) {
-            return parent::doWrite($message, $newline);
-        }
-
-        $erasedContent = $this->popStreamContentUntilCurrentSection();
-
-        $this->addContent($message);
-
-        parent::doWrite($message, true);
-        parent::doWrite($erasedContent, false);
-    }
-
     /**
      * At initial stage, cursor is at the end of stream output. This method makes cursor crawl upwards until it hits
      * current section. Then it erases content it crawled through. Optionally, it erases part of current section too.
@@ -132,6 +98,40 @@ class ConsoleSectionOutput extends StreamOutput
         }
 
         return implode('', array_reverse($erasedContent));
+    }
+
+    public function getContent(): string
+    {
+        return implode('', $this->content);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doWrite($message, $newline)
+    {
+        if (!$this->isDecorated()) {
+            return parent::doWrite($message, $newline);
+        }
+
+        $erasedContent = $this->popStreamContentUntilCurrentSection();
+
+        $this->addContent($message);
+
+        parent::doWrite($message, true);
+        parent::doWrite($erasedContent, false);
+    }
+
+    /**
+     * @internal
+     */
+    public function addContent(string $input)
+    {
+        foreach (explode(PHP_EOL, $input) as $lineContent) {
+            $this->lines += ceil($this->getDisplayLength($lineContent) / $this->terminal->getWidth()) ?: 1;
+            $this->content[] = $lineContent;
+            $this->content[] = PHP_EOL;
+        }
     }
 
     private function getDisplayLength(string $text): string

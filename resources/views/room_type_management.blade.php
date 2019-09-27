@@ -39,7 +39,6 @@
 </head>
 
 <body>
-
 <div class="container">
     <div class="navigation">
         @if (session()->has('success'))

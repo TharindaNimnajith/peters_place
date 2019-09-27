@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Console\Tests\Helper;
 
-use Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -25,6 +24,22 @@ class HelperSetTest extends TestCase
 
         $this->assertEquals($mock_helper, $helperset->get('fake_helper_alias'), '__construct sets given helper to helpers');
         $this->assertTrue($helperset->has('fake_helper_alias'), '__construct sets helper alias for given helper');
+    }
+
+    private function getGenericMockHelper($name, HelperSet $helperset = null)
+    {
+        $mock_helper = $this->getMockBuilder('\Symfony\Component\Console\Helper\HelperInterface')->getMock();
+        $mock_helper->expects($this->any())
+            ->method('getName')
+            ->willReturn($name);
+
+        if ($helperset) {
+            $mock_helper->expects($this->any())
+                ->method('setHelperSet')
+                ->with($this->equalTo($helperset));
+        }
+
+        return $mock_helper;
     }
 
     public function testSet()
@@ -66,7 +81,7 @@ class HelperSetTest extends TestCase
         try {
             $helperset->get('foo');
             $this->fail('->get() throws InvalidArgumentException when helper not found');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->assertInstanceOf('\InvalidArgumentException', $e, '->get() throws InvalidArgumentException when helper not found');
             $this->assertInstanceOf('Symfony\Component\Console\Exception\ExceptionInterface', $e, '->get() throws domain specific exception when helper not found');
             $this->assertContains('The helper "foo" is not defined.', $e->getMessage(), '->get() throws InvalidArgumentException when helper not found');
@@ -108,21 +123,5 @@ class HelperSetTest extends TestCase
         foreach ($helperset as $helper) {
             $this->assertEquals($helpers[$i++], $helper->getName());
         }
-    }
-
-    private function getGenericMockHelper($name, HelperSet $helperset = null)
-    {
-        $mock_helper = $this->getMockBuilder('\Symfony\Component\Console\Helper\HelperInterface')->getMock();
-        $mock_helper->expects($this->any())
-            ->method('getName')
-            ->willReturn($name);
-
-        if ($helperset) {
-            $mock_helper->expects($this->any())
-                ->method('setHelperSet')
-                ->with($this->equalTo($helperset));
-        }
-
-        return $mock_helper;
     }
 }

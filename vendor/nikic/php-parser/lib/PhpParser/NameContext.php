@@ -153,6 +153,30 @@ class NameContext
         return FullyQualified::concat($this->namespace, $name, $name->getAttributes());
     }
 
+    private function resolveAlias(Name $name, $type)
+    {
+        $firstPart = $name->getFirst();
+
+        if ($name->isQualified()) {
+            // resolve aliases for qualified names, always against class alias table
+            $checkName = strtolower($firstPart);
+            if (isset($this->aliases[Stmt\Use_::TYPE_NORMAL][$checkName])) {
+                $alias = $this->aliases[Stmt\Use_::TYPE_NORMAL][$checkName];
+                return FullyQualified::concat($alias, $name->slice(1), $name->getAttributes());
+            }
+        } elseif ($name->isUnqualified()) {
+            // constant aliases are case-sensitive, function aliases case-insensitive
+            $checkName = $type === Stmt\Use_::TYPE_CONSTANT ? $firstPart : strtolower($firstPart);
+            if (isset($this->aliases[$type][$checkName])) {
+                // resolve unqualified aliases
+                return new FullyQualified($this->aliases[$type][$checkName], $name->getAttributes());
+            }
+        }
+
+        // No applicable aliases
+        return null;
+    }
+
     /**
      * Get shortest representation of this fully-qualified name.
      *
@@ -234,30 +258,6 @@ class NameContext
         }
 
         return $possibleNames;
-    }
-
-    private function resolveAlias(Name $name, $type)
-    {
-        $firstPart = $name->getFirst();
-
-        if ($name->isQualified()) {
-            // resolve aliases for qualified names, always against class alias table
-            $checkName = strtolower($firstPart);
-            if (isset($this->aliases[Stmt\Use_::TYPE_NORMAL][$checkName])) {
-                $alias = $this->aliases[Stmt\Use_::TYPE_NORMAL][$checkName];
-                return FullyQualified::concat($alias, $name->slice(1), $name->getAttributes());
-            }
-        } elseif ($name->isUnqualified()) {
-            // constant aliases are case-sensitive, function aliases case-insensitive
-            $checkName = $type === Stmt\Use_::TYPE_CONSTANT ? $firstPart : strtolower($firstPart);
-            if (isset($this->aliases[$type][$checkName])) {
-                // resolve unqualified aliases
-                return new FullyQualified($this->aliases[$type][$checkName], $name->getAttributes());
-            }
-        }
-
-        // No applicable aliases
-        return null;
     }
 
     private function getNamespaceRelativeName(string $name, string $lcName, int $type)

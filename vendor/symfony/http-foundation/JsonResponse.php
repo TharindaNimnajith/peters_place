@@ -11,13 +11,6 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-use ArrayObject;
-use Exception;
-use InvalidArgumentException;
-use function get_class;
-use function in_array;
-use const PHP_VERSION_ID;
-
 /**
  * Response represents an HTTP response in JSON format.
  *
@@ -50,10 +43,80 @@ class JsonResponse extends Response
         parent::__construct('', $status, $headers);
 
         if (null === $data) {
-            $data = new ArrayObject();
+            $data = new \ArrayObject();
         }
 
         $json ? $this->setJson($data) : $this->setData($data);
+    }
+
+    /**
+     * Sets a raw string containing a JSON document to be sent.
+     *
+     * @param string $json
+     *
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setJson($json)
+    {
+        $this->data = $json;
+
+        return $this->update();
+    }
+
+    /**
+     * Updates the content and headers according to the JSON data and callback.
+     *
+     * @return $this
+     */
+    protected function update()
+    {
+        if (null !== $this->callback) {
+            // Not using application/javascript for compatibility reasons with older browsers.
+            $this->headers->set('Content-Type', 'text/javascript');
+
+            return $this->setContent(sprintf('/**/%s(%s);', $this->callback, $this->data));
+        }
+
+        // Only set the header when there is none or when it equals 'text/javascript' (from a previous update with callback)
+        // in order to not overwrite a custom definition.
+        if (!$this->headers->has('Content-Type') || 'text/javascript' === $this->headers->get('Content-Type')) {
+            $this->headers->set('Content-Type', 'application/json');
+        }
+
+        return $this->setContent($this->data);
+    }
+
+    /**
+     * Sets the data to be sent as JSON.
+     *
+     * @param mixed $data
+     *
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function setData($data = [])
+    {
+        try {
+            $data = json_encode($data, $this->encodingOptions);
+        } catch (\Exception $e) {
+            if ('Exception' === \get_class($e) && 0 === strpos($e->getMessage(), 'Failed calling ')) {
+                throw $e->getPrevious() ?: $e;
+            }
+            throw $e;
+        }
+
+        if (\PHP_VERSION_ID >= 70300 && (JSON_THROW_ON_ERROR & $this->encodingOptions)) {
+            return $this->setJson($data);
+        }
+
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            throw new \InvalidArgumentException(json_last_error_msg());
+        }
+
+        return $this->setJson($data);
     }
 
     /**
@@ -95,60 +158,13 @@ class JsonResponse extends Response
     }
 
     /**
-     * Sets a raw string containing a JSON document to be sent.
-     *
-     * @param string $json
-     *
-     * @return $this
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setJson($json)
-    {
-        $this->data = $json;
-
-        return $this->update();
-    }
-
-    /**
-     * Sets the data to be sent as JSON.
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     *
-     * @throws InvalidArgumentException
-     */
-    public function setData($data = [])
-    {
-        try {
-            $data = json_encode($data, $this->encodingOptions);
-        } catch (Exception $e) {
-            if ('Exception' === get_class($e) && 0 === strpos($e->getMessage(), 'Failed calling ')) {
-                throw $e->getPrevious() ?: $e;
-            }
-            throw $e;
-        }
-
-        if (PHP_VERSION_ID >= 70300 && (JSON_THROW_ON_ERROR & $this->encodingOptions)) {
-            return $this->setJson($data);
-        }
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw new InvalidArgumentException(json_last_error_msg());
-        }
-
-        return $this->setJson($data);
-    }
-
-    /**
      * Sets the JSONP callback.
      *
      * @param string|null $callback The JSONP callback or null to use none
      *
      * @return $this
      *
-     * @throws InvalidArgumentException When the callback name is not valid
+     * @throws \InvalidArgumentException When the callback name is not valid
      */
     public function setCallback($callback = null)
     {
@@ -165,8 +181,8 @@ class JsonResponse extends Response
             ];
             $parts = explode('.', $callback);
             foreach ($parts as $part) {
-                if (!preg_match($pattern, $part) || in_array($part, $reserved, true)) {
-                    throw new InvalidArgumentException('The callback name is not valid.');
+                if (!preg_match($pattern, $part) || \in_array($part, $reserved, true)) {
+                    throw new \InvalidArgumentException('The callback name is not valid.');
                 }
             }
         }
@@ -198,28 +214,5 @@ class JsonResponse extends Response
         $this->encodingOptions = (int)$encodingOptions;
 
         return $this->setData(json_decode($this->data));
-    }
-
-    /**
-     * Updates the content and headers according to the JSON data and callback.
-     *
-     * @return $this
-     */
-    protected function update()
-    {
-        if (null !== $this->callback) {
-            // Not using application/javascript for compatibility reasons with older browsers.
-            $this->headers->set('Content-Type', 'text/javascript');
-
-            return $this->setContent(sprintf('/**/%s(%s);', $this->callback, $this->data));
-        }
-
-        // Only set the header when there is none or when it equals 'text/javascript' (from a previous update with callback)
-        // in order to not overwrite a custom definition.
-        if (!$this->headers->has('Content-Type') || 'text/javascript' === $this->headers->get('Content-Type')) {
-            $this->headers->set('Content-Type', 'application/json');
-        }
-
-        return $this->setContent($this->data);
     }
 }

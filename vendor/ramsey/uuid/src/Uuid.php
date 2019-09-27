@@ -326,18 +326,6 @@ class Uuid implements UuidInterface
     }
 
     /**
-     * Creates a UUID from the string standard representation.
-     *
-     * @param string $name A string that specifies a UUID
-     * @return UuidInterface
-     * @throws InvalidUuidStringException
-     */
-    public static function fromString($name)
-    {
-        return self::getFactory()->fromString($name);
-    }
-
-    /**
      * Converts this UUID object to a string when the object is used in any
      * string context.
      *
@@ -391,6 +379,18 @@ class Uuid implements UuidInterface
         $this->codec = $uuid->codec;
         $this->converter = $uuid->converter;
         $this->fields = $uuid->fields;
+    }
+
+    /**
+     * Creates a UUID from the string standard representation.
+     *
+     * @param string $name A string that specifies a UUID
+     * @return UuidInterface
+     * @throws InvalidUuidStringException
+     */
+    public static function fromString($name)
+    {
+        return self::getFactory()->fromString($name);
     }
 
     public function equals($other)

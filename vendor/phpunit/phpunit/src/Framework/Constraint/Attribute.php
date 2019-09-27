@@ -59,14 +59,6 @@ class Attribute extends Composite
     }
 
     /**
-     * Returns a string representation of the constraint.
-     */
-    public function toString(): string
-    {
-        return 'attribute "' . $this->attributeName . '" ' . $this->innerConstraint()->toString();
-    }
-
-    /**
      * Returns the description of the failure
      *
      * The beginning of failure messages is "Failed asserting that" in most
@@ -77,5 +69,13 @@ class Attribute extends Composite
     protected function failureDescription($other): string
     {
         return $this->toString();
+    }
+
+    /**
+     * Returns a string representation of the constraint.
+     */
+    public function toString(): string
+    {
+        return 'attribute "' . $this->attributeName . '" ' . $this->innerConstraint()->toString();
     }
 }

@@ -26,6 +26,53 @@ class PrettyPrinterTest extends CodeTestAbstract
         $this->doTestPrettyPrintMethod('prettyPrint', $name, $code, $expected, $mode);
     }
 
+    protected function doTestPrettyPrintMethod($method, $name, $code, $expected, $modeLine)
+    {
+        $lexer = new Lexer\Emulative;
+        $parser5 = new Parser\Php5($lexer);
+        $parser7 = new Parser\Php7($lexer);
+
+        list($version, $options) = $this->parseModeLine($modeLine);
+        $prettyPrinter = new Standard($options);
+
+        try {
+            $output5 = canonicalize($prettyPrinter->$method($parser5->parse($code)));
+        } catch (Error $e) {
+            $output5 = null;
+            if ('php7' !== $version) {
+                throw $e;
+            }
+        }
+
+        try {
+            $output7 = canonicalize($prettyPrinter->$method($parser7->parse($code)));
+        } catch (Error $e) {
+            $output7 = null;
+            if ('php5' !== $version) {
+                throw $e;
+            }
+        }
+
+        if ('php5' === $version) {
+            $this->assertSame($expected, $output5, $name);
+            $this->assertNotSame($expected, $output7, $name);
+        } elseif ('php7' === $version) {
+            $this->assertSame($expected, $output7, $name);
+            $this->assertNotSame($expected, $output5, $name);
+        } else {
+            $this->assertSame($expected, $output5, $name);
+            $this->assertSame($expected, $output7, $name);
+        }
+    }
+
+    private function parseModeLine($modeLine)
+    {
+        $parts = explode(' ', (string)$modeLine, 2);
+        $version = $parts[0] ?? 'both';
+        $options = isset($parts[1]) ? json_decode($parts[1], true) : [];
+        return [$version, $options];
+    }
+
     /**
      * @dataProvider provideTestPrettyPrintFile
      * @covers       \PhpParser\PrettyPrinter\Standard<extended>
@@ -279,52 +326,5 @@ CODE
             $this->getTests(__DIR__ . '/../code/prettyPrinter', 'test'),
             $this->getTests(__DIR__ . '/../code/parser', 'test')
         );
-    }
-
-    protected function doTestPrettyPrintMethod($method, $name, $code, $expected, $modeLine)
-    {
-        $lexer = new Lexer\Emulative;
-        $parser5 = new Parser\Php5($lexer);
-        $parser7 = new Parser\Php7($lexer);
-
-        list($version, $options) = $this->parseModeLine($modeLine);
-        $prettyPrinter = new Standard($options);
-
-        try {
-            $output5 = canonicalize($prettyPrinter->$method($parser5->parse($code)));
-        } catch (Error $e) {
-            $output5 = null;
-            if ('php7' !== $version) {
-                throw $e;
-            }
-        }
-
-        try {
-            $output7 = canonicalize($prettyPrinter->$method($parser7->parse($code)));
-        } catch (Error $e) {
-            $output7 = null;
-            if ('php5' !== $version) {
-                throw $e;
-            }
-        }
-
-        if ('php5' === $version) {
-            $this->assertSame($expected, $output5, $name);
-            $this->assertNotSame($expected, $output7, $name);
-        } elseif ('php7' === $version) {
-            $this->assertSame($expected, $output7, $name);
-            $this->assertNotSame($expected, $output5, $name);
-        } else {
-            $this->assertSame($expected, $output5, $name);
-            $this->assertSame($expected, $output7, $name);
-        }
-    }
-
-    private function parseModeLine($modeLine)
-    {
-        $parts = explode(' ', (string)$modeLine, 2);
-        $version = $parts[0] ?? 'both';
-        $options = isset($parts[1]) ? json_decode($parts[1], true) : [];
-        return [$version, $options];
     }
 }

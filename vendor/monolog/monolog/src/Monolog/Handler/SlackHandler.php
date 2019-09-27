@@ -110,6 +110,19 @@ class SlackHandler extends SocketHandler
     }
 
     /**
+     * Builds the body of API call
+     *
+     * @param array $record
+     * @return string
+     */
+    private function buildContent($record)
+    {
+        $dataArray = $this->prepareContentData($record);
+
+        return http_build_query($dataArray);
+    }
+
+    /**
      * Prepares content data
      *
      * @param array $record
@@ -125,6 +138,23 @@ class SlackHandler extends SocketHandler
         }
 
         return $dataArray;
+    }
+
+    /**
+     * Builds the header of the API Call
+     *
+     * @param string $content
+     * @return string
+     */
+    private function buildHeader($content)
+    {
+        $header = "POST /api/chat.postMessage HTTP/1.1\r\n";
+        $header .= "Host: slack.com\r\n";
+        $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
+        $header .= "Content-Length: " . strlen($content) . "\r\n";
+        $header .= "\r\n";
+
+        return $header;
     }
 
     /**
@@ -186,35 +216,5 @@ class SlackHandler extends SocketHandler
         );
 
         return $this->slackRecord->stringify($fields);
-    }
-
-    /**
-     * Builds the body of API call
-     *
-     * @param array $record
-     * @return string
-     */
-    private function buildContent($record)
-    {
-        $dataArray = $this->prepareContentData($record);
-
-        return http_build_query($dataArray);
-    }
-
-    /**
-     * Builds the header of the API Call
-     *
-     * @param string $content
-     * @return string
-     */
-    private function buildHeader($content)
-    {
-        $header = "POST /api/chat.postMessage HTTP/1.1\r\n";
-        $header .= "Host: slack.com\r\n";
-        $header .= "Content-Type: application/x-www-form-urlencoded\r\n";
-        $header .= "Content-Length: " . strlen($content) . "\r\n";
-        $header .= "\r\n";
-
-        return $header;
     }
 }

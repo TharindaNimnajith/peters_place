@@ -11,9 +11,6 @@
 
 namespace Symfony\Component\HttpKernel\Fragment;
 
-use Exception;
-use InvalidArgumentException;
-use LogicException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
@@ -22,9 +19,6 @@ use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Loader\ExistsLoaderInterface;
-use function count;
-use function is_array;
-use function strlen;
 
 /**
  * Implements the Hinclude rendering strategy.
@@ -57,12 +51,12 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
      *
      * @param EngineInterface|Environment|null $templating An EngineInterface or an Environment instance
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setTemplating($templating)
     {
         if (null !== $templating && !$templating instanceof EngineInterface && !$templating instanceof Environment) {
-            throw new InvalidArgumentException('The hinclude rendering strategy needs an instance of Twig\Environment or Symfony\Component\Templating\EngineInterface');
+            throw new \InvalidArgumentException('The hinclude rendering strategy needs an instance of Twig\Environment or Symfony\Component\Templating\EngineInterface');
         }
 
         if ($templating instanceof EngineInterface) {
@@ -95,11 +89,11 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
     {
         if ($uri instanceof ControllerReference) {
             if (null === $this->signer) {
-                throw new LogicException('You must use a proper URI when using the Hinclude rendering strategy or set a URL signer.');
+                throw new \LogicException('You must use a proper URI when using the Hinclude rendering strategy or set a URL signer.');
             }
 
             // we need to sign the absolute URI, but want to return the path only.
-            $uri = substr($this->signer->sign($this->generateFragmentUri($uri, $request, true)), strlen($request->getSchemeAndHttpHost()));
+            $uri = substr($this->signer->sign($this->generateFragmentUri($uri, $request, true)), \strlen($request->getSchemeAndHttpHost()));
         }
 
         // We need to replace ampersands in the URI with the encoded form in order to return valid html/xml content.
@@ -112,12 +106,12 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
             $content = $template;
         }
 
-        $attributes = isset($options['attributes']) && is_array($options['attributes']) ? $options['attributes'] : [];
+        $attributes = isset($options['attributes']) && \is_array($options['attributes']) ? $options['attributes'] : [];
         if (isset($options['id']) && $options['id']) {
             $attributes['id'] = $options['id'];
         }
         $renderedAttributes = '';
-        if (count($attributes) > 0) {
+        if (\count($attributes) > 0) {
             $flags = ENT_QUOTES | ENT_SUBSTITUTE;
             foreach ($attributes as $attribute => $value) {
                 $renderedAttributes .= sprintf(
@@ -131,20 +125,12 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
         return new Response(sprintf('<hx:include src="%s"%s>%s</hx:include>', $uri, $renderedAttributes, $content));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'hinclude';
-    }
-
     private function templateExists(string $template): bool
     {
         if ($this->templating instanceof EngineInterface) {
             try {
                 return $this->templating->exists($template);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
         }
@@ -166,5 +152,13 @@ class HIncludeFragmentRenderer extends RoutableFragmentRenderer
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'hinclude';
     }
 }

@@ -74,6 +74,21 @@ class MorphTo extends BelongsTo
     }
 
     /**
+     * Build a dictionary with the models.
+     *
+     * @param Collection $models
+     * @return void
+     */
+    protected function buildDictionary(Collection $models)
+    {
+        foreach ($models as $model) {
+            if ($model->{$this->morphType}) {
+                $this->dictionary[$model->{$this->morphType}][$model->{$this->foreignKey}][] = $model;
+            }
+        }
+    }
+
+    /**
      * Get the results of the relationship.
      *
      * Called via eager load method of Eloquent query builder.
@@ -90,6 +105,52 @@ class MorphTo extends BelongsTo
     }
 
     /**
+     * Match the results for a given type to their parents.
+     *
+     * @param string $type
+     * @param Collection $results
+     * @return void
+     */
+    protected function matchToMorphParents($type, Collection $results)
+    {
+        foreach ($results as $result) {
+            $ownerKey = !is_null($this->ownerKey) ? $result->{$this->ownerKey} : $result->getKey();
+
+            if (isset($this->dictionary[$type][$ownerKey])) {
+                foreach ($this->dictionary[$type][$ownerKey] as $model) {
+                    $model->setRelation($this->relationName, $result);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get all of the relation results for a type.
+     *
+     * @param string $type
+     * @return Collection
+     */
+    protected function getResultsByType($type)
+    {
+        $instance = $this->createModelByType($type);
+
+        $ownerKey = $this->ownerKey ?? $instance->getKeyName();
+
+        $query = $this->replayMacros($instance->newQuery())
+            ->mergeConstraintsFrom($this->getQuery())
+            ->with(array_merge(
+                $this->getQuery()->getEagerLoads(),
+                (array)($this->morphableEagerLoads[get_class($instance)] ?? [])
+            ));
+
+        $whereIn = $this->whereInMethod($instance, $ownerKey);
+
+        return $query->{$whereIn}(
+            $instance->getTable() . '.' . $ownerKey, $this->gatherKeysByType($type)
+        )->get();
+    }
+
+    /**
      * Create a new model instance by type.
      *
      * @param string $type
@@ -100,6 +161,34 @@ class MorphTo extends BelongsTo
         $class = Model::getActualClassNameForMorph($type);
 
         return new $class;
+    }
+
+    /**
+     * Replay stored macro calls on the actual related instance.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    protected function replayMacros(Builder $query)
+    {
+        foreach ($this->macroBuffer as $macro) {
+            $query->{$macro['method']}(...$macro['parameters']);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Gather all of the foreign keys for a given type.
+     *
+     * @param string $type
+     * @return array
+     */
+    protected function gatherKeysByType($type)
+    {
+        return collect($this->dictionary[$type])->map(function ($models) {
+            return head($models)->{$this->foreignKey};
+        })->values()->unique()->all();
     }
 
     /**
@@ -222,95 +311,6 @@ class MorphTo extends BelongsTo
 
             return $this;
         }
-    }
-
-    /**
-     * Build a dictionary with the models.
-     *
-     * @param Collection $models
-     * @return void
-     */
-    protected function buildDictionary(Collection $models)
-    {
-        foreach ($models as $model) {
-            if ($model->{$this->morphType}) {
-                $this->dictionary[$model->{$this->morphType}][$model->{$this->foreignKey}][] = $model;
-            }
-        }
-    }
-
-    /**
-     * Match the results for a given type to their parents.
-     *
-     * @param string $type
-     * @param Collection $results
-     * @return void
-     */
-    protected function matchToMorphParents($type, Collection $results)
-    {
-        foreach ($results as $result) {
-            $ownerKey = !is_null($this->ownerKey) ? $result->{$this->ownerKey} : $result->getKey();
-
-            if (isset($this->dictionary[$type][$ownerKey])) {
-                foreach ($this->dictionary[$type][$ownerKey] as $model) {
-                    $model->setRelation($this->relationName, $result);
-                }
-            }
-        }
-    }
-
-    /**
-     * Get all of the relation results for a type.
-     *
-     * @param string $type
-     * @return Collection
-     */
-    protected function getResultsByType($type)
-    {
-        $instance = $this->createModelByType($type);
-
-        $ownerKey = $this->ownerKey ?? $instance->getKeyName();
-
-        $query = $this->replayMacros($instance->newQuery())
-            ->mergeConstraintsFrom($this->getQuery())
-            ->with(array_merge(
-                $this->getQuery()->getEagerLoads(),
-                (array)($this->morphableEagerLoads[get_class($instance)] ?? [])
-            ));
-
-        $whereIn = $this->whereInMethod($instance, $ownerKey);
-
-        return $query->{$whereIn}(
-            $instance->getTable() . '.' . $ownerKey, $this->gatherKeysByType($type)
-        )->get();
-    }
-
-    /**
-     * Replay stored macro calls on the actual related instance.
-     *
-     * @param Builder $query
-     * @return Builder
-     */
-    protected function replayMacros(Builder $query)
-    {
-        foreach ($this->macroBuffer as $macro) {
-            $query->{$macro['method']}(...$macro['parameters']);
-        }
-
-        return $query;
-    }
-
-    /**
-     * Gather all of the foreign keys for a given type.
-     *
-     * @param string $type
-     * @return array
-     */
-    protected function gatherKeysByType($type)
-    {
-        return collect($this->dictionary[$type])->map(function ($models) {
-            return head($models)->{$this->foreignKey};
-        })->values()->unique()->all();
     }
 
     /**

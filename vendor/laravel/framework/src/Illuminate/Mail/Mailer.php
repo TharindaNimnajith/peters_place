@@ -223,184 +223,6 @@ class Mailer implements MailerContract, MailQueueContract
     }
 
     /**
-     * Get the Swift Mailer instance.
-     *
-     * @return Swift_Mailer
-     */
-    public function getSwiftMailer()
-    {
-        return $this->swift;
-    }
-
-    /**
-     * Send a new message with only a raw text part.
-     *
-     * @param string $text
-     * @param mixed $callback
-     * @return void
-     */
-    public function raw($text, $callback)
-    {
-        return $this->send(['raw' => $text], [], $callback);
-    }
-
-    /**
-     * Send a new message with only a plain part.
-     *
-     * @param string $view
-     * @param array $data
-     * @param mixed $callback
-     * @return void
-     */
-    public function plain($view, array $data, $callback)
-    {
-        return $this->send(['text' => $view], $data, $callback);
-    }
-
-    /**
-     * Render the given message as a view.
-     *
-     * @param string|array $view
-     * @param array $data
-     * @return string
-     */
-    public function render($view, array $data = [])
-    {
-        // First we need to parse the view, which could either be a string or an array
-        // containing both an HTML and plain text versions of the view which should
-        // be used when sending an e-mail. We will extract both of them out here.
-        [$view, $plain, $raw] = $this->parseView($view);
-
-        $data['message'] = $this->createMessage();
-
-        return $this->renderView($view ?: $plain, $data);
-    }
-
-    /**
-     * Queue a new e-mail message for sending on the given queue.
-     *
-     * This method didn't match rest of framework's "onQueue" phrasing. Added "onQueue".
-     *
-     * @param string $queue
-     * @param MailableContract $view
-     * @return mixed
-     */
-    public function queueOn($queue, $view)
-    {
-        return $this->onQueue($queue, $view);
-    }
-
-    /**
-     * Queue a new e-mail message for sending on the given queue.
-     *
-     * @param string $queue
-     * @param MailableContract $view
-     * @return mixed
-     */
-    public function onQueue($queue, $view)
-    {
-        return $this->queue($view, $queue);
-    }
-
-    /**
-     * Queue a new e-mail message for sending.
-     *
-     * @param MailableContract $view
-     * @param string|null $queue
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public function queue($view, $queue = null)
-    {
-        if (!$view instanceof MailableContract) {
-            throw new InvalidArgumentException('Only mailables may be queued.');
-        }
-
-        if (is_string($queue)) {
-            $view->onQueue($queue);
-        }
-
-        return $view->queue($this->queue);
-    }
-
-    /**
-     * Queue a new e-mail message for sending after (n) seconds on the given queue.
-     *
-     * @param string $queue
-     * @param DateTimeInterface|DateInterval|int $delay
-     * @param MailableContract $view
-     * @return mixed
-     */
-    public function laterOn($queue, $delay, $view)
-    {
-        return $this->later($delay, $view, $queue);
-    }
-
-    /**
-     * Queue a new e-mail message for sending after (n) seconds.
-     *
-     * @param DateTimeInterface|DateInterval|int $delay
-     * @param MailableContract $view
-     * @param string|null $queue
-     * @return mixed
-     *
-     * @throws InvalidArgumentException
-     */
-    public function later($delay, $view, $queue = null)
-    {
-        if (!$view instanceof MailableContract) {
-            throw new InvalidArgumentException('Only mailables may be queued.');
-        }
-
-        return $view->later($delay, is_null($queue) ? $this->queue : $queue);
-    }
-
-    /**
-     * Get the array of failed recipients.
-     *
-     * @return array
-     */
-    public function failures()
-    {
-        return $this->failedRecipients;
-    }
-
-    /**
-     * Get the view factory instance.
-     *
-     * @return Factory
-     */
-    public function getViewFactory()
-    {
-        return $this->views;
-    }
-
-    /**
-     * Set the Swift Mailer instance.
-     *
-     * @param Swift_Mailer $swift
-     * @return void
-     */
-    public function setSwiftMailer($swift)
-    {
-        $this->swift = $swift;
-    }
-
-    /**
-     * Set the queue manager instance.
-     *
-     * @param QueueContract $queue
-     * @return $this
-     */
-    public function setQueue(QueueContract $queue)
-    {
-        $this->queue = $queue;
-
-        return $this;
-    }
-
-    /**
      * Send the given mailable.
      *
      * @param MailableContract $mailable
@@ -576,6 +398,16 @@ class Mailer implements MailerContract, MailQueueContract
     }
 
     /**
+     * Get the Swift Mailer instance.
+     *
+     * @return Swift_Mailer
+     */
+    public function getSwiftMailer()
+    {
+        return $this->swift;
+    }
+
+    /**
      * Dispatch the message sent event.
      *
      * @param Message $message
@@ -589,5 +421,173 @@ class Mailer implements MailerContract, MailQueueContract
                 new Events\MessageSent($message->getSwiftMessage(), $data)
             );
         }
+    }
+
+    /**
+     * Send a new message with only a raw text part.
+     *
+     * @param string $text
+     * @param mixed $callback
+     * @return void
+     */
+    public function raw($text, $callback)
+    {
+        return $this->send(['raw' => $text], [], $callback);
+    }
+
+    /**
+     * Send a new message with only a plain part.
+     *
+     * @param string $view
+     * @param array $data
+     * @param mixed $callback
+     * @return void
+     */
+    public function plain($view, array $data, $callback)
+    {
+        return $this->send(['text' => $view], $data, $callback);
+    }
+
+    /**
+     * Render the given message as a view.
+     *
+     * @param string|array $view
+     * @param array $data
+     * @return string
+     */
+    public function render($view, array $data = [])
+    {
+        // First we need to parse the view, which could either be a string or an array
+        // containing both an HTML and plain text versions of the view which should
+        // be used when sending an e-mail. We will extract both of them out here.
+        [$view, $plain, $raw] = $this->parseView($view);
+
+        $data['message'] = $this->createMessage();
+
+        return $this->renderView($view ?: $plain, $data);
+    }
+
+    /**
+     * Queue a new e-mail message for sending on the given queue.
+     *
+     * This method didn't match rest of framework's "onQueue" phrasing. Added "onQueue".
+     *
+     * @param string $queue
+     * @param MailableContract $view
+     * @return mixed
+     */
+    public function queueOn($queue, $view)
+    {
+        return $this->onQueue($queue, $view);
+    }
+
+    /**
+     * Queue a new e-mail message for sending on the given queue.
+     *
+     * @param string $queue
+     * @param MailableContract $view
+     * @return mixed
+     */
+    public function onQueue($queue, $view)
+    {
+        return $this->queue($view, $queue);
+    }
+
+    /**
+     * Queue a new e-mail message for sending.
+     *
+     * @param MailableContract $view
+     * @param string|null $queue
+     * @return mixed
+     *
+     * @throws InvalidArgumentException
+     */
+    public function queue($view, $queue = null)
+    {
+        if (!$view instanceof MailableContract) {
+            throw new InvalidArgumentException('Only mailables may be queued.');
+        }
+
+        if (is_string($queue)) {
+            $view->onQueue($queue);
+        }
+
+        return $view->queue($this->queue);
+    }
+
+    /**
+     * Queue a new e-mail message for sending after (n) seconds on the given queue.
+     *
+     * @param string $queue
+     * @param DateTimeInterface|DateInterval|int $delay
+     * @param MailableContract $view
+     * @return mixed
+     */
+    public function laterOn($queue, $delay, $view)
+    {
+        return $this->later($delay, $view, $queue);
+    }
+
+    /**
+     * Queue a new e-mail message for sending after (n) seconds.
+     *
+     * @param DateTimeInterface|DateInterval|int $delay
+     * @param MailableContract $view
+     * @param string|null $queue
+     * @return mixed
+     *
+     * @throws InvalidArgumentException
+     */
+    public function later($delay, $view, $queue = null)
+    {
+        if (!$view instanceof MailableContract) {
+            throw new InvalidArgumentException('Only mailables may be queued.');
+        }
+
+        return $view->later($delay, is_null($queue) ? $this->queue : $queue);
+    }
+
+    /**
+     * Get the array of failed recipients.
+     *
+     * @return array
+     */
+    public function failures()
+    {
+        return $this->failedRecipients;
+    }
+
+    /**
+     * Get the view factory instance.
+     *
+     * @return Factory
+     */
+    public function getViewFactory()
+    {
+        return $this->views;
+    }
+
+    /**
+     * Set the Swift Mailer instance.
+     *
+     * @param Swift_Mailer $swift
+     * @return void
+     */
+    public function setSwiftMailer($swift)
+    {
+        $this->swift = $swift;
+    }
+
+    /**
+     * Set the queue manager instance.
+     *
+     * @param QueueContract $queue
+     * @return $this
+     */
+    public function setQueue(QueueContract $queue)
+    {
+        $this->queue = $queue;
+
+        return $this;
     }
 }

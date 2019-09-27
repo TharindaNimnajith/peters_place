@@ -85,6 +85,18 @@ class CallbackEvent extends Event
     }
 
     /**
+     * Clear the mutex for the event.
+     *
+     * @return void
+     */
+    protected function removeMutex()
+    {
+        if ($this->description && $this->withoutOverlapping) {
+            $this->mutex->forget($this);
+        }
+    }
+
+    /**
      * Do not allow the event to overlap each other.
      *
      * @param int $expiresAt
@@ -151,17 +163,5 @@ class CallbackEvent extends Event
         }
 
         return is_string($this->callback) ? $this->callback : 'Closure';
-    }
-
-    /**
-     * Clear the mutex for the event.
-     *
-     * @return void
-     */
-    protected function removeMutex()
-    {
-        if ($this->description && $this->withoutOverlapping) {
-            $this->mutex->forget($this);
-        }
     }
 }

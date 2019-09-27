@@ -71,6 +71,18 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
+     * Bootstrap the console application.
+     *
+     * @return void
+     */
+    protected function bootstrap()
+    {
+        foreach (static::$bootstrappers as $bootstrapper) {
+            $bootstrapper($this);
+        }
+    }
+
+    /**
      * Format the given command as a fully-qualified executable command.
      *
      * @param string $string
@@ -143,6 +155,32 @@ class Application extends SymfonyApplication implements ApplicationContract
         return $this->run(
             $input, $this->lastOutput = $outputBuffer ?: new BufferedOutput
         );
+    }
+
+    /**
+     * Parse the incoming Artisan command and its input.
+     *
+     * @param string $command
+     * @param array $parameters
+     * @return array
+     */
+    protected function parseCommand($command, $parameters)
+    {
+        if (is_subclass_of($command, SymfonyCommand::class)) {
+            $callingClass = true;
+
+            $command = $this->laravel->make($command)->getName();
+        }
+
+        if (!isset($callingClass) && empty($parameters)) {
+            $command = $this->getCommandName($input = new StringInput($command));
+        } else {
+            array_unshift($parameters, $command);
+
+            $input = new ArrayInput($parameters);
+        }
+
+        return [$command, $input ?? null];
     }
 
     /**
@@ -225,54 +263,6 @@ class Application extends SymfonyApplication implements ApplicationContract
     }
 
     /**
-     * Get the Laravel application instance.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application
-     */
-    public function getLaravel()
-    {
-        return $this->laravel;
-    }
-
-    /**
-     * Bootstrap the console application.
-     *
-     * @return void
-     */
-    protected function bootstrap()
-    {
-        foreach (static::$bootstrappers as $bootstrapper) {
-            $bootstrapper($this);
-        }
-    }
-
-    /**
-     * Parse the incoming Artisan command and its input.
-     *
-     * @param string $command
-     * @param array $parameters
-     * @return array
-     */
-    protected function parseCommand($command, $parameters)
-    {
-        if (is_subclass_of($command, SymfonyCommand::class)) {
-            $callingClass = true;
-
-            $command = $this->laravel->make($command)->getName();
-        }
-
-        if (!isset($callingClass) && empty($parameters)) {
-            $command = $this->getCommandName($input = new StringInput($command));
-        } else {
-            array_unshift($parameters, $command);
-
-            $input = new ArrayInput($parameters);
-        }
-
-        return [$command, $input ?? null];
-    }
-
-    /**
      * Add the command to the parent instance.
      *
      * @param SymfonyCommand $command
@@ -281,6 +271,16 @@ class Application extends SymfonyApplication implements ApplicationContract
     protected function addToParent(SymfonyCommand $command)
     {
         return parent::add($command);
+    }
+
+    /**
+     * Get the Laravel application instance.
+     *
+     * @return \Illuminate\Contracts\Foundation\Application
+     */
+    public function getLaravel()
+    {
+        return $this->laravel;
     }
 
     /**

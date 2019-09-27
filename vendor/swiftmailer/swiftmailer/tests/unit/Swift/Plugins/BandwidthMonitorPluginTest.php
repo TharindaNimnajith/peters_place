@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Plugins_BandwidthMonitorPluginTest extends TestCase
+class Swift_Plugins_BandwidthMonitorPluginTest extends \PHPUnit\Framework\TestCase
 {
     private $_monitor;
 
@@ -19,6 +17,18 @@ class Swift_Plugins_BandwidthMonitorPluginTest extends TestCase
         $this->assertEquals(46, $this->monitor->getBytesOut());
     }
 
+    private function createCommandEvent($command)
+    {
+        $evt = $this->getMockBuilder('Swift_Events_CommandEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getCommand')
+            ->will($this->returnValue($command));
+
+        return $evt;
+    }
+
     public function testBytesInIncreasesWhenResponsesReceived()
     {
         $evt = $this->createResponseEvent("250 Ok\r\n");
@@ -28,6 +38,18 @@ class Swift_Plugins_BandwidthMonitorPluginTest extends TestCase
         $this->assertEquals(8, $this->monitor->getBytesIn());
         $this->monitor->responseReceived($evt);
         $this->assertEquals(16, $this->monitor->getBytesIn());
+    }
+
+    private function createResponseEvent($response)
+    {
+        $evt = $this->getMockBuilder('Swift_Events_ResponseEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getResponse')
+            ->will($this->returnValue($response));
+
+        return $evt;
     }
 
     public function testCountersCanBeReset()
@@ -66,42 +88,6 @@ class Swift_Plugins_BandwidthMonitorPluginTest extends TestCase
         $this->assertEquals(12, $this->monitor->getBytesOut());
     }
 
-    public function write($is)
-    {
-        for ($i = 0; $i < $this->bytes; ++$i) {
-            $is->write('x');
-        }
-    }
-
-    protected function setUp()
-    {
-        $this->monitor = new Swift_Plugins_BandwidthMonitorPlugin();
-    }
-
-    private function createCommandEvent($command)
-    {
-        $evt = $this->getMockBuilder('Swift_Events_CommandEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getCommand')
-            ->will($this->returnValue($command));
-
-        return $evt;
-    }
-
-    private function createResponseEvent($response)
-    {
-        $evt = $this->getMockBuilder('Swift_Events_ResponseEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getResponse')
-            ->will($this->returnValue($response));
-
-        return $evt;
-    }
-
     private function createMessageWithByteCount($bytes)
     {
         $this->bytes = $bytes;
@@ -126,5 +112,17 @@ class Swift_Plugins_BandwidthMonitorPluginTest extends TestCase
             ->will($this->returnValue($message));
 
         return $evt;
+    }
+
+    public function write($is)
+    {
+        for ($i = 0; $i < $this->bytes; ++$i) {
+            $is->write('x');
+        }
+    }
+
+    protected function setUp()
+    {
+        $this->monitor = new Swift_Plugins_BandwidthMonitorPlugin();
     }
 }

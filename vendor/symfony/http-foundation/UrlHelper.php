@@ -12,7 +12,6 @@
 namespace Symfony\Component\HttpFoundation;
 
 use Symfony\Component\Routing\RequestContext;
-use function strlen;
 
 /**
  * A helper service for manipulating URLs within and outside the request scope.
@@ -48,7 +47,7 @@ final class UrlHelper
 
         if (!$path || '/' !== $path[0]) {
             $prefix = $request->getPathInfo();
-            $last = strlen($prefix) - 1;
+            $last = \strlen($prefix) - 1;
             if ($last !== $pos = strrpos($prefix, '/')) {
                 $prefix = substr($prefix, 0, $pos) . '/';
             }
@@ -57,19 +56,6 @@ final class UrlHelper
         }
 
         return $request->getSchemeAndHttpHost() . $path;
-    }
-
-    public function getRelativePath(string $path): string
-    {
-        if (false !== strpos($path, '://') || '//' === substr($path, 0, 2)) {
-            return $path;
-        }
-
-        if (null === $request = $this->requestStack->getMasterRequest()) {
-            return $path;
-        }
-
-        return $request->getRelativeUriForPath($path);
     }
 
     private function getAbsoluteUrlFromContext(string $path): string
@@ -99,5 +85,18 @@ final class UrlHelper
         }
 
         return $scheme . '://' . $host . $port . $path;
+    }
+
+    public function getRelativePath(string $path): string
+    {
+        if (false !== strpos($path, '://') || '//' === substr($path, 0, 2)) {
+            return $path;
+        }
+
+        if (null === $request = $this->requestStack->getMasterRequest()) {
+            return $path;
+        }
+
+        return $request->getRelativeUriForPath($path);
     }
 }

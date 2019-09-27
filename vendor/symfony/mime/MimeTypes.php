@@ -3064,16 +3064,6 @@ final class MimeTypes implements MimeTypesInterface
         $this->registerGuesser(new FileinfoMimeTypeGuesser());
     }
 
-    public static function getDefault(): self
-    {
-        return self::$default ?? self::$default = new self();
-    }
-
-    public static function setDefault(self $default)
-    {
-        self::$default = $default;
-    }
-
     /**
      * Registers a MIME type guesser.
      *
@@ -3082,6 +3072,16 @@ final class MimeTypes implements MimeTypesInterface
     public function registerGuesser(MimeTypeGuesserInterface $guesser)
     {
         array_unshift($this->guessers, $guesser);
+    }
+
+    public static function getDefault(): self
+    {
+        return self::$default ?? self::$default = new self();
+    }
+
+    public static function setDefault(self $default)
+    {
+        self::$default = $default;
     }
 
     /**

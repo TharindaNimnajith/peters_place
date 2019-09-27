@@ -6,25 +6,21 @@ use Faker\DefaultGenerator;
 use Faker\Generator;
 use Faker\UniqueGenerator;
 use Faker\ValidGenerator;
-use InvalidArgumentException;
-use LengthException;
-use OverflowException;
-use Traversable;
 
 class Base
 {
     /**
-     * @var Generator
+     * @var \Faker\Generator
      */
     protected $generator;
 
     /**
-     * @var UniqueGenerator
+     * @var \Faker\UniqueGenerator
      */
     protected $unique;
 
     /**
-     * @param Generator $generator
+     * @param \Faker\Generator $generator
      */
     public function __construct(Generator $generator)
     {
@@ -118,14 +114,14 @@ class Base
     public static function randomNumber($nbDigits = null, $strict = false)
     {
         if (!is_bool($strict)) {
-            throw new InvalidArgumentException('randomNumber() generates numbers of fixed width. To generate numbers between two boundaries, use numberBetween() instead.');
+            throw new \InvalidArgumentException('randomNumber() generates numbers of fixed width. To generate numbers between two boundaries, use numberBetween() instead.');
         }
         if (null === $nbDigits) {
             $nbDigits = static::randomDigitNotNull();
         }
         $max = pow(10, $nbDigits) - 1;
         if ($max > mt_getrandmax()) {
-            throw new InvalidArgumentException('randomNumber() can only generate numbers up to mt_getrandmax()');
+            throw new \InvalidArgumentException('randomNumber() can only generate numbers up to mt_getrandmax()');
         }
         if ($strict) {
             return mt_rand(pow(10, $nbDigits - 1), $max);
@@ -213,7 +209,7 @@ class Base
         if (is_string($arg)) {
             return static::shuffleString($arg);
         }
-        throw new InvalidArgumentException('shuffle() only supports strings or arrays');
+        throw new \InvalidArgumentException('shuffle() only supports strings or arrays');
     }
 
     /**
@@ -298,6 +294,19 @@ class Base
             return mt_rand(0, 1) ? '#' : '?';
         });
         return static::lexify(static::numerify($string));
+    }
+
+    private static function replaceWildcard($string, $wildcard = '#', $callback = 'static::randomDigit')
+    {
+        if (($pos = strpos($string, $wildcard)) === false) {
+            return $string;
+        }
+        for ($i = $pos, $last = strrpos($string, $wildcard, $pos) + 1; $i < $last; $i++) {
+            if ($string[$i] === $wildcard) {
+                $string[$i] = call_user_func($callback);
+            }
+        }
+        return $string;
     }
 
     /**
@@ -442,7 +451,7 @@ class Base
      */
     public static function randomElement($array = array('a', 'b', 'c'))
     {
-        if (!$array || ($array instanceof Traversable && !count($array))) {
+        if (!$array || ($array instanceof \Traversable && !count($array))) {
             return null;
         }
         $elements = static::randomElements($array, 1);
@@ -457,14 +466,14 @@ class Base
      * @param integer $count Number of elements to take.
      * @param boolean $allowDuplicates Allow elements to be picked several times. Defaults to false
      * @return array New array with $count elements from $array
-     * @throws LengthException When requesting more elements than provided
+     * @throws \LengthException When requesting more elements than provided
      *
      */
     public static function randomElements($array = array('a', 'b', 'c'), $count = 1, $allowDuplicates = false)
     {
         $traversables = array();
 
-        if ($array instanceof Traversable) {
+        if ($array instanceof \Traversable) {
             foreach ($array as $element) {
                 $traversables[] = $element;
             }
@@ -476,7 +485,7 @@ class Base
         $numKeys = count($allKeys);
 
         if (!$allowDuplicates && $numKeys < $count) {
-            throw new LengthException(sprintf('Cannot get %d elements, only %d in array', $count, $numKeys));
+            throw new \LengthException(sprintf('Cannot get %d elements, only %d in array', $count, $numKeys));
         }
 
         $highKey = $numKeys - 1;
@@ -524,19 +533,6 @@ class Base
         return extension_loaded('mbstring') ? mb_strtoupper($string, 'UTF-8') : strtoupper($string);
     }
 
-    private static function replaceWildcard($string, $wildcard = '#', $callback = 'static::randomDigit')
-    {
-        if (($pos = strpos($string, $wildcard)) === false) {
-            return $string;
-        }
-        for ($i = $pos, $last = strrpos($string, $wildcard, $pos) + 1; $i < $last; $i++) {
-            if ($string[$i] === $wildcard) {
-                $string[$i] = call_user_func($callback);
-            }
-        }
-        return $string;
-    }
-
     /**
      * Chainable method for making any formatter optional.
      *
@@ -574,7 +570,7 @@ class Base
      * @param integer $maxRetries Maximum number of retries to find a unique value,
      *                                       After which an OverflowException is thrown.
      * @return UniqueGenerator A proxy class returning only non-existing values
-     * @throws OverflowException When no unique value can be found by iterating $maxRetries times
+     * @throws \OverflowException When no unique value can be found by iterating $maxRetries times
      *
      */
     public function unique($reset = false, $maxRetries = 10000)
@@ -606,7 +602,7 @@ class Base
      * @param integer $maxRetries Maximum number of retries to find a unique value,
      *                            After which an OverflowException is thrown.
      * @return ValidGenerator A proxy class returning only valid values
-     * @throws OverflowException When no valid value can be found by iterating $maxRetries times
+     * @throws \OverflowException When no valid value can be found by iterating $maxRetries times
      *
      */
     public function valid($validator = null, $maxRetries = 10000)

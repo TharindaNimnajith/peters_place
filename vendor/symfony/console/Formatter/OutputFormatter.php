@@ -12,7 +12,6 @@
 namespace Symfony\Component\Console\Formatter;
 
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use function strlen;
 
 /**
  * Formatter class for console output.
@@ -49,6 +48,14 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setStyle($name, OutputFormatterStyleInterface $style)
+    {
+        $this->styles[strtolower($name)] = $style;
+    }
+
+    /**
      * Escapes "<" special char in given text.
      *
      * @param string $text Text to escape
@@ -74,21 +81,13 @@ class OutputFormatter implements WrappableOutputFormatterInterface
     public static function escapeTrailingBackslash($text)
     {
         if ('\\' === substr($text, -1)) {
-            $len = strlen($text);
+            $len = \strlen($text);
             $text = rtrim($text, '\\');
             $text = str_replace("\0", '', $text);
-            $text .= str_repeat("\0", $len - strlen($text));
+            $text .= str_repeat("\0", $len - \strlen($text));
         }
 
         return $text;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setStyle($name, OutputFormatterStyleInterface $style)
-    {
-        $this->styles[strtolower($name)] = $style;
     }
 
     /**
@@ -139,7 +138,7 @@ class OutputFormatter implements WrappableOutputFormatterInterface
 
             // add the text up to the next tag
             $output .= $this->applyCurrentStyle(substr($message, $offset, $pos - $offset), $output, $width, $currentLineLength);
-            $offset = $pos + strlen($text);
+            $offset = $pos + \strlen($text);
 
             // opening tag?
             if ($open = '/' != $text[1]) {
@@ -167,30 +166,6 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         }
 
         return str_replace('\\<', '<', $output);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isDecorated()
-    {
-        return $this->decorated;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDecorated($decorated)
-    {
-        $this->decorated = (bool)$decorated;
-    }
-
-    /**
-     * @return OutputFormatterStyleStack
-     */
-    public function getStyleStack()
-    {
-        return $this->styleStack;
     }
 
     /**
@@ -228,7 +203,7 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         $lines = explode("\n", $text);
 
         foreach ($lines as $line) {
-            $currentLineLength += strlen($line);
+            $currentLineLength += \strlen($line);
             if ($width <= $currentLineLength) {
                 $currentLineLength = 0;
             }
@@ -241,6 +216,22 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         }
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isDecorated()
+    {
+        return $this->decorated;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDecorated($decorated)
+    {
+        $this->decorated = (bool)$decorated;
     }
 
     /**
@@ -281,5 +272,13 @@ class OutputFormatter implements WrappableOutputFormatterInterface
         }
 
         return $style;
+    }
+
+    /**
+     * @return OutputFormatterStyleStack
+     */
+    public function getStyleStack()
+    {
+        return $this->styleStack;
     }
 }

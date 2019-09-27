@@ -115,6 +115,25 @@ class RouteRegistrar
     }
 
     /**
+     * Compile the action into an array including the attributes.
+     *
+     * @param Closure|array|string|null $action
+     * @return array
+     */
+    protected function compileAction($action)
+    {
+        if (is_null($action)) {
+            return $this->attributes;
+        }
+
+        if (is_string($action) || $action instanceof Closure) {
+            $action = ['uses' => $action];
+        }
+
+        return array_merge($this->attributes, $action);
+    }
+
+    /**
      * Dynamically handle calls into the route registrar.
      *
      * @param string $method
@@ -143,6 +162,23 @@ class RouteRegistrar
     }
 
     /**
+     * Register a new route with the router.
+     *
+     * @param string $method
+     * @param string $uri
+     * @param Closure|array|string|null $action
+     * @return Route
+     */
+    protected function registerRoute($method, $uri, $action = null)
+    {
+        if (!is_array($action)) {
+            $action = array_merge($this->attributes, $action ? ['uses' => $action] : []);
+        }
+
+        return $this->router->{$method}($uri, $this->compileAction($action));
+    }
+
+    /**
      * Set the value for a given attribute.
      *
      * @param string $key
@@ -160,41 +196,5 @@ class RouteRegistrar
         $this->attributes[Arr::get($this->aliases, $key, $key)] = $value;
 
         return $this;
-    }
-
-    /**
-     * Compile the action into an array including the attributes.
-     *
-     * @param Closure|array|string|null $action
-     * @return array
-     */
-    protected function compileAction($action)
-    {
-        if (is_null($action)) {
-            return $this->attributes;
-        }
-
-        if (is_string($action) || $action instanceof Closure) {
-            $action = ['uses' => $action];
-        }
-
-        return array_merge($this->attributes, $action);
-    }
-
-    /**
-     * Register a new route with the router.
-     *
-     * @param string $method
-     * @param string $uri
-     * @param Closure|array|string|null $action
-     * @return Route
-     */
-    protected function registerRoute($method, $uri, $action = null)
-    {
-        if (!is_array($action)) {
-            $action = array_merge($this->attributes, $action ? ['uses' => $action] : []);
-        }
-
-        return $this->router->{$method}($uri, $this->compileAction($action));
     }
 }

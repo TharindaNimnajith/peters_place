@@ -12,7 +12,6 @@
 namespace Symfony\Component\Translation\Tests\Command;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -39,6 +38,52 @@ class XliffLintCommandTest extends TestCase
 
         $this->assertEquals(0, $tester->getStatusCode(), 'Returns 0 in case of success');
         $this->assertContains('OK', trim($tester->getDisplay()));
+    }
+
+    /**
+     * @return CommandTester
+     */
+    private function createCommandTester($requireStrictFileNames = true, $application = null)
+    {
+        if (!$application) {
+            $application = new Application();
+            $application->add(new XliffLintCommand(null, null, null, $requireStrictFileNames));
+        }
+
+        $command = $application->find('lint:xliff');
+
+        if ($application) {
+            $command->setApplication($application);
+        }
+
+        return new CommandTester($command);
+    }
+
+    /**
+     * @return string Path to the new file
+     */
+    private function createFile($sourceContent = 'note', $targetLanguage = 'en', $fileNamePattern = 'messages.%locale%.xlf')
+    {
+        $xliffContent = <<<XLIFF
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" target-language="$targetLanguage" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="note">
+                <source>$sourceContent</source>
+                <target>NOTE</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
+XLIFF;
+
+        $filename = sprintf('%s/translation-xliff-lint-test/%s', sys_get_temp_dir(), str_replace('%locale%', 'en', $fileNamePattern));
+        file_put_contents($filename, $xliffContent);
+
+        $this->files[] = $filename;
+
+        return $filename;
     }
 
     public function testLintCorrectFiles()
@@ -107,7 +152,7 @@ class XliffLintCommandTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testLintFileNotReadable()
     {
@@ -169,51 +214,5 @@ EOF;
             }
         }
         rmdir(sys_get_temp_dir() . '/translation-xliff-lint-test');
-    }
-
-    /**
-     * @return CommandTester
-     */
-    private function createCommandTester($requireStrictFileNames = true, $application = null)
-    {
-        if (!$application) {
-            $application = new Application();
-            $application->add(new XliffLintCommand(null, null, null, $requireStrictFileNames));
-        }
-
-        $command = $application->find('lint:xliff');
-
-        if ($application) {
-            $command->setApplication($application);
-        }
-
-        return new CommandTester($command);
-    }
-
-    /**
-     * @return string Path to the new file
-     */
-    private function createFile($sourceContent = 'note', $targetLanguage = 'en', $fileNamePattern = 'messages.%locale%.xlf')
-    {
-        $xliffContent = <<<XLIFF
-<?xml version="1.0"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" target-language="$targetLanguage" datatype="plaintext" original="file.ext">
-        <body>
-            <trans-unit id="note">
-                <source>$sourceContent</source>
-                <target>NOTE</target>
-            </trans-unit>
-        </body>
-    </file>
-</xliff>
-XLIFF;
-
-        $filename = sprintf('%s/translation-xliff-lint-test/%s', sys_get_temp_dir(), str_replace('%locale%', 'en', $fileNamePattern));
-        file_put_contents($filename, $xliffContent);
-
-        $this->files[] = $filename;
-
-        return $filename;
     }
 }

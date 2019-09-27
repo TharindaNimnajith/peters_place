@@ -120,28 +120,6 @@ class ArrayStore extends TaggableStore
     }
 
     /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        $this->storage = [];
-
-        return true;
-    }
-
-    /**
-     * Get the cache key prefix.
-     *
-     * @return string
-     */
-    public function getPrefix()
-    {
-        return '';
-    }
-
-    /**
      * Get the expiration time of the key.
      *
      * @param int $seconds
@@ -161,5 +139,27 @@ class ArrayStore extends TaggableStore
     protected function toTimestamp($seconds)
     {
         return $seconds > 0 ? $this->availableAt($seconds) : 0;
+    }
+
+    /**
+     * Remove all items from the cache.
+     *
+     * @return bool
+     */
+    public function flush()
+    {
+        $this->storage = [];
+
+        return true;
+    }
+
+    /**
+     * Get the cache key prefix.
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return '';
     }
 }

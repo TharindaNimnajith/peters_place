@@ -2,8 +2,6 @@
 
 namespace Cron;
 
-use OutOfRangeException;
-
 /**
  * Abstract CRON expression field
  */
@@ -102,11 +100,11 @@ abstract class AbstractField implements FieldInterface
         $rangeEnd = isset($rangeChunks[1]) ? $rangeChunks[1] : $rangeStart;
 
         if ($rangeStart < $this->rangeStart || $rangeStart > $this->rangeEnd || $rangeStart > $rangeEnd) {
-            throw new OutOfRangeException('Invalid range start requested');
+            throw new \OutOfRangeException('Invalid range start requested');
         }
 
         if ($rangeEnd < $this->rangeStart || $rangeEnd > $this->rangeEnd || $rangeEnd < $rangeStart) {
-            throw new OutOfRangeException('Invalid range end requested');
+            throw new \OutOfRangeException('Invalid range end requested');
         }
 
         // Steps larger than the range need to wrap around and be handled slightly differently than smaller steps
@@ -151,6 +149,24 @@ abstract class AbstractField implements FieldInterface
 
 
         return $dateValue >= $parts[0] && $dateValue <= $parts[1];
+    }
+
+    /**
+     * Convert literal
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function convertLiterals($value)
+    {
+        if (count($this->literals)) {
+            $key = array_search($value, $this->literals);
+            if ($key !== false) {
+                return (string)$key;
+            }
+        }
+
+        return $value;
     }
 
     /**
@@ -264,23 +280,5 @@ abstract class AbstractField implements FieldInterface
         $value = (int)$value;
 
         return in_array($value, $this->fullRange, true);
-    }
-
-    /**
-     * Convert literal
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function convertLiterals($value)
-    {
-        if (count($this->literals)) {
-            $key = array_search($value, $this->literals);
-            if ($key !== false) {
-                return (string)$key;
-            }
-        }
-
-        return $value;
     }
 }

@@ -10,8 +10,6 @@
 
 namespace SebastianBergmann\RecursionContext;
 
-use SplObjectStorage;
-
 /**
  * A context containing previously processed arrays and objects
  * when recursively processing a value.
@@ -24,7 +22,7 @@ final class Context
     private $arrays;
 
     /**
-     * @var SplObjectStorage
+     * @var \SplObjectStorage
      */
     private $objects;
 
@@ -34,7 +32,7 @@ final class Context
     public function __construct()
     {
         $this->arrays = array();
-        $this->objects = new SplObjectStorage;
+        $this->objects = new \SplObjectStorage;
     }
 
     /**
@@ -57,38 +55,6 @@ final class Context
         throw new InvalidArgumentException(
             'Only arrays and objects are supported'
         );
-    }
-
-    /**
-     * Checks if the given value exists within the context.
-     *
-     * @param array|object $value The value to check.
-     *
-     * @return int|string|false The string or integer ID of the stored value if it has already been seen, or false if the value is not stored.
-     *
-     * @throws InvalidArgumentException Thrown if $value is not an array or object
-     */
-    public function contains(&$value)
-    {
-        if (is_array($value)) {
-            return $this->containsArray($value);
-        } elseif (is_object($value)) {
-            return $this->containsObject($value);
-        }
-
-        throw new InvalidArgumentException(
-            'Only arrays and objects are supported'
-        );
-    }
-
-    public function __destruct()
-    {
-        foreach ($this->arrays as &$array) {
-            if (is_array($array)) {
-                array_pop($array);
-                array_pop($array);
-            }
-        }
     }
 
     /**
@@ -154,6 +120,28 @@ final class Context
     }
 
     /**
+     * Checks if the given value exists within the context.
+     *
+     * @param array|object $value The value to check.
+     *
+     * @return int|string|false The string or integer ID of the stored value if it has already been seen, or false if the value is not stored.
+     *
+     * @throws InvalidArgumentException Thrown if $value is not an array or object
+     */
+    public function contains(&$value)
+    {
+        if (is_array($value)) {
+            return $this->containsArray($value);
+        } elseif (is_object($value)) {
+            return $this->containsObject($value);
+        }
+
+        throw new InvalidArgumentException(
+            'Only arrays and objects are supported'
+        );
+    }
+
+    /**
      * @param object $value
      *
      * @return string|false
@@ -165,5 +153,15 @@ final class Context
         }
 
         return false;
+    }
+
+    public function __destruct()
+    {
+        foreach ($this->arrays as &$array) {
+            if (is_array($array)) {
+                array_pop($array);
+                array_pop($array);
+            }
+        }
     }
 }

@@ -108,16 +108,6 @@ class Person extends \Faker\Provider\Person
         'Wasswa', 'Wavamuno', 'Were'
     );
 
-    public static function lastNameMale()
-    {
-        return static::randomElement(static::$lastNameMale);
-    }
-
-    public static function lastNameFemale()
-    {
-        return static::randomElement(static::$lastNameFemale);
-    }
-
     public function lastName($gender = null)
     {
         if ($gender === static::GENDER_MALE) {
@@ -128,5 +118,15 @@ class Person extends \Faker\Provider\Person
         }
 
         return static::randomElement(static::$lastName);
+    }
+
+    public static function lastNameMale()
+    {
+        return static::randomElement(static::$lastNameMale);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::randomElement(static::$lastNameFemale);
     }
 }

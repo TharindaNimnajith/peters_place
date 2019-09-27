@@ -51,15 +51,6 @@ class FlowdockHandlerTest extends TestCase
         return $content;
     }
 
-    /**
-     * @depends testWriteHeader
-     */
-    public function testWriteContent($content)
-    {
-        $this->assertRegexp('/"source":"test_source"/', $content);
-        $this->assertRegexp('/"from_address":"source@test\.com"/', $content);
-    }
-
     private function createHandler($token = 'myToken')
     {
         $constructorArgs = array($token, Logger::DEBUG);
@@ -85,5 +76,14 @@ class FlowdockHandlerTest extends TestCase
             ->will($this->returnValue(true));
 
         $this->handler->setFormatter(new FlowdockFormatter('test_source', 'source@test.com'));
+    }
+
+    /**
+     * @depends testWriteHeader
+     */
+    public function testWriteContent($content)
+    {
+        $this->assertRegexp('/"source":"test_source"/', $content);
+        $this->assertRegexp('/"from_address":"source@test\.com"/', $content);
     }
 }

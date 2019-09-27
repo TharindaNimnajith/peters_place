@@ -10,14 +10,30 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
-use DOMDocument;
-
 final class Project extends Node
 {
     public function __construct(string $directory)
     {
         $this->init();
         $this->setProjectSourceDirectory($directory);
+    }
+
+    private function init(): void
+    {
+        $dom = new \DOMDocument;
+        $dom->loadXML('<?xml version="1.0" ?><phpunit xmlns="https://schema.phpunit.de/coverage/1.0"><build/><project/></phpunit>');
+
+        $this->setContextNode(
+            $dom->getElementsByTagNameNS(
+                'https://schema.phpunit.de/coverage/1.0',
+                'project'
+            )->item(0)
+        );
+    }
+
+    private function setProjectSourceDirectory(string $name): void
+    {
+        $this->getContextNode()->setAttribute('source', $name);
     }
 
     public function getProjectSourceDirectory(): string
@@ -63,26 +79,8 @@ final class Project extends Node
         return new Tests($testsNode);
     }
 
-    public function asDom(): DOMDocument
+    public function asDom(): \DOMDocument
     {
         return $this->getDom();
-    }
-
-    private function init(): void
-    {
-        $dom = new DOMDocument;
-        $dom->loadXML('<?xml version="1.0" ?><phpunit xmlns="https://schema.phpunit.de/coverage/1.0"><build/><project/></phpunit>');
-
-        $this->setContextNode(
-            $dom->getElementsByTagNameNS(
-                'https://schema.phpunit.de/coverage/1.0',
-                'project'
-            )->item(0)
-        );
-    }
-
-    private function setProjectSourceDirectory(string $name): void
-    {
-        $this->getContextNode()->setAttribute('source', $name);
     }
 }

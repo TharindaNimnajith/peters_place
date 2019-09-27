@@ -31,24 +31,6 @@ use function end;
 class ImplicitReturnPass extends CodeCleanerPass
 {
     /**
-     * Check whether a given node is a non-expression statement.
-     *
-     * As of PHP Parser 4.x, Expressions are now instances of Stmt as well, so
-     * we'll exclude them here.
-     *
-     * @param Node $node
-     *
-     * @return bool
-     */
-    private static function isNonExpressionStmt(Node $node)
-    {
-        return $node instanceof Stmt &&
-            !$node instanceof Expression &&
-            !$node instanceof Return_ &&
-            !$node instanceof Namespace_;
-    }
-
-    /**
      * @param array $nodes
      *
      * @return array
@@ -127,5 +109,23 @@ class ImplicitReturnPass extends CodeCleanerPass
         }
 
         return $nodes;
+    }
+
+    /**
+     * Check whether a given node is a non-expression statement.
+     *
+     * As of PHP Parser 4.x, Expressions are now instances of Stmt as well, so
+     * we'll exclude them here.
+     *
+     * @param Node $node
+     *
+     * @return bool
+     */
+    private static function isNonExpressionStmt(Node $node)
+    {
+        return $node instanceof Stmt &&
+            !$node instanceof Expression &&
+            !$node instanceof Return_ &&
+            !$node instanceof Namespace_;
     }
 }

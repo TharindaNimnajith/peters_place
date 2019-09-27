@@ -104,59 +104,6 @@ class Listener
     }
 
     /**
-     * Run the given process.
-     *
-     * @param Process $process
-     * @param int $memory
-     * @return void
-     */
-    public function runProcess(Process $process, $memory)
-    {
-        $process->run(function ($type, $line) {
-            $this->handleWorkerOutput($type, $line);
-        });
-
-        // Once we have run the job we'll go check if the memory limit has been exceeded
-        // for the script. If it has, we will kill this script so the process manager
-        // will restart this with a clean slate of memory automatically on exiting.
-        if ($this->memoryExceeded($memory)) {
-            $this->stop();
-        }
-    }
-
-    /**
-     * Determine if the memory limit has been exceeded.
-     *
-     * @param int $memoryLimit
-     * @return bool
-     */
-    public function memoryExceeded($memoryLimit)
-    {
-        return (memory_get_usage(true) / 1024 / 1024) >= $memoryLimit;
-    }
-
-    /**
-     * Stop listening and bail out of the script.
-     *
-     * @return void
-     */
-    public function stop()
-    {
-        die;
-    }
-
-    /**
-     * Set the output handler callback.
-     *
-     * @param Closure $outputHandler
-     * @return void
-     */
-    public function setOutputHandler(Closure $outputHandler)
-    {
-        $this->outputHandler = $outputHandler;
-    }
-
-    /**
      * Create the command with the listener options.
      *
      * @param string $connection
@@ -215,6 +162,27 @@ class Listener
     }
 
     /**
+     * Run the given process.
+     *
+     * @param Process $process
+     * @param int $memory
+     * @return void
+     */
+    public function runProcess(Process $process, $memory)
+    {
+        $process->run(function ($type, $line) {
+            $this->handleWorkerOutput($type, $line);
+        });
+
+        // Once we have run the job we'll go check if the memory limit has been exceeded
+        // for the script. If it has, we will kill this script so the process manager
+        // will restart this with a clean slate of memory automatically on exiting.
+        if ($this->memoryExceeded($memory)) {
+            $this->stop();
+        }
+    }
+
+    /**
      * Handle output from the worker process.
      *
      * @param int $type
@@ -226,5 +194,37 @@ class Listener
         if (isset($this->outputHandler)) {
             call_user_func($this->outputHandler, $type, $line);
         }
+    }
+
+    /**
+     * Determine if the memory limit has been exceeded.
+     *
+     * @param int $memoryLimit
+     * @return bool
+     */
+    public function memoryExceeded($memoryLimit)
+    {
+        return (memory_get_usage(true) / 1024 / 1024) >= $memoryLimit;
+    }
+
+    /**
+     * Stop listening and bail out of the script.
+     *
+     * @return void
+     */
+    public function stop()
+    {
+        die;
+    }
+
+    /**
+     * Set the output handler callback.
+     *
+     * @param Closure $outputHandler
+     * @return void
+     */
+    public function setOutputHandler(Closure $outputHandler)
+    {
+        $this->outputHandler = $outputHandler;
     }
 }

@@ -70,6 +70,18 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
     }
 
     /**
+     * Initialize the namespace of $nsKey if needed.
+     *
+     * @param string $nsKey
+     */
+    private function prepareCache($nsKey)
+    {
+        if (!array_key_exists($nsKey, $this->contents)) {
+            $this->contents[$nsKey] = [];
+        }
+    }
+
+    /**
      * Check if the given $itemKey exists in the namespace $nsKey.
      *
      * @param string $nsKey
@@ -187,17 +199,5 @@ class Swift_KeyCache_ArrayKeyCache implements Swift_KeyCache
     public function clearAll($nsKey)
     {
         unset($this->contents[$nsKey]);
-    }
-
-    /**
-     * Initialize the namespace of $nsKey if needed.
-     *
-     * @param string $nsKey
-     */
-    private function prepareCache($nsKey)
-    {
-        if (!array_key_exists($nsKey, $this->contents)) {
-            $this->contents[$nsKey] = [];
-        }
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Faker\Provider;
 
-use Exception;
-use Transliterator;
-
 class Internet extends Base
 {
     protected static $freeEmailDomain = array('gmail.com', 'yahoo.com', 'hotmail.com');
@@ -61,25 +58,43 @@ class Internet extends Base
     }
 
     /**
-     * @example 'example.org'
+     * @example 'jdoe@acme.biz'
      */
-    final public static function safeEmailDomain()
+    public function email()
     {
-        $domains = array(
-            'example.com',
-            'example.org',
-            'example.net'
-        );
+        $format = static::randomElement(static::$emailFormats);
 
-        return static::randomElement($domains);
+        return $this->generator->parse($format);
     }
 
     /**
-     * @example 'gmail.com'
+     * @example 'jdoe@example.com'
      */
-    public static function freeEmailDomain()
+    final public function safeEmail()
     {
-        return static::randomElement(static::$freeEmailDomain);
+        return preg_replace('/\s/u', '', $this->userName() . '@' . static::safeEmailDomain());
+    }
+
+    /**
+     * @example 'jdoe'
+     */
+    public function userName()
+    {
+        $format = static::randomElement(static::$userNameFormats);
+        $username = static::bothify($this->generator->parse($format));
+
+        $username = strtolower(static::transliterate($username));
+
+        // check if transliterate() didn't support the language and removed all letters
+        if (trim($username, '._') === '') {
+            throw new \Exception('userName failed with the selected locale. Try a different locale or activate the "intl" PHP extension.');
+        }
+
+        // clean possible trailing dots from first/last names
+        $username = str_replace('..', '.', $username);
+        $username = rtrim($username, '.');
+
+        return $username;
     }
 
     protected static function transliterate($string)
@@ -89,7 +104,7 @@ class Internet extends Base
         }
 
         $transId = 'Any-Latin; Latin-ASCII; NFD; [:Nonspacing Mark:] Remove; NFC;';
-        if (class_exists('Transliterator') && $transliterator = Transliterator::create($transId)) {
+        if (class_exists('Transliterator') && $transliterator = \Transliterator::create($transId)) {
             $transString = $transliterator->transliterate($string);
         } else {
             $transString = static::toAscii($string);
@@ -217,43 +232,17 @@ class Internet extends Base
     }
 
     /**
-     * @example 'jdoe@acme.biz'
+     * @example 'example.org'
      */
-    public function email()
+    final public static function safeEmailDomain()
     {
-        $format = static::randomElement(static::$emailFormats);
+        $domains = array(
+            'example.com',
+            'example.org',
+            'example.net'
+        );
 
-        return $this->generator->parse($format);
-    }
-
-    /**
-     * @example 'jdoe@example.com'
-     */
-    final public function safeEmail()
-    {
-        return preg_replace('/\s/u', '', $this->userName() . '@' . static::safeEmailDomain());
-    }
-
-    /**
-     * @example 'jdoe'
-     */
-    public function userName()
-    {
-        $format = static::randomElement(static::$userNameFormats);
-        $username = static::bothify($this->generator->parse($format));
-
-        $username = strtolower(static::transliterate($username));
-
-        // check if transliterate() didn't support the language and removed all letters
-        if (trim($username, '._') === '') {
-            throw new Exception('userName failed with the selected locale. Try a different locale or activate the "intl" PHP extension.');
-        }
-
-        // clean possible trailing dots from first/last names
-        $username = str_replace('..', '.', $username);
-        $username = rtrim($username, '.');
-
-        return $username;
+        return static::randomElement($domains);
     }
 
     /**
@@ -262,6 +251,14 @@ class Internet extends Base
     public function freeEmail()
     {
         return preg_replace('/\s/u', '', $this->userName() . '@' . static::freeEmailDomain());
+    }
+
+    /**
+     * @example 'gmail.com'
+     */
+    public static function freeEmailDomain()
+    {
+        return static::randomElement(static::$freeEmailDomain);
     }
 
     /**
@@ -291,7 +288,7 @@ class Internet extends Base
 
         // check if transliterate() didn't support the language and removed all letters
         if (trim($lastName, '._') === '') {
-            throw new Exception('domainWord failed with the selected locale. Try a different locale or activate the "intl" PHP extension.');
+            throw new \Exception('domainWord failed with the selected locale. Try a different locale or activate the "intl" PHP extension.');
         }
 
         // clean possible trailing dot from last name

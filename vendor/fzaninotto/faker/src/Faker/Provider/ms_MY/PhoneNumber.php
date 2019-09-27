@@ -123,24 +123,6 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
     }
 
     /**
-     * Return a Malaysian Country Code Prefix.
-     *
-     * @param bool $formatting true, false
-     *
-     * @return string
-     * @example '+6'
-     *
-     */
-    public static function countryCodePrefix($formatting = true)
-    {
-        if ($formatting) {
-            return static::randomElement(static::$plusSymbol) . static::randomElement(static::$countryCodePrefix);
-        } else {
-            return static::randomElement(static::$countryCodePrefix);
-        }
-    }
-
-    /**
      * Return a Malaysian Mobile Phone Number.
      *
      * @param bool $countryCodePrefix true, false
@@ -162,6 +144,24 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
             return static::countryCodePrefix($formatting) . static::numerify($this->generator->parse($format));
         } else {
             return static::numerify($this->generator->parse($format));
+        }
+    }
+
+    /**
+     * Return a Malaysian Country Code Prefix.
+     *
+     * @param bool $formatting true, false
+     *
+     * @return string
+     * @example '+6'
+     *
+     */
+    public static function countryCodePrefix($formatting = true)
+    {
+        if ($formatting) {
+            return static::randomElement(static::$plusSymbol) . static::randomElement(static::$countryCodePrefix);
+        } else {
+            return static::randomElement(static::$countryCodePrefix);
         }
     }
 

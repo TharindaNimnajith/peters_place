@@ -46,6 +46,21 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
         return count($this->transports) > 0;
     }
 
+    protected function getNextTransport()
+    {
+        if (!isset($this->currentTransport)) {
+            $this->currentTransport = parent::getNextTransport();
+        }
+
+        return $this->currentTransport;
+    }
+
+    protected function killCurrentTransport()
+    {
+        $this->currentTransport = null;
+        parent::killCurrentTransport();
+    }
+
     /**
      * Send the given Message.
      *
@@ -86,20 +101,5 @@ class Swift_Transport_FailoverTransport extends Swift_Transport_LoadBalancedTran
         }
 
         return $sent;
-    }
-
-    protected function getNextTransport()
-    {
-        if (!isset($this->currentTransport)) {
-            $this->currentTransport = parent::getNextTransport();
-        }
-
-        return $this->currentTransport;
-    }
-
-    protected function killCurrentTransport()
-    {
-        $this->currentTransport = null;
-        parent::killCurrentTransport();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
+class Swift_Transport_LoadBalancedTransportTest extends \SwiftMailerTestCase
 {
     public function testEachTransportIsUsedInTurn()
     {
@@ -26,7 +26,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message1, Mockery::any())
+            ->with($message1, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $testCase) {
                 if ($connectionState1) {
                     return 1;
@@ -35,7 +35,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->never()
-            ->with($message2, Mockery::any());
+            ->with($message2, \Mockery::any());
 
         $t2->shouldReceive('isStarted')
             ->zeroOrMoreTimes()
@@ -51,7 +51,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message2, Mockery::any())
+            ->with($message2, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $testCase) {
                 if ($connectionState2) {
                     return 1;
@@ -60,12 +60,20 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->never()
-            ->with($message1, Mockery::any());
+            ->with($message1, \Mockery::any());
 
         $transport = $this->getTransport([$t1, $t2]);
         $transport->start();
         $this->assertEquals(1, $transport->send($message1));
         $this->assertEquals(1, $transport->send($message2));
+    }
+
+    private function getTransport(array $transports)
+    {
+        $transport = new Swift_Transport_LoadBalancedTransport();
+        $transport->setTransports($transports);
+
+        return $transport;
     }
 
     public function testTransportsAreReusedInRotatingFashion()
@@ -94,7 +102,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message1, Mockery::any())
+            ->with($message1, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $testCase) {
                 if ($connectionState1) {
                     return 1;
@@ -103,10 +111,10 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->never()
-            ->with($message2, Mockery::any());
+            ->with($message2, \Mockery::any());
         $t1->shouldReceive('send')
             ->once()
-            ->with($message3, Mockery::any())
+            ->with($message3, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $testCase) {
                 if ($connectionState1) {
                     return 1;
@@ -115,7 +123,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->never()
-            ->with($message4, Mockery::any());
+            ->with($message4, \Mockery::any());
 
         $t2->shouldReceive('isStarted')
             ->zeroOrMoreTimes()
@@ -131,7 +139,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message2, Mockery::any())
+            ->with($message2, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $testCase) {
                 if ($connectionState2) {
                     return 1;
@@ -140,10 +148,10 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->never()
-            ->with($message1, Mockery::any());
+            ->with($message1, \Mockery::any());
         $t2->shouldReceive('send')
             ->once()
-            ->with($message4, Mockery::any())
+            ->with($message4, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $testCase) {
                 if ($connectionState2) {
                     return 1;
@@ -152,7 +160,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->never()
-            ->with($message3, Mockery::any());
+            ->with($message3, \Mockery::any());
 
         $transport = $this->getTransport([$t1, $t2]);
         $transport->start();
@@ -188,7 +196,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e, $testCase) {
                 if ($connectionState1) {
                     throw $e;
@@ -210,7 +218,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $testCase) {
                 if ($connectionState2) {
                     return 1;
@@ -245,7 +253,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1) {
                 if ($connectionState1) {
                     return 0;
@@ -268,7 +276,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2) {
                 if ($connectionState2) {
                     return 1;
@@ -304,7 +312,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1) {
                 if ($connectionState1) {
                     return 0;
@@ -327,7 +335,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2) {
                 if ($connectionState2) {
                     return 0;
@@ -369,7 +377,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message1, Mockery::any())
+            ->with($message1, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e, $testCase) {
                 if ($connectionState1) {
                     throw $e;
@@ -378,13 +386,13 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->never()
-            ->with($message2, Mockery::any());
+            ->with($message2, \Mockery::any());
         $t1->shouldReceive('send')
             ->never()
-            ->with($message3, Mockery::any());
+            ->with($message3, \Mockery::any());
         $t1->shouldReceive('send')
             ->never()
-            ->with($message4, Mockery::any());
+            ->with($message4, \Mockery::any());
 
         $t2->shouldReceive('isStarted')
             ->zeroOrMoreTimes()
@@ -400,7 +408,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->times(4)
-            ->with(Mockery::anyOf($message1, $message3, $message3, $message4), Mockery::any())
+            ->with(\Mockery::anyOf($message1, $message3, $message3, $message4), \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $testCase) {
                 if ($connectionState2) {
                     return 1;
@@ -440,7 +448,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e) {
                 if ($connectionState1) {
                     throw $e;
@@ -461,7 +469,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $e) {
                 if ($connectionState2) {
                     throw $e;
@@ -539,7 +547,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e) {
                 if ($connectionState1) {
                     throw $e;
@@ -560,7 +568,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::any())
+            ->with($message, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $e) {
                 if ($connectionState2) {
                     throw $e;
@@ -603,7 +611,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message1, Mockery::any())
+            ->with($message1, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e) {
                 if ($connectionState1) {
                     $connectionState1 = false;
@@ -612,7 +620,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message2, Mockery::any())
+            ->with($message2, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState1, $e) {
                 if ($connectionState1) {
                     return 10;
@@ -633,7 +641,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->once()
-            ->with($message1, Mockery::any())
+            ->with($message1, \Mockery::any())
             ->andReturnUsing(function () use (&$connectionState2, $e) {
                 if ($connectionState2) {
                     throw $e;
@@ -641,7 +649,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t2->shouldReceive('send')
             ->never()
-            ->with($message2, Mockery::any());
+            ->with($message2, \Mockery::any());
 
         $transport = $this->getTransport([$t1, $t2]);
         $transport->start();
@@ -681,7 +689,7 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
             });
         $t1->shouldReceive('send')
             ->once()
-            ->with($message, Mockery::on(function (&$var) use (&$failures, $testCase) {
+            ->with($message, \Mockery::on(function (&$var) use (&$failures, $testCase) {
                 return $testCase->varsAreReferences($var, $failures);
             }))
             ->andReturnUsing(function () use (&$connectionState) {
@@ -732,6 +740,11 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
 
         $transport = $this->getTransport([$t1, $t2]);
         $transport->registerPlugin($plugin);
+    }
+
+    private function createPlugin()
+    {
+        return $this->getMockery('Swift_Events_EventListener');
     }
 
     public function testEachDelegateIsPinged()
@@ -821,18 +834,5 @@ class Swift_Transport_LoadBalancedTransportTest extends SwiftMailerTestCase
         $this->assertFalse($transport->ping());
         $this->assertFalse($transport->isStarted());
         $this->assertFalse($transport->ping());
-    }
-
-    private function getTransport(array $transports)
-    {
-        $transport = new Swift_Transport_LoadBalancedTransport();
-        $transport->setTransports($transports);
-
-        return $transport;
-    }
-
-    private function createPlugin()
-    {
-        return $this->getMockery('Swift_Events_EventListener');
     }
 }

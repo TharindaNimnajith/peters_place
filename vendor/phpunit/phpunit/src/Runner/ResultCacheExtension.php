@@ -32,6 +32,22 @@ final class ResultCacheExtension implements AfterIncompleteTestHook, AfterLastTe
         $this->cache->setTime($testName, round($time, 3));
     }
 
+    /**
+     * @param string $test A long description format of the current test
+     *
+     * @return string The test name without TestSuiteClassName:: and @dataprovider details
+     */
+    private function getTestName(string $test): string
+    {
+        $matches = [];
+
+        if (preg_match('/^(?<name>\S+::\S+)(?:(?<dataname> with data set (?:#\d+|"[^"]+"))\s\()?/', $test, $matches)) {
+            $test = $matches['name'] . ($matches['dataname'] ?? '');
+        }
+
+        return $test;
+    }
+
     public function executeAfterIncompleteTest(string $test, string $message, float $time): void
     {
         $testName = $this->getTestName($test);
@@ -88,21 +104,5 @@ final class ResultCacheExtension implements AfterIncompleteTestHook, AfterLastTe
     public function flush(): void
     {
         $this->cache->persist();
-    }
-
-    /**
-     * @param string $test A long description format of the current test
-     *
-     * @return string The test name without TestSuiteClassName:: and @dataprovider details
-     */
-    private function getTestName(string $test): string
-    {
-        $matches = [];
-
-        if (preg_match('/^(?<name>\S+::\S+)(?:(?<dataname> with data set (?:#\d+|"[^"]+"))\s\()?/', $test, $matches)) {
-            $test = $matches['name'] . ($matches['dataname'] ?? '');
-        }
-
-        return $test;
     }
 }

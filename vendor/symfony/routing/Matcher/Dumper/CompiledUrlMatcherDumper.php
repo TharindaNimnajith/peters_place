@@ -11,21 +11,10 @@
 
 namespace Symfony\Component\Routing\Matcher\Dumper;
 
-use ErrorException;
-use Exception;
-use InvalidArgumentException;
-use LogicException;
-use RuntimeException;
-use stdClass;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use function count;
-use function is_array;
-use function is_int;
-use function is_object;
-use function strlen;
 
 /**
  * CompiledUrlMatcherDumper creates PHP arrays to be used with CompiledUrlMatcher.
@@ -46,45 +35,6 @@ class CompiledUrlMatcherDumper extends MatcherDumper
     private $expressionLanguageProviders = [];
 
     /**
-     * @internal
-     */
-    public static function export($value): string
-    {
-        if (null === $value) {
-            return 'null';
-        }
-        if (!is_array($value)) {
-            if (is_object($value)) {
-                throw new InvalidArgumentException('Symfony\Component\Routing\Route cannot contain objects.');
-            }
-
-            return str_replace("\n", '\'."\n".\'', var_export($value, true));
-        }
-        if (!$value) {
-            return '[]';
-        }
-
-        $i = 0;
-        $export = '[';
-
-        foreach ($value as $k => $v) {
-            if ($i === $k) {
-                ++$i;
-            } else {
-                $export .= self::export($k) . ' => ';
-
-                if (is_int($k) && $i < $k) {
-                    $i = 1 + $k;
-                }
-            }
-
-            $export .= self::export($v) . ', ';
-        }
-
-        return substr_replace($export, ']', -2);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function dump(array $options = [])
@@ -101,82 +51,6 @@ return [
 {$this->generateCompiledRoutes()}];
 
 EOF;
-    }
-
-    /**
-     * Generates the arrays for CompiledUrlMatcher's constructor.
-     */
-    public function getCompiledRoutes(bool $forDump = false): array
-    {
-        // Group hosts by same-suffix, re-order when possible
-        $matchHost = false;
-        $routes = new StaticPrefixCollection();
-        foreach ($this->getRoutes()->all() as $name => $route) {
-            if ($host = $route->getHost()) {
-                $matchHost = true;
-                $host = '/' . strtr(strrev($host), '}.{', '(/)');
-            }
-
-            $routes->addRoute($host ?: '/(.*)', [$name, $route]);
-        }
-
-        if ($matchHost) {
-            $compiledRoutes = [true];
-            $routes = $routes->populateCollection(new RouteCollection());
-        } else {
-            $compiledRoutes = [false];
-            $routes = $this->getRoutes();
-        }
-
-        list($staticRoutes, $dynamicRoutes) = $this->groupStaticRoutes($routes);
-
-        $conditions = [null];
-        $compiledRoutes[] = $this->compileStaticRoutes($staticRoutes, $conditions);
-        $chunkLimit = count($dynamicRoutes);
-
-        while (true) {
-            try {
-                $this->signalingException = new RuntimeException('preg_match(): Compilation failed: regular expression is too large');
-                $compiledRoutes = array_merge($compiledRoutes, $this->compileDynamicRoutes($dynamicRoutes, $matchHost, $chunkLimit, $conditions));
-
-                break;
-            } catch (Exception $e) {
-                if (1 < $chunkLimit && $this->signalingException === $e) {
-                    $chunkLimit = 1 + ($chunkLimit >> 1);
-                    continue;
-                }
-                throw $e;
-            }
-        }
-
-        if ($forDump) {
-            $compiledRoutes[2] = $compiledRoutes[4];
-        }
-        unset($conditions[0]);
-
-        if ($conditions) {
-            foreach ($conditions as $expression => $condition) {
-                $conditions[$expression] = "case {$condition}: return {$expression};";
-            }
-
-            $checkConditionCode = <<<EOF
-    static function (\$condition, \$context, \$request) { // \$checkCondition
-        switch (\$condition) {
-{$this->indent(implode("\n", $conditions), 3)}
-        }
-    }
-EOF;
-            $compiledRoutes[4] = $forDump ? $checkConditionCode .= ",\n" : eval('return ' . $checkConditionCode . ';');
-        } else {
-            $compiledRoutes[4] = $forDump ? "    null, // \$checkCondition\n" : null;
-        }
-
-        return $compiledRoutes;
-    }
-
-    public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
-    {
-        $this->expressionLanguageProviders[] = $provider;
     }
 
     private function generateCompiledRoutes(): string
@@ -209,6 +83,77 @@ EOF;
         $code = preg_replace('/ => \[\n        (\[.+?),\n    \],/', ' => [$1],', $code);
 
         return $this->indent($code, 1) . $checkConditionCode;
+    }
+
+    /**
+     * Generates the arrays for CompiledUrlMatcher's constructor.
+     */
+    public function getCompiledRoutes(bool $forDump = false): array
+    {
+        // Group hosts by same-suffix, re-order when possible
+        $matchHost = false;
+        $routes = new StaticPrefixCollection();
+        foreach ($this->getRoutes()->all() as $name => $route) {
+            if ($host = $route->getHost()) {
+                $matchHost = true;
+                $host = '/' . strtr(strrev($host), '}.{', '(/)');
+            }
+
+            $routes->addRoute($host ?: '/(.*)', [$name, $route]);
+        }
+
+        if ($matchHost) {
+            $compiledRoutes = [true];
+            $routes = $routes->populateCollection(new RouteCollection());
+        } else {
+            $compiledRoutes = [false];
+            $routes = $this->getRoutes();
+        }
+
+        list($staticRoutes, $dynamicRoutes) = $this->groupStaticRoutes($routes);
+
+        $conditions = [null];
+        $compiledRoutes[] = $this->compileStaticRoutes($staticRoutes, $conditions);
+        $chunkLimit = \count($dynamicRoutes);
+
+        while (true) {
+            try {
+                $this->signalingException = new \RuntimeException('preg_match(): Compilation failed: regular expression is too large');
+                $compiledRoutes = array_merge($compiledRoutes, $this->compileDynamicRoutes($dynamicRoutes, $matchHost, $chunkLimit, $conditions));
+
+                break;
+            } catch (\Exception $e) {
+                if (1 < $chunkLimit && $this->signalingException === $e) {
+                    $chunkLimit = 1 + ($chunkLimit >> 1);
+                    continue;
+                }
+                throw $e;
+            }
+        }
+
+        if ($forDump) {
+            $compiledRoutes[2] = $compiledRoutes[4];
+        }
+        unset($conditions[0]);
+
+        if ($conditions) {
+            foreach ($conditions as $expression => $condition) {
+                $conditions[$expression] = "case {$condition}: return {$expression};";
+            }
+
+            $checkConditionCode = <<<EOF
+    static function (\$condition, \$context, \$request) { // \$checkCondition
+        switch (\$condition) {
+{$this->indent(implode("\n", $conditions), 3)}
+        }
+    }
+EOF;
+            $compiledRoutes[4] = $forDump ? $checkConditionCode .= ",\n" : eval('return ' . $checkConditionCode . ';');
+        } else {
+            $compiledRoutes[4] = $forDump ? "    null, // \$checkCondition\n" : null;
+        }
+
+        return $compiledRoutes;
     }
 
     /**
@@ -260,7 +205,7 @@ EOF;
      * Condition-less paths are put in a static array in the switch's default, with generic matching logic.
      * Paths that can match two or more routes, or have user-specified conditions are put in separate switch's cases.
      *
-     * @throws LogicException
+     * @throws \LogicException
      */
     private function compileStaticRoutes(array $staticRoutes, array &$conditions): array
     {
@@ -293,7 +238,7 @@ EOF;
 
         if ($condition = $route->getCondition()) {
             $condition = $this->getExpressionLanguage()->compile($condition, ['context', 'request']);
-            $condition = $conditions[$condition] ?? $conditions[$condition] = (false !== strpos($condition, '$request') ? 1 : -1) * count($conditions);
+            $condition = $conditions[$condition] ?? $conditions[$condition] = (false !== strpos($condition, '$request') ? 1 : -1) * \count($conditions);
         } else {
             $condition = null;
         }
@@ -313,7 +258,7 @@ EOF;
     {
         if (null === $this->expressionLanguage) {
             if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+                throw new \LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders);
         }
@@ -395,7 +340,7 @@ EOF;
             $rx = '{^(?';
             $code .= "\n    {$state->mark} => " . self::export($rx);
             $startingMark = $state->mark;
-            $state->mark += strlen($rx);
+            $state->mark += \strlen($rx);
             $state->regex = $rx;
 
             foreach ($perHost as list($hostRegex, $routes)) {
@@ -409,7 +354,7 @@ EOF;
                         $hostRegex = '(?:(?:[^./]*+\.)++)';
                         $state->hostVars = [];
                     }
-                    $state->mark += strlen($rx = ($prev ? ')' : '') . "|{$hostRegex}(?");
+                    $state->mark += \strlen($rx = ($prev ? ')' : '') . "|{$hostRegex}(?");
                     $code .= "\n        ." . self::export($rx);
                     $state->regex .= $rx;
                     $prev = true;
@@ -442,7 +387,7 @@ EOF;
 
             // if the regex is too large, throw a signaling exception to recompute with smaller chunk size
             set_error_handler(function ($type, $message) {
-                throw 0 === strpos($message, $this->signalingException->getMessage()) ? $this->signalingException : new ErrorException($message);
+                throw 0 === strpos($message, $this->signalingException->getMessage()) ? $this->signalingException : new \ErrorException($message);
             });
             try {
                 preg_match($state->regex, '');
@@ -460,12 +405,51 @@ EOF;
     }
 
     /**
+     * @internal
+     */
+    public static function export($value): string
+    {
+        if (null === $value) {
+            return 'null';
+        }
+        if (!\is_array($value)) {
+            if (\is_object($value)) {
+                throw new \InvalidArgumentException('Symfony\Component\Routing\Route cannot contain objects.');
+            }
+
+            return str_replace("\n", '\'."\n".\'', var_export($value, true));
+        }
+        if (!$value) {
+            return '[]';
+        }
+
+        $i = 0;
+        $export = '[';
+
+        foreach ($value as $k => $v) {
+            if ($i === $k) {
+                ++$i;
+            } else {
+                $export .= self::export($k) . ' => ';
+
+                if (\is_int($k) && $i < $k) {
+                    $i = 1 + $k;
+                }
+            }
+
+            $export .= self::export($v) . ', ';
+        }
+
+        return substr_replace($export, ']', -2);
+    }
+
+    /**
      * Compiles a regexp tree of subpatterns that matches nested same-prefix routes.
      *
-     * @param stdClass $state A simple state object that keeps track of the progress of the compilation,
+     * @param \stdClass $state A simple state object that keeps track of the progress of the compilation,
      *                         and gathers the generated switch's "case" and "default" statements
      */
-    private function compileStaticPrefixCollection(StaticPrefixCollection $tree, stdClass $state, int $prefixLen, array &$conditions): string
+    private function compileStaticPrefixCollection(StaticPrefixCollection $tree, \stdClass $state, int $prefixLen, array &$conditions): string
     {
         $code = '';
         $prevRegex = null;
@@ -475,10 +459,10 @@ EOF;
             if ($route instanceof StaticPrefixCollection) {
                 $prevRegex = null;
                 $prefix = substr($route->getPrefix(), $prefixLen);
-                $state->mark += strlen($rx = "|{$prefix}(?");
+                $state->mark += \strlen($rx = "|{$prefix}(?");
                 $code .= "\n            ." . self::export($rx);
                 $state->regex .= $rx;
-                $code .= $this->indent($this->compileStaticPrefixCollection($route, $state, $prefixLen + strlen($prefix), $conditions));
+                $code .= $this->indent($this->compileStaticPrefixCollection($route, $state, $prefixLen + \strlen($prefix), $conditions));
                 $code .= "\n            .')'";
                 $state->regex .= ')';
                 ++$state->markTail;
@@ -494,8 +478,8 @@ EOF;
                 continue;
             }
 
-            $state->mark += 3 + $state->markTail + strlen($regex) - $prefixLen;
-            $state->markTail = 2 + strlen($state->mark);
+            $state->mark += 3 + $state->markTail + \strlen($regex) - $prefixLen;
+            $state->markTail = 2 + \strlen($state->mark);
             $rx = sprintf('|%s(*:%s)', substr($regex, $prefixLen), $state->mark);
             $code .= "\n            ." . self::export($rx);
             $state->regex .= $rx;
@@ -510,5 +494,10 @@ EOF;
     private function indent($code, $level = 1)
     {
         return preg_replace('/^./m', str_repeat('    ', $level) . '$0', $code);
+    }
+
+    public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
+    {
+        $this->expressionLanguageProviders[] = $provider;
     }
 }

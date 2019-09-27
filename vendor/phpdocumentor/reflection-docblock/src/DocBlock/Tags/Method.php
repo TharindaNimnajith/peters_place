@@ -12,7 +12,6 @@
 
 namespace phpDocumentor\Reflection\DocBlock\Tags;
 
-use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlock\Description;
 use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
 use phpDocumentor\Reflection\Type;
@@ -60,6 +59,29 @@ final class Method extends BaseTag implements Factory\StaticMethod
         $this->returnType = $returnType;
         $this->isStatic = $static;
         $this->description = $description;
+    }
+
+    private function filterArguments($arguments)
+    {
+        foreach ($arguments as &$argument) {
+            if (is_string($argument)) {
+                $argument = ['name' => $argument];
+            }
+
+            if (!isset($argument['type'])) {
+                $argument['type'] = new Void_();
+            }
+
+            $keys = array_keys($argument);
+            sort($keys);
+            if ($keys !== ['name', 'type']) {
+                throw new \InvalidArgumentException(
+                    'Arguments can only have the "name" and "type" fields, found: ' . var_export($keys, true)
+                );
+            }
+        }
+
+        return $arguments;
     }
 
     /**
@@ -218,28 +240,5 @@ final class Method extends BaseTag implements Factory\StaticMethod
     public function isStatic()
     {
         return $this->isStatic;
-    }
-
-    private function filterArguments($arguments)
-    {
-        foreach ($arguments as &$argument) {
-            if (is_string($argument)) {
-                $argument = ['name' => $argument];
-            }
-
-            if (!isset($argument['type'])) {
-                $argument['type'] = new Void_();
-            }
-
-            $keys = array_keys($argument);
-            sort($keys);
-            if ($keys !== ['name', 'type']) {
-                throw new InvalidArgumentException(
-                    'Arguments can only have the "name" and "type" fields, found: ' . var_export($keys, true)
-                );
-            }
-        }
-
-        return $arguments;
     }
 }

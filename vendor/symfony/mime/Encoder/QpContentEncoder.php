@@ -11,10 +11,6 @@
 
 namespace Symfony\Component\Mime\Encoder;
 
-use TypeError;
-use function is_resource;
-use function ord;
-
 /**
  * @author Lars Strojny
  *
@@ -24,8 +20,8 @@ final class QpContentEncoder implements ContentEncoderInterface
 {
     public function encodeByteStream($stream, int $maxLineLength = 0): iterable
     {
-        if (!is_resource($stream)) {
-            throw new TypeError(sprintf('Method "%s" takes a stream as a first argument.', __METHOD__));
+        if (!\is_resource($stream)) {
+            throw new \TypeError(sprintf('Method "%s" takes a stream as a first argument.', __METHOD__));
         }
 
         // we don't use PHP stream filters here as the content should be small enough
@@ -41,11 +37,6 @@ final class QpContentEncoder implements ContentEncoderInterface
         return $this->standardize(quoted_printable_encode($string));
     }
 
-    public function getName(): string
-    {
-        return 'quoted-printable';
-    }
-
     /**
      * Make sure CRLF is correct and HT/SPACE are in valid places.
      */
@@ -56,7 +47,7 @@ final class QpContentEncoder implements ContentEncoderInterface
         // transform =0D=0A to CRLF
         $string = str_replace(["\t=0D=0A", ' =0D=0A', '=0D=0A'], ["=09\r\n", "=20\r\n", "\r\n"], $string);
 
-        switch (ord(substr($string, -1))) {
+        switch (\ord(substr($string, -1))) {
             case 0x09:
                 $string = substr_replace($string, '=09', -1);
                 break;
@@ -66,5 +57,10 @@ final class QpContentEncoder implements ContentEncoderInterface
         }
 
         return $string;
+    }
+
+    public function getName(): string
+    {
+        return 'quoted-printable';
     }
 }

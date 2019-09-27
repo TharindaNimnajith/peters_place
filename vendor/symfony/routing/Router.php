@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Routing;
 
-use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\RedirectableUrlMatcher;
 use Symfony\Component\Config\ConfigCacheFactory;
@@ -32,7 +31,6 @@ use Symfony\Component\Routing\Matcher\Dumper\MatcherDumperInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
-use function array_key_exists;
 
 /**
  * The Router class is an example of the integration of all pieces of the
@@ -131,7 +129,7 @@ class Router implements RouterInterface, RequestMatcherInterface
      *
      * @param array $options An array of options
      *
-     * @throws InvalidArgumentException When unsupported option is provided
+     * @throws \InvalidArgumentException When unsupported option is provided
      */
     public function setOptions(array $options)
     {
@@ -154,7 +152,7 @@ class Router implements RouterInterface, RequestMatcherInterface
         $invalid = [];
         foreach ($options as $key => $value) {
             $this->checkDeprecatedOption($key);
-            if (array_key_exists($key, $this->options)) {
+            if (\array_key_exists($key, $this->options)) {
                 $this->options[$key] = $value;
             } else {
                 $invalid[] = $key;
@@ -162,7 +160,18 @@ class Router implements RouterInterface, RequestMatcherInterface
         }
 
         if ($invalid) {
-            throw new InvalidArgumentException(sprintf('The Router does not support the following options: "%s".', implode('", "', $invalid)));
+            throw new \InvalidArgumentException(sprintf('The Router does not support the following options: "%s".', implode('", "', $invalid)));
+        }
+    }
+
+    private function checkDeprecatedOption($key)
+    {
+        switch ($key) {
+            case 'generator_base_class':
+            case 'generator_cache_class':
+            case 'matcher_base_class':
+            case 'matcher_cache_class':
+                @trigger_error(sprintf('Option "%s" given to router %s is deprecated since Symfony 4.3.', $key, static::class), E_USER_DEPRECATED);
         }
     }
 
@@ -172,12 +181,12 @@ class Router implements RouterInterface, RequestMatcherInterface
      * @param string $key The key
      * @param mixed $value The value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function setOption($key, $value)
     {
-        if (!array_key_exists($key, $this->options)) {
-            throw new InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        if (!\array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
         }
 
         $this->checkDeprecatedOption($key);
@@ -192,12 +201,12 @@ class Router implements RouterInterface, RequestMatcherInterface
      *
      * @return mixed The value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function getOption($key)
     {
-        if (!array_key_exists($key, $this->options)) {
-            throw new InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
+        if (!\array_key_exists($key, $this->options)) {
+            throw new \InvalidArgumentException(sprintf('The Router does not support the "%s" option.', $key));
         }
 
         $this->checkDeprecatedOption($key);
@@ -298,6 +307,29 @@ class Router implements RouterInterface, RequestMatcherInterface
     }
 
     /**
+     * Provides the ConfigCache factory implementation, falling back to a
+     * default implementation if necessary.
+     *
+     * @return ConfigCacheFactoryInterface
+     */
+    private function getConfigCacheFactory()
+    {
+        if (null === $this->configCacheFactory) {
+            $this->configCacheFactory = new ConfigCacheFactory($this->options['debug']);
+        }
+
+        return $this->configCacheFactory;
+    }
+
+    /**
+     * @return MatcherDumperInterface
+     */
+    protected function getMatcherDumperInstance()
+    {
+        return new $this->options['matcher_dumper_class']($this->getRouteCollection());
+    }
+
+    /**
      * Gets the UrlGenerator instance associated with this Router.
      *
      * @return UrlGeneratorInterface A UrlGeneratorInterface instance
@@ -349,6 +381,14 @@ class Router implements RouterInterface, RequestMatcherInterface
     }
 
     /**
+     * @return GeneratorDumperInterface
+     */
+    protected function getGeneratorDumperInstance()
+    {
+        return new $this->options['generator_dumper_class']($this->getRouteCollection());
+    }
+
+    /**
      * Sets the ConfigCache factory to use.
      */
     public function setConfigCacheFactory(ConfigCacheFactoryInterface $configCacheFactory)
@@ -389,47 +429,5 @@ class Router implements RouterInterface, RequestMatcherInterface
     public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
     {
         $this->expressionLanguageProviders[] = $provider;
-    }
-
-    /**
-     * @return MatcherDumperInterface
-     */
-    protected function getMatcherDumperInstance()
-    {
-        return new $this->options['matcher_dumper_class']($this->getRouteCollection());
-    }
-
-    /**
-     * @return GeneratorDumperInterface
-     */
-    protected function getGeneratorDumperInstance()
-    {
-        return new $this->options['generator_dumper_class']($this->getRouteCollection());
-    }
-
-    private function checkDeprecatedOption($key)
-    {
-        switch ($key) {
-            case 'generator_base_class':
-            case 'generator_cache_class':
-            case 'matcher_base_class':
-            case 'matcher_cache_class':
-                @trigger_error(sprintf('Option "%s" given to router %s is deprecated since Symfony 4.3.', $key, static::class), E_USER_DEPRECATED);
-        }
-    }
-
-    /**
-     * Provides the ConfigCache factory implementation, falling back to a
-     * default implementation if necessary.
-     *
-     * @return ConfigCacheFactoryInterface
-     */
-    private function getConfigCacheFactory()
-    {
-        if (null === $this->configCacheFactory) {
-            $this->configCacheFactory = new ConfigCacheFactory($this->options['debug']);
-        }
-
-        return $this->configCacheFactory;
     }
 }

@@ -44,16 +44,6 @@ trait SendsPasswordResetEmails
     }
 
     /**
-     * Get the broker to be used during password reset.
-     *
-     * @return PasswordBroker
-     */
-    public function broker()
-    {
-        return Password::broker();
-    }
-
-    /**
      * Validate the email for the given request.
      *
      * @param Request $request
@@ -62,6 +52,16 @@ trait SendsPasswordResetEmails
     protected function validateEmail(Request $request)
     {
         $request->validate(['email' => 'required|email']);
+    }
+
+    /**
+     * Get the broker to be used during password reset.
+     *
+     * @return PasswordBroker
+     */
+    public function broker()
+    {
+        return Password::broker();
     }
 
     /**

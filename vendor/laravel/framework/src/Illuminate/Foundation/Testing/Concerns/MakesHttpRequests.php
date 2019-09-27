@@ -173,6 +173,36 @@ trait MakesHttpRequests
     }
 
     /**
+     * Transform headers array to array of $_SERVER vars with HTTP_* format.
+     *
+     * @param array $headers
+     * @return array
+     */
+    protected function transformHeadersToServerVars(array $headers)
+    {
+        return collect(array_merge($this->defaultHeaders, $headers))->mapWithKeys(function ($value, $name) {
+            $name = strtr(strtoupper($name), '-', '_');
+
+            return [$this->formatServerHeaderKey($name) => $value];
+        })->all();
+    }
+
+    /**
+     * Format the header name for the server array.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function formatServerHeaderKey($name)
+    {
+        if (!Str::startsWith($name, 'HTTP_') && $name !== 'CONTENT_TYPE' && $name !== 'REMOTE_ADDR') {
+            return 'HTTP_' . $name;
+        }
+
+        return $name;
+    }
+
+    /**
      * Call the given URI and return the Response.
      *
      * @param string $method
@@ -206,6 +236,80 @@ trait MakesHttpRequests
         $kernel->terminate($request, $response);
 
         return $this->createTestResponse($response);
+    }
+
+    /**
+     * Extract the file uploads from the given data array.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function extractFilesFromDataArray(&$data)
+    {
+        $files = [];
+
+        foreach ($data as $key => $value) {
+            if ($value instanceof SymfonyUploadedFile) {
+                $files[$key] = $value;
+
+                unset($data[$key]);
+            }
+
+            if (is_array($value)) {
+                $files[$key] = $this->extractFilesFromDataArray($value);
+
+                $data[$key] = $value;
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * Turn the given URI into a fully qualified URL.
+     *
+     * @param string $uri
+     * @return string
+     */
+    protected function prepareUrlForRequest($uri)
+    {
+        if (Str::startsWith($uri, '/')) {
+            $uri = substr($uri, 1);
+        }
+
+        if (!Str::startsWith($uri, 'http')) {
+            $uri = config('app.url') . '/' . $uri;
+        }
+
+        return trim($uri, '/');
+    }
+
+    /**
+     * Follow a redirect chain until a non-redirect is received.
+     *
+     * @param Response $response
+     * @return Response|TestResponse
+     */
+    protected function followRedirects($response)
+    {
+        while ($response->isRedirect()) {
+            $response = $this->get($response->headers->get('Location'));
+        }
+
+        $this->followRedirects = false;
+
+        return $response;
+    }
+
+    /**
+     * Create the test response instance from the given response.
+     *
+     * @param Response $response
+     * @return TestResponse
+     */
+    protected function createTestResponse($response)
+    {
+        return TestResponse::fromBaseResponse($response);
     }
 
     /**
@@ -384,109 +488,5 @@ trait MakesHttpRequests
     public function optionJson($uri, array $data = [], array $headers = [])
     {
         return $this->json('OPTION', $uri, $data, $headers);
-    }
-
-    /**
-     * Transform headers array to array of $_SERVER vars with HTTP_* format.
-     *
-     * @param array $headers
-     * @return array
-     */
-    protected function transformHeadersToServerVars(array $headers)
-    {
-        return collect(array_merge($this->defaultHeaders, $headers))->mapWithKeys(function ($value, $name) {
-            $name = strtr(strtoupper($name), '-', '_');
-
-            return [$this->formatServerHeaderKey($name) => $value];
-        })->all();
-    }
-
-    /**
-     * Format the header name for the server array.
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function formatServerHeaderKey($name)
-    {
-        if (!Str::startsWith($name, 'HTTP_') && $name !== 'CONTENT_TYPE' && $name !== 'REMOTE_ADDR') {
-            return 'HTTP_' . $name;
-        }
-
-        return $name;
-    }
-
-    /**
-     * Extract the file uploads from the given data array.
-     *
-     * @param array $data
-     * @return array
-     */
-    protected function extractFilesFromDataArray(&$data)
-    {
-        $files = [];
-
-        foreach ($data as $key => $value) {
-            if ($value instanceof SymfonyUploadedFile) {
-                $files[$key] = $value;
-
-                unset($data[$key]);
-            }
-
-            if (is_array($value)) {
-                $files[$key] = $this->extractFilesFromDataArray($value);
-
-                $data[$key] = $value;
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * Turn the given URI into a fully qualified URL.
-     *
-     * @param string $uri
-     * @return string
-     */
-    protected function prepareUrlForRequest($uri)
-    {
-        if (Str::startsWith($uri, '/')) {
-            $uri = substr($uri, 1);
-        }
-
-        if (!Str::startsWith($uri, 'http')) {
-            $uri = config('app.url') . '/' . $uri;
-        }
-
-        return trim($uri, '/');
-    }
-
-    /**
-     * Follow a redirect chain until a non-redirect is received.
-     *
-     * @param Response $response
-     * @return Response|TestResponse
-     */
-    protected function followRedirects($response)
-    {
-        while ($response->isRedirect()) {
-            $response = $this->get($response->headers->get('Location'));
-        }
-
-        $this->followRedirects = false;
-
-        return $response;
-    }
-
-    /**
-     * Create the test response instance from the given response.
-     *
-     * @param Response $response
-     * @return TestResponse
-     */
-    protected function createTestResponse($response)
-    {
-        return TestResponse::fromBaseResponse($response);
     }
 }

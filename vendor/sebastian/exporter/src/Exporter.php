@@ -11,29 +11,6 @@
 namespace SebastianBergmann\Exporter;
 
 use SebastianBergmann\RecursionContext\Context;
-use SplObjectStorage;
-use function bin2hex;
-use function count;
-use function function_exists;
-use function get_class;
-use function get_resource_type;
-use function implode;
-use function is_array;
-use function is_float;
-use function is_object;
-use function is_resource;
-use function is_string;
-use function mb_strlen;
-use function mb_substr;
-use function preg_match;
-use function property_exists;
-use function spl_object_hash;
-use function sprintf;
-use function str_repeat;
-use function str_replace;
-use function strlen;
-use function substr;
-use function var_export;
 
 /**
  * A nifty utility for visualizing PHP variables.
@@ -67,11 +44,11 @@ class Exporter
         $context->add($data);
 
         foreach ($array as $key => $value) {
-            if (is_array($value)) {
+            if (\is_array($value)) {
                 if ($context->contains($data[$key]) !== false) {
                     $result[] = '*RECURSION*';
                 } else {
-                    $result[] = sprintf(
+                    $result[] = \sprintf(
                         'array(%s)',
                         $this->shortenedRecursiveExport($data[$key], $context)
                     );
@@ -81,7 +58,7 @@ class Exporter
             }
         }
 
-        return implode(', ', $result);
+        return \implode(', ', $result);
     }
 
     /**
@@ -99,34 +76,34 @@ class Exporter
      */
     public function shortenedExport($value)
     {
-        if (is_string($value)) {
-            $string = str_replace("\n", '', $this->export($value));
+        if (\is_string($value)) {
+            $string = \str_replace("\n", '', $this->export($value));
 
-            if (function_exists('mb_strlen')) {
-                if (mb_strlen($string) > 40) {
-                    $string = mb_substr($string, 0, 30) . '...' . mb_substr($string, -7);
+            if (\function_exists('mb_strlen')) {
+                if (\mb_strlen($string) > 40) {
+                    $string = \mb_substr($string, 0, 30) . '...' . \mb_substr($string, -7);
                 }
             } else {
-                if (strlen($string) > 40) {
-                    $string = substr($string, 0, 30) . '...' . substr($string, -7);
+                if (\strlen($string) > 40) {
+                    $string = \substr($string, 0, 30) . '...' . \substr($string, -7);
                 }
             }
 
             return $string;
         }
 
-        if (is_object($value)) {
-            return sprintf(
+        if (\is_object($value)) {
+            return \sprintf(
                 '%s Object (%s)',
-                get_class($value),
-                count($this->toArray($value)) > 0 ? '...' : ''
+                \get_class($value),
+                \count($this->toArray($value)) > 0 ? '...' : ''
             );
         }
 
-        if (is_array($value)) {
-            return sprintf(
+        if (\is_array($value)) {
+            return \sprintf(
                 'Array (%s)',
-                count($value) > 0 ? '...' : ''
+                \count($value) > 0 ? '...' : ''
             );
         }
 
@@ -156,76 +133,11 @@ class Exporter
     }
 
     /**
-     * Converts an object to an array containing all of its private, protected
-     * and public properties.
-     *
-     * @return array
-     */
-    public function toArray($value)
-    {
-        if (!is_object($value)) {
-            return (array)$value;
-        }
-
-        $array = [];
-
-        foreach ((array)$value as $key => $val) {
-            // Exception traces commonly reference hundreds to thousands of
-            // objects currently loaded in memory. Including them in the result
-            // has a severe negative performance impact.
-            if ("\0Error\0trace" === $key || "\0Exception\0trace" === $key) {
-                continue;
-            }
-
-            // properties are transformed to keys in the following way:
-            // private   $property => "\0Classname\0property"
-            // protected $property => "\0*\0property"
-            // public    $property => "property"
-            if (preg_match('/^\0.+\0(.+)$/', (string)$key, $matches)) {
-                $key = $matches[1];
-            }
-
-            // See https://github.com/php/php-src/commit/5721132
-            if ($key === "\0gcdata") {
-                continue;
-            }
-
-            $array[$key] = $val;
-        }
-
-        // Some internal classes like SplObjectStorage don't work with the
-        // above (fast) mechanism nor with reflection in Zend.
-        // Format the output similarly to print_r() in this case
-        if ($value instanceof SplObjectStorage) {
-            // However, the fast method does work in HHVM, and exposes the
-            // internal implementation. Hide it again.
-            if (property_exists('\SplObjectStorage', '__storage')) {
-                unset($array['__storage']);
-            } elseif (property_exists('\SplObjectStorage', 'storage')) {
-                unset($array['storage']);
-            }
-
-            if (property_exists('\SplObjectStorage', '__key')) {
-                unset($array['__key']);
-            }
-
-            foreach ($value as $key => $val) {
-                $array[spl_object_hash($val)] = [
-                    'obj' => $val,
-                    'inf' => $value->getInfo(),
-                ];
-            }
-        }
-
-        return $array;
-    }
-
-    /**
      * Recursive implementation of export
      *
      * @param mixed $value The value to export
      * @param int $indentation The indentation level of the 2nd+ line
-     * @param Context $processed Previously processed objects
+     * @param \SebastianBergmann\RecursionContext\Context $processed Previously processed objects
      *
      * @return string
      *
@@ -245,29 +157,29 @@ class Exporter
             return 'false';
         }
 
-        if (is_float($value) && (float)((int)$value) === $value) {
+        if (\is_float($value) && (float)((int)$value) === $value) {
             return "$value.0";
         }
 
-        if (is_resource($value)) {
-            return sprintf(
+        if (\is_resource($value)) {
+            return \sprintf(
                 'resource(%d) of type (%s)',
                 $value,
-                get_resource_type($value)
+                \get_resource_type($value)
             );
         }
 
-        if (is_string($value)) {
+        if (\is_string($value)) {
             // Match for most non printable chars somewhat taking multibyte chars into account
-            if (preg_match('/[^\x09-\x0d\x1b\x20-\xff]/', $value)) {
-                return 'Binary String: 0x' . bin2hex($value);
+            if (\preg_match('/[^\x09-\x0d\x1b\x20-\xff]/', $value)) {
+                return 'Binary String: 0x' . \bin2hex($value);
             }
 
             return "'" .
-                str_replace(
+                \str_replace(
                     '<lf>',
                     "\n",
-                    str_replace(
+                    \str_replace(
                         ["\r\n", "\n\r", "\r", "\n"],
                         ['\r\n<lf>', '\n\r<lf>', '\r<lf>', '\n<lf>'],
                         $value
@@ -276,13 +188,13 @@ class Exporter
                 "'";
         }
 
-        $whitespace = str_repeat(' ', 4 * $indentation);
+        $whitespace = \str_repeat(' ', 4 * $indentation);
 
         if (!$processed) {
             $processed = new Context;
         }
 
-        if (is_array($value)) {
+        if (\is_array($value)) {
             if (($key = $processed->contains($value)) !== false) {
                 return 'Array &' . $key;
             }
@@ -291,9 +203,9 @@ class Exporter
             $key = $processed->add($value);
             $values = '';
 
-            if (count($array) > 0) {
+            if (\count($array) > 0) {
                 foreach ($array as $k => $v) {
-                    $values .= sprintf(
+                    $values .= \sprintf(
                         '%s    %s => %s' . "\n",
                         $whitespace,
                         $this->recursiveExport($k, $indentation),
@@ -304,23 +216,23 @@ class Exporter
                 $values = "\n" . $values . $whitespace;
             }
 
-            return sprintf('Array &%s (%s)', $key, $values);
+            return \sprintf('Array &%s (%s)', $key, $values);
         }
 
-        if (is_object($value)) {
-            $class = get_class($value);
+        if (\is_object($value)) {
+            $class = \get_class($value);
 
             if ($hash = $processed->contains($value)) {
-                return sprintf('%s Object &%s', $class, $hash);
+                return \sprintf('%s Object &%s', $class, $hash);
             }
 
             $hash = $processed->add($value);
             $values = '';
             $array = $this->toArray($value);
 
-            if (count($array) > 0) {
+            if (\count($array) > 0) {
                 foreach ($array as $k => $v) {
-                    $values .= sprintf(
+                    $values .= \sprintf(
                         '%s    %s => %s' . "\n",
                         $whitespace,
                         $this->recursiveExport($k, $indentation),
@@ -331,9 +243,74 @@ class Exporter
                 $values = "\n" . $values . $whitespace;
             }
 
-            return sprintf('%s Object &%s (%s)', $class, $hash, $values);
+            return \sprintf('%s Object &%s (%s)', $class, $hash, $values);
         }
 
-        return var_export($value, true);
+        return \var_export($value, true);
+    }
+
+    /**
+     * Converts an object to an array containing all of its private, protected
+     * and public properties.
+     *
+     * @return array
+     */
+    public function toArray($value)
+    {
+        if (!\is_object($value)) {
+            return (array)$value;
+        }
+
+        $array = [];
+
+        foreach ((array)$value as $key => $val) {
+            // Exception traces commonly reference hundreds to thousands of
+            // objects currently loaded in memory. Including them in the result
+            // has a severe negative performance impact.
+            if ("\0Error\0trace" === $key || "\0Exception\0trace" === $key) {
+                continue;
+            }
+
+            // properties are transformed to keys in the following way:
+            // private   $property => "\0Classname\0property"
+            // protected $property => "\0*\0property"
+            // public    $property => "property"
+            if (\preg_match('/^\0.+\0(.+)$/', (string)$key, $matches)) {
+                $key = $matches[1];
+            }
+
+            // See https://github.com/php/php-src/commit/5721132
+            if ($key === "\0gcdata") {
+                continue;
+            }
+
+            $array[$key] = $val;
+        }
+
+        // Some internal classes like SplObjectStorage don't work with the
+        // above (fast) mechanism nor with reflection in Zend.
+        // Format the output similarly to print_r() in this case
+        if ($value instanceof \SplObjectStorage) {
+            // However, the fast method does work in HHVM, and exposes the
+            // internal implementation. Hide it again.
+            if (\property_exists('\SplObjectStorage', '__storage')) {
+                unset($array['__storage']);
+            } elseif (\property_exists('\SplObjectStorage', 'storage')) {
+                unset($array['storage']);
+            }
+
+            if (\property_exists('\SplObjectStorage', '__key')) {
+                unset($array['__key']);
+            }
+
+            foreach ($value as $key => $val) {
+                $array[\spl_object_hash($val)] = [
+                    'obj' => $val,
+                    'inf' => $value->getInfo(),
+                ];
+            }
+        }
+
+        return $array;
     }
 }

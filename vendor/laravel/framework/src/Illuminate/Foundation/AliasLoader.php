@@ -71,17 +71,6 @@ class AliasLoader
     }
 
     /**
-     * Set the real-time facade namespace.
-     *
-     * @param string $namespace
-     * @return void
-     */
-    public static function setFacadeNamespace($namespace)
-    {
-        static::$facadeNamespace = rtrim($namespace, '\\') . '\\';
-    }
-
-    /**
      * Get the registered aliases.
      *
      * @return array
@@ -103,6 +92,17 @@ class AliasLoader
     }
 
     /**
+     * Set the real-time facade namespace.
+     *
+     * @param string $namespace
+     * @return void
+     */
+    public static function setFacadeNamespace($namespace)
+    {
+        static::$facadeNamespace = rtrim($namespace, '\\') . '\\';
+    }
+
+    /**
      * Load a class alias if it is registered.
      *
      * @param string $alias
@@ -119,53 +119,6 @@ class AliasLoader
         if (isset($this->aliases[$alias])) {
             return class_alias($this->aliases[$alias], $alias);
         }
-    }
-
-    /**
-     * Add an alias to the loader.
-     *
-     * @param string $class
-     * @param string $alias
-     * @return void
-     */
-    public function alias($class, $alias)
-    {
-        $this->aliases[$class] = $alias;
-    }
-
-    /**
-     * Register the loader on the auto-loader stack.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        if (!$this->registered) {
-            $this->prependToLoaderStack();
-
-            $this->registered = true;
-        }
-    }
-
-    /**
-     * Indicates if the loader has been registered.
-     *
-     * @return bool
-     */
-    public function isRegistered()
-    {
-        return $this->registered;
-    }
-
-    /**
-     * Set the "registered" state of the loader.
-     *
-     * @param bool $value
-     * @return void
-     */
-    public function setRegistered($value)
-    {
-        $this->registered = $value;
     }
 
     /**
@@ -219,6 +172,32 @@ class AliasLoader
     }
 
     /**
+     * Add an alias to the loader.
+     *
+     * @param string $class
+     * @param string $alias
+     * @return void
+     */
+    public function alias($class, $alias)
+    {
+        $this->aliases[$class] = $alias;
+    }
+
+    /**
+     * Register the loader on the auto-loader stack.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        if (!$this->registered) {
+            $this->prependToLoaderStack();
+
+            $this->registered = true;
+        }
+    }
+
+    /**
      * Prepend the load method to the auto-loader stack.
      *
      * @return void
@@ -226,6 +205,27 @@ class AliasLoader
     protected function prependToLoaderStack()
     {
         spl_autoload_register([$this, 'load'], true, true);
+    }
+
+    /**
+     * Indicates if the loader has been registered.
+     *
+     * @return bool
+     */
+    public function isRegistered()
+    {
+        return $this->registered;
+    }
+
+    /**
+     * Set the "registered" state of the loader.
+     *
+     * @param bool $value
+     * @return void
+     */
+    public function setRegistered($value)
+    {
+        $this->registered = $value;
     }
 
     /**

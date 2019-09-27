@@ -76,16 +76,6 @@ class SplFileInfoPatch implements ClassPatchInterface
     }
 
     /**
-     * Returns patch priority, which determines when patch will be applied.
-     *
-     * @return int Priority number (higher - earlier)
-     */
-    public function getPriority()
-    {
-        return 50;
-    }
-
-    /**
      * @param ClassNode $node
      * @return boolean
      */
@@ -118,5 +108,15 @@ class SplFileInfoPatch implements ClassPatchInterface
         $parent = $node->getParentClass();
 
         return 'Symfony\\Component\\Finder\\SplFileInfo' === $parent;
+    }
+
+    /**
+     * Returns patch priority, which determines when patch will be applied.
+     *
+     * @return int Priority number (higher - earlier)
+     */
+    public function getPriority()
+    {
+        return 50;
     }
 }

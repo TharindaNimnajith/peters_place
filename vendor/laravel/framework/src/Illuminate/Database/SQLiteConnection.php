@@ -37,6 +37,16 @@ class SQLiteConnection extends Connection
     }
 
     /**
+     * Get the database connection foreign key constraints configuration option.
+     *
+     * @return bool|null
+     */
+    protected function getForeignKeyConstraintsConfigurationValue()
+    {
+        return $this->getConfig('foreign_key_constraints');
+    }
+
+    /**
      * Get a schema builder instance for the connection.
      *
      * @return SQLiteBuilder
@@ -48,16 +58,6 @@ class SQLiteConnection extends Connection
         }
 
         return new SQLiteBuilder($this);
-    }
-
-    /**
-     * Get the database connection foreign key constraints configuration option.
-     *
-     * @return bool|null
-     */
-    protected function getForeignKeyConstraintsConfigurationValue()
-    {
-        return $this->getConfig('foreign_key_constraints');
     }
 
     /**

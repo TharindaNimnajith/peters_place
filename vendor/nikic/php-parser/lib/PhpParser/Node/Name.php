@@ -31,6 +31,37 @@ class Name extends NodeAbstract
     }
 
     /**
+     * Prepares a (string, array or Name node) name for use in name changing methods by converting
+     * it to an array.
+     *
+     * @param string|string[]|self $name Name to prepare
+     *
+     * @return string[] Prepared name
+     */
+    private static function prepareName($name): array
+    {
+        if (is_string($name)) {
+            if ('' === $name) {
+                throw new InvalidArgumentException('Name cannot be empty');
+            }
+
+            return explode('\\', $name);
+        } elseif (is_array($name)) {
+            if (empty($name)) {
+                throw new InvalidArgumentException('Name cannot be empty');
+            }
+
+            return $name;
+        } elseif ($name instanceof self) {
+            return $name->parts;
+        }
+
+        throw new InvalidArgumentException(
+            'Expected string, array of parts or Name instance'
+        );
+    }
+
+    /**
      * Concatenate two names, yielding a new Name instance.
      *
      * The type of the generated instance depends on which class this method is called on, for
@@ -60,37 +91,6 @@ class Name extends NodeAbstract
                 array_merge(self::prepareName($name1), self::prepareName($name2)), $attributes
             );
         }
-    }
-
-    /**
-     * Prepares a (string, array or Name node) name for use in name changing methods by converting
-     * it to an array.
-     *
-     * @param string|string[]|self $name Name to prepare
-     *
-     * @return string[] Prepared name
-     */
-    private static function prepareName($name): array
-    {
-        if (is_string($name)) {
-            if ('' === $name) {
-                throw new InvalidArgumentException('Name cannot be empty');
-            }
-
-            return explode('\\', $name);
-        } elseif (is_array($name)) {
-            if (empty($name)) {
-                throw new InvalidArgumentException('Name cannot be empty');
-            }
-
-            return $name;
-        } elseif ($name instanceof self) {
-            return $name->parts;
-        }
-
-        throw new InvalidArgumentException(
-            'Expected string, array of parts or Name instance'
-        );
     }
 
     public function getSubNodeNames(): array

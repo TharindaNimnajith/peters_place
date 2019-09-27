@@ -11,16 +11,13 @@
 
 namespace Symfony\Component\Routing\Tests\Matcher\Dumper;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
 use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use const DIRECTORY_SEPARATOR;
 
 /**
  * @group legacy
@@ -52,6 +49,23 @@ class PhpMatcherDumperTest extends TestCase
         $matcher->expects($this->once())->method('redirect')->with('/foo%3Abar/', 'foo')->willReturn([]);
 
         $matcher->match('/foo%3Abar');
+    }
+
+    private function generateDumpedMatcher(RouteCollection $collection, $redirectableStub = false)
+    {
+        $options = ['class' => $this->matcherClass];
+
+        if ($redirectableStub) {
+            $options['base_class'] = '\Symfony\Component\Routing\Tests\Matcher\Dumper\RedirectableUrlMatcherStub';
+        }
+
+        $dumper = new PhpMatcherDumper($collection);
+        $code = $dumper->dump($options);
+
+        file_put_contents($this->dumpPath, $code);
+        include $this->dumpPath;
+
+        return $this->matcherClass;
     }
 
     /**
@@ -464,13 +478,13 @@ class PhpMatcherDumperTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Symfony\Component\Routing\Route cannot contain objects
      */
     public function testGenerateDumperMatcherWithObject()
     {
         $routeCollection = new RouteCollection();
-        $routeCollection->add('_', new Route('/', [new stdClass()]));
+        $routeCollection->add('_', new Route('/', [new \stdClass()]));
         $dumper = new PhpMatcherDumper($routeCollection);
         $dumper->dump();
     }
@@ -480,7 +494,7 @@ class PhpMatcherDumperTest extends TestCase
         parent::setUp();
 
         $this->matcherClass = uniqid('ProjectUrlMatcher');
-        $this->dumpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php_matcher.' . $this->matcherClass . '.php';
+        $this->dumpPath = sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'php_matcher.' . $this->matcherClass . '.php';
     }
 
     protected function tearDown()
@@ -488,23 +502,6 @@ class PhpMatcherDumperTest extends TestCase
         parent::tearDown();
 
         @unlink($this->dumpPath);
-    }
-
-    private function generateDumpedMatcher(RouteCollection $collection, $redirectableStub = false)
-    {
-        $options = ['class' => $this->matcherClass];
-
-        if ($redirectableStub) {
-            $options['base_class'] = '\Symfony\Component\Routing\Tests\Matcher\Dumper\RedirectableUrlMatcherStub';
-        }
-
-        $dumper = new PhpMatcherDumper($collection);
-        $code = $dumper->dump($options);
-
-        file_put_contents($this->dumpPath, $code);
-        include $this->dumpPath;
-
-        return $this->matcherClass;
     }
 }
 

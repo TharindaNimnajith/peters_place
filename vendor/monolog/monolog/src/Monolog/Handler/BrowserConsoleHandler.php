@@ -45,14 +45,6 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
     }
 
     /**
-     * Forget all logged records
-     */
-    public static function resetStatic()
-    {
-        static::$records = array();
-    }
-
-    /**
      * Checks the format of the response
      *
      * If Content-Type is set to application/javascript or text/javascript -> js
@@ -187,6 +179,14 @@ class BrowserConsoleHandler extends AbstractProcessingHandler
 
             return $m[1];
         }, $style);
+    }
+
+    /**
+     * Forget all logged records
+     */
+    public static function resetStatic()
+    {
+        static::$records = array();
     }
 
     public function close()

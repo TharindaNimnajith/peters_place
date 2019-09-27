@@ -128,6 +128,40 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+     * Load a relationship path if it is not already eager loaded.
+     *
+     * @param Collection $models
+     * @param array $path
+     * @return void
+     */
+    protected function loadMissingRelation(self $models, array $path)
+    {
+        $relation = array_shift($path);
+
+        $name = explode(':', key($relation))[0];
+
+        if (is_string(reset($relation))) {
+            $relation = reset($relation);
+        }
+
+        $models->filter(function ($model) use ($name) {
+            return !is_null($model) && !$model->relationLoaded($name);
+        })->load($relation);
+
+        if (empty($path)) {
+            return;
+        }
+
+        $models = $models->pluck($name);
+
+        if ($models->first() instanceof BaseCollection) {
+            $models = $models->collapse();
+        }
+
+        $this->loadMissingRelation(new static($models), $path);
+    }
+
+    /**
      * Load a set of relationships onto the collection.
      *
      * @param array|string $relations
@@ -383,6 +417,10 @@ class Collection extends BaseCollection implements QueueableCollection
     }
 
     /**
+     * The following methods are intercepted to always return base collections.
+     */
+
+    /**
      * Make the given, typically hidden, attributes visible across the entire collection.
      *
      * @param array|string $attributes
@@ -392,10 +430,6 @@ class Collection extends BaseCollection implements QueueableCollection
     {
         return $this->each->makeVisible($attributes);
     }
-
-    /**
-     * The following methods are intercepted to always return base collections.
-     */
 
     /**
      * Get the keys of the collection items.
@@ -533,40 +567,6 @@ class Collection extends BaseCollection implements QueueableCollection
         });
 
         return $connection;
-    }
-
-    /**
-     * Load a relationship path if it is not already eager loaded.
-     *
-     * @param Collection $models
-     * @param array $path
-     * @return void
-     */
-    protected function loadMissingRelation(self $models, array $path)
-    {
-        $relation = array_shift($path);
-
-        $name = explode(':', key($relation))[0];
-
-        if (is_string(reset($relation))) {
-            $relation = reset($relation);
-        }
-
-        $models->filter(function ($model) use ($name) {
-            return !is_null($model) && !$model->relationLoaded($name);
-        })->load($relation);
-
-        if (empty($path)) {
-            return;
-        }
-
-        $models = $models->pluck($name);
-
-        if ($models->first() instanceof BaseCollection) {
-            $models = $models->collapse();
-        }
-
-        $this->loadMissingRelation(new static($models), $path);
     }
 
     /**

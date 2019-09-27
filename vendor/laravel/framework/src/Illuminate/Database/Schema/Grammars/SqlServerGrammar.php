@@ -432,21 +432,6 @@ class SqlServerGrammar extends Grammar
     }
 
     /**
-     * Quote the given string literal.
-     *
-     * @param string|array $value
-     * @return string
-     */
-    public function quoteString($value)
-    {
-        if (is_array($value)) {
-            return implode(', ', array_map([$this, __FUNCTION__], $value));
-        }
-
-        return "N'$value'";
-    }
-
-    /**
      * Create the column definition for a char type.
      *
      * @param Fluent $column
@@ -602,6 +587,21 @@ class SqlServerGrammar extends Grammar
             $column->name,
             $this->quoteString($column->allowed)
         );
+    }
+
+    /**
+     * Quote the given string literal.
+     *
+     * @param string|array $value
+     * @return string
+     */
+    public function quoteString($value)
+    {
+        if (is_array($value)) {
+            return implode(', ', array_map([$this, __FUNCTION__], $value));
+        }
+
+        return "N'$value'";
     }
 
     /**

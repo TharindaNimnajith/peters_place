@@ -101,6 +101,43 @@ class DatabaseQueue extends Queue implements QueueContract
     }
 
     /**
+     * Push a raw payload to the database with a given delay.
+     *
+     * @param string|null $queue
+     * @param string $payload
+     * @param DateTimeInterface|DateInterval|int $delay
+     * @param int $attempts
+     * @return mixed
+     */
+    protected function pushToDatabase($queue, $payload, $delay = 0, $attempts = 0)
+    {
+        return $this->database->table($this->table)->insertGetId($this->buildDatabaseRecord(
+            $this->getQueue($queue), $payload, $this->availableAt($delay), $attempts
+        ));
+    }
+
+    /**
+     * Create an array to insert for the given job.
+     *
+     * @param string|null $queue
+     * @param string $payload
+     * @param int $availableAt
+     * @param int $attempts
+     * @return array
+     */
+    protected function buildDatabaseRecord($queue, $payload, $availableAt, $attempts = 0)
+    {
+        return [
+            'queue' => $queue,
+            'attempts' => $attempts,
+            'reserved_at' => null,
+            'available_at' => $availableAt,
+            'created_at' => $this->currentTime(),
+            'payload' => $payload,
+        ];
+    }
+
+    /**
      * Push a raw payload onto the queue.
      *
      * @param string $payload
@@ -183,71 +220,6 @@ class DatabaseQueue extends Queue implements QueueContract
     }
 
     /**
-     * Delete a reserved job from the queue.
-     *
-     * @param string $queue
-     * @param string $id
-     * @return void
-     *
-     * @throws Exception|Throwable
-     */
-    public function deleteReserved($queue, $id)
-    {
-        $this->database->transaction(function () use ($id) {
-            if ($this->database->table($this->table)->lockForUpdate()->find($id)) {
-                $this->database->table($this->table)->where('id', $id)->delete();
-            }
-        });
-    }
-
-    /**
-     * Get the underlying database instance.
-     *
-     * @return Connection
-     */
-    public function getDatabase()
-    {
-        return $this->database;
-    }
-
-    /**
-     * Push a raw payload to the database with a given delay.
-     *
-     * @param string|null $queue
-     * @param string $payload
-     * @param DateTimeInterface|DateInterval|int $delay
-     * @param int $attempts
-     * @return mixed
-     */
-    protected function pushToDatabase($queue, $payload, $delay = 0, $attempts = 0)
-    {
-        return $this->database->table($this->table)->insertGetId($this->buildDatabaseRecord(
-            $this->getQueue($queue), $payload, $this->availableAt($delay), $attempts
-        ));
-    }
-
-    /**
-     * Create an array to insert for the given job.
-     *
-     * @param string|null $queue
-     * @param string $payload
-     * @param int $availableAt
-     * @param int $attempts
-     * @return array
-     */
-    protected function buildDatabaseRecord($queue, $payload, $availableAt, $attempts = 0)
-    {
-        return [
-            'queue' => $queue,
-            'attempts' => $attempts,
-            'reserved_at' => null,
-            'available_at' => $availableAt,
-            'created_at' => $this->currentTime(),
-            'payload' => $payload,
-        ];
-    }
-
-    /**
      * Get the next available job for the queue.
      *
      * @param string|null $queue
@@ -327,5 +299,33 @@ class DatabaseQueue extends Queue implements QueueContract
         ]);
 
         return $job;
+    }
+
+    /**
+     * Delete a reserved job from the queue.
+     *
+     * @param string $queue
+     * @param string $id
+     * @return void
+     *
+     * @throws Exception|Throwable
+     */
+    public function deleteReserved($queue, $id)
+    {
+        $this->database->transaction(function () use ($id) {
+            if ($this->database->table($this->table)->lockForUpdate()->find($id)) {
+                $this->database->table($this->table)->where('id', $id)->delete();
+            }
+        });
+    }
+
+    /**
+     * Get the underlying database instance.
+     *
+     * @return Connection
+     */
+    public function getDatabase()
+    {
+        return $this->database;
     }
 }

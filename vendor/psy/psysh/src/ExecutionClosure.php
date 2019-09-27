@@ -86,6 +86,26 @@ class ExecutionClosure
     }
 
     /**
+     * Set the closure instance.
+     *
+     * @param Shell $psysh
+     * @param Closure $closure
+     */
+    protected function setClosure(Shell $shell, Closure $closure)
+    {
+        if (self::shouldBindClosure()) {
+            $that = $shell->getBoundObject();
+            if (is_object($that)) {
+                $closure = $closure->bindTo($that, get_class($that));
+            } else {
+                $closure = $closure->bindTo(null, $shell->getBoundClass());
+            }
+        }
+
+        $this->closure = $closure;
+    }
+
+    /**
      * Decide whether to bind the execution closure.
      *
      * @return bool
@@ -111,25 +131,5 @@ class ExecutionClosure
         $closure = $this->closure;
 
         return $closure();
-    }
-
-    /**
-     * Set the closure instance.
-     *
-     * @param Shell $psysh
-     * @param Closure $closure
-     */
-    protected function setClosure(Shell $shell, Closure $closure)
-    {
-        if (self::shouldBindClosure()) {
-            $that = $shell->getBoundObject();
-            if (is_object($that)) {
-                $closure = $closure->bindTo($that, get_class($that));
-            } else {
-                $closure = $closure->bindTo(null, $shell->getBoundClass());
-            }
-        }
-
-        $this->closure = $closure;
     }
 }

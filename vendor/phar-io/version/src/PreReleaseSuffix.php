@@ -38,6 +38,34 @@ class PreReleaseSuffix
         $this->parseValue($value);
     }
 
+    private function parseValue($value)
+    {
+        $regex = '/-?(dev|beta|b|rc|alpha|a|patch|p)\.?(\d*).*$/i';
+        if (preg_match($regex, $value, $matches) !== 1) {
+            throw new InvalidPreReleaseSuffixException(sprintf('Invalid label %s', $value));
+        }
+
+        $this->value = $matches[1];
+        if (isset($matches[2])) {
+            $this->number = (int)$matches[2];
+        }
+        $this->valueScore = $this->mapValueToScore($this->value);
+    }
+
+    /**
+     * @param $value
+     *
+     * @return int
+     */
+    private function mapValueToScore($value)
+    {
+        if (array_key_exists($value, $this->valueScoreMap)) {
+            return $this->valueScoreMap[$value];
+        }
+
+        return 0;
+    }
+
     /**
      * @return string
      */
@@ -70,33 +98,5 @@ class PreReleaseSuffix
     public function getNumber()
     {
         return $this->number;
-    }
-
-    private function parseValue($value)
-    {
-        $regex = '/-?(dev|beta|b|rc|alpha|a|patch|p)\.?(\d*).*$/i';
-        if (preg_match($regex, $value, $matches) !== 1) {
-            throw new InvalidPreReleaseSuffixException(sprintf('Invalid label %s', $value));
-        }
-
-        $this->value = $matches[1];
-        if (isset($matches[2])) {
-            $this->number = (int)$matches[2];
-        }
-        $this->valueScore = $this->mapValueToScore($this->value);
-    }
-
-    /**
-     * @param $value
-     *
-     * @return int
-     */
-    private function mapValueToScore($value)
-    {
-        if (array_key_exists($value, $this->valueScoreMap)) {
-            return $this->valueScoreMap[$value];
-        }
-
-        return 0;
     }
 }

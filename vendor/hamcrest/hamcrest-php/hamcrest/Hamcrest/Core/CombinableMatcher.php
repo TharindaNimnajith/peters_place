@@ -64,16 +64,16 @@ class CombinableMatcher extends BaseMatcher
         return new self(new AllOf($this->_templatedListWith($other)));
     }
 
-    /** Diversion from Hamcrest-Java... Logical "or" not permitted */
-    public function orElse(Matcher $other)
+    private function _templatedListWith(Matcher $other)
     {
-        return new self(new AnyOf($this->_templatedListWith($other)));
+        return array($this->_matcher, $other);
     }
 
     // -- Private Methods
 
-    private function _templatedListWith(Matcher $other)
+    /** Diversion from Hamcrest-Java... Logical "or" not permitted */
+    public function orElse(Matcher $other)
     {
-        return array($this->_matcher, $other);
+        return new self(new AnyOf($this->_templatedListWith($other)));
     }
 }

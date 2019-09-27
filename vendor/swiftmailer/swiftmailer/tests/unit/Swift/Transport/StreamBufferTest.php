@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Transport_StreamBufferTest extends TestCase
+class Swift_Transport_StreamBufferTest extends \PHPUnit\Framework\TestCase
 {
     public function testSettingWriteTranslationsCreatesFilters()
     {
@@ -14,6 +12,16 @@ class Swift_Transport_StreamBufferTest extends TestCase
 
         $buffer = $this->createBuffer($factory);
         $buffer->setWriteTranslations(['a' => 'b']);
+    }
+
+    private function createFactory()
+    {
+        return $this->getMockBuilder('Swift_ReplacementFilterFactory')->getMock();
+    }
+
+    private function createBuffer($replacementFactory)
+    {
+        return new Swift_Transport_StreamBuffer($replacementFactory);
     }
 
     public function testOverridingTranslationsOnlyAddsNeededFilters()
@@ -31,15 +39,5 @@ class Swift_Transport_StreamBufferTest extends TestCase
     public function createFilter()
     {
         return $this->getMockBuilder('Swift_StreamFilter')->getMock();
-    }
-
-    private function createFactory()
-    {
-        return $this->getMockBuilder('Swift_ReplacementFilterFactory')->getMock();
-    }
-
-    private function createBuffer($replacementFactory)
-    {
-        return new Swift_Transport_StreamBuffer($replacementFactory);
     }
 }

@@ -47,29 +47,6 @@ abstract class TypeSafeMatcher extends BaseMatcher
         return $this->_isSafeType($item) && $this->matchesSafely($item);
     }
 
-    final public function describeMismatch($item, Description $mismatchDescription)
-    {
-        if (!$this->_isSafeType($item)) {
-            parent::describeMismatch($item, $mismatchDescription);
-        } else {
-            $this->describeMismatchSafely($item, $mismatchDescription);
-        }
-    }
-
-    // -- Protected Methods
-
-    /**
-     * The item will already have been checked for the specific type and subtype.
-     */
-    abstract protected function matchesSafely($item);
-
-    /**
-     * The item will already have been checked for the specific type and subtype.
-     */
-    abstract protected function describeMismatchSafely($item, Description $mismatchDescription);
-
-    // -- Private Methods
-
     private function _isSafeType($value)
     {
         switch ($this->_expectedType) {
@@ -104,4 +81,27 @@ abstract class TypeSafeMatcher extends BaseMatcher
 
         }
     }
+
+    // -- Protected Methods
+
+    /**
+     * The item will already have been checked for the specific type and subtype.
+     */
+    abstract protected function matchesSafely($item);
+
+    final public function describeMismatch($item, Description $mismatchDescription)
+    {
+        if (!$this->_isSafeType($item)) {
+            parent::describeMismatch($item, $mismatchDescription);
+        } else {
+            $this->describeMismatchSafely($item, $mismatchDescription);
+        }
+    }
+
+    // -- Private Methods
+
+    /**
+     * The item will already have been checked for the specific type and subtype.
+     */
+    abstract protected function describeMismatchSafely($item, Description $mismatchDescription);
 }

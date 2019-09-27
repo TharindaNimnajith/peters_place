@@ -79,6 +79,34 @@ class Store implements Session
     }
 
     /**
+     * Load the session data from the handler.
+     *
+     * @return void
+     */
+    protected function loadSession()
+    {
+        $this->attributes = array_merge($this->attributes, $this->readFromHandler());
+    }
+
+    /**
+     * Read the session data from the handler.
+     *
+     * @return array
+     */
+    protected function readFromHandler()
+    {
+        if ($data = $this->handler->read($this->getId())) {
+            $data = @unserialize($this->prepareForUnserialize($data));
+
+            if ($data !== false && !is_null($data) && is_array($data)) {
+                return $data;
+            }
+        }
+
+        return [];
+    }
+
+    /**
      * Get the current session ID.
      *
      * @return string
@@ -97,6 +125,17 @@ class Store implements Session
     public function setId($id)
     {
         $this->id = $this->isValidId($id) ? $id : $this->generateSessionId();
+    }
+
+    /**
+     * Prepare the raw string data from the session for unserialization.
+     *
+     * @param string $data
+     * @return string
+     */
+    protected function prepareForUnserialize($data)
+    {
+        return $data;
     }
 
     /**
@@ -191,6 +230,17 @@ class Store implements Session
     public function forget($keys)
     {
         Arr::forget($this->attributes, $keys);
+    }
+
+    /**
+     * Prepare the serialized session data for storage.
+     *
+     * @param string $data
+     * @return string
+     */
+    protected function prepareForStorage($data)
+    {
+        return $data;
     }
 
     /**
@@ -364,6 +414,19 @@ class Store implements Session
     }
 
     /**
+     * Merge new flash keys into the new flash array.
+     *
+     * @param array $keys
+     * @return void
+     */
+    protected function mergeNewFlashes(array $keys)
+    {
+        $values = array_unique(array_merge($this->get('_flash.new', []), $keys));
+
+        $this->put('_flash.new', $values);
+    }
+
+    /**
      * Reflash a subset of the current flash data.
      *
      * @param array|mixed $keys
@@ -374,6 +437,17 @@ class Store implements Session
         $this->mergeNewFlashes($keys = is_array($keys) ? $keys : func_get_args());
 
         $this->removeFromOldFlashData($keys);
+    }
+
+    /**
+     * Remove the given keys from the old flash data.
+     *
+     * @param array $keys
+     * @return void
+     */
+    protected function removeFromOldFlashData(array $keys)
+    {
+        $this->put('_flash.old', array_diff($this->get('_flash.old', []), $keys));
     }
 
     /**
@@ -466,6 +540,16 @@ class Store implements Session
         if ($this->handler instanceof ExistenceAwareInterface) {
             $this->handler->setExists($value);
         }
+    }
+
+    /**
+     * Get a new, random session ID.
+     *
+     * @return string
+     */
+    protected function generateSessionId()
+    {
+        return Str::random(40);
     }
 
     /**
@@ -585,89 +669,5 @@ class Store implements Session
     public function handlerNeedsRequest()
     {
         return $this->handler instanceof CookieSessionHandler;
-    }
-
-    /**
-     * Load the session data from the handler.
-     *
-     * @return void
-     */
-    protected function loadSession()
-    {
-        $this->attributes = array_merge($this->attributes, $this->readFromHandler());
-    }
-
-    /**
-     * Read the session data from the handler.
-     *
-     * @return array
-     */
-    protected function readFromHandler()
-    {
-        if ($data = $this->handler->read($this->getId())) {
-            $data = @unserialize($this->prepareForUnserialize($data));
-
-            if ($data !== false && !is_null($data) && is_array($data)) {
-                return $data;
-            }
-        }
-
-        return [];
-    }
-
-    /**
-     * Prepare the raw string data from the session for unserialization.
-     *
-     * @param string $data
-     * @return string
-     */
-    protected function prepareForUnserialize($data)
-    {
-        return $data;
-    }
-
-    /**
-     * Prepare the serialized session data for storage.
-     *
-     * @param string $data
-     * @return string
-     */
-    protected function prepareForStorage($data)
-    {
-        return $data;
-    }
-
-    /**
-     * Merge new flash keys into the new flash array.
-     *
-     * @param array $keys
-     * @return void
-     */
-    protected function mergeNewFlashes(array $keys)
-    {
-        $values = array_unique(array_merge($this->get('_flash.new', []), $keys));
-
-        $this->put('_flash.new', $values);
-    }
-
-    /**
-     * Remove the given keys from the old flash data.
-     *
-     * @param array $keys
-     * @return void
-     */
-    protected function removeFromOldFlashData(array $keys)
-    {
-        $this->put('_flash.old', array_diff($this->get('_flash.old', []), $keys));
-    }
-
-    /**
-     * Get a new, random session ID.
-     *
-     * @return string
-     */
-    protected function generateSessionId()
-    {
-        return Str::random(40);
     }
 }

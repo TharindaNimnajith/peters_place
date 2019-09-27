@@ -20,6 +20,24 @@ class ComposerScripts
     }
 
     /**
+     * Clear the cached Laravel bootstrapping files.
+     *
+     * @return void
+     */
+    protected static function clearCompiled()
+    {
+        $laravel = new Application(getcwd());
+
+        if (file_exists($servicesPath = $laravel->getCachedServicesPath())) {
+            @unlink($servicesPath);
+        }
+
+        if (file_exists($packagesPath = $laravel->getCachedPackagesPath())) {
+            @unlink($packagesPath);
+        }
+    }
+
+    /**
      * Handle the post-update Composer event.
      *
      * @param Event $event
@@ -43,23 +61,5 @@ class ComposerScripts
         require_once $event->getComposer()->getConfig()->get('vendor-dir') . '/autoload.php';
 
         static::clearCompiled();
-    }
-
-    /**
-     * Clear the cached Laravel bootstrapping files.
-     *
-     * @return void
-     */
-    protected static function clearCompiled()
-    {
-        $laravel = new Application(getcwd());
-
-        if (file_exists($servicesPath = $laravel->getCachedServicesPath())) {
-            @unlink($servicesPath);
-        }
-
-        if (file_exists($packagesPath = $laravel->getCachedPackagesPath())) {
-            @unlink($packagesPath);
-        }
     }
 }

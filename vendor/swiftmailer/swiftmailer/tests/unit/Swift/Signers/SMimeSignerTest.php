@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Signers_SMimeSignerTest extends TestCase
+class Swift_Signers_SMimeSignerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Swift_StreamFilters_StringReplacementFilterFactory
@@ -10,48 +8,6 @@ class Swift_Signers_SMimeSignerTest extends TestCase
     protected $replacementFactory;
 
     protected $samplesDir;
-
-    /**
-     * Returns the headers of the message.
-     *
-     * Header-names are lowercase.
-     *
-     * @param string $message
-     *
-     * @return array
-     */
-    protected static function getHeadersOfMessage($message)
-    {
-        $headersPosEnd = strpos($message, "\r\n\r\n");
-        $headerData = trim(substr($message, 0, $headersPosEnd));
-        $headerLines = explode("\r\n", $headerData);
-        $headers = [];
-
-        if (false === $headerLines) {
-            return $headers;
-        }
-
-        // Transform header lines into an associative array
-        $currentHeaderName = '';
-        foreach ($headerLines as $headerLine) {
-            // Handle headers that span multiple lines
-            if (false === strpos($headerLine, ':')) {
-                $headers[$currentHeaderName] .= ' ' . trim($headerLine);
-                continue;
-            }
-
-            $header = explode(':', $headerLine, 2);
-            $currentHeaderName = strtolower($header[0]);
-            $headers[$currentHeaderName] = trim($header[1]);
-        }
-
-        return $headers;
-    }
-
-    protected static function getBodyOfMessage($message)
-    {
-        return trim(substr($message, strpos($message, "\r\n\r\n")));
-    }
 
     public function testUnSignedMessage()
     {
@@ -104,6 +60,96 @@ Content-Disposition: attachment; filename="smime\.p7s"
 OEL;
         $this->assertValidVerify($expectedBody, $messageStream);
         unset($messageStream);
+    }
+
+    protected function newFilteredStream()
+    {
+        $messageStream = new Swift_ByteStream_TemporaryFileByteStream();
+        $messageStream->addFilter($this->replacementFactory->createFilter("\r\n", "\n"), 'CRLF to LF');
+        $messageStream->addFilter($this->replacementFactory->createFilter("\n", "\r\n"), 'LF to CRLF');
+
+        return $messageStream;
+    }
+
+    /**
+     * Returns the headers of the message.
+     *
+     * Header-names are lowercase.
+     *
+     * @param string $message
+     *
+     * @return array
+     */
+    protected static function getHeadersOfMessage($message)
+    {
+        $headersPosEnd = strpos($message, "\r\n\r\n");
+        $headerData = trim(substr($message, 0, $headersPosEnd));
+        $headerLines = explode("\r\n", $headerData);
+        $headers = [];
+
+        if (false === $headerLines) {
+            return $headers;
+        }
+
+        // Transform header lines into an associative array
+        $currentHeaderName = '';
+        foreach ($headerLines as $headerLine) {
+            // Handle headers that span multiple lines
+            if (false === strpos($headerLine, ':')) {
+                $headers[$currentHeaderName] .= ' ' . trim($headerLine);
+                continue;
+            }
+
+            $header = explode(':', $headerLine, 2);
+            $currentHeaderName = strtolower($header[0]);
+            $headers[$currentHeaderName] = trim($header[1]);
+        }
+
+        return $headers;
+    }
+
+    protected function getBoundary($contentType)
+    {
+        if (!preg_match('/boundary=("[^"]+"|(?:[^\s]+|$))/is', $contentType, $contentTypeData)) {
+            $this->fail('Failed to find Boundary parameter');
+
+            return false;
+        }
+
+        return trim($contentTypeData[1], '"');
+    }
+
+    protected function assertValidVerify($expected, Swift_ByteStream_TemporaryFileByteStream $messageStream)
+    {
+        $actual = $messageStream->getContent();
+
+        // File is UNIX encoded so convert them to correct line ending
+        $expected = str_replace("\n", "\r\n", $expected);
+
+        $actual = self::getBodyOfMessage($actual);
+        if (!$this->assertRegExp('%^' . $expected . '$\s*%m', $actual)) {
+            return false;
+        }
+
+        $opensslOutput = new Swift_ByteStream_TemporaryFileByteStream();
+        $verify = openssl_pkcs7_verify($messageStream->getPath(), null, $opensslOutput->getPath(), [$this->samplesDir . 'smime/ca.crt']);
+
+        if (false === $verify) {
+            $this->fail('Verification of the message failed.');
+
+            return false;
+        } elseif (-1 === $verify) {
+            $this->fail(sprintf('Verification of the message failed. Internal error "%s".', openssl_error_string()));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected static function getBodyOfMessage($message)
+    {
+        return trim(substr($message, strpos($message, "\r\n\r\n")));
     }
 
     public function testSignedMessageWithFullyWrappedMessage()
@@ -341,6 +387,33 @@ OEL;
         unset($decryptedMessageStream, $messageStream);
     }
 
+    /**
+     * Strips of the sender headers and Mime-Version.
+     */
+    protected function cleanMessage($content)
+    {
+        $newContent = '';
+
+        $headers = self::getHeadersOfMessage($content);
+        foreach ($headers as $headerName => $value) {
+            if (!in_array($headerName, ['content-type', 'content-transfer-encoding', 'content-disposition'])) {
+                continue;
+            }
+
+            $headerName = explode('-', $headerName);
+            $headerName = array_map('ucfirst', $headerName);
+            $headerName = implode('-', $headerName);
+
+            if (strlen($value) > 62) {
+                $value = wordwrap($value, 62, "\n ");
+            }
+
+            $newContent .= "$headerName: $value\r\n";
+        }
+
+        return $newContent . "\r\n" . self::getBodyOfMessage($content);
+    }
+
     public function testEncryptedMessageWithFullyWrappedMessage()
     {
         $message = (new Swift_Message('Middle-out compression secrets'))
@@ -568,81 +641,6 @@ OEL;
 
         $this->assertEquals($originalMessage, $decryptedMessageStream->getContent());
         unset($messageStreamClean, $messageStream, $decryptedMessageStream);
-    }
-
-    protected function newFilteredStream()
-    {
-        $messageStream = new Swift_ByteStream_TemporaryFileByteStream();
-        $messageStream->addFilter($this->replacementFactory->createFilter("\r\n", "\n"), 'CRLF to LF');
-        $messageStream->addFilter($this->replacementFactory->createFilter("\n", "\r\n"), 'LF to CRLF');
-
-        return $messageStream;
-    }
-
-    protected function getBoundary($contentType)
-    {
-        if (!preg_match('/boundary=("[^"]+"|(?:[^\s]+|$))/is', $contentType, $contentTypeData)) {
-            $this->fail('Failed to find Boundary parameter');
-
-            return false;
-        }
-
-        return trim($contentTypeData[1], '"');
-    }
-
-    protected function assertValidVerify($expected, Swift_ByteStream_TemporaryFileByteStream $messageStream)
-    {
-        $actual = $messageStream->getContent();
-
-        // File is UNIX encoded so convert them to correct line ending
-        $expected = str_replace("\n", "\r\n", $expected);
-
-        $actual = self::getBodyOfMessage($actual);
-        if (!$this->assertRegExp('%^' . $expected . '$\s*%m', $actual)) {
-            return false;
-        }
-
-        $opensslOutput = new Swift_ByteStream_TemporaryFileByteStream();
-        $verify = openssl_pkcs7_verify($messageStream->getPath(), null, $opensslOutput->getPath(), [$this->samplesDir . 'smime/ca.crt']);
-
-        if (false === $verify) {
-            $this->fail('Verification of the message failed.');
-
-            return false;
-        } elseif (-1 === $verify) {
-            $this->fail(sprintf('Verification of the message failed. Internal error "%s".', openssl_error_string()));
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Strips of the sender headers and Mime-Version.
-     */
-    protected function cleanMessage($content)
-    {
-        $newContent = '';
-
-        $headers = self::getHeadersOfMessage($content);
-        foreach ($headers as $headerName => $value) {
-            if (!in_array($headerName, ['content-type', 'content-transfer-encoding', 'content-disposition'])) {
-                continue;
-            }
-
-            $headerName = explode('-', $headerName);
-            $headerName = array_map('ucfirst', $headerName);
-            $headerName = implode('-', $headerName);
-
-            if (strlen($value) > 62) {
-                $value = wordwrap($value, 62, "\n ");
-            }
-
-            $newContent .= "$headerName: $value\r\n";
-        }
-
-        return $newContent . "\r\n" . self::getBodyOfMessage($content);
     }
 
     protected function setUp()

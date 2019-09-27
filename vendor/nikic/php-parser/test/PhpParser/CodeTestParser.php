@@ -35,6 +35,22 @@ class CodeTestParser
         return [$name, $tests];
     }
 
+    private function extractMode($expected)
+    {
+        $firstNewLine = strpos($expected, "\n");
+        if (false === $firstNewLine) {
+            $firstNewLine = strlen($expected);
+        }
+
+        $firstLine = substr($expected, 0, $firstNewLine);
+        if (0 !== strpos($firstLine, '!!')) {
+            return [$expected, null];
+        }
+
+        $expected = (string)substr($expected, $firstNewLine + 1);
+        return [$expected, substr($firstLine, 2)];
+    }
+
     public function reconstructTest($name, array $tests)
     {
         $result = $name;
@@ -51,21 +67,5 @@ class CodeTestParser
             $result .= $lastPart;
         }
         return $result;
-    }
-
-    private function extractMode($expected)
-    {
-        $firstNewLine = strpos($expected, "\n");
-        if (false === $firstNewLine) {
-            $firstNewLine = strlen($expected);
-        }
-
-        $firstLine = substr($expected, 0, $firstNewLine);
-        if (0 !== strpos($firstLine, '!!')) {
-            return [$expected, null];
-        }
-
-        $expected = (string)substr($expected, $firstNewLine + 1);
-        return [$expected, substr($firstLine, 2)];
     }
 }

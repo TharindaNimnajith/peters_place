@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Events_ResponseEventTest extends TestCase
+class Swift_Events_ResponseEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testResponseCanBeFetchViaGetter()
     {
@@ -10,6 +8,16 @@ class Swift_Events_ResponseEventTest extends TestCase
         $this->assertEquals("250 Ok\r\n", $evt->getResponse(),
             '%s: Response should be available via getResponse()'
         );
+    }
+
+    private function createEvent(Swift_Transport $source, $response, $result)
+    {
+        return new Swift_Events_ResponseEvent($source, $response, $result);
+    }
+
+    private function createTransport()
+    {
+        return $this->getMockBuilder('Swift_Transport')->getMock();
     }
 
     public function testResultCanBeFetchedViaGetter()
@@ -26,15 +34,5 @@ class Swift_Events_ResponseEventTest extends TestCase
         $evt = $this->createEvent($transport, "250 Ok\r\n", true);
         $ref = $evt->getSource();
         $this->assertEquals($transport, $ref);
-    }
-
-    private function createEvent(Swift_Transport $source, $response, $result)
-    {
-        return new Swift_Events_ResponseEvent($source, $response, $result);
-    }
-
-    private function createTransport()
-    {
-        return $this->getMockBuilder('Swift_Transport')->getMock();
     }
 }

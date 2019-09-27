@@ -2057,14 +2057,14 @@ class MockeryTest_InterMethod1
         return $this->doSecond();
     }
 
-    public function doThird()
-    {
-        return false;
-    }
-
     private function doSecond()
     {
         return $this->doThird();
+    }
+
+    public function doThird()
+    {
+        return false;
     }
 }
 

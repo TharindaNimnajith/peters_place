@@ -120,6 +120,31 @@ class Swift_DependencyContainer
             && isset($this->store[$itemName]['lookupType']);
     }
 
+    /** Resolve an alias to another item */
+    private function createAlias($itemName)
+    {
+        return $this->lookup($this->store[$itemName]['ref']);
+    }
+
+    /** Get the literal value with $itemName */
+    private function getValue($itemName)
+    {
+        return $this->store[$itemName]['value'];
+    }
+
+    /** Create a fresh instance of $itemName */
+    private function createNewInstance($itemName)
+    {
+        $reflector = new ReflectionClass($this->store[$itemName]['className']);
+        if ($reflector->getConstructor()) {
+            return $reflector->newInstanceArgs(
+                $this->createDependenciesFor($itemName)
+            );
+        }
+
+        return $reflector->newInstance();
+    }
+
     /**
      * Create an array of arguments passed to the constructor of $itemName.
      *
@@ -135,6 +160,49 @@ class Swift_DependencyContainer
         }
 
         return $args;
+    }
+
+    /** Get an argument list with dependencies resolved */
+    private function resolveArgs(array $args)
+    {
+        $resolved = [];
+        foreach ($args as $argDefinition) {
+            switch ($argDefinition['type']) {
+                case 'lookup':
+                    $resolved[] = $this->lookupRecursive($argDefinition['item']);
+                    break;
+                case 'value':
+                    $resolved[] = $argDefinition['item'];
+                    break;
+            }
+        }
+
+        return $resolved;
+    }
+
+    /** Resolve a single dependency with an collections */
+    private function lookupRecursive($item)
+    {
+        if (is_array($item)) {
+            $collection = [];
+            foreach ($item as $k => $v) {
+                $collection[$k] = $this->lookupRecursive($v);
+            }
+
+            return $collection;
+        }
+
+        return $this->lookup($item);
+    }
+
+    /** Create and register a shared instance of $itemName */
+    private function createSharedInstance($itemName)
+    {
+        if (!isset($this->store[$itemName]['instance'])) {
+            $this->store[$itemName]['instance'] = $this->createNewInstance($itemName);
+        }
+
+        return $this->store[$itemName]['instance'];
     }
 
     /**
@@ -174,6 +242,18 @@ class Swift_DependencyContainer
         $endPoint['value'] = $value;
 
         return $this;
+    }
+
+    /** Get the current endpoint in the store */
+    private function &getEndPoint()
+    {
+        if (!isset($this->endPoint)) {
+            throw new BadMethodCallException(
+                'Component must first be registered by calling register()'
+            );
+        }
+
+        return $this->endPoint;
     }
 
     /**
@@ -307,85 +387,5 @@ class Swift_DependencyContainer
         $endPoint['args'][] = ['type' => 'value', 'item' => $value];
 
         return $this;
-    }
-
-    /** Resolve an alias to another item */
-    private function createAlias($itemName)
-    {
-        return $this->lookup($this->store[$itemName]['ref']);
-    }
-
-    /** Get the literal value with $itemName */
-    private function getValue($itemName)
-    {
-        return $this->store[$itemName]['value'];
-    }
-
-    /** Create a fresh instance of $itemName */
-    private function createNewInstance($itemName)
-    {
-        $reflector = new ReflectionClass($this->store[$itemName]['className']);
-        if ($reflector->getConstructor()) {
-            return $reflector->newInstanceArgs(
-                $this->createDependenciesFor($itemName)
-            );
-        }
-
-        return $reflector->newInstance();
-    }
-
-    /** Get an argument list with dependencies resolved */
-    private function resolveArgs(array $args)
-    {
-        $resolved = [];
-        foreach ($args as $argDefinition) {
-            switch ($argDefinition['type']) {
-                case 'lookup':
-                    $resolved[] = $this->lookupRecursive($argDefinition['item']);
-                    break;
-                case 'value':
-                    $resolved[] = $argDefinition['item'];
-                    break;
-            }
-        }
-
-        return $resolved;
-    }
-
-    /** Resolve a single dependency with an collections */
-    private function lookupRecursive($item)
-    {
-        if (is_array($item)) {
-            $collection = [];
-            foreach ($item as $k => $v) {
-                $collection[$k] = $this->lookupRecursive($v);
-            }
-
-            return $collection;
-        }
-
-        return $this->lookup($item);
-    }
-
-    /** Create and register a shared instance of $itemName */
-    private function createSharedInstance($itemName)
-    {
-        if (!isset($this->store[$itemName]['instance'])) {
-            $this->store[$itemName]['instance'] = $this->createNewInstance($itemName);
-        }
-
-        return $this->store[$itemName]['instance'];
-    }
-
-    /** Get the current endpoint in the store */
-    private function &getEndPoint()
-    {
-        if (!isset($this->endPoint)) {
-            throw new BadMethodCallException(
-                'Component must first be registered by calling register()'
-            );
-        }
-
-        return $this->endPoint;
     }
 }

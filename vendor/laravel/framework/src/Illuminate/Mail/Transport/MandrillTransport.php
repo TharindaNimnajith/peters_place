@@ -56,27 +56,6 @@ class MandrillTransport extends Transport
     }
 
     /**
-     * Get the API key being used by the transport.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Set the API key being used by the transport.
-     *
-     * @param string $key
-     * @return string
-     */
-    public function setKey($key)
-    {
-        return $this->key = $key;
-    }
-
-    /**
      * Get all the addresses this message should be sent to.
      *
      * Note that Mandrill still respects CC, BCC headers in raw message itself.
@@ -101,5 +80,26 @@ class MandrillTransport extends Transport
         }
 
         return $to;
+    }
+
+    /**
+     * Get the API key being used by the transport.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set the API key being used by the transport.
+     *
+     * @param string $key
+     * @return string
+     */
+    public function setKey($key)
+    {
+        return $this->key = $key;
     }
 }

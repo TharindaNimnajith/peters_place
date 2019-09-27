@@ -59,6 +59,11 @@ class GelfMessageFormatterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('mysystem', $message->getHost());
     }
 
+    private function isLegacy()
+    {
+        return interface_exists('\Gelf\IMessagePublisher');
+    }
+
     /**
      * @covers Monolog\Formatter\GelfMessageFormatter::format
      */
@@ -251,10 +256,5 @@ class GelfMessageFormatterTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertGreaterThanOrEqual(131289, $length, 'The message should not be truncated');
-    }
-
-    private function isLegacy()
-    {
-        return interface_exists('\Gelf\IMessagePublisher');
     }
 }

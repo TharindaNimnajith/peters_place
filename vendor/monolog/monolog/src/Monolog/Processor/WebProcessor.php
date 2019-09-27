@@ -86,18 +86,6 @@ class WebProcessor implements ProcessorInterface
     }
 
     /**
-     * @param string $extraName
-     * @param string $serverName
-     * @return $this
-     */
-    public function addExtraField($extraName, $serverName)
-    {
-        $this->extraFields[$extraName] = $serverName;
-
-        return $this;
-    }
-
-    /**
      * @param array $extra
      * @return array
      */
@@ -112,5 +100,17 @@ class WebProcessor implements ProcessorInterface
         }
 
         return $extra;
+    }
+
+    /**
+     * @param string $extraName
+     * @param string $serverName
+     * @return $this
+     */
+    public function addExtraField($extraName, $serverName)
+    {
+        $this->extraFields[$extraName] = $serverName;
+
+        return $this;
     }
 }

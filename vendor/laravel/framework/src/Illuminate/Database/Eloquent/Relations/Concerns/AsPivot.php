@@ -128,6 +128,19 @@ trait AsPivot
     }
 
     /**
+     * Get the query builder for a delete operation on the pivot.
+     *
+     * @return Builder
+     */
+    protected function getDeleteQuery()
+    {
+        return $this->newQueryWithoutRelationships()->where([
+            $this->foreignKey => $this->getOriginal($this->foreignKey, $this->getAttribute($this->foreignKey)),
+            $this->relatedKey => $this->getOriginal($this->relatedKey, $this->getAttribute($this->relatedKey)),
+        ]);
+    }
+
+    /**
      * Get the table associated with the model.
      *
      * @return string
@@ -240,19 +253,6 @@ trait AsPivot
         return $this->newQueryWithoutScopes()
             ->where($segments[0], $segments[1])
             ->where($segments[2], $segments[3]);
-    }
-
-    /**
-     * Get the query builder for a delete operation on the pivot.
-     *
-     * @return Builder
-     */
-    protected function getDeleteQuery()
-    {
-        return $this->newQueryWithoutRelationships()->where([
-            $this->foreignKey => $this->getOriginal($this->foreignKey, $this->getAttribute($this->foreignKey)),
-            $this->relatedKey => $this->getOriginal($this->relatedKey, $this->getAttribute($this->relatedKey)),
-        ]);
     }
 
     /**

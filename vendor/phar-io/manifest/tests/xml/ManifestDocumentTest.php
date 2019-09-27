@@ -55,6 +55,11 @@ class ManifestDocumentTest extends TestCase
         );
     }
 
+    private function loadFixture()
+    {
+        return ManifestDocument::fromFile(__DIR__ . '/../_fixture/phpunit-5.6.5.xml');
+    }
+
     public function testRequiresElementCanBeRetrieved()
     {
         $this->assertInstanceOf(
@@ -83,6 +88,13 @@ class ManifestDocumentTest extends TestCase
     {
         $this->expectException(ManifestDocumentException::class);
         $this->loadEmptyFixture()->getContainsElement();
+    }
+
+    private function loadEmptyFixture()
+    {
+        return ManifestDocument::fromString(
+            '<?xml version="1.0" ?><phar xmlns="https://phar.io/xml/manifest/1.0" />'
+        );
     }
 
     public function testThrowsExceptionWhenCopyirhgtIsMissing()
@@ -114,18 +126,6 @@ class ManifestDocumentTest extends TestCase
     {
         $this->assertFalse(
             $this->loadEmptyFixture()->hasBundlesElement()
-        );
-    }
-
-    private function loadFixture()
-    {
-        return ManifestDocument::fromFile(__DIR__ . '/../_fixture/phpunit-5.6.5.xml');
-    }
-
-    private function loadEmptyFixture()
-    {
-        return ManifestDocument::fromString(
-            '<?xml version="1.0" ?><phar xmlns="https://phar.io/xml/manifest/1.0" />'
         );
     }
 }

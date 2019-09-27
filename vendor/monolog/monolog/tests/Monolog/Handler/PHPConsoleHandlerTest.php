@@ -77,6 +77,13 @@ class PHPConsoleHandlerTest extends TestCase
         $this->initLogger()->addDebug('test');
     }
 
+    protected function initLogger($handlerOptions = array(), $level = Logger::DEBUG)
+    {
+        return new Logger('test', array(
+            new PHPConsoleHandler($handlerOptions, $this->connector, $level),
+        ));
+    }
+
     public function testDebugContextInMessage()
     {
         $message = 'test';
@@ -141,6 +148,14 @@ class PHPConsoleHandlerTest extends TestCase
         $errorHandler->handleError($code, $message, $file, $line);
     }
 
+    protected function getHandlerDefaultOption($name)
+    {
+        $handler = new PHPConsoleHandler(array(), $this->connector);
+        $options = $handler->getOptions();
+
+        return $options[$name];
+    }
+
     public function testOptionDebugTagsKeysInContext()
     {
         $this->testDebugTags(array('key1', 'key2'));
@@ -162,6 +177,15 @@ class PHPConsoleHandlerTest extends TestCase
             $this->connector->setDebugDispatcher($debugDispatcher);
             $logger->addDebug('test', array($key => $expectedTags));
         }
+    }
+
+    protected function initDebugDispatcherMock(Connector $connector)
+    {
+        return $this->getMockBuilder('PhpConsole\Dispatcher\Debug')
+            ->disableOriginalConstructor()
+            ->setMethods(array('dispatchDebug'))
+            ->setConstructorArgs(array($connector, $connector->getDumper()))
+            ->getMock();
     }
 
     public function testOptionUseOwnErrorsAndExceptionsHandler()
@@ -198,30 +222,6 @@ class PHPConsoleHandlerTest extends TestCase
     {
         new PHPConsoleHandler(array($option => $value), $this->connector);
         $this->assertEquals($value, $this->connector->getDumper()->$dumperProperty);
-    }
-
-    protected function initLogger($handlerOptions = array(), $level = Logger::DEBUG)
-    {
-        return new Logger('test', array(
-            new PHPConsoleHandler($handlerOptions, $this->connector, $level),
-        ));
-    }
-
-    protected function getHandlerDefaultOption($name)
-    {
-        $handler = new PHPConsoleHandler(array(), $this->connector);
-        $options = $handler->getOptions();
-
-        return $options[$name];
-    }
-
-    protected function initDebugDispatcherMock(Connector $connector)
-    {
-        return $this->getMockBuilder('PhpConsole\Dispatcher\Debug')
-            ->disableOriginalConstructor()
-            ->setMethods(array('dispatchDebug'))
-            ->setConstructorArgs(array($connector, $connector->getDumper()))
-            ->getMock();
     }
 
     protected function setUp()

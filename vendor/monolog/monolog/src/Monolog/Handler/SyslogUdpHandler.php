@@ -66,6 +66,15 @@ class SyslogUdpHandler extends AbstractSyslogHandler
         }
     }
 
+    private function splitMessageIntoLines($message)
+    {
+        if (is_array($message)) {
+            $message = implode("\n", $message);
+        }
+
+        return preg_split('/$\R?^/m', $message, -1, PREG_SPLIT_NO_EMPTY);
+    }
+
     /**
      * Make common syslog header (see rfc5424)
      */
@@ -91,14 +100,5 @@ class SyslogUdpHandler extends AbstractSyslogHandler
     protected function getDateTime()
     {
         return date(DateTime::RFC3339);
-    }
-
-    private function splitMessageIntoLines($message)
-    {
-        if (is_array($message)) {
-            $message = implode("\n", $message);
-        }
-
-        return preg_split('/$\R?^/m', $message, -1, PREG_SPLIT_NO_EMPTY);
     }
 }

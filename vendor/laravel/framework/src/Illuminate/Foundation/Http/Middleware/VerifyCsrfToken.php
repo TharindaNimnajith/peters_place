@@ -58,16 +58,6 @@ class VerifyCsrfToken
     }
 
     /**
-     * Determine if the cookie contents should be serialized.
-     *
-     * @return bool
-     */
-    public static function serialized()
-    {
-        return EncryptCookies::serialized('XSRF-TOKEN');
-    }
-
-    /**
      * Handle an incoming request.
      *
      * @param Request $request
@@ -92,16 +82,6 @@ class VerifyCsrfToken
         }
 
         throw new TokenMismatchException('CSRF token mismatch.');
-    }
-
-    /**
-     * Determine if the cookie should be added to the response.
-     *
-     * @return bool
-     */
-    public function shouldAddXsrfTokenCookie()
-    {
-        return $this->addHttpCookie;
     }
 
     /**
@@ -176,6 +156,26 @@ class VerifyCsrfToken
         }
 
         return $token;
+    }
+
+    /**
+     * Determine if the cookie contents should be serialized.
+     *
+     * @return bool
+     */
+    public static function serialized()
+    {
+        return EncryptCookies::serialized('XSRF-TOKEN');
+    }
+
+    /**
+     * Determine if the cookie should be added to the response.
+     *
+     * @return bool
+     */
+    public function shouldAddXsrfTokenCookie()
+    {
+        return $this->addHttpCookie;
     }
 
     /**

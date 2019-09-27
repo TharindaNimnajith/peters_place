@@ -177,36 +177,6 @@ class Logger implements LoggerInterface, ResettableInterface
     }
 
     /**
-     * Gets the name of the logging level.
-     *
-     * @param int $level
-     * @return string
-     */
-    public static function getLevelName($level)
-    {
-        if (!isset(static::$levels[$level])) {
-            throw new InvalidArgumentException('Level "' . $level . '" is not defined, use one of: ' . implode(', ', array_keys(static::$levels)));
-        }
-
-        return static::$levels[$level];
-    }
-
-    /**
-     * Converts PSR-3 levels to Monolog ones if necessary
-     *
-     * @param string|int Level number (monolog) or name (PSR-3)
-     * @return int
-     */
-    public static function toMonologLevel($level)
-    {
-        if (is_string($level) && defined(__CLASS__ . '::' . strtoupper($level))) {
-            return constant(__CLASS__ . '::' . strtoupper($level));
-        }
-
-        return $level;
-    }
-
-    /**
      * @return string
      */
     public function getName()
@@ -466,6 +436,34 @@ class Logger implements LoggerInterface, ResettableInterface
     }
 
     /**
+     * Gets the name of the logging level.
+     *
+     * @param int $level
+     * @return string
+     */
+    public static function getLevelName($level)
+    {
+        if (!isset(static::$levels[$level])) {
+            throw new InvalidArgumentException('Level "' . $level . '" is not defined, use one of: ' . implode(', ', array_keys(static::$levels)));
+        }
+
+        return static::$levels[$level];
+    }
+
+    /**
+     * Delegates exception management to the custom exception handler,
+     * or throws the exception if no custom handler is set.
+     */
+    protected function handleException(Exception $e, array $record)
+    {
+        if (!$this->exceptionHandler) {
+            throw $e;
+        }
+
+        call_user_func($this->exceptionHandler, $e, $record);
+    }
+
+    /**
      * Adds a log record at the INFO level.
      *
      * @param string $message The log message
@@ -609,6 +607,21 @@ class Logger implements LoggerInterface, ResettableInterface
         $level = static::toMonologLevel($level);
 
         return $this->addRecord($level, $message, $context);
+    }
+
+    /**
+     * Converts PSR-3 levels to Monolog ones if necessary
+     *
+     * @param string|int Level number (monolog) or name (PSR-3)
+     * @return int
+     */
+    public static function toMonologLevel($level)
+    {
+        if (is_string($level) && defined(__CLASS__ . '::' . strtoupper($level))) {
+            return constant(__CLASS__ . '::' . strtoupper($level));
+        }
+
+        return $level;
     }
 
     /**
@@ -777,18 +790,5 @@ class Logger implements LoggerInterface, ResettableInterface
     public function emergency($message, array $context = array())
     {
         return $this->addRecord(static::EMERGENCY, $message, $context);
-    }
-
-    /**
-     * Delegates exception management to the custom exception handler,
-     * or throws the exception if no custom handler is set.
-     */
-    protected function handleException(Exception $e, array $record)
-    {
-        if (!$this->exceptionHandler) {
-            throw $e;
-        }
-
-        call_user_func($this->exceptionHandler, $e, $record);
     }
 }

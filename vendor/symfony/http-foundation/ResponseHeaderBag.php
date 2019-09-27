@@ -11,12 +11,6 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-use DateTime;
-use DateTimeZone;
-use InvalidArgumentException;
-use function array_key_exists;
-use function in_array;
-
 /**
  * ResponseHeaderBag is a container for Response HTTP headers.
  *
@@ -72,7 +66,7 @@ class ResponseHeaderBag extends HeaderBag
         parent::set($key, $values, $replace);
 
         // ensure the cache-control header has sensible defaults
-        if (in_array($uniqueKey, ['cache-control', 'etag', 'last-modified', 'expires'], true) && '' !== $computed = $this->computeCacheControlValue()) {
+        if (\in_array($uniqueKey, ['cache-control', 'etag', 'last-modified', 'expires'], true) && '' !== $computed = $this->computeCacheControlValue()) {
             $this->headers['cache-control'] = [$computed];
             $this->headerNames['cache-control'] = 'Cache-Control';
             $this->computedCacheControl = $this->parseCacheControl($computed);
@@ -83,6 +77,45 @@ class ResponseHeaderBag extends HeaderBag
     {
         $this->cookies[$cookie->getDomain()][$cookie->getPath()][$cookie->getName()] = $cookie;
         $this->headerNames['set-cookie'] = 'Set-Cookie';
+    }
+
+    /**
+     * Returns the calculated value of the cache-control header.
+     *
+     * This considers several other headers and calculates or modifies the
+     * cache-control header to a sensible, conservative value.
+     *
+     * @return string
+     */
+    protected function computeCacheControlValue()
+    {
+        if (!$this->cacheControl && !$this->has('ETag') && !$this->has('Last-Modified') && !$this->has('Expires')) {
+            return 'no-cache, private';
+        }
+
+        if (!$this->cacheControl) {
+            // conservative by default
+            return 'private, must-revalidate';
+        }
+
+        $header = $this->getCacheControlHeader();
+        if (isset($this->cacheControl['public']) || isset($this->cacheControl['private'])) {
+            return $header;
+        }
+
+        // public if s-maxage is defined, private otherwise
+        if (!isset($this->cacheControl['s-maxage'])) {
+            return $header . ', private';
+        }
+
+        return $header;
+    }
+
+    private function initDate()
+    {
+        $now = \DateTime::createFromFormat('U', time());
+        $now->setTimezone(new \DateTimeZone('UTC'));
+        $this->set('Date', $now->format('D, d M Y H:i:s') . ' GMT');
     }
 
     public function allPreserveCaseWithoutCookies()
@@ -130,12 +163,12 @@ class ResponseHeaderBag extends HeaderBag
      *
      * @return Cookie[]
      *
-     * @throws InvalidArgumentException When the $format is invalid
+     * @throws \InvalidArgumentException When the $format is invalid
      */
     public function getCookies($format = self::COOKIES_FLAT)
     {
-        if (!in_array($format, [self::COOKIES_FLAT, self::COOKIES_ARRAY])) {
-            throw new InvalidArgumentException(sprintf('Format "%s" invalid (%s).', $format, implode(', ', [self::COOKIES_FLAT, self::COOKIES_ARRAY])));
+        if (!\in_array($format, [self::COOKIES_FLAT, self::COOKIES_ARRAY])) {
+            throw new \InvalidArgumentException(sprintf('Format "%s" invalid (%s).', $format, implode(', ', [self::COOKIES_FLAT, self::COOKIES_ARRAY])));
         }
 
         if (self::COOKIES_ARRAY === $format) {
@@ -202,7 +235,7 @@ class ResponseHeaderBag extends HeaderBag
      */
     public function hasCacheControlDirective($key)
     {
-        return array_key_exists($key, $this->computedCacheControl);
+        return \array_key_exists($key, $this->computedCacheControl);
     }
 
     /**
@@ -210,7 +243,7 @@ class ResponseHeaderBag extends HeaderBag
      */
     public function getCacheControlDirective($key)
     {
-        return array_key_exists($key, $this->computedCacheControl) ? $this->computedCacheControl[$key] : null;
+        return \array_key_exists($key, $this->computedCacheControl) ? $this->computedCacheControl[$key] : null;
     }
 
     /**
@@ -261,44 +294,5 @@ class ResponseHeaderBag extends HeaderBag
     public function makeDisposition($disposition, $filename, $filenameFallback = '')
     {
         return HeaderUtils::makeDisposition((string)$disposition, (string)$filename, (string)$filenameFallback);
-    }
-
-    /**
-     * Returns the calculated value of the cache-control header.
-     *
-     * This considers several other headers and calculates or modifies the
-     * cache-control header to a sensible, conservative value.
-     *
-     * @return string
-     */
-    protected function computeCacheControlValue()
-    {
-        if (!$this->cacheControl && !$this->has('ETag') && !$this->has('Last-Modified') && !$this->has('Expires')) {
-            return 'no-cache, private';
-        }
-
-        if (!$this->cacheControl) {
-            // conservative by default
-            return 'private, must-revalidate';
-        }
-
-        $header = $this->getCacheControlHeader();
-        if (isset($this->cacheControl['public']) || isset($this->cacheControl['private'])) {
-            return $header;
-        }
-
-        // public if s-maxage is defined, private otherwise
-        if (!isset($this->cacheControl['s-maxage'])) {
-            return $header . ', private';
-        }
-
-        return $header;
-    }
-
-    private function initDate()
-    {
-        $now = DateTime::createFromFormat('U', time());
-        $now->setTimezone(new DateTimeZone('UTC'));
-        $this->set('Date', $now->format('D, d M Y H:i:s') . ' GMT');
     }
 }

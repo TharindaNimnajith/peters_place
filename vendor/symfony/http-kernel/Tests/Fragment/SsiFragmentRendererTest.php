@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Fragment;
 
-use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
@@ -25,6 +24,17 @@ class SsiFragmentRendererTest extends TestCase
     {
         $strategy = new SsiFragmentRenderer(new Ssi(), $this->getInlineStrategy(true));
         $strategy->render('/', Request::create('/'));
+    }
+
+    private function getInlineStrategy($called = false)
+    {
+        $inline = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer')->disableOriginalConstructor()->getMock();
+
+        if ($called) {
+            $inline->expects($this->once())->method('render');
+        }
+
+        return $inline;
     }
 
     public function testRender()
@@ -58,7 +68,7 @@ class SsiFragmentRendererTest extends TestCase
     }
 
     /**
-     * @expectedException LogicException
+     * @expectedException \LogicException
      */
     public function testRenderControllerReferenceWithoutSignerThrowsException()
     {
@@ -72,7 +82,7 @@ class SsiFragmentRendererTest extends TestCase
     }
 
     /**
-     * @expectedException LogicException
+     * @expectedException \LogicException
      */
     public function testRenderAltControllerReferenceWithoutSignerThrowsException()
     {
@@ -83,16 +93,5 @@ class SsiFragmentRendererTest extends TestCase
         $request->headers->set('Surrogate-Capability', 'SSI/1.0');
 
         $strategy->render('/', $request, ['alt' => new ControllerReference('alt_controller')]);
-    }
-
-    private function getInlineStrategy($called = false)
-    {
-        $inline = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer')->disableOriginalConstructor()->getMock();
-
-        if ($called) {
-            $inline->expects($this->once())->method('render');
-        }
-
-        return $inline;
     }
 }

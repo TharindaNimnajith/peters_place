@@ -6,15 +6,6 @@ namespace Faker\Provider\en_US;
 
 class Payment extends \Faker\Provider\Payment
 {
-    public static function calculateRoutingNumberChecksum($routing)
-    {
-        return (
-                7 * ($routing[0] + $routing[3] + $routing[6]) +
-                3 * ($routing[1] + $routing[4] + $routing[7]) +
-                9 * ($routing[2] + $routing[5])
-            ) % 10;
-    }
-
     public function bankAccountNumber()
     {
         // Length between 5 and 17, biased towards center
@@ -34,5 +25,14 @@ class Payment extends \Faker\Provider\Payment
         $result = sprintf('%02d%01d%01d%04d', $district + $type, $clearingCenter, $state, $institution);
 
         return $result . self::calculateRoutingNumberChecksum($result);
+    }
+
+    public static function calculateRoutingNumberChecksum($routing)
+    {
+        return (
+                7 * ($routing[0] + $routing[3] + $routing[6]) +
+                3 * ($routing[1] + $routing[4] + $routing[7]) +
+                9 * ($routing[2] + $routing[5])
+            ) % 10;
     }
 }

@@ -12,14 +12,12 @@
 
 namespace phpDocumentor\Reflection;
 
-use InvalidArgumentException;
 use phpDocumentor\Reflection\Types\Array_;
 use phpDocumentor\Reflection\Types\Compound;
 use phpDocumentor\Reflection\Types\Context;
 use phpDocumentor\Reflection\Types\Iterable_;
 use phpDocumentor\Reflection\Types\Nullable;
 use phpDocumentor\Reflection\Types\Object_;
-use RuntimeException;
 
 final class TypeResolver
 {
@@ -91,14 +89,14 @@ final class TypeResolver
     public function resolve($type, Context $context = null)
     {
         if (!is_string($type)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Attempted to resolve type but it appeared not to be a string, received: ' . var_export($type, true)
             );
         }
 
         $type = trim($type);
         if (!$type) {
-            throw new InvalidArgumentException('Attempted to resolve "' . $type . '" but it appears to be empty');
+            throw new \InvalidArgumentException('Attempted to resolve "' . $type . '" but it appears to be empty');
         }
 
         if ($context === null) {
@@ -121,37 +119,11 @@ final class TypeResolver
             // @codeCoverageIgnoreStart
             default:
                 // I haven't got the foggiest how the logic would come here but added this as a defense.
-                throw new RuntimeException(
+                throw new \RuntimeException(
                     'Unable to resolve type "' . $type . '", there is no known method to resolve it'
                 );
         }
         // @codeCoverageIgnoreEnd
-    }
-
-    /**
-     * Adds a keyword to the list of Keywords and associates it with a specific Value Object.
-     *
-     * @param string $keyword
-     * @param string $typeClassName
-     *
-     * @return void
-     */
-    public function addKeyword($keyword, $typeClassName)
-    {
-        if (!class_exists($typeClassName)) {
-            throw new InvalidArgumentException(
-                'The Value Object that needs to be created with a keyword "' . $keyword . '" must be an existing class'
-                . ' but we could not find the class ' . $typeClassName
-            );
-        }
-
-        if (!in_array(Type::class, class_implements($typeClassName))) {
-            throw new InvalidArgumentException(
-                'The class "' . $typeClassName . '" must implement the interface "phpDocumentor\Reflection\Type"'
-            );
-        }
-
-        $this->keywords[$keyword] = $typeClassName;
     }
 
     /**
@@ -296,5 +268,31 @@ final class TypeResolver
     private function isPartialStructuralElementName($type)
     {
         return ($type[0] !== self::OPERATOR_NAMESPACE) && !$this->isKeyword($type);
+    }
+
+    /**
+     * Adds a keyword to the list of Keywords and associates it with a specific Value Object.
+     *
+     * @param string $keyword
+     * @param string $typeClassName
+     *
+     * @return void
+     */
+    public function addKeyword($keyword, $typeClassName)
+    {
+        if (!class_exists($typeClassName)) {
+            throw new \InvalidArgumentException(
+                'The Value Object that needs to be created with a keyword "' . $keyword . '" must be an existing class'
+                . ' but we could not find the class ' . $typeClassName
+            );
+        }
+
+        if (!in_array(Type::class, class_implements($typeClassName))) {
+            throw new \InvalidArgumentException(
+                'The class "' . $typeClassName . '" must implement the interface "phpDocumentor\Reflection\Type"'
+            );
+        }
+
+        $this->keywords[$keyword] = $typeClassName;
     }
 }

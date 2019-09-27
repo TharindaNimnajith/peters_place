@@ -208,7 +208,7 @@
                         <select name="roomtype" class="form-control">
                             @foreach ($dat as $item)
                                 @if (isset($item))
-                                    <option value="{{ $item->id }}" @if (old('roomtype') == '{{ $item->id }}') selected
+                                    <option value="{{ $item->id }}" @if (old('roomtype') == $item->id) selected
                                         @endif>{{ $item->name }}</option>
                                 @endif
                             @endforeach

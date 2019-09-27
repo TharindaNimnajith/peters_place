@@ -11,12 +11,9 @@
 
 namespace Symfony\Contracts\Translation\Test;
 
-use InvalidArgumentException;
-use Locale;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorTrait;
-use function count;
 
 /**
  * Test should cover all languages mentioned on http://translate.sourceforge.net/wiki/l10n/pluralforms
@@ -67,7 +64,7 @@ class TranslatorTest extends TestCase
      */
     public function testTransChoiceWithDefaultLocale($expected, $id, $number)
     {
-        Locale::setDefault('en');
+        \Locale::setDefault('en');
 
         $translator = $this->getTranslator();
 
@@ -89,10 +86,10 @@ class TranslatorTest extends TestCase
     {
         $translator = $this->getTranslator();
 
-        Locale::setDefault('pt_BR');
+        \Locale::setDefault('pt_BR');
         $this->assertEquals('pt_BR', $translator->getLocale());
 
-        Locale::setDefault('en');
+        \Locale::setDefault('en');
         $this->assertEquals('en', $translator->getLocale());
     }
 
@@ -162,7 +159,7 @@ class TranslatorTest extends TestCase
 
     /**
      * @dataProvider getNonMatchingMessages
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testThrowExceptionIfMatchingMessageCannotBeFound($id, $number)
     {
@@ -271,6 +268,45 @@ class TranslatorTest extends TestCase
         $this->validateMatrix($nplural, $matrix, false);
     }
 
+    protected function generateTestData($langCodes)
+    {
+        $translator = new class()
+        {
+            use TranslatorTrait {
+                getPluralizationRule as public;
+            }
+        };
+
+        $matrix = [];
+        foreach ($langCodes as $langCode) {
+            for ($count = 0; $count < 200; ++$count) {
+                $plural = $translator->getPluralizationRule($count, $langCode);
+                $matrix[$langCode][$count] = $plural;
+            }
+        }
+
+        return $matrix;
+    }
+
+    /**
+     * We validate only on the plural coverage. Thus the real rules is not tested.
+     *
+     * @param string $nplural Plural expected
+     * @param array $matrix Containing langcodes and their plural index values
+     * @param bool $expectSuccess
+     */
+    protected function validateMatrix($nplural, $matrix, $expectSuccess = true)
+    {
+        foreach ($matrix as $langCode => $data) {
+            $indexes = array_flip($data);
+            if ($expectSuccess) {
+                $this->assertEquals($nplural, \count($indexes), "Langcode '$langCode' has '$nplural' plural forms.");
+            } else {
+                $this->assertNotEquals((int)$nplural, \count($indexes), "Langcode '$langCode' has '$nplural' plural forms.");
+            }
+        }
+    }
+
     /**
      * @dataProvider successLangcodes
      */
@@ -315,44 +351,5 @@ class TranslatorTest extends TestCase
             ['4', ['gd', 'kw']],
             ['5', ['ga']],
         ];
-    }
-
-    protected function generateTestData($langCodes)
-    {
-        $translator = new class()
-        {
-            use TranslatorTrait {
-                getPluralizationRule as public;
-            }
-        };
-
-        $matrix = [];
-        foreach ($langCodes as $langCode) {
-            for ($count = 0; $count < 200; ++$count) {
-                $plural = $translator->getPluralizationRule($count, $langCode);
-                $matrix[$langCode][$count] = $plural;
-            }
-        }
-
-        return $matrix;
-    }
-
-    /**
-     * We validate only on the plural coverage. Thus the real rules is not tested.
-     *
-     * @param string $nplural Plural expected
-     * @param array $matrix Containing langcodes and their plural index values
-     * @param bool $expectSuccess
-     */
-    protected function validateMatrix($nplural, $matrix, $expectSuccess = true)
-    {
-        foreach ($matrix as $langCode => $data) {
-            $indexes = array_flip($data);
-            if ($expectSuccess) {
-                $this->assertEquals($nplural, count($indexes), "Langcode '$langCode' has '$nplural' plural forms.");
-            } else {
-                $this->assertNotEquals((int)$nplural, count($indexes), "Langcode '$langCode' has '$nplural' plural forms.");
-            }
-        }
     }
 }

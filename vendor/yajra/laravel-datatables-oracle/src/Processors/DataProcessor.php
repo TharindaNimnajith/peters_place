@@ -117,26 +117,6 @@ class DataProcessor
     }
 
     /**
-     * Flatten array with exceptions.
-     *
-     * @param array $array
-     * @return array
-     */
-    public function flatten(array $array)
-    {
-        $return = [];
-        foreach ($array as $key => $value) {
-            if (in_array($key, $this->exceptions)) {
-                $return[$key] = $value;
-            } else {
-                $return[] = $value;
-            }
-        }
-
-        return $return;
-    }
-
-    /**
      * Process add columns.
      *
      * @param mixed $data
@@ -227,6 +207,26 @@ class DataProcessor
         }
 
         return $data;
+    }
+
+    /**
+     * Flatten array with exceptions.
+     *
+     * @param array $array
+     * @return array
+     */
+    public function flatten(array $array)
+    {
+        $return = [];
+        foreach ($array as $key => $value) {
+            if (in_array($key, $this->exceptions)) {
+                $return[$key] = $value;
+            } else {
+                $return[] = $value;
+            }
+        }
+
+        return $return;
     }
 
     /**

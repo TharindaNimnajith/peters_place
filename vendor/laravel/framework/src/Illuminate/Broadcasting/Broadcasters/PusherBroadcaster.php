@@ -80,6 +80,23 @@ class PusherBroadcaster extends Broadcaster
     }
 
     /**
+     * Decode the given Pusher response.
+     *
+     * @param Request $request
+     * @param mixed $response
+     * @return array
+     */
+    protected function decodePusherResponse($request, $response)
+    {
+        if (!$request->input('callback', false)) {
+            return json_decode($response, true);
+        }
+
+        return response()->json(json_decode($response, true))
+            ->withCallback($request->callback);
+    }
+
+    /**
      * Broadcast the given event.
      *
      * @param array $channels
@@ -113,22 +130,5 @@ class PusherBroadcaster extends Broadcaster
     public function getPusher()
     {
         return $this->pusher;
-    }
-
-    /**
-     * Decode the given Pusher response.
-     *
-     * @param Request $request
-     * @param mixed $response
-     * @return array
-     */
-    protected function decodePusherResponse($request, $response)
-    {
-        if (!$request->input('callback', false)) {
-            return json_decode($response, true);
-        }
-
-        return response()->json(json_decode($response, true))
-            ->withCallback($request->callback);
     }
 }

@@ -101,6 +101,17 @@ abstract class Job
     abstract public function getRawBody();
 
     /**
+     * Resolve the given class.
+     *
+     * @param string $class
+     * @return mixed
+     */
+    protected function resolve($class)
+    {
+        return $this->container->make($class);
+    }
+
+    /**
      * Release the job back into the queue.
      *
      * @param int $delay
@@ -200,6 +211,23 @@ abstract class Job
     }
 
     /**
+     * Process an exception that caused the job to fail.
+     *
+     * @param Throwable|null $e
+     * @return void
+     */
+    protected function failed($e)
+    {
+        $payload = $this->payload();
+
+        [$class, $method] = JobName::parse($payload['job']);
+
+        if (method_exists($this->instance = $this->resolve($class), 'failed')) {
+            $this->instance->failed($payload['data'], $e);
+        }
+    }
+
+    /**
      * Get the number of times to attempt a job.
      *
      * @return int|null
@@ -289,33 +317,5 @@ abstract class Job
     public function getContainer()
     {
         return $this->container;
-    }
-
-    /**
-     * Resolve the given class.
-     *
-     * @param string $class
-     * @return mixed
-     */
-    protected function resolve($class)
-    {
-        return $this->container->make($class);
-    }
-
-    /**
-     * Process an exception that caused the job to fail.
-     *
-     * @param Throwable|null $e
-     * @return void
-     */
-    protected function failed($e)
-    {
-        $payload = $this->payload();
-
-        [$class, $method] = JobName::parse($payload['job']);
-
-        if (method_exists($this->instance = $this->resolve($class), 'failed')) {
-            $this->instance->failed($payload['data'], $e);
-        }
     }
 }

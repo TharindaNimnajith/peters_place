@@ -81,17 +81,6 @@ class SyncQueue extends Queue implements QueueContract
     }
 
     /**
-     * Pop the next job off of the queue.
-     *
-     * @param string|null $queue
-     * @return Job|null
-     */
-    public function pop($queue = null)
-    {
-        //
-    }
-
-    /**
      * Resolve a Sync job instance.
      *
      * @param string $payload
@@ -159,5 +148,16 @@ class SyncQueue extends Queue implements QueueContract
         if ($this->container->bound('events')) {
             $this->container['events']->dispatch(new Events\JobExceptionOccurred($this->connectionName, $job, $e));
         }
+    }
+
+    /**
+     * Pop the next job off of the queue.
+     *
+     * @param string|null $queue
+     * @return Job|null
+     */
+    public function pop($queue = null)
+    {
+        //
     }
 }

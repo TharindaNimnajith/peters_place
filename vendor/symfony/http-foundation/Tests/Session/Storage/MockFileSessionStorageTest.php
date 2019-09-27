@@ -12,7 +12,6 @@
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage;
@@ -78,6 +77,15 @@ class MockFileSessionStorageTest extends TestCase
         $this->assertEquals(['test'], $storage->getBag('flashes')->peek('newkey'));
     }
 
+    private function getStorage()
+    {
+        $storage = new MockFileSessionStorage($this->sessionDir);
+        $storage->registerBag(new FlashBag());
+        $storage->registerBag(new AttributeBag());
+
+        return $storage;
+    }
+
     public function testMultipleInstances()
     {
         $storage1 = $this->getStorage();
@@ -92,7 +100,7 @@ class MockFileSessionStorageTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testSaveWithoutStart()
     {
@@ -114,14 +122,5 @@ class MockFileSessionStorageTest extends TestCase
         if (is_dir($this->sessionDir)) {
             rmdir($this->sessionDir);
         }
-    }
-
-    private function getStorage()
-    {
-        $storage = new MockFileSessionStorage($this->sessionDir);
-        $storage->registerBag(new FlashBag());
-        $storage->registerBag(new AttributeBag());
-
-        return $storage;
     }
 }

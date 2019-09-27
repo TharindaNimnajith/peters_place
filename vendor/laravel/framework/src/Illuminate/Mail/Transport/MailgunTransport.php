@@ -81,69 +81,6 @@ class MailgunTransport extends Transport
     }
 
     /**
-     * Get the API key being used by the transport.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Set the API key being used by the transport.
-     *
-     * @param string $key
-     * @return string
-     */
-    public function setKey($key)
-    {
-        return $this->key = $key;
-    }
-
-    /**
-     * Get the domain being used by the transport.
-     *
-     * @return string
-     */
-    public function getDomain()
-    {
-        return $this->domain;
-    }
-
-    /**
-     * Set the domain being used by the transport.
-     *
-     * @param string $domain
-     * @return string
-     */
-    public function setDomain($domain)
-    {
-        return $this->domain = $domain;
-    }
-
-    /**
-     * Get the API endpoint being used by the transport.
-     *
-     * @return string
-     */
-    public function getEndpoint()
-    {
-        return $this->endpoint;
-    }
-
-    /**
-     * Set the API endpoint being used by the transport.
-     *
-     * @param string $endpoint
-     * @return string
-     */
-    public function setEndpoint($endpoint)
-    {
-        return $this->endpoint = $endpoint;
-    }
-
-    /**
      * Get the "to" payload field for the API request.
      *
      * @param Swift_Mime_SimpleMessage $message
@@ -208,5 +145,68 @@ class MailgunTransport extends Transport
         return object_get(
             json_decode($response->getBody()->getContents()), 'id'
         );
+    }
+
+    /**
+     * Get the API key being used by the transport.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set the API key being used by the transport.
+     *
+     * @param string $key
+     * @return string
+     */
+    public function setKey($key)
+    {
+        return $this->key = $key;
+    }
+
+    /**
+     * Get the domain being used by the transport.
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * Set the domain being used by the transport.
+     *
+     * @param string $domain
+     * @return string
+     */
+    public function setDomain($domain)
+    {
+        return $this->domain = $domain;
+    }
+
+    /**
+     * Get the API endpoint being used by the transport.
+     *
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        return $this->endpoint;
+    }
+
+    /**
+     * Set the API endpoint being used by the transport.
+     *
+     * @param string $endpoint
+     * @return string
+     */
+    public function setEndpoint($endpoint)
+    {
+        return $this->endpoint = $endpoint;
     }
 }

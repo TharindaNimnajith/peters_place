@@ -70,6 +70,16 @@ trait ManagesComponents
     }
 
     /**
+     * Get the index for the current component.
+     *
+     * @return int
+     */
+    protected function currentComponent()
+    {
+        return count($this->componentStack) - 1;
+    }
+
+    /**
      * Render the current component.
      *
      * @return string
@@ -79,6 +89,21 @@ trait ManagesComponents
         $name = array_pop($this->componentStack);
 
         return $this->make($name, $this->componentData($name))->render();
+    }
+
+    /**
+     * Get the data for the given component.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function componentData($name)
+    {
+        return array_merge(
+            $this->componentData[count($this->componentStack)],
+            ['slot' => new HtmlString(trim(ob_get_clean()))],
+            $this->slots[count($this->componentStack)]
+        );
     }
 
     /**
@@ -116,30 +141,5 @@ trait ManagesComponents
 
         $this->slots[$this->currentComponent()]
         [$currentSlot] = new HtmlString(trim(ob_get_clean()));
-    }
-
-    /**
-     * Get the index for the current component.
-     *
-     * @return int
-     */
-    protected function currentComponent()
-    {
-        return count($this->componentStack) - 1;
-    }
-
-    /**
-     * Get the data for the given component.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function componentData($name)
-    {
-        return array_merge(
-            $this->componentData[count($this->componentStack)],
-            ['slot' => new HtmlString(trim(ob_get_clean()))],
-            $this->slots[count($this->componentStack)]
-        );
     }
 }

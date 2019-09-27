@@ -253,18 +253,6 @@ abstract class PHP_Token_Includes extends PHP_Token
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        if ($this->type === null) {
-            $this->process();
-        }
-
-        return $this->type;
-    }
-
     private function process()
     {
         $tokens = $this->tokenStream->tokens();
@@ -275,6 +263,18 @@ abstract class PHP_Token_Includes extends PHP_Token
                 str_replace('PHP_Token_', '', PHP_Token_Util::getClass($tokens[$this->id]))
             );
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        if ($this->type === null) {
+            $this->process();
+        }
+
+        return $this->type;
     }
 }
 
@@ -528,6 +528,25 @@ class PHP_Token_INTERFACE extends PHP_TokenWithScopeAndVisibility
     }
 
     /**
+     * @param array $parts
+     * @param string $join
+     *
+     * @return string
+     */
+    protected function arrayToName(array $parts, $join = '\\')
+    {
+        $result = '';
+
+        if (count($parts) > 1) {
+            array_pop($parts);
+
+            $result = implode($join, $parts);
+        }
+
+        return $result;
+    }
+
+    /**
      * @return bool|string
      */
     public function getParent()
@@ -597,25 +616,6 @@ class PHP_Token_INTERFACE extends PHP_TokenWithScopeAndVisibility
                 $this->tokenStream[$this->id + 4] instanceof PHP_Token_IMPLEMENTS) ||
             (isset($this->tokenStream[$this->id + 8]) &&
                 $this->tokenStream[$this->id + 8] instanceof PHP_Token_IMPLEMENTS);
-    }
-
-    /**
-     * @param array $parts
-     * @param string $join
-     *
-     * @return string
-     */
-    protected function arrayToName(array $parts, $join = '\\')
-    {
-        $result = '';
-
-        if (count($parts) > 1) {
-            array_pop($parts);
-
-            $result = implode($join, $parts);
-        }
-
-        return $result;
     }
 }
 

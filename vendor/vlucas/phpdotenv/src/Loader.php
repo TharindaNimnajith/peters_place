@@ -65,47 +65,6 @@ class Loader
     }
 
     /**
-     * Attempt to read the files in order.
-     *
-     * @param string[] $filePaths
-     *
-     * @return string[]
-     * @throws InvalidPathException
-     *
-     */
-    private static function findAndRead(array $filePaths)
-    {
-        if ($filePaths === []) {
-            throw new InvalidPathException('At least one environment file path must be provided.');
-        }
-
-        foreach ($filePaths as $filePath) {
-            $lines = self::readFromFile($filePath);
-            if ($lines->isDefined()) {
-                return $lines->get();
-            }
-        }
-
-        throw new InvalidPathException(
-            sprintf('Unable to read any of the environment file(s) at [%s].', implode(', ', $filePaths))
-        );
-    }
-
-    /**
-     * Read the given file.
-     *
-     * @param string $filePath
-     *
-     * @return Option
-     */
-    private static function readFromFile($filePath)
-    {
-        $content = @file_get_contents($filePath);
-
-        return Option::fromValue($content, false);
-    }
-
-    /**
      * Set immutable value.
      *
      * @param bool $immutable
@@ -149,56 +108,6 @@ class Loader
         return $this->processEntries(
             Lines::process(preg_split("/(\r\n|\n|\r)/", $content))
         );
-    }
-
-    /**
-     * Search the different places for environment variables and return first value found.
-     *
-     * @param string $name
-     *
-     * @return string|null
-     */
-    public function getEnvironmentVariable($name)
-    {
-        return $this->envVariables->get($name);
-    }
-
-    /**
-     * Set an environment variable.
-     *
-     * @param string $name
-     * @param string|null $value
-     *
-     * @return void
-     */
-    public function setEnvironmentVariable($name, $value = null)
-    {
-        $this->variableNames[] = $name;
-        $this->envVariables->set($name, $value);
-    }
-
-    /**
-     * Clear an environment variable.
-     *
-     * This method only expects names in normal form.
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    public function clearEnvironmentVariable($name)
-    {
-        $this->envVariables->clear($name);
-    }
-
-    /**
-     * Get the list of environment variables names.
-     *
-     * @return string[]
-     */
-    public function getEnvironmentVariableNames()
-    {
-        return $this->variableNames;
     }
 
     /**
@@ -253,5 +162,96 @@ class Loader
                 )->success();
             })
             ->getOrElse($value);
+    }
+
+    /**
+     * Search the different places for environment variables and return first value found.
+     *
+     * @param string $name
+     *
+     * @return string|null
+     */
+    public function getEnvironmentVariable($name)
+    {
+        return $this->envVariables->get($name);
+    }
+
+    /**
+     * Set an environment variable.
+     *
+     * @param string $name
+     * @param string|null $value
+     *
+     * @return void
+     */
+    public function setEnvironmentVariable($name, $value = null)
+    {
+        $this->variableNames[] = $name;
+        $this->envVariables->set($name, $value);
+    }
+
+    /**
+     * Attempt to read the files in order.
+     *
+     * @param string[] $filePaths
+     *
+     * @return string[]
+     * @throws InvalidPathException
+     *
+     */
+    private static function findAndRead(array $filePaths)
+    {
+        if ($filePaths === []) {
+            throw new InvalidPathException('At least one environment file path must be provided.');
+        }
+
+        foreach ($filePaths as $filePath) {
+            $lines = self::readFromFile($filePath);
+            if ($lines->isDefined()) {
+                return $lines->get();
+            }
+        }
+
+        throw new InvalidPathException(
+            sprintf('Unable to read any of the environment file(s) at [%s].', implode(', ', $filePaths))
+        );
+    }
+
+    /**
+     * Read the given file.
+     *
+     * @param string $filePath
+     *
+     * @return Option
+     */
+    private static function readFromFile($filePath)
+    {
+        $content = @file_get_contents($filePath);
+
+        return Option::fromValue($content, false);
+    }
+
+    /**
+     * Clear an environment variable.
+     *
+     * This method only expects names in normal form.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
+    public function clearEnvironmentVariable($name)
+    {
+        $this->envVariables->clear($name);
+    }
+
+    /**
+     * Get the list of environment variables names.
+     *
+     * @return string[]
+     */
+    public function getEnvironmentVariableNames()
+    {
+        return $this->variableNames;
     }
 }

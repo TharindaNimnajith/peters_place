@@ -50,36 +50,6 @@ class NameFilterIterator extends RecursiveFilterIterator
         $this->setFilter($filter);
     }
 
-    public function accept(): bool
-    {
-        $test = $this->getInnerIterator()->current();
-
-        if ($test instanceof TestSuite) {
-            return true;
-        }
-
-        $tmp = Test::describe($test);
-
-        if ($test instanceof WarningTestCase) {
-            $name = $test->getMessage();
-        } else {
-            if ($tmp[0] !== '') {
-                $name = implode('::', $tmp);
-            } else {
-                $name = $tmp[1];
-            }
-        }
-
-        $accepted = @preg_match($this->filter, $name, $matches);
-
-        if ($accepted && isset($this->filterMax)) {
-            $set = end($matches);
-            $accepted = $set >= $this->filterMin && $set <= $this->filterMax;
-        }
-
-        return (bool)$accepted;
-    }
-
     /**
      * @throws Exception
      */
@@ -126,5 +96,35 @@ class NameFilterIterator extends RecursiveFilterIterator
         }
 
         $this->filter = $filter;
+    }
+
+    public function accept(): bool
+    {
+        $test = $this->getInnerIterator()->current();
+
+        if ($test instanceof TestSuite) {
+            return true;
+        }
+
+        $tmp = Test::describe($test);
+
+        if ($test instanceof WarningTestCase) {
+            $name = $test->getMessage();
+        } else {
+            if ($tmp[0] !== '') {
+                $name = implode('::', $tmp);
+            } else {
+                $name = $tmp[1];
+            }
+        }
+
+        $accepted = @preg_match($this->filter, $name, $matches);
+
+        if ($accepted && isset($this->filterMax)) {
+            $set = end($matches);
+            $accepted = $set >= $this->filterMin && $set <= $this->filterMax;
+        }
+
+        return (bool)$accepted;
     }
 }

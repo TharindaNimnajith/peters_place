@@ -47,11 +47,44 @@ class TestSessionListenerTest extends TestCase
         $this->filterResponse(new Request());
     }
 
+    private function sessionHasBeenStarted()
+    {
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(true);
+    }
+
+    private function sessionMustBeSaved()
+    {
+        $this->session->expects($this->once())
+            ->method('save');
+    }
+
+    private function filterResponse(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, Response $response = null)
+    {
+        $request->setSession($this->session);
+        $response = $response ?: new Response();
+        $kernel = $this->getMockBuilder(HttpKernelInterface::class)->getMock();
+        $event = new ResponseEvent($kernel, $request, $type, $response);
+
+        $this->listener->onKernelResponse($event);
+
+        $this->assertSame($response, $event->getResponse());
+
+        return $response;
+    }
+
     public function testShouldNotSaveSubRequestSession()
     {
         $this->sessionMustNotBeSaved();
 
         $this->filterResponse(new Request(), HttpKernelInterface::SUB_REQUEST);
+    }
+
+    private function sessionMustNotBeSaved()
+    {
+        $this->session->expects($this->never())
+            ->method('save');
     }
 
     public function testDoesNotDeleteCookieIfUsingSessionLifetime()
@@ -79,6 +112,13 @@ class TestSessionListenerTest extends TestCase
         $this->assertSame([], $response->headers->getCookies());
     }
 
+    private function sessionIsEmpty()
+    {
+        $this->session->expects($this->once())
+            ->method('isEmpty')
+            ->willReturn(true);
+    }
+
     public function testEmptySessionWithNewSessionIdDoesSendCookie()
     {
         $this->sessionHasBeenStarted();
@@ -93,6 +133,13 @@ class TestSessionListenerTest extends TestCase
         $response = $this->filterResponse(new Request(), HttpKernelInterface::MASTER_REQUEST);
 
         $this->assertNotEmpty($response->headers->getCookies());
+    }
+
+    private function fixSessionId($sessionId)
+    {
+        $this->session->expects($this->any())
+            ->method('getId')
+            ->willReturn($sessionId);
     }
 
     /**
@@ -133,6 +180,13 @@ class TestSessionListenerTest extends TestCase
         $this->filterResponse(new Request());
     }
 
+    private function sessionHasNotBeenStarted()
+    {
+        $this->session->expects($this->once())
+            ->method('isStarted')
+            ->willReturn(false);
+    }
+
     public function testDoesNotThrowIfRequestDoesNotHaveASession()
     {
         $kernel = $this->getMockBuilder(HttpKernelInterface::class)->getMock();
@@ -150,60 +204,6 @@ class TestSessionListenerTest extends TestCase
         $this->listener->expects($this->any())
             ->method('getSession')
             ->willReturn($this->session);
-    }
-
-    private function sessionHasBeenStarted()
-    {
-        $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(true);
-    }
-
-    private function sessionMustBeSaved()
-    {
-        $this->session->expects($this->once())
-            ->method('save');
-    }
-
-    private function filterResponse(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, Response $response = null)
-    {
-        $request->setSession($this->session);
-        $response = $response ?: new Response();
-        $kernel = $this->getMockBuilder(HttpKernelInterface::class)->getMock();
-        $event = new ResponseEvent($kernel, $request, $type, $response);
-
-        $this->listener->onKernelResponse($event);
-
-        $this->assertSame($response, $event->getResponse());
-
-        return $response;
-    }
-
-    private function sessionMustNotBeSaved()
-    {
-        $this->session->expects($this->never())
-            ->method('save');
-    }
-
-    private function sessionIsEmpty()
-    {
-        $this->session->expects($this->once())
-            ->method('isEmpty')
-            ->willReturn(true);
-    }
-
-    private function fixSessionId($sessionId)
-    {
-        $this->session->expects($this->any())
-            ->method('getId')
-            ->willReturn($sessionId);
-    }
-
-    private function sessionHasNotBeenStarted()
-    {
-        $this->session->expects($this->once())
-            ->method('isStarted')
-            ->willReturn(false);
     }
 
     private function getSession()

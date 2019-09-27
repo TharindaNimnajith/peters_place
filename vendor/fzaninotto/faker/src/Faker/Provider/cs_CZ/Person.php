@@ -430,37 +430,6 @@ class Person extends \Faker\Provider\Person
         return static::birthNumber(static::GENDER_MALE);
     }
 
-    public static function birthNumberFemale()
-    {
-        return static::birthNumber(static::GENDER_FEMALE);
-    }
-
-    /**
-     * replaced by specific unisex Czech title
-     */
-    public static function titleFemale()
-    {
-        return static::titleMale();
-    }
-
-    /**
-     * replaced by specific unisex Czech title
-     */
-    public static function titleMale()
-    {
-        return static::randomElement(static::$title);
-    }
-
-    public static function lastNameMale()
-    {
-        return static::randomElement(static::$lastNameMale);
-    }
-
-    public static function lastNameFemale()
-    {
-        return static::randomElement(static::$lastNameFemale);
-    }
-
     /**
      * @param string|null $gender 'male', 'female' or null for any
      * @param int $minAge minimal age of "generated person" in years
@@ -511,6 +480,27 @@ class Person extends \Faker\Provider\Person
         return $birthNumber;
     }
 
+    public static function birthNumberFemale()
+    {
+        return static::birthNumber(static::GENDER_FEMALE);
+    }
+
+    /**
+     * replaced by specific unisex Czech title
+     */
+    public static function titleFemale()
+    {
+        return static::titleMale();
+    }
+
+    /**
+     * replaced by specific unisex Czech title
+     */
+    public static function titleMale()
+    {
+        return static::randomElement(static::$title);
+    }
+
     public function title($gender = null)
     {
         return static::titleMale();
@@ -529,5 +519,15 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$lastNameFormat));
+    }
+
+    public static function lastNameMale()
+    {
+        return static::randomElement(static::$lastNameMale);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::randomElement(static::$lastNameFemale);
     }
 }

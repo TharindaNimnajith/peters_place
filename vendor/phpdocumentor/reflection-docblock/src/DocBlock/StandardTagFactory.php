@@ -12,13 +12,10 @@
 
 namespace phpDocumentor\Reflection\DocBlock;
 
-use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlock\Tags\Factory\StaticMethod;
 use phpDocumentor\Reflection\DocBlock\Tags\Generic;
 use phpDocumentor\Reflection\FqsenResolver;
 use phpDocumentor\Reflection\Types\Context as TypeContext;
-use ReflectionMethod;
-use ReflectionParameter;
 use Webmozart\Assert\Assert;
 
 /**
@@ -69,7 +66,7 @@ final class StandardTagFactory implements TagFactory
     ];
 
     /**
-     * @var ReflectionParameter[][] a lazy-loading cache containing parameters for each tagHandler that has been used.
+     * @var \ReflectionParameter[][] a lazy-loading cache containing parameters for each tagHandler that has been used.
      */
     private $tagHandlerParameterCache = [];
 
@@ -125,39 +122,12 @@ final class StandardTagFactory implements TagFactory
         list($tagName, $tagBody) = $this->extractTagParts($tagLine);
 
         if ($tagBody !== '' && $tagBody[0] === '[') {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors'
             );
         }
 
         return $this->createTag($tagBody, $tagName, $context);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function addParameter($name, $value)
-    {
-        $this->serviceLocator[$name] = $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function registerTagHandler($tagName, $handler)
-    {
-        Assert::stringNotEmpty($tagName);
-        Assert::stringNotEmpty($handler);
-        Assert::classExists($handler);
-        Assert::implementsInterface($handler, StaticMethod::class);
-
-        if (strpos($tagName, '\\') && $tagName[0] !== '\\') {
-            throw new InvalidArgumentException(
-                'A namespaced tag must have a leading backslash as it must be fully qualified'
-            );
-        }
-
-        $this->tagHandlerMappings[$tagName] = $handler;
     }
 
     /**
@@ -171,7 +141,7 @@ final class StandardTagFactory implements TagFactory
     {
         $matches = [];
         if (!preg_match('/^@(' . self::REGEX_TAGNAME . ')(?:\s*([^\s].*)|$)/us', $tagLine, $matches)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'The tag "' . $tagLine . '" does not seem to be wellformed, please check it for errors'
             );
         }
@@ -250,7 +220,7 @@ final class StandardTagFactory implements TagFactory
     /**
      * Retrieves the arguments that need to be passed to the Factory Method with the given Parameters.
      *
-     * @param ReflectionParameter[] $parameters
+     * @param \ReflectionParameter[] $parameters
      * @param mixed[] $locator
      *
      * @return mixed[] A series of values that can be passed to the Factory Method of the tag whose parameters
@@ -284,12 +254,12 @@ final class StandardTagFactory implements TagFactory
      *
      * @param string $handlerClassName
      *
-     * @return ReflectionParameter[]
+     * @return \ReflectionParameter[]
      */
     private function fetchParametersForHandlerFactoryMethod($handlerClassName)
     {
         if (!isset($this->tagHandlerParameterCache[$handlerClassName])) {
-            $methodReflection = new ReflectionMethod($handlerClassName, 'create');
+            $methodReflection = new \ReflectionMethod($handlerClassName, 'create');
             $this->tagHandlerParameterCache[$handlerClassName] = $methodReflection->getParameters();
         }
 
@@ -318,5 +288,32 @@ final class StandardTagFactory implements TagFactory
         );
 
         return $locator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function addParameter($name, $value)
+    {
+        $this->serviceLocator[$name] = $value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function registerTagHandler($tagName, $handler)
+    {
+        Assert::stringNotEmpty($tagName);
+        Assert::stringNotEmpty($handler);
+        Assert::classExists($handler);
+        Assert::implementsInterface($handler, StaticMethod::class);
+
+        if (strpos($tagName, '\\') && $tagName[0] !== '\\') {
+            throw new \InvalidArgumentException(
+                'A namespaced tag must have a leading backslash as it must be fully qualified'
+            );
+        }
+
+        $this->tagHandlerMappings[$tagName] = $handler;
     }
 }

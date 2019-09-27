@@ -31,17 +31,17 @@ class BundlesElementTest extends TestCase
         );
     }
 
-    protected function setUp()
-    {
-        $this->dom = new DOMDocument();
-        $this->dom->loadXML('<?xml version="1.0" ?><bundles xmlns="https://phar.io/xml/manifest/1.0" />');
-        $this->bundles = new BundlesElement($this->dom->documentElement);
-    }
-
     private function addComponent()
     {
         $this->dom->documentElement->appendChild(
             $this->dom->createElementNS('https://phar.io/xml/manifest/1.0', 'component')
         );
+    }
+
+    protected function setUp()
+    {
+        $this->dom = new DOMDocument();
+        $this->dom->loadXML('<?xml version="1.0" ?><bundles xmlns="https://phar.io/xml/manifest/1.0" />');
+        $this->bundles = new BundlesElement($this->dom->documentElement);
     }
 }

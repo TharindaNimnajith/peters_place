@@ -50,26 +50,6 @@ class BroadcastEvent implements ShouldQueue
     }
 
     /**
-     * Get the display name for the queued job.
-     *
-     * @return string
-     */
-    public function displayName()
-    {
-        return get_class($this->event);
-    }
-
-    /**
-     * Prepare the instance for cloning.
-     *
-     * @return void
-     */
-    public function __clone()
-    {
-        $this->event = clone $this->event;
-    }
-
-    /**
      * Get the payload for the given event.
      *
      * @param mixed $event
@@ -107,5 +87,25 @@ class BroadcastEvent implements ShouldQueue
         }
 
         return $value;
+    }
+
+    /**
+     * Get the display name for the queued job.
+     *
+     * @return string
+     */
+    public function displayName()
+    {
+        return get_class($this->event);
+    }
+
+    /**
+     * Prepare the instance for cloning.
+     *
+     * @return void
+     */
+    public function __clone()
+    {
+        $this->event = clone $this->event;
     }
 }

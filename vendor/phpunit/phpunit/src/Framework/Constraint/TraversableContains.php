@@ -52,20 +52,6 @@ class TraversableContains extends Constraint
     }
 
     /**
-     * Returns a string representation of the constraint.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function toString(): string
-    {
-        if (is_string($this->value) && strpos($this->value, "\n") !== false) {
-            return 'contains "' . $this->value . '"';
-        }
-
-        return 'contains ' . $this->exporter->export($this->value);
-    }
-
-    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
@@ -119,5 +105,19 @@ class TraversableContains extends Constraint
             is_array($other) ? 'an array' : 'a traversable',
             $this->toString()
         );
+    }
+
+    /**
+     * Returns a string representation of the constraint.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function toString(): string
+    {
+        if (is_string($this->value) && strpos($this->value, "\n") !== false) {
+            return 'contains "' . $this->value . '"';
+        }
+
+        return 'contains ' . $this->exporter->export($this->value);
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_StreamFilters_StringReplacementFilterFactoryTest extends TestCase
+class Swift_StreamFilters_StringReplacementFilterFactoryTest extends \PHPUnit\Framework\TestCase
 {
     public function testInstancesOfStringReplacementFilterAreCreated()
     {
@@ -11,6 +9,11 @@ class Swift_StreamFilters_StringReplacementFilterFactoryTest extends TestCase
             'Swift_StreamFilters_StringReplacementFilter',
             $factory->createFilter('a', 'b')
         );
+    }
+
+    private function createFactory()
+    {
+        return new Swift_StreamFilters_StringReplacementFilterFactory();
     }
 
     public function testSameInstancesAreCached()
@@ -29,10 +32,5 @@ class Swift_StreamFilters_StringReplacementFilterFactoryTest extends TestCase
         $this->assertNotEquals($filter1, $filter2,
             '%s: Differing instances should not be cached'
         );
-    }
-
-    private function createFactory()
-    {
-        return new Swift_StreamFilters_StringReplacementFilterFactory();
     }
 }

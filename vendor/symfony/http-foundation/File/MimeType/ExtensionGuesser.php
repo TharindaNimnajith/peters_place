@@ -54,6 +54,16 @@ class ExtensionGuesser implements ExtensionGuesserInterface
     }
 
     /**
+     * Registers a new extension guesser.
+     *
+     * When guessing, this guesser is preferred over previously registered ones.
+     */
+    public function register(ExtensionGuesserInterface $guesser)
+    {
+        array_unshift($this->guessers, $guesser);
+    }
+
+    /**
      * Returns the singleton instance.
      *
      * @return self
@@ -65,16 +75,6 @@ class ExtensionGuesser implements ExtensionGuesserInterface
         }
 
         return self::$instance;
-    }
-
-    /**
-     * Registers a new extension guesser.
-     *
-     * When guessing, this guesser is preferred over previously registered ones.
-     */
-    public function register(ExtensionGuesserInterface $guesser)
-    {
-        array_unshift($this->guessers, $guesser);
     }
 
     /**

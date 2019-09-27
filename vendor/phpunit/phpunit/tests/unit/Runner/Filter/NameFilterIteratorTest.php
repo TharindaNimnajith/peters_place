@@ -21,11 +21,6 @@ class NameFilterIteratorTest extends TestCase
         $this->assertTrue($this->createFilter('BankAccountTest')->accept());
     }
 
-    public function testCaseInsensitiveMatch(): void
-    {
-        $this->assertTrue($this->createFilter('bankaccounttest')->accept());
-    }
-
     private function createFilter(string $filter): NameFilterIterator
     {
         $suite = new TestSuite;
@@ -36,5 +31,10 @@ class NameFilterIteratorTest extends TestCase
         $iterator->rewind();
 
         return $iterator;
+    }
+
+    public function testCaseInsensitiveMatch(): void
+    {
+        $this->assertTrue($this->createFilter('bankaccounttest')->accept());
     }
 }

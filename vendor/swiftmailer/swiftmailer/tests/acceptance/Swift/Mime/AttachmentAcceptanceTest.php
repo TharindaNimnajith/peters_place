@@ -1,9 +1,8 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
-use PHPUnit\Framework\TestCase;
 
-class Swift_Mime_AttachmentAcceptanceTest extends TestCase
+class Swift_Mime_AttachmentAcceptanceTest extends \PHPUnit\Framework\TestCase
 {
     private $contentEncoder;
     private $cache;
@@ -21,6 +20,18 @@ class Swift_Mime_AttachmentAcceptanceTest extends TestCase
             'Content-Disposition: inline' . "\r\n",
             $attachment->toString()
         );
+    }
+
+    protected function createAttachment()
+    {
+        $entity = new Swift_Mime_Attachment(
+            $this->headers,
+            $this->contentEncoder,
+            $this->cache,
+            $this->idGenerator
+        );
+
+        return $entity;
     }
 
     public function testDispositionIsAttachmentByDefault()
@@ -90,18 +101,6 @@ class Swift_Mime_AttachmentAcceptanceTest extends TestCase
             base64_encode('abcd'),
             $attachment->toString()
         );
-    }
-
-    protected function createAttachment()
-    {
-        $entity = new Swift_Mime_Attachment(
-            $this->headers,
-            $this->contentEncoder,
-            $this->cache,
-            $this->idGenerator
-        );
-
-        return $entity;
     }
 
     protected function setUp()

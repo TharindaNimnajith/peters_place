@@ -41,6 +41,18 @@ class ProgressBarTest extends TestCase
         );
     }
 
+    protected function getOutputStream($decorated = true, $verbosity = StreamOutput::VERBOSITY_NORMAL)
+    {
+        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, $decorated);
+    }
+
+    protected function generateOutput($expected)
+    {
+        $count = substr_count($expected, "\n");
+
+        return "\x0D\x1B[2K" . ($count ? str_repeat("\x1B[1A\x1B[2K", $count) : '') . $expected;
+    }
+
     public function testAdvance()
     {
         $bar = new ProgressBar($output = $this->getOutputStream());
@@ -919,18 +931,6 @@ class ProgressBarTest extends TestCase
         rewind($output->getStream());
         $this->assertEquals(5, $bar->getBarWidth(), stream_get_contents($output->getStream()));
         putenv('COLUMNS=120');
-    }
-
-    protected function getOutputStream($decorated = true, $verbosity = StreamOutput::VERBOSITY_NORMAL)
-    {
-        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, $decorated);
-    }
-
-    protected function generateOutput($expected)
-    {
-        $count = substr_count($expected, "\n");
-
-        return "\x0D\x1B[2K" . ($count ? str_repeat("\x1B[1A\x1B[2K", $count) : '') . $expected;
     }
 
     protected function setUp()

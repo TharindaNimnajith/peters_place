@@ -12,7 +12,6 @@
 
 namespace phpDocumentor\Reflection\DocBlock\Tags;
 
-use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlock\Description;
 use phpDocumentor\Reflection\DocBlock\DescriptionFactory;
 use phpDocumentor\Reflection\DocBlock\StandardTagFactory;
@@ -36,6 +35,23 @@ class Generic extends BaseTag implements Factory\StaticMethod
 
         $this->name = $name;
         $this->description = $description;
+    }
+
+    /**
+     * Validates if the tag name matches the expected format, otherwise throws an exception.
+     *
+     * @param string $name
+     *
+     * @return void
+     */
+    private function validateTagName($name)
+    {
+        if (!preg_match('/^' . StandardTagFactory::REGEX_TAGNAME . '$/u', $name)) {
+            throw new \InvalidArgumentException(
+                'The tag name "' . $name . '" is not wellformed. Tags may only consist of letters, underscores, '
+                . 'hyphens and backslashes.'
+            );
+        }
     }
 
     /**
@@ -72,22 +88,5 @@ class Generic extends BaseTag implements Factory\StaticMethod
     public function __toString()
     {
         return ($this->description ? $this->description->render() : '');
-    }
-
-    /**
-     * Validates if the tag name matches the expected format, otherwise throws an exception.
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    private function validateTagName($name)
-    {
-        if (!preg_match('/^' . StandardTagFactory::REGEX_TAGNAME . '$/u', $name)) {
-            throw new InvalidArgumentException(
-                'The tag name "' . $name . '" is not wellformed. Tags may only consist of letters, underscores, '
-                . 'hyphens and backslashes.'
-            );
-        }
     }
 }

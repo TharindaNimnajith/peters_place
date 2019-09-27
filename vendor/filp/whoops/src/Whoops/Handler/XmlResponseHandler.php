@@ -23,6 +23,37 @@ class XmlResponseHandler extends Handler
     private $returnFrames = false;
 
     /**
+     * @return int
+     */
+    public function handle()
+    {
+        $response = [
+            'error' => Formatter::formatExceptionAsDataArray(
+                $this->getInspector(),
+                $this->addTraceToOutput()
+            ),
+        ];
+
+        echo self::toXml($response);
+
+        return Handler::QUIT;
+    }
+
+    /**
+     * @param bool|null $returnFrames
+     * @return bool|$this
+     */
+    public function addTraceToOutput($returnFrames = null)
+    {
+        if (func_num_args() == 0) {
+            return $this->returnFrames;
+        }
+
+        $this->returnFrames = (bool)$returnFrames;
+        return $this;
+    }
+
+    /**
      * The main function for converting to an XML document.
      *
      * @param array|Traversable $data
@@ -65,37 +96,6 @@ class XmlResponseHandler extends Handler
         }
 
         return $node;
-    }
-
-    /**
-     * @return int
-     */
-    public function handle()
-    {
-        $response = [
-            'error' => Formatter::formatExceptionAsDataArray(
-                $this->getInspector(),
-                $this->addTraceToOutput()
-            ),
-        ];
-
-        echo self::toXml($response);
-
-        return Handler::QUIT;
-    }
-
-    /**
-     * @param bool|null $returnFrames
-     * @return bool|$this
-     */
-    public function addTraceToOutput($returnFrames = null)
-    {
-        if (func_num_args() == 0) {
-            return $this->returnFrames;
-        }
-
-        $this->returnFrames = (bool)$returnFrames;
-        return $this;
     }
 
     /**

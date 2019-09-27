@@ -32,14 +32,6 @@ class Url
     }
 
     /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->url;
-    }
-
-    /**
      * @param string $url
      *
      * @throws InvalidUrlException
@@ -49,5 +41,13 @@ class Url
         if (filter_var($url, FILTER_VALIDATE_URL) === false) {
             throw new InvalidUrlException;
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->url;
     }
 }

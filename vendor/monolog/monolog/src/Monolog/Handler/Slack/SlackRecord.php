@@ -176,57 +176,6 @@ class SlackRecord
     }
 
     /**
-     * Returned a Slack message attachment color associated with
-     * provided level.
-     *
-     * @param int $level
-     * @return string
-     */
-    public function getAttachmentColor($level)
-    {
-        switch (true) {
-            case $level >= Logger::ERROR:
-                return self::COLOR_DANGER;
-            case $level >= Logger::WARNING:
-                return self::COLOR_WARNING;
-            case $level >= Logger::INFO:
-                return self::COLOR_GOOD;
-            default:
-                return self::COLOR_DEFAULT;
-        }
-    }
-
-    /**
-     * Stringifies an array of key/value pairs to be used in attachment fields
-     *
-     * @param array $fields
-     *
-     * @return string
-     */
-    public function stringify($fields)
-    {
-        $normalized = $this->normalizerFormatter->format($fields);
-        $prettyPrintFlag = defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128;
-
-        $hasSecondDimension = count(array_filter($normalized, 'is_array'));
-        $hasNonNumericKeys = !count(array_filter(array_keys($normalized), 'is_numeric'));
-
-        return $hasSecondDimension || $hasNonNumericKeys
-            ? json_encode($normalized, $prettyPrintFlag)
-            : json_encode($normalized);
-    }
-
-    /**
-     * Sets the formatter
-     *
-     * @param FormatterInterface $formatter
-     */
-    public function setFormatter(FormatterInterface $formatter)
-    {
-        $this->formatter = $formatter;
-    }
-
-    /**
      * Get a copy of record with fields excluded according to $this->excludeFields
      *
      * @param array $record
@@ -255,6 +204,27 @@ class SlackRecord
     }
 
     /**
+     * Returned a Slack message attachment color associated with
+     * provided level.
+     *
+     * @param int $level
+     * @return string
+     */
+    public function getAttachmentColor($level)
+    {
+        switch (true) {
+            case $level >= Logger::ERROR:
+                return self::COLOR_DANGER;
+            case $level >= Logger::WARNING:
+                return self::COLOR_WARNING;
+            case $level >= Logger::INFO:
+                return self::COLOR_GOOD;
+            default:
+                return self::COLOR_DEFAULT;
+        }
+    }
+
+    /**
      * Generates attachment field
      *
      * @param string $title
@@ -276,6 +246,26 @@ class SlackRecord
     }
 
     /**
+     * Stringifies an array of key/value pairs to be used in attachment fields
+     *
+     * @param array $fields
+     *
+     * @return string
+     */
+    public function stringify($fields)
+    {
+        $normalized = $this->normalizerFormatter->format($fields);
+        $prettyPrintFlag = defined('JSON_PRETTY_PRINT') ? JSON_PRETTY_PRINT : 128;
+
+        $hasSecondDimension = count(array_filter($normalized, 'is_array'));
+        $hasNonNumericKeys = !count(array_filter(array_keys($normalized), 'is_numeric'));
+
+        return $hasSecondDimension || $hasNonNumericKeys
+            ? json_encode($normalized, $prettyPrintFlag)
+            : json_encode($normalized);
+    }
+
+    /**
      * Generates a collection of attachment fields from array
      *
      * @param array $data
@@ -290,5 +280,15 @@ class SlackRecord
         }
 
         return $fields;
+    }
+
+    /**
+     * Sets the formatter
+     *
+     * @param FormatterInterface $formatter
+     */
+    public function setFormatter(FormatterInterface $formatter)
+    {
+        $this->formatter = $formatter;
     }
 }

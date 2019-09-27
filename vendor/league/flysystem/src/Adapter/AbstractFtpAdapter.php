@@ -310,6 +310,8 @@ abstract class AbstractFtpAdapter extends AbstractAdapter
         return $this->listDirectoryContents($directory, $recursive);
     }
 
+    abstract protected function listDirectoryContents($directory, $recursive = false);
+
     /**
      * @inheritdoc
      */
@@ -438,24 +440,6 @@ abstract class AbstractFtpAdapter extends AbstractAdapter
     }
 
     /**
-     * Filter out dot-directories.
-     *
-     * @param array $list
-     *
-     * @return array
-     */
-    public function removeDotDirectories(array $list)
-    {
-        $filter = function ($line) {
-            return $line !== '' && !preg_match('#.* \.(\.)?$|^total#', $line);
-        };
-
-        return array_filter($list, $filter);
-    }
-
-    abstract protected function listDirectoryContents($directory, $recursive = false);
-
-    /**
      * Normalize a directory listing.
      *
      * @param array $listing
@@ -479,6 +463,22 @@ abstract class AbstractFtpAdapter extends AbstractAdapter
         }
 
         return $this->sortListing($result);
+    }
+
+    /**
+     * Filter out dot-directories.
+     *
+     * @param array $list
+     *
+     * @return array
+     */
+    public function removeDotDirectories(array $list)
+    {
+        $filter = function ($line) {
+            return $line !== '' && !preg_match('#.* \.(\.)?$|^total#', $line);
+        };
+
+        return array_filter($list, $filter);
     }
 
     /**

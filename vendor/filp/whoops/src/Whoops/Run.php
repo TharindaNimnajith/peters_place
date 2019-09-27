@@ -73,6 +73,29 @@ final class Run implements RunInterface
     }
 
     /**
+     * Create a CallbackHandler from callable and throw if handler is invalid
+     *
+     * @param Callable|HandlerInterface $handler
+     * @return HandlerInterface
+     * @throws InvalidArgumentException  If argument is not callable or instance of HandlerInterface
+     */
+    private function resolveHandler($handler)
+    {
+        if (is_callable($handler)) {
+            $handler = new CallbackHandler($handler);
+        }
+
+        if (!$handler instanceof HandlerInterface) {
+            throw new InvalidArgumentException(
+                "Argument to " . __METHOD__ . " must be a callable, or instance of "
+                . "Whoops\\Handler\\HandlerInterface"
+            );
+        }
+
+        return $handler;
+    }
+
+    /**
      * Appends a handler to the end of the queue
      *
      * @param Callable|HandlerInterface $handler
@@ -223,6 +246,15 @@ final class Run implements RunInterface
         }
     }
 
+    /*
+     * Should Whoops send HTTP error code to the browser if possible?
+     * Whoops will by default send HTTP code 500, but you may wish to
+     * use 502, 503, or another 5xx family code.
+     *
+     * @param bool|int $code
+     * @return int|false
+     */
+
     /**
      * Converts generic PHP errors to \ErrorException
      * instances, before passing them off to be handled.
@@ -266,15 +298,6 @@ final class Run implements RunInterface
         // work on silenced errors.
         return false;
     }
-
-    /*
-     * Should Whoops send HTTP error code to the browser if possible?
-     * Whoops will by default send HTTP code 500, but you may wish to
-     * use 502, 503, or another 5xx family code.
-     *
-     * @param bool|int $code
-     * @return int|false
-     */
 
     /**
      * Handles an exception, ultimately generating a Whoops error
@@ -358,6 +381,15 @@ final class Run implements RunInterface
     }
 
     /**
+     * @param Throwable $exception
+     * @return Inspector
+     */
+    private function getInspector($exception)
+    {
+        return new Inspector($exception);
+    }
+
+    /**
      * Should Whoops allow Handlers to force the script to quit?
      * @param bool|int $exit
      * @return bool
@@ -386,6 +418,24 @@ final class Run implements RunInterface
         return $this->sendOutput = (bool)$send;
     }
 
+    /**
+     * Echo something to the browser
+     * @param string $output
+     * @return $this
+     */
+    private function writeToOutputNow($output)
+    {
+        if ($this->sendHttpCode() && Misc::canSendHeaders()) {
+            $this->system->setHttpResponseCode(
+                $this->sendHttpCode()
+            );
+        }
+
+        echo $output;
+
+        return $this;
+    }
+
     public function sendHttpCode($code = null)
     {
         if (func_num_args() == 0) {
@@ -407,55 +457,5 @@ final class Run implements RunInterface
         }
 
         return $this->sendHttpCode = $code;
-    }
-
-    /**
-     * Create a CallbackHandler from callable and throw if handler is invalid
-     *
-     * @param Callable|HandlerInterface $handler
-     * @return HandlerInterface
-     * @throws InvalidArgumentException  If argument is not callable or instance of HandlerInterface
-     */
-    private function resolveHandler($handler)
-    {
-        if (is_callable($handler)) {
-            $handler = new CallbackHandler($handler);
-        }
-
-        if (!$handler instanceof HandlerInterface) {
-            throw new InvalidArgumentException(
-                "Argument to " . __METHOD__ . " must be a callable, or instance of "
-                . "Whoops\\Handler\\HandlerInterface"
-            );
-        }
-
-        return $handler;
-    }
-
-    /**
-     * @param Throwable $exception
-     * @return Inspector
-     */
-    private function getInspector($exception)
-    {
-        return new Inspector($exception);
-    }
-
-    /**
-     * Echo something to the browser
-     * @param string $output
-     * @return $this
-     */
-    private function writeToOutputNow($output)
-    {
-        if ($this->sendHttpCode() && Misc::canSendHeaders()) {
-            $this->system->setHttpResponseCode(
-                $this->sendHttpCode()
-            );
-        }
-
-        echo $output;
-
-        return $this;
     }
 }

@@ -10,20 +10,23 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
-use DOMElement;
-
 final class Method
 {
     /**
-     * @var DOMElement
+     * @var \DOMElement
      */
     private $contextNode;
 
-    public function __construct(DOMElement $context, string $name)
+    public function __construct(\DOMElement $context, string $name)
     {
         $this->contextNode = $context;
 
         $this->setName($name);
+    }
+
+    private function setName(string $name): void
+    {
+        $this->contextNode->setAttribute('name', $name);
     }
 
     public function setSignature(string $signature): void
@@ -50,10 +53,5 @@ final class Method
     public function setCrap(string $crap): void
     {
         $this->contextNode->setAttribute('crap', $crap);
-    }
-
-    private function setName(string $name): void
-    {
-        $this->contextNode->setAttribute('name', $name);
     }
 }

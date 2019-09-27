@@ -11,8 +11,6 @@
 
 namespace Symfony\Component\HttpKernel\Tests\EventListener;
 
-use ArrayIterator;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,12 +37,25 @@ class LocaleAwareListenerTest extends TestCase
         $this->listener->onKernelRequest($event);
     }
 
+    private function createHttpKernel()
+    {
+        return $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')->getMock();
+    }
+
+    private function createRequest($locale)
+    {
+        $request = new Request();
+        $request->setLocale($locale);
+
+        return $request;
+    }
+
     public function testDefaultLocaleIsUsedOnExceptionsInOnKernelRequest()
     {
         $this->localeAwareService
             ->expects($this->at(0))
             ->method('setLocale')
-            ->will($this->throwException(new InvalidArgumentException()));
+            ->will($this->throwException(new \InvalidArgumentException()));
         $this->localeAwareService
             ->expects($this->at(1))
             ->method('setLocale')
@@ -86,7 +97,7 @@ class LocaleAwareListenerTest extends TestCase
         $this->localeAwareService
             ->expects($this->at(0))
             ->method('setLocale')
-            ->will($this->throwException(new InvalidArgumentException()));
+            ->will($this->throwException(new \InvalidArgumentException()));
         $this->localeAwareService
             ->expects($this->at(1))
             ->method('setLocale')
@@ -103,19 +114,6 @@ class LocaleAwareListenerTest extends TestCase
     {
         $this->localeAwareService = $this->getMockBuilder(LocaleAwareInterface::class)->getMock();
         $this->requestStack = new RequestStack();
-        $this->listener = new LocaleAwareListener(new ArrayIterator([$this->localeAwareService]), $this->requestStack);
-    }
-
-    private function createHttpKernel()
-    {
-        return $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')->getMock();
-    }
-
-    private function createRequest($locale)
-    {
-        $request = new Request();
-        $request->setLocale($locale);
-
-        return $request;
+        $this->listener = new LocaleAwareListener(new \ArrayIterator([$this->localeAwareService]), $this->requestStack);
     }
 }

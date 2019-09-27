@@ -43,17 +43,6 @@ trait HasRelationships
     protected $touches = [];
 
     /**
-     * Retrieve the actual class name for a given morph class.
-     *
-     * @param string $class
-     * @return string
-     */
-    public static function getActualClassNameForMorph($class)
-    {
-        return Arr::get(Relation::morphMap() ?: [], $class, $class);
-    }
-
-    /**
      * Define a one-to-one relationship.
      *
      * @param string $related
@@ -70,6 +59,35 @@ trait HasRelationships
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newHasOne($instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey);
+    }
+
+    /**
+     * Create a new model instance for a related model.
+     *
+     * @param string $class
+     * @return mixed
+     */
+    protected function newRelatedInstance($class)
+    {
+        return tap(new $class, function ($instance) {
+            if (!$instance->getConnectionName()) {
+                $instance->setConnection($this->connection);
+            }
+        });
+    }
+
+    /**
+     * Instantiate a new HasOne relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return HasOne
+     */
+    protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        return new HasOne($query, $parent, $foreignKey, $localKey);
     }
 
     /**
@@ -99,6 +117,23 @@ trait HasRelationships
     }
 
     /**
+     * Instantiate a new HasOneThrough relationship.
+     *
+     * @param Builder $query
+     * @param Model $farParent
+     * @param Model $throughParent
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
+     * @return HasOneThrough
+     */
+    protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    {
+        return new HasOneThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
+    }
+
+    /**
      * Define a polymorphic one-to-one relationship.
      *
      * @param string $related
@@ -119,6 +154,34 @@ trait HasRelationships
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newMorphOne($instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $localKey);
+    }
+
+    /**
+     * Get the polymorphic relationship columns.
+     *
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @return array
+     */
+    protected function getMorphs($name, $type, $id)
+    {
+        return [$type ?: $name . '_type', $id ?: $name . '_id'];
+    }
+
+    /**
+     * Instantiate a new MorphOne relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
+     * @return MorphOne
+     */
+    protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
+    {
+        return new MorphOne($query, $parent, $type, $id, $localKey);
     }
 
     /**
@@ -159,6 +222,33 @@ trait HasRelationships
     }
 
     /**
+     * Guess the "belongs to" relationship name.
+     *
+     * @return string
+     */
+    protected function guessBelongsToRelation()
+    {
+        [$one, $two, $caller] = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+
+        return $caller['function'];
+    }
+
+    /**
+     * Instantiate a new BelongsTo relationship.
+     *
+     * @param Builder $query
+     * @param Model $child
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $relation
+     * @return BelongsTo
+     */
+    protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
+    {
+        return new BelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
+    }
+
+    /**
      * Define a polymorphic, inverse one-to-one or many relationship.
      *
      * @param string $name
@@ -187,6 +277,70 @@ trait HasRelationships
     }
 
     /**
+     * Define a polymorphic, inverse one-to-one or many relationship.
+     *
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $ownerKey
+     * @return MorphTo
+     */
+    protected function morphEagerTo($name, $type, $id, $ownerKey)
+    {
+        return $this->newMorphTo(
+            $this->newQuery()->setEagerLoads([]), $this, $id, $ownerKey, $type, $name
+        );
+    }
+
+    /**
+     * Instantiate a new MorphTo relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $type
+     * @param string $relation
+     * @return MorphTo
+     */
+    protected function newMorphTo(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
+    {
+        return new MorphTo($query, $parent, $foreignKey, $ownerKey, $type, $relation);
+    }
+
+    /**
+     * Define a polymorphic, inverse one-to-one or many relationship.
+     *
+     * @param string $target
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     * @param string $ownerKey
+     * @return MorphTo
+     */
+    protected function morphInstanceTo($target, $name, $type, $id, $ownerKey)
+    {
+        $instance = $this->newRelatedInstance(
+            static::getActualClassNameForMorph($target)
+        );
+
+        return $this->newMorphTo(
+            $instance->newQuery(), $this, $id, $ownerKey ?? $instance->getKeyName(), $type, $name
+        );
+    }
+
+    /**
+     * Retrieve the actual class name for a given morph class.
+     *
+     * @param string $class
+     * @return string
+     */
+    public static function getActualClassNameForMorph($class)
+    {
+        return Arr::get(Relation::morphMap() ?: [], $class, $class);
+    }
+
+    /**
      * Define a one-to-many relationship.
      *
      * @param string $related
@@ -205,6 +359,20 @@ trait HasRelationships
         return $this->newHasMany(
             $instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey
         );
+    }
+
+    /**
+     * Instantiate a new HasMany relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return HasMany
+     */
+    protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        return new HasMany($query, $parent, $foreignKey, $localKey);
     }
 
     /**
@@ -234,6 +402,23 @@ trait HasRelationships
     }
 
     /**
+     * Instantiate a new HasManyThrough relationship.
+     *
+     * @param Builder $query
+     * @param Model $farParent
+     * @param Model $throughParent
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
+     * @return HasManyThrough
+     */
+    protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    {
+        return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
+    }
+
+    /**
      * Define a polymorphic one-to-many relationship.
      *
      * @param string $related
@@ -257,6 +442,21 @@ trait HasRelationships
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newMorphMany($instance->newQuery(), $this, $table . '.' . $type, $table . '.' . $id, $localKey);
+    }
+
+    /**
+     * Instantiate a new MorphMany relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $type
+     * @param string $id
+     * @param string $localKey
+     * @return MorphMany
+     */
+    protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
+    {
+        return new MorphMany($query, $parent, $type, $id, $localKey);
     }
 
     /**
@@ -305,6 +505,23 @@ trait HasRelationships
     }
 
     /**
+     * Get the relationship name of the belongsToMany relationship.
+     *
+     * @return string|null
+     */
+    protected function guessBelongsToManyRelation()
+    {
+        $caller = Arr::first(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
+            return !in_array(
+                $trace['function'],
+                array_merge(static::$manyMethods, ['guessBelongsToManyRelation'])
+            );
+        });
+
+        return !is_null($caller) ? $caller['function'] : null;
+    }
+
+    /**
      * Get the joining table name for a many-to-many relation.
      *
      * @param string $related
@@ -338,6 +555,25 @@ trait HasRelationships
     public function joiningTableSegment()
     {
         return Str::snake(class_basename($this));
+    }
+
+    /**
+     * Instantiate a new BelongsToMany relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
+     * @return BelongsToMany
+     */
+    protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey,
+                                        $parentKey, $relatedKey, $relationName = null)
+    {
+        return new BelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
 
     /**
@@ -412,6 +648,29 @@ trait HasRelationships
             $foreignPivotKey, $relatedPivotKey, $parentKey ?: $this->getKeyName(),
             $relatedKey ?: $instance->getKeyName(), $caller, $inverse
         );
+    }
+
+    /**
+     * Instantiate a new MorphToMany relationship.
+     *
+     * @param Builder $query
+     * @param Model $parent
+     * @param string $name
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
+     * @param bool $inverse
+     * @return MorphToMany
+     */
+    protected function newMorphToMany(Builder $query, Model $parent, $name, $table, $foreignPivotKey,
+                                      $relatedPivotKey, $parentKey, $relatedKey,
+                                      $relationName = null, $inverse = false)
+    {
+        return new MorphToMany($query, $parent, $name, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,
+            $relationName, $inverse);
     }
 
     /**
@@ -556,264 +815,5 @@ trait HasRelationships
         $this->touches = $touches;
 
         return $this;
-    }
-
-    /**
-     * Create a new model instance for a related model.
-     *
-     * @param string $class
-     * @return mixed
-     */
-    protected function newRelatedInstance($class)
-    {
-        return tap(new $class, function ($instance) {
-            if (!$instance->getConnectionName()) {
-                $instance->setConnection($this->connection);
-            }
-        });
-    }
-
-    /**
-     * Instantiate a new HasOne relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
-     * @return HasOne
-     */
-    protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
-    {
-        return new HasOne($query, $parent, $foreignKey, $localKey);
-    }
-
-    /**
-     * Instantiate a new HasOneThrough relationship.
-     *
-     * @param Builder $query
-     * @param Model $farParent
-     * @param Model $throughParent
-     * @param string $firstKey
-     * @param string $secondKey
-     * @param string $localKey
-     * @param string $secondLocalKey
-     * @return HasOneThrough
-     */
-    protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
-    {
-        return new HasOneThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
-    }
-
-    /**
-     * Get the polymorphic relationship columns.
-     *
-     * @param string $name
-     * @param string $type
-     * @param string $id
-     * @return array
-     */
-    protected function getMorphs($name, $type, $id)
-    {
-        return [$type ?: $name . '_type', $id ?: $name . '_id'];
-    }
-
-    /**
-     * Instantiate a new MorphOne relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $type
-     * @param string $id
-     * @param string $localKey
-     * @return MorphOne
-     */
-    protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
-    {
-        return new MorphOne($query, $parent, $type, $id, $localKey);
-    }
-
-    /**
-     * Guess the "belongs to" relationship name.
-     *
-     * @return string
-     */
-    protected function guessBelongsToRelation()
-    {
-        [$one, $two, $caller] = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
-
-        return $caller['function'];
-    }
-
-    /**
-     * Instantiate a new BelongsTo relationship.
-     *
-     * @param Builder $query
-     * @param Model $child
-     * @param string $foreignKey
-     * @param string $ownerKey
-     * @param string $relation
-     * @return BelongsTo
-     */
-    protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
-    {
-        return new BelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
-    }
-
-    /**
-     * Define a polymorphic, inverse one-to-one or many relationship.
-     *
-     * @param string $name
-     * @param string $type
-     * @param string $id
-     * @param string $ownerKey
-     * @return MorphTo
-     */
-    protected function morphEagerTo($name, $type, $id, $ownerKey)
-    {
-        return $this->newMorphTo(
-            $this->newQuery()->setEagerLoads([]), $this, $id, $ownerKey, $type, $name
-        );
-    }
-
-    /**
-     * Instantiate a new MorphTo relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $foreignKey
-     * @param string $ownerKey
-     * @param string $type
-     * @param string $relation
-     * @return MorphTo
-     */
-    protected function newMorphTo(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation)
-    {
-        return new MorphTo($query, $parent, $foreignKey, $ownerKey, $type, $relation);
-    }
-
-    /**
-     * Define a polymorphic, inverse one-to-one or many relationship.
-     *
-     * @param string $target
-     * @param string $name
-     * @param string $type
-     * @param string $id
-     * @param string $ownerKey
-     * @return MorphTo
-     */
-    protected function morphInstanceTo($target, $name, $type, $id, $ownerKey)
-    {
-        $instance = $this->newRelatedInstance(
-            static::getActualClassNameForMorph($target)
-        );
-
-        return $this->newMorphTo(
-            $instance->newQuery(), $this, $id, $ownerKey ?? $instance->getKeyName(), $type, $name
-        );
-    }
-
-    /**
-     * Instantiate a new HasMany relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
-     * @return HasMany
-     */
-    protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
-    {
-        return new HasMany($query, $parent, $foreignKey, $localKey);
-    }
-
-    /**
-     * Instantiate a new HasManyThrough relationship.
-     *
-     * @param Builder $query
-     * @param Model $farParent
-     * @param Model $throughParent
-     * @param string $firstKey
-     * @param string $secondKey
-     * @param string $localKey
-     * @param string $secondLocalKey
-     * @return HasManyThrough
-     */
-    protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
-    {
-        return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
-    }
-
-    /**
-     * Instantiate a new MorphMany relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $type
-     * @param string $id
-     * @param string $localKey
-     * @return MorphMany
-     */
-    protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
-    {
-        return new MorphMany($query, $parent, $type, $id, $localKey);
-    }
-
-    /**
-     * Get the relationship name of the belongsToMany relationship.
-     *
-     * @return string|null
-     */
-    protected function guessBelongsToManyRelation()
-    {
-        $caller = Arr::first(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function ($trace) {
-            return !in_array(
-                $trace['function'],
-                array_merge(static::$manyMethods, ['guessBelongsToManyRelation'])
-            );
-        });
-
-        return !is_null($caller) ? $caller['function'] : null;
-    }
-
-    /**
-     * Instantiate a new BelongsToMany relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $table
-     * @param string $foreignPivotKey
-     * @param string $relatedPivotKey
-     * @param string $parentKey
-     * @param string $relatedKey
-     * @param string $relationName
-     * @return BelongsToMany
-     */
-    protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey,
-                                        $parentKey, $relatedKey, $relationName = null)
-    {
-        return new BelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
-    }
-
-    /**
-     * Instantiate a new MorphToMany relationship.
-     *
-     * @param Builder $query
-     * @param Model $parent
-     * @param string $name
-     * @param string $table
-     * @param string $foreignPivotKey
-     * @param string $relatedPivotKey
-     * @param string $parentKey
-     * @param string $relatedKey
-     * @param string $relationName
-     * @param bool $inverse
-     * @return MorphToMany
-     */
-    protected function newMorphToMany(Builder $query, Model $parent, $name, $table, $foreignPivotKey,
-                                      $relatedPivotKey, $parentKey, $relatedKey,
-                                      $relationName = null, $inverse = false)
-    {
-        return new MorphToMany($query, $parent, $name, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey,
-            $relationName, $inverse);
     }
 }

@@ -185,6 +185,104 @@ class BladeCompiler extends Compiler implements CompilerInterface
     }
 
     /**
+     * Store the verbatim blocks and replace them with a temporary placeholder.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function storeVerbatimBlocks($value)
+    {
+        return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', function ($matches) {
+            return $this->storeRawBlock($matches[1]);
+        }, $value);
+    }
+
+    /**
+     * Store a raw block and return a unique raw placeholder.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function storeRawBlock($value)
+    {
+        return $this->getRawPlaceholder(
+            array_push($this->rawBlocks, $value) - 1
+        );
+    }
+
+    /**
+     * Get a placeholder to temporary mark the position of raw blocks.
+     *
+     * @param int|string $replace
+     * @return string
+     */
+    protected function getRawPlaceholder($replace)
+    {
+        return str_replace('#', $replace, '@__raw_block_#__@');
+    }
+
+    /**
+     * Store the PHP blocks and replace them with a temporary placeholder.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function storePhpBlocks($value)
+    {
+        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', function ($matches) {
+            return $this->storeRawBlock("<?php{$matches[1]}?>");
+        }, $value);
+    }
+
+    /**
+     * Parse the tokens from the template.
+     *
+     * @param array $token
+     * @return string
+     */
+    protected function parseToken($token)
+    {
+        [$id, $content] = $token;
+
+        if ($id == T_INLINE_HTML) {
+            foreach ($this->compilers as $type) {
+                $content = $this->{"compile{$type}"}($content);
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Replace the raw placeholders with the original code stored in the raw blocks.
+     *
+     * @param string $result
+     * @return string
+     */
+    protected function restoreRawContent($result)
+    {
+        $result = preg_replace_callback('/' . $this->getRawPlaceholder('(\d+)') . '/', function ($matches) {
+            return $this->rawBlocks[$matches[1]];
+        }, $result);
+
+        $this->rawBlocks = [];
+
+        return $result;
+    }
+
+    /**
+     * Add the stored footers onto the given content.
+     *
+     * @param string $result
+     * @return string
+     */
+    protected function addFooters($result)
+    {
+        return ltrim($result, PHP_EOL)
+            . PHP_EOL . implode(PHP_EOL, array_reverse($this->footer));
+    }
+
+    /**
      * Get the path currently being compiled.
      *
      * @return string
@@ -203,6 +301,21 @@ class BladeCompiler extends Compiler implements CompilerInterface
     public function setPath($path)
     {
         $this->path = $path;
+    }
+
+    /**
+     * Get the open and closing PHP tag tokens from the given string.
+     *
+     * @param string $contents
+     * @return Collection
+     */
+    protected function getOpenAndClosingPhpTokens($contents)
+    {
+        return collect(token_get_all($contents))
+            ->pluck($tokenNumber = 0)
+            ->filter(function ($token) {
+                return in_array($token, [T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLOSE_TAG]);
+            });
     }
 
     /**
@@ -376,119 +489,6 @@ class BladeCompiler extends Compiler implements CompilerInterface
     public function withoutDoubleEncoding()
     {
         $this->setEchoFormat('e(%s, false)');
-    }
-
-    /**
-     * Store the verbatim blocks and replace them with a temporary placeholder.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function storeVerbatimBlocks($value)
-    {
-        return preg_replace_callback('/(?<!@)@verbatim(.*?)@endverbatim/s', function ($matches) {
-            return $this->storeRawBlock($matches[1]);
-        }, $value);
-    }
-
-    /**
-     * Store a raw block and return a unique raw placeholder.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function storeRawBlock($value)
-    {
-        return $this->getRawPlaceholder(
-            array_push($this->rawBlocks, $value) - 1
-        );
-    }
-
-    /**
-     * Get a placeholder to temporary mark the position of raw blocks.
-     *
-     * @param int|string $replace
-     * @return string
-     */
-    protected function getRawPlaceholder($replace)
-    {
-        return str_replace('#', $replace, '@__raw_block_#__@');
-    }
-
-    /**
-     * Store the PHP blocks and replace them with a temporary placeholder.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function storePhpBlocks($value)
-    {
-        return preg_replace_callback('/(?<!@)@php(.*?)@endphp/s', function ($matches) {
-            return $this->storeRawBlock("<?php{$matches[1]}?>");
-        }, $value);
-    }
-
-    /**
-     * Parse the tokens from the template.
-     *
-     * @param array $token
-     * @return string
-     */
-    protected function parseToken($token)
-    {
-        [$id, $content] = $token;
-
-        if ($id == T_INLINE_HTML) {
-            foreach ($this->compilers as $type) {
-                $content = $this->{"compile{$type}"}($content);
-            }
-        }
-
-        return $content;
-    }
-
-    /**
-     * Replace the raw placeholders with the original code stored in the raw blocks.
-     *
-     * @param string $result
-     * @return string
-     */
-    protected function restoreRawContent($result)
-    {
-        $result = preg_replace_callback('/' . $this->getRawPlaceholder('(\d+)') . '/', function ($matches) {
-            return $this->rawBlocks[$matches[1]];
-        }, $result);
-
-        $this->rawBlocks = [];
-
-        return $result;
-    }
-
-    /**
-     * Add the stored footers onto the given content.
-     *
-     * @param string $result
-     * @return string
-     */
-    protected function addFooters($result)
-    {
-        return ltrim($result, PHP_EOL)
-            . PHP_EOL . implode(PHP_EOL, array_reverse($this->footer));
-    }
-
-    /**
-     * Get the open and closing PHP tag tokens from the given string.
-     *
-     * @param string $contents
-     * @return Collection
-     */
-    protected function getOpenAndClosingPhpTokens($contents)
-    {
-        return collect(token_get_all($contents))
-            ->pluck($tokenNumber = 0)
-            ->filter(function ($token) {
-                return in_array($token, [T_OPEN_TAG, T_OPEN_TAG_WITH_ECHO, T_CLOSE_TAG]);
-            });
     }
 
     /**

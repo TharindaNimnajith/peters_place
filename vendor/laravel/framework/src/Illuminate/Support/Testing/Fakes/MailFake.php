@@ -55,6 +55,21 @@ class MailFake implements Mailer, MailQueue
     }
 
     /**
+     * Assert if a mailable was sent a number of times.
+     *
+     * @param string $mailable
+     * @param int $times
+     * @return void
+     */
+    protected function assertSentTimes($mailable, $times = 1)
+    {
+        PHPUnit::assertTrue(
+            ($count = $this->sent($mailable)->count()) === $times,
+            "The expected [{$mailable}] mailable was sent {$count} times instead of {$times} times."
+        );
+    }
+
+    /**
      * Get all of the mailables matching a truth-test callback.
      *
      * @param string $mailable
@@ -85,6 +100,19 @@ class MailFake implements Mailer, MailQueue
     public function hasSent($mailable)
     {
         return $this->mailablesOf($mailable)->count() > 0;
+    }
+
+    /**
+     * Get all of the mailed mailables for a given type.
+     *
+     * @param string $type
+     * @return Collection
+     */
+    protected function mailablesOf($type)
+    {
+        return collect($this->mailables)->filter(function ($mailable) use ($type) {
+            return $mailable instanceof $type;
+        });
     }
 
     /**
@@ -132,6 +160,21 @@ class MailFake implements Mailer, MailQueue
     }
 
     /**
+     * Assert if a mailable was queued a number of times.
+     *
+     * @param string $mailable
+     * @param int $times
+     * @return void
+     */
+    protected function assertQueuedTimes($mailable, $times = 1)
+    {
+        PHPUnit::assertTrue(
+            ($count = $this->queued($mailable)->count()) === $times,
+            "The expected [{$mailable}] mailable was queued {$count} times instead of {$times} times."
+        );
+    }
+
+    /**
      * Get all of the queued mailables matching a truth-test callback.
      *
      * @param string $mailable
@@ -162,6 +205,19 @@ class MailFake implements Mailer, MailQueue
     public function hasQueued($mailable)
     {
         return $this->queuedMailablesOf($mailable)->count() > 0;
+    }
+
+    /**
+     * Get all of the mailed mailables for a given type.
+     *
+     * @param string $type
+     * @return Collection
+     */
+    protected function queuedMailablesOf($type)
+    {
+        return collect($this->queuedMailables)->filter(function ($mailable) use ($type) {
+            return $mailable instanceof $type;
+        });
     }
 
     /**
@@ -281,61 +337,5 @@ class MailFake implements Mailer, MailQueue
     public function failures()
     {
         return [];
-    }
-
-    /**
-     * Assert if a mailable was sent a number of times.
-     *
-     * @param string $mailable
-     * @param int $times
-     * @return void
-     */
-    protected function assertSentTimes($mailable, $times = 1)
-    {
-        PHPUnit::assertTrue(
-            ($count = $this->sent($mailable)->count()) === $times,
-            "The expected [{$mailable}] mailable was sent {$count} times instead of {$times} times."
-        );
-    }
-
-    /**
-     * Get all of the mailed mailables for a given type.
-     *
-     * @param string $type
-     * @return Collection
-     */
-    protected function mailablesOf($type)
-    {
-        return collect($this->mailables)->filter(function ($mailable) use ($type) {
-            return $mailable instanceof $type;
-        });
-    }
-
-    /**
-     * Assert if a mailable was queued a number of times.
-     *
-     * @param string $mailable
-     * @param int $times
-     * @return void
-     */
-    protected function assertQueuedTimes($mailable, $times = 1)
-    {
-        PHPUnit::assertTrue(
-            ($count = $this->queued($mailable)->count()) === $times,
-            "The expected [{$mailable}] mailable was queued {$count} times instead of {$times} times."
-        );
-    }
-
-    /**
-     * Get all of the mailed mailables for a given type.
-     *
-     * @param string $type
-     * @return Collection
-     */
-    protected function queuedMailablesOf($type)
-    {
-        return collect($this->queuedMailables)->filter(function ($mailable) use ($type) {
-            return $mailable instanceof $type;
-        });
     }
 }

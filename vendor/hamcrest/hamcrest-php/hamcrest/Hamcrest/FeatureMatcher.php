@@ -23,7 +23,7 @@ abstract class FeatureMatcher extends TypeSafeDiagnosingMatcher
      *
      * @param string $type
      * @param string $subtype
-     * @param Matcher $subMatcher The matcher to apply to the feature
+     * @param \Hamcrest\Matcher $subMatcher The matcher to apply to the feature
      * @param string $featureDescription Descriptive text to use in describeTo
      * @param string $featureName Identifying text for mismatch message
      */
@@ -50,12 +50,6 @@ abstract class FeatureMatcher extends TypeSafeDiagnosingMatcher
         return true;
     }
 
-    final public function describeTo(Description $description)
-    {
-        $description->appendText($this->_featureDescription)->appendText(' ')
-            ->appendDescriptionOf($this->_subMatcher);
-    }
-
     /**
      * Implement this to extract the interesting feature.
      *
@@ -64,4 +58,10 @@ abstract class FeatureMatcher extends TypeSafeDiagnosingMatcher
      * @return mixed the feature to be matched
      */
     abstract protected function featureValueOf($actual);
+
+    final public function describeTo(Description $description)
+    {
+        $description->appendText($this->_featureDescription)->appendText(' ')
+            ->appendDescriptionOf($this->_subMatcher);
+    }
 }

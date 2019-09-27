@@ -61,6 +61,50 @@ class TeamCity extends ResultPrinter
      */
     private $flowId;
 
+    public function printResult(TestResult $result): void
+    {
+        $this->printHeader();
+        $this->printFooter($result);
+    }
+
+    /**
+     * A warning occurred.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function addWarning(Test $test, Warning $e, float $time): void
+    {
+        $this->printEvent(
+            'testFailed',
+            [
+                'name' => $test->getName(),
+                'message' => self::getMessage($e),
+                'details' => self::getDetails($e),
+                'duration' => self::toMilliseconds($time),
+            ]
+        );
+    }
+
+    /**
+     * @param string $eventName
+     * @param array $params
+     */
+    private function printEvent($eventName, $params = []): void
+    {
+        $this->write("\n##teamcity[$eventName");
+
+        if ($this->flowId) {
+            $params['flowId'] = $this->flowId;
+        }
+
+        foreach ($params as $key => $value) {
+            $escapedValue = self::escapeValue($value);
+            $this->write(" $key='$escapedValue'");
+        }
+
+        $this->write("]\n");
+    }
+
     private static function escapeValue(string $text): string
     {
         return str_replace(
@@ -115,59 +159,6 @@ class TeamCity extends ResultPrinter
         return round($time * 1000);
     }
 
-    private static function getPrimitiveValueAsString($value): ?string
-    {
-        if ($value === null) {
-            return 'null';
-        }
-
-        if (is_bool($value)) {
-            return $value === true ? 'true' : 'false';
-        }
-
-        if (is_scalar($value)) {
-            return print_r($value, true);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $className
-     *
-     * @throws ReflectionException
-     */
-    private static function getFileName($className): string
-    {
-        $reflectionClass = new ReflectionClass($className);
-
-        return $reflectionClass->getFileName();
-    }
-
-    public function printResult(TestResult $result): void
-    {
-        $this->printHeader();
-        $this->printFooter($result);
-    }
-
-    /**
-     * A warning occurred.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function addWarning(Test $test, Warning $e, float $time): void
-    {
-        $this->printEvent(
-            'testFailed',
-            [
-                'name' => $test->getName(),
-                'message' => self::getMessage($e),
-                'details' => self::getDetails($e),
-                'duration' => self::toMilliseconds($time),
-            ]
-        );
-    }
-
     /**
      * A failure occurred.
      *
@@ -207,6 +198,23 @@ class TeamCity extends ResultPrinter
         }
 
         $this->printEvent('testFailed', $parameters);
+    }
+
+    private static function getPrimitiveValueAsString($value): ?string
+    {
+        if ($value === null) {
+            return 'null';
+        }
+
+        if (is_bool($value)) {
+            return $value === true ? 'true' : 'false';
+        }
+
+        if (is_scalar($value)) {
+            return print_r($value, true);
+        }
+
+        return null;
     }
 
     /**
@@ -297,6 +305,18 @@ class TeamCity extends ResultPrinter
     }
 
     /**
+     * @param string $className
+     *
+     * @throws ReflectionException
+     */
+    private static function getFileName($className): string
+    {
+        $reflectionClass = new ReflectionClass($className);
+
+        return $reflectionClass->getFileName();
+    }
+
+    /**
      * A test ended.
      */
     public function endTest(Test $test, float $time): void
@@ -384,25 +404,5 @@ class TeamCity extends ResultPrinter
 
     protected function writeProgress(string $progress): void
     {
-    }
-
-    /**
-     * @param string $eventName
-     * @param array $params
-     */
-    private function printEvent($eventName, $params = []): void
-    {
-        $this->write("\n##teamcity[$eventName");
-
-        if ($this->flowId) {
-            $params['flowId'] = $this->flowId;
-        }
-
-        foreach ($params as $key => $value) {
-            $escapedValue = self::escapeValue($value);
-            $this->write(" $key='$escapedValue'");
-        }
-
-        $this->write("]\n");
     }
 }

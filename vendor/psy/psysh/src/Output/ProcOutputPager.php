@@ -70,25 +70,6 @@ class ProcOutputPager extends StreamOutput implements OutputPager
     }
 
     /**
-     * Close the current pager process.
-     */
-    public function close()
-    {
-        if (isset($this->pipe)) {
-            fclose($this->pipe);
-        }
-
-        if (isset($this->proc)) {
-            $exit = proc_close($this->proc);
-            if ($exit !== 0) {
-                throw new RuntimeException('Error closing output stream');
-            }
-        }
-
-        unset($this->pipe, $this->proc);
-    }
-
-    /**
      * Get a pipe for paging output.
      *
      * If no active pager process exists, fork one and return its input pipe.
@@ -107,5 +88,24 @@ class ProcOutputPager extends StreamOutput implements OutputPager
         }
 
         return $this->pipe;
+    }
+
+    /**
+     * Close the current pager process.
+     */
+    public function close()
+    {
+        if (isset($this->pipe)) {
+            fclose($this->pipe);
+        }
+
+        if (isset($this->proc)) {
+            $exit = proc_close($this->proc);
+            if ($exit !== 0) {
+                throw new RuntimeException('Error closing output stream');
+            }
+        }
+
+        unset($this->pipe, $this->proc);
     }
 }

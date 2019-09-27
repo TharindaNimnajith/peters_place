@@ -29,22 +29,6 @@ final class ResponseHasCookie extends Constraint
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function toString(): string
-    {
-        $str = sprintf('has cookie "%s"', $this->name);
-        if ('/' !== $this->path) {
-            $str .= sprintf(' with path "%s"', $this->path);
-        }
-        if ($this->domain) {
-            $str .= sprintf(' for domain "%s"', $this->domain);
-        }
-
-        return $str;
-    }
-
-    /**
      * @param Response $response
      *
      * {@inheritdoc}
@@ -73,5 +57,21 @@ final class ResponseHasCookie extends Constraint
     protected function failureDescription($response): string
     {
         return 'the Response ' . $this->toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        $str = sprintf('has cookie "%s"', $this->name);
+        if ('/' !== $this->path) {
+            $str .= sprintf(' with path "%s"', $this->path);
+        }
+        if ($this->domain) {
+            $str .= sprintf(' for domain "%s"', $this->domain);
+        }
+
+        return $str;
     }
 }

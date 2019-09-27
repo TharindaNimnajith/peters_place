@@ -57,6 +57,60 @@ class RouteCollection implements Countable, IteratorAggregate
     }
 
     /**
+     * Add the given route to the arrays of routes.
+     *
+     * @param Route $route
+     * @return void
+     */
+    protected function addToCollections($route)
+    {
+        $domainAndUri = $route->getDomain() . $route->uri();
+
+        foreach ($route->methods() as $method) {
+            $this->routes[$method][$domainAndUri] = $route;
+        }
+
+        $this->allRoutes[$method . $domainAndUri] = $route;
+    }
+
+    /**
+     * Add the route to any look-up tables if necessary.
+     *
+     * @param Route $route
+     * @return void
+     */
+    protected function addLookups($route)
+    {
+        // If the route has a name, we will add it to the name look-up table so that we
+        // will quickly be able to find any route associate with a name and not have
+        // to iterate through every route every time we need to perform a look-up.
+        if ($name = $route->getName()) {
+            $this->nameList[$name] = $route;
+        }
+
+        // When the route is routing to a controller we will also store the action that
+        // is used by the route. This will let us reverse route to controllers while
+        // processing a request and easily generate URLs to the given controllers.
+        $action = $route->getAction();
+
+        if (isset($action['controller'])) {
+            $this->addToActionList($action, $route);
+        }
+    }
+
+    /**
+     * Add a route to the controller action dictionary.
+     *
+     * @param array $action
+     * @param Route $route
+     * @return void
+     */
+    protected function addToActionList($action, $route)
+    {
+        $this->actionList[trim($action['controller'], '\\')] = $route;
+    }
+
+    /**
      * Refresh the name look-up table.
      *
      * This is done in case any names are fluently defined or if routes are overwritten.
@@ -147,133 +201,6 @@ class RouteCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * Determine if the route collection contains a given named route.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function hasNamedRoute($name)
-    {
-        return !is_null($this->getByName($name));
-    }
-
-    /**
-     * Get a route instance by its name.
-     *
-     * @param string $name
-     * @return Route|null
-     */
-    public function getByName($name)
-    {
-        return $this->nameList[$name] ?? null;
-    }
-
-    /**
-     * Get a route instance by its controller action.
-     *
-     * @param string $action
-     * @return Route|null
-     */
-    public function getByAction($action)
-    {
-        return $this->actionList[$action] ?? null;
-    }
-
-    /**
-     * Get all of the routes keyed by their HTTP verb / method.
-     *
-     * @return array
-     */
-    public function getRoutesByMethod()
-    {
-        return $this->routes;
-    }
-
-    /**
-     * Get all of the routes keyed by their name.
-     *
-     * @return array
-     */
-    public function getRoutesByName()
-    {
-        return $this->nameList;
-    }
-
-    /**
-     * Get an iterator for the items.
-     *
-     * @return ArrayIterator
-     */
-    public function getIterator()
-    {
-        return new ArrayIterator($this->getRoutes());
-    }
-
-    /**
-     * Count the number of items in the collection.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return count($this->getRoutes());
-    }
-
-    /**
-     * Add the given route to the arrays of routes.
-     *
-     * @param Route $route
-     * @return void
-     */
-    protected function addToCollections($route)
-    {
-        $domainAndUri = $route->getDomain() . $route->uri();
-
-        foreach ($route->methods() as $method) {
-            $this->routes[$method][$domainAndUri] = $route;
-        }
-
-        $this->allRoutes[$method . $domainAndUri] = $route;
-    }
-
-    /**
-     * Add the route to any look-up tables if necessary.
-     *
-     * @param Route $route
-     * @return void
-     */
-    protected function addLookups($route)
-    {
-        // If the route has a name, we will add it to the name look-up table so that we
-        // will quickly be able to find any route associate with a name and not have
-        // to iterate through every route every time we need to perform a look-up.
-        if ($name = $route->getName()) {
-            $this->nameList[$name] = $route;
-        }
-
-        // When the route is routing to a controller we will also store the action that
-        // is used by the route. This will let us reverse route to controllers while
-        // processing a request and easily generate URLs to the given controllers.
-        $action = $route->getAction();
-
-        if (isset($action['controller'])) {
-            $this->addToActionList($action, $route);
-        }
-    }
-
-    /**
-     * Add a route to the controller action dictionary.
-     *
-     * @param array $action
-     * @param Route $route
-     * @return void
-     */
-    protected function addToActionList($action, $route)
-    {
-        $this->actionList[trim($action['controller'], '\\')] = $route;
-    }
-
-    /**
      * Determine if a route in the array matches the request.
      *
      * @param array $routes
@@ -355,5 +282,78 @@ class RouteCollection implements Countable, IteratorAggregate
                 implode(', ', $others)
             )
         );
+    }
+
+    /**
+     * Determine if the route collection contains a given named route.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function hasNamedRoute($name)
+    {
+        return !is_null($this->getByName($name));
+    }
+
+    /**
+     * Get a route instance by its name.
+     *
+     * @param string $name
+     * @return Route|null
+     */
+    public function getByName($name)
+    {
+        return $this->nameList[$name] ?? null;
+    }
+
+    /**
+     * Get a route instance by its controller action.
+     *
+     * @param string $action
+     * @return Route|null
+     */
+    public function getByAction($action)
+    {
+        return $this->actionList[$action] ?? null;
+    }
+
+    /**
+     * Get all of the routes keyed by their HTTP verb / method.
+     *
+     * @return array
+     */
+    public function getRoutesByMethod()
+    {
+        return $this->routes;
+    }
+
+    /**
+     * Get all of the routes keyed by their name.
+     *
+     * @return array
+     */
+    public function getRoutesByName()
+    {
+        return $this->nameList;
+    }
+
+    /**
+     * Get an iterator for the items.
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->getRoutes());
+    }
+
+    /**
+     * Count the number of items in the collection.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->getRoutes());
     }
 }

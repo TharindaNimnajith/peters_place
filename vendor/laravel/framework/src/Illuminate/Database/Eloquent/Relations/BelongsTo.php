@@ -101,6 +101,30 @@ class BelongsTo extends Relation
     }
 
     /**
+     * Gather the keys from an array of related models.
+     *
+     * @param array $models
+     * @return array
+     */
+    protected function getEagerModelKeys(array $models)
+    {
+        $keys = [];
+
+        // First we need to gather all of the keys from the parent models so we know what
+        // to query for via the eager loading query. We will add them to an array then
+        // execute a "where in" statement to gather up all of those related records.
+        foreach ($models as $model) {
+            if (!is_null($value = $model->{$this->foreignKey})) {
+                $keys[] = $value;
+            }
+        }
+
+        sort($keys);
+
+        return array_values(array_unique($keys));
+    }
+
+    /**
      * Initialize the relation on a set of models.
      *
      * @param array $models
@@ -328,30 +352,6 @@ class BelongsTo extends Relation
     public function getRelation()
     {
         return $this->relationName;
-    }
-
-    /**
-     * Gather the keys from an array of related models.
-     *
-     * @param array $models
-     * @return array
-     */
-    protected function getEagerModelKeys(array $models)
-    {
-        $keys = [];
-
-        // First we need to gather all of the keys from the parent models so we know what
-        // to query for via the eager loading query. We will add them to an array then
-        // execute a "where in" statement to gather up all of those related records.
-        foreach ($models as $model) {
-            if (!is_null($value = $model->{$this->foreignKey})) {
-                $keys[] = $value;
-            }
-        }
-
-        sort($keys);
-
-        return array_values(array_unique($keys));
     }
 
     /**

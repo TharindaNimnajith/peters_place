@@ -204,6 +204,27 @@ class InvocationMocker implements MethodNameMatch
     }
 
     /**
+     * Validate that a parameters matcher can be defined, throw exceptions otherwise.
+     *
+     * @throws RuntimeException
+     */
+    private function canDefineParameters(): void
+    {
+        if (!$this->matcher->hasMethodNameMatcher()) {
+            throw new RuntimeException(
+                'Method name matcher is not defined, cannot define parameter ' .
+                'matcher without one'
+            );
+        }
+
+        if ($this->matcher->hasParametersMatcher()) {
+            throw new RuntimeException(
+                'Parameter matcher is already defined, cannot redefine'
+            );
+        }
+    }
+
+    /**
      * @param array ...$arguments
      *
      * @return InvocationMocker
@@ -260,26 +281,5 @@ class InvocationMocker implements MethodNameMatch
         $this->matcher->setMethodNameMatcher(new Matcher\MethodName($constraint));
 
         return $this;
-    }
-
-    /**
-     * Validate that a parameters matcher can be defined, throw exceptions otherwise.
-     *
-     * @throws RuntimeException
-     */
-    private function canDefineParameters(): void
-    {
-        if (!$this->matcher->hasMethodNameMatcher()) {
-            throw new RuntimeException(
-                'Method name matcher is not defined, cannot define parameter ' .
-                'matcher without one'
-            );
-        }
-
-        if ($this->matcher->hasParametersMatcher()) {
-            throw new RuntimeException(
-                'Parameter matcher is already defined, cannot redefine'
-            );
-        }
     }
 }

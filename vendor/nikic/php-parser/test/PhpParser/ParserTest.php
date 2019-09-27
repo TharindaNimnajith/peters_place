@@ -20,6 +20,9 @@ abstract class ParserTest extends TestCase
         $parser->parse('<?php foo');
     }
 
+    /** @returns Parser */
+    abstract protected function getParser(Lexer $lexer);
+
     public function testParserThrowsSpecialError()
     {
         $this->expectException(Error::class);
@@ -179,9 +182,6 @@ EOC;
             [" (  REAL )  5.0", ['kind' => Expr\Cast\Double::KIND_REAL]],
         ];
     }
-
-    /** @returns Parser */
-    abstract protected function getParser(Lexer $lexer);
 }
 
 class InvalidTokenLexer extends Lexer

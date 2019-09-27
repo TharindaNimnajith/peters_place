@@ -20,6 +20,11 @@ class EmulativeTest extends LexerTest
         $this->assertSame(0, $lexer->getNextToken());
     }
 
+    protected function getLexer(array $options = [])
+    {
+        return new Emulative($options);
+    }
+
     /**
      * @dataProvider provideTestReplaceKeywords
      */
@@ -258,10 +263,5 @@ class EmulativeTest extends LexerTest
                 [Tokens::T_STRING, 'abc'],
             ]],
         ];
-    }
-
-    protected function getLexer(array $options = [])
-    {
-        return new Emulative($options);
     }
 }

@@ -11,14 +11,7 @@
 
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler;
 
-use InvalidArgumentException;
-use MongoDB\BSON\Binary;
-use MongoDB\BSON\UTCDateTime;
-use MongoDB\Client;
-use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_MockObject_MockObject;
-use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\MongoDbSessionHandler;
 
 /**
@@ -30,13 +23,13 @@ class MongoDbSessionHandlerTest extends TestCase
 {
     public $options;
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
     private $mongo;
     private $storage;
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testConstructorShouldThrowExceptionForMissingOptions()
     {
@@ -75,17 +68,26 @@ class MongoDbSessionHandlerTest extends TestCase
                 $this->assertArrayHasKey($this->options['expiry_field'], $criteria);
                 $this->assertArrayHasKey('$gte', $criteria[$this->options['expiry_field']]);
 
-                $this->assertInstanceOf(UTCDateTime::class, $criteria[$this->options['expiry_field']]['$gte']);
+                $this->assertInstanceOf(\MongoDB\BSON\UTCDateTime::class, $criteria[$this->options['expiry_field']]['$gte']);
                 $this->assertGreaterThanOrEqual(round((string)$criteria[$this->options['expiry_field']]['$gte'] / 1000), $testTimeout);
 
                 return [
                     $this->options['id_field'] => 'foo',
-                    $this->options['expiry_field'] => new UTCDateTime(),
-                    $this->options['data_field'] => new Binary('bar', Binary::TYPE_OLD_BINARY),
+                    $this->options['expiry_field'] => new \MongoDB\BSON\UTCDateTime(),
+                    $this->options['data_field'] => new \MongoDB\BSON\Binary('bar', \MongoDB\BSON\Binary::TYPE_OLD_BINARY),
                 ];
             });
 
         $this->assertEquals('bar', $this->storage->read('foo'));
+    }
+
+    private function createMongoCollectionMock()
+    {
+        $collection = $this->getMockBuilder(\MongoDB\Collection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $collection;
     }
 
     public function testWrite()
@@ -105,10 +107,10 @@ class MongoDbSessionHandlerTest extends TestCase
 
                 $data = $updateData['$set'];
                 $expectedExpiry = time() + (int)ini_get('session.gc_maxlifetime');
-                $this->assertInstanceOf(Binary::class, $data[$this->options['data_field']]);
+                $this->assertInstanceOf(\MongoDB\BSON\Binary::class, $data[$this->options['data_field']]);
                 $this->assertEquals('bar', $data[$this->options['data_field']]->getData());
-                $this->assertInstanceOf(UTCDateTime::class, $data[$this->options['time_field']]);
-                $this->assertInstanceOf(UTCDateTime::class, $data[$this->options['expiry_field']]);
+                $this->assertInstanceOf(\MongoDB\BSON\UTCDateTime::class, $data[$this->options['time_field']]);
+                $this->assertInstanceOf(\MongoDB\BSON\UTCDateTime::class, $data[$this->options['expiry_field']]);
                 $this->assertGreaterThanOrEqual($expectedExpiry, round((string)$data[$this->options['expiry_field']] / 1000));
             });
 
@@ -166,7 +168,7 @@ class MongoDbSessionHandlerTest extends TestCase
         $collection->expects($this->once())
             ->method('deleteMany')
             ->willReturnCallback(function ($criteria) {
-                $this->assertInstanceOf(UTCDateTime::class, $criteria[$this->options['expiry_field']]['$lt']);
+                $this->assertInstanceOf(\MongoDB\BSON\UTCDateTime::class, $criteria[$this->options['expiry_field']]['$lt']);
                 $this->assertGreaterThanOrEqual(time() - 1, round((string)$criteria[$this->options['expiry_field']]['$lt'] / 1000));
             });
 
@@ -175,21 +177,21 @@ class MongoDbSessionHandlerTest extends TestCase
 
     public function testGetConnection()
     {
-        $method = new ReflectionMethod($this->storage, 'getMongo');
+        $method = new \ReflectionMethod($this->storage, 'getMongo');
         $method->setAccessible(true);
 
-        $this->assertInstanceOf(Client::class, $method->invoke($this->storage));
+        $this->assertInstanceOf(\MongoDB\Client::class, $method->invoke($this->storage));
     }
 
     protected function setUp()
     {
         parent::setUp();
 
-        if (!class_exists(Client::class)) {
+        if (!class_exists(\MongoDB\Client::class)) {
             $this->markTestSkipped('The mongodb/mongodb package is required.');
         }
 
-        $this->mongo = $this->getMockBuilder(Client::class)
+        $this->mongo = $this->getMockBuilder(\MongoDB\Client::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -203,14 +205,5 @@ class MongoDbSessionHandlerTest extends TestCase
         ];
 
         $this->storage = new MongoDbSessionHandler($this->mongo, $this->options);
-    }
-
-    private function createMongoCollectionMock()
-    {
-        $collection = $this->getMockBuilder(Collection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $collection;
     }
 }

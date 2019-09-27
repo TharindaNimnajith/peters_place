@@ -146,6 +146,18 @@ class NameResolver extends NodeVisitorAbstract
         return null;
     }
 
+    private function addAlias(Stmt\UseUse $use, $type, Name $prefix = null)
+    {
+        // Add prefix for group uses
+        $name = $prefix ? Name::concat($prefix, $use->name) : $use->name;
+        // Type is determined either by individual element or whole use declaration
+        $type |= $use->type;
+
+        $this->nameContext->addAlias(
+            $name, (string)$use->getAlias(), $type, $use->getAttributes()
+        );
+    }
+
     protected function resolveClassName(Name $name)
     {
         return $this->resolveName($name, Stmt\Use_::TYPE_NORMAL);
@@ -195,18 +207,6 @@ class NameResolver extends NodeVisitorAbstract
     {
         $node->namespacedName = Name::concat(
             $this->nameContext->getNamespace(), (string)$node->name);
-    }
-
-    private function addAlias(Stmt\UseUse $use, $type, Name $prefix = null)
-    {
-        // Add prefix for group uses
-        $name = $prefix ? Name::concat($prefix, $use->name) : $use->name;
-        // Type is determined either by individual element or whole use declaration
-        $type |= $use->type;
-
-        $this->nameContext->addAlias(
-            $name, (string)$use->getAlias(), $type, $use->getAttributes()
-        );
     }
 
     /** @param Stmt\Function_|Stmt\ClassMethod|Expr\Closure $node */

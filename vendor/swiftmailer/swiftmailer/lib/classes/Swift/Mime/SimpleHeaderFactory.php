@@ -65,6 +65,14 @@ class Swift_Mime_SimpleHeaderFactory implements Swift_Mime_CharsetObserver
         return $header;
     }
 
+    /** Apply the charset to the Header */
+    private function setHeaderCharset(Swift_Mime_Header $header)
+    {
+        if (isset($this->charset)) {
+            $header->setCharset($this->charset);
+        }
+    }
+
     /**
      * Create a new Date header using $dateTime.
      *
@@ -183,13 +191,5 @@ class Swift_Mime_SimpleHeaderFactory implements Swift_Mime_CharsetObserver
     {
         $this->encoder = clone $this->encoder;
         $this->paramEncoder = clone $this->paramEncoder;
-    }
-
-    /** Apply the charset to the Header */
-    private function setHeaderCharset(Swift_Mime_Header $header)
-    {
-        if (isset($this->charset)) {
-            $header->setCharset($this->charset);
-        }
     }
 }

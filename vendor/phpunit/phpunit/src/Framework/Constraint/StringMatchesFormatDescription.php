@@ -40,6 +40,34 @@ class StringMatchesFormatDescription extends RegularExpression
         $this->string = $string;
     }
 
+    private function createPatternFromFormat(string $string): string
+    {
+        $string = strtr(
+            preg_quote($string, '/'),
+            [
+                '%%' => '%',
+                '%e' => '\\' . DIRECTORY_SEPARATOR,
+                '%s' => '[^\r\n]+',
+                '%S' => '[^\r\n]*',
+                '%a' => '.+',
+                '%A' => '.*',
+                '%w' => '\s*',
+                '%i' => '[+-]?\d+',
+                '%d' => '\d+',
+                '%x' => '[0-9a-fA-F]+',
+                '%f' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?',
+                '%c' => '.',
+            ]
+        );
+
+        return '/^' . $string . '$/s';
+    }
+
+    private function convertNewlines($text): string
+    {
+        return preg_replace('/\r\n/', "\n", $text);
+    }
+
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -79,33 +107,5 @@ class StringMatchesFormatDescription extends RegularExpression
         $differ = new Differ("--- Expected\n+++ Actual\n");
 
         return $differ->diff($this->string, $other);
-    }
-
-    private function createPatternFromFormat(string $string): string
-    {
-        $string = strtr(
-            preg_quote($string, '/'),
-            [
-                '%%' => '%',
-                '%e' => '\\' . DIRECTORY_SEPARATOR,
-                '%s' => '[^\r\n]+',
-                '%S' => '[^\r\n]*',
-                '%a' => '.+',
-                '%A' => '.*',
-                '%w' => '\s*',
-                '%i' => '[+-]?\d+',
-                '%d' => '\d+',
-                '%x' => '[0-9a-fA-F]+',
-                '%f' => '[+-]?\.?\d+\.?\d*(?:[Ee][+-]?\d+)?',
-                '%c' => '.',
-            ]
-        );
-
-        return '/^' . $string . '$/s';
-    }
-
-    private function convertNewlines($text): string
-    {
-        return preg_replace('/\r\n/', "\n", $text);
     }
 }

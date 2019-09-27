@@ -108,6 +108,79 @@ class Grammar extends BaseGrammar
     }
 
     /**
+     * Compile a union aggregate query into SQL.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    protected function compileUnionAggregate(Builder $query)
+    {
+        $sql = $this->compileAggregate($query, $query->aggregate);
+
+        $query->aggregate = null;
+
+        return $sql . ' from (' . $this->compileSelect($query) . ') as ' . $this->wrapTable('temp_table');
+    }
+
+    /**
+     * Compile an aggregated select clause.
+     *
+     * @param Builder $query
+     * @param array $aggregate
+     * @return string
+     */
+    protected function compileAggregate(Builder $query, $aggregate)
+    {
+        $column = $this->columnize($aggregate['columns']);
+
+        // If the query has a "distinct" constraint and we're not asking for all columns
+        // we need to prepend "distinct" onto the column name so that the query takes
+        // it into account when it performs the aggregating operations on the data.
+        if ($query->distinct && $column !== '*') {
+            $column = 'distinct ' . $column;
+        }
+
+        return 'select ' . $aggregate['function'] . '(' . $column . ') as aggregate';
+    }
+
+    /**
+     * Concatenate an array of segments, removing empties.
+     *
+     * @param array $segments
+     * @return string
+     */
+    protected function concatenate($segments)
+    {
+        return implode(' ', array_filter($segments, function ($value) {
+            return (string)$value !== '';
+        }));
+    }
+
+    /**
+     * Compile the components necessary for a select clause.
+     *
+     * @param Builder $query
+     * @return array
+     */
+    protected function compileComponents(Builder $query)
+    {
+        $sql = [];
+
+        foreach ($this->selectComponents as $component) {
+            // To compile the query, we'll spin through each component of the query and
+            // see if that component exists. If it does we'll just call the compiler
+            // function for the component which is responsible for making the SQL.
+            if (isset($query->$component) && !is_null($query->$component)) {
+                $method = 'compile' . ucfirst($component);
+
+                $sql[$component] = $this->$method($query, $query->$component);
+            }
+        }
+
+        return $sql;
+    }
+
+    /**
      * Wrap a value in keyword identifiers.
      *
      * @param Expression|string $value
@@ -135,6 +208,28 @@ class Grammar extends BaseGrammar
         }
 
         return $this->wrapSegments(explode('.', $value));
+    }
+
+    /**
+     * Determine if the given string is a JSON selector.
+     *
+     * @param string $value
+     * @return bool
+     */
+    protected function isJsonSelector($value)
+    {
+        return Str::contains($value, '->');
+    }
+
+    /**
+     * Wrap the given JSON selector.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function wrapJsonSelector($value)
+    {
+        throw new RuntimeException('This database engine does not support JSON operations.');
     }
 
     /**
@@ -226,6 +321,89 @@ class Grammar extends BaseGrammar
         $wheres = $this->compileWheres($query);
 
         return trim("update {$table}{$joins} set $columns $wheres");
+    }
+
+    /**
+     * Compile the "join" portions of the query.
+     *
+     * @param Builder $query
+     * @param array $joins
+     * @return string
+     */
+    protected function compileJoins(Builder $query, $joins)
+    {
+        return collect($joins)->map(function ($join) use ($query) {
+            $table = $this->wrapTable($join->table);
+
+            $nestedJoins = is_null($join->joins) ? '' : ' ' . $this->compileJoins($query, $join->joins);
+
+            $tableAndNestedJoins = is_null($join->joins) ? $table : '(' . $table . $nestedJoins . ')';
+
+            return trim("{$join->type} join {$tableAndNestedJoins} {$this->compileWheres($join)}");
+        })->implode(' ');
+    }
+
+    /**
+     * Compile the "where" portions of the query.
+     *
+     * @param Builder $query
+     * @return string
+     */
+    protected function compileWheres(Builder $query)
+    {
+        // Each type of where clauses has its own compiler function which is responsible
+        // for actually creating the where clauses SQL. This helps keep the code nice
+        // and maintainable since each clause has a very small method that it uses.
+        if (is_null($query->wheres)) {
+            return '';
+        }
+
+        // If we actually have some where clauses, we will strip off the first boolean
+        // operator, which is added by the query builders for convenience so we can
+        // avoid checking for the first clauses in each of the compilers methods.
+        if (count($sql = $this->compileWheresToArray($query)) > 0) {
+            return $this->concatenateWhereClauses($query, $sql);
+        }
+
+        return '';
+    }
+
+    /**
+     * Get an array of all the where clauses for the query.
+     *
+     * @param Builder $query
+     * @return array
+     */
+    protected function compileWheresToArray($query)
+    {
+        return collect($query->wheres)->map(function ($where) use ($query) {
+            return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
+        })->all();
+    }
+
+    /**
+     * Format the where clause statements into one string.
+     *
+     * @param Builder $query
+     * @param array $sql
+     * @return string
+     */
+    protected function concatenateWhereClauses($query, $sql)
+    {
+        $conjunction = $query instanceof JoinClause ? 'on' : 'where';
+
+        return $conjunction . ' ' . $this->removeLeadingBoolean(implode(' ', $sql));
+    }
+
+    /**
+     * Remove the leading boolean from a statement.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function removeLeadingBoolean($value)
+    {
+        return preg_replace('/and |or /i', '', $value, 1);
     }
 
     /**
@@ -321,184 +499,6 @@ class Grammar extends BaseGrammar
     public function getOperators()
     {
         return $this->operators;
-    }
-
-    /**
-     * Compile a union aggregate query into SQL.
-     *
-     * @param Builder $query
-     * @return string
-     */
-    protected function compileUnionAggregate(Builder $query)
-    {
-        $sql = $this->compileAggregate($query, $query->aggregate);
-
-        $query->aggregate = null;
-
-        return $sql . ' from (' . $this->compileSelect($query) . ') as ' . $this->wrapTable('temp_table');
-    }
-
-    /**
-     * Compile an aggregated select clause.
-     *
-     * @param Builder $query
-     * @param array $aggregate
-     * @return string
-     */
-    protected function compileAggregate(Builder $query, $aggregate)
-    {
-        $column = $this->columnize($aggregate['columns']);
-
-        // If the query has a "distinct" constraint and we're not asking for all columns
-        // we need to prepend "distinct" onto the column name so that the query takes
-        // it into account when it performs the aggregating operations on the data.
-        if ($query->distinct && $column !== '*') {
-            $column = 'distinct ' . $column;
-        }
-
-        return 'select ' . $aggregate['function'] . '(' . $column . ') as aggregate';
-    }
-
-    /**
-     * Concatenate an array of segments, removing empties.
-     *
-     * @param array $segments
-     * @return string
-     */
-    protected function concatenate($segments)
-    {
-        return implode(' ', array_filter($segments, function ($value) {
-            return (string)$value !== '';
-        }));
-    }
-
-    /**
-     * Compile the components necessary for a select clause.
-     *
-     * @param Builder $query
-     * @return array
-     */
-    protected function compileComponents(Builder $query)
-    {
-        $sql = [];
-
-        foreach ($this->selectComponents as $component) {
-            // To compile the query, we'll spin through each component of the query and
-            // see if that component exists. If it does we'll just call the compiler
-            // function for the component which is responsible for making the SQL.
-            if (isset($query->$component) && !is_null($query->$component)) {
-                $method = 'compile' . ucfirst($component);
-
-                $sql[$component] = $this->$method($query, $query->$component);
-            }
-        }
-
-        return $sql;
-    }
-
-    /**
-     * Determine if the given string is a JSON selector.
-     *
-     * @param string $value
-     * @return bool
-     */
-    protected function isJsonSelector($value)
-    {
-        return Str::contains($value, '->');
-    }
-
-    /**
-     * Wrap the given JSON selector.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function wrapJsonSelector($value)
-    {
-        throw new RuntimeException('This database engine does not support JSON operations.');
-    }
-
-    /**
-     * Compile the "join" portions of the query.
-     *
-     * @param Builder $query
-     * @param array $joins
-     * @return string
-     */
-    protected function compileJoins(Builder $query, $joins)
-    {
-        return collect($joins)->map(function ($join) use ($query) {
-            $table = $this->wrapTable($join->table);
-
-            $nestedJoins = is_null($join->joins) ? '' : ' ' . $this->compileJoins($query, $join->joins);
-
-            $tableAndNestedJoins = is_null($join->joins) ? $table : '(' . $table . $nestedJoins . ')';
-
-            return trim("{$join->type} join {$tableAndNestedJoins} {$this->compileWheres($join)}");
-        })->implode(' ');
-    }
-
-    /**
-     * Compile the "where" portions of the query.
-     *
-     * @param Builder $query
-     * @return string
-     */
-    protected function compileWheres(Builder $query)
-    {
-        // Each type of where clauses has its own compiler function which is responsible
-        // for actually creating the where clauses SQL. This helps keep the code nice
-        // and maintainable since each clause has a very small method that it uses.
-        if (is_null($query->wheres)) {
-            return '';
-        }
-
-        // If we actually have some where clauses, we will strip off the first boolean
-        // operator, which is added by the query builders for convenience so we can
-        // avoid checking for the first clauses in each of the compilers methods.
-        if (count($sql = $this->compileWheresToArray($query)) > 0) {
-            return $this->concatenateWhereClauses($query, $sql);
-        }
-
-        return '';
-    }
-
-    /**
-     * Get an array of all the where clauses for the query.
-     *
-     * @param Builder $query
-     * @return array
-     */
-    protected function compileWheresToArray($query)
-    {
-        return collect($query->wheres)->map(function ($where) use ($query) {
-            return $where['boolean'] . ' ' . $this->{"where{$where['type']}"}($query, $where);
-        })->all();
-    }
-
-    /**
-     * Format the where clause statements into one string.
-     *
-     * @param Builder $query
-     * @param array $sql
-     * @return string
-     */
-    protected function concatenateWhereClauses($query, $sql)
-    {
-        $conjunction = $query instanceof JoinClause ? 'on' : 'where';
-
-        return $conjunction . ' ' . $this->removeLeadingBoolean(implode(' ', $sql));
-    }
-
-    /**
-     * Remove the leading boolean from a statement.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function removeLeadingBoolean($value)
-    {
-        return preg_replace('/and |or /i', '', $value, 1);
     }
 
     /**

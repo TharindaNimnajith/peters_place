@@ -13,6 +13,15 @@ class Swift_Transport_SendmailTransportTest extends Swift_Transport_AbstractSmtp
         $this->assertEquals('/usr/sbin/sendmail -oi -t', $sendmail->getCommand());
     }
 
+    protected function getSendmail($buf, $dispatcher = null)
+    {
+        if (!$dispatcher) {
+            $dispatcher = $this->createEventDispatcher();
+        }
+
+        return new Swift_Transport_SendmailTransport($buf, $dispatcher);
+    }
+
     public function testSendingMessageIn_t_ModeUsesSimplePipe()
     {
         $buf = $this->getBuffer();
@@ -126,15 +135,6 @@ class Swift_Transport_SendmailTransportTest extends Swift_Transport_AbstractSmtp
 
         $ref = $sendmail->setCommand('/foo');
         $this->assertEquals($ref, $sendmail);
-    }
-
-    protected function getSendmail($buf, $dispatcher = null)
-    {
-        if (!$dispatcher) {
-            $dispatcher = $this->createEventDispatcher();
-        }
-
-        return new Swift_Transport_SendmailTransport($buf, $dispatcher);
     }
 
     protected function getTransport($buf, $dispatcher = null, $addressEncoder = null, $command = '/usr/sbin/sendmail -bs')

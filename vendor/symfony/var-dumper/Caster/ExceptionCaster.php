@@ -11,16 +11,9 @@
 
 namespace Symfony\Component\VarDumper\Caster;
 
-use Error;
-use ErrorException;
-use Exception;
 use Symfony\Component\Debug\Exception\SilencedErrorContext;
 use Symfony\Component\VarDumper\Cloner\Stub;
 use Symfony\Component\VarDumper\Exception\ThrowingCasterException;
-use function array_slice;
-use function count;
-use function get_class;
-use function strlen;
 
 /**
  * Casts common Exception classes to array representation.
@@ -51,17 +44,62 @@ class ExceptionCaster
 
     private static $framesCache = [];
 
-    public static function castError(Error $e, array $a, Stub $stub, $isNested, $filter = 0)
+    public static function castError(\Error $e, array $a, Stub $stub, $isNested, $filter = 0)
     {
         return self::filterExceptionArray($stub->class, $a, "\0Error\0", $filter);
     }
 
-    public static function castException(Exception $e, array $a, Stub $stub, $isNested, $filter = 0)
+    private static function filterExceptionArray($xClass, array $a, $xPrefix, $filter)
+    {
+        if (isset($a[$xPrefix . 'trace'])) {
+            $trace = $a[$xPrefix . 'trace'];
+            unset($a[$xPrefix . 'trace']); // Ensures the trace is always last
+        } else {
+            $trace = [];
+        }
+
+        if (!($filter & Caster::EXCLUDE_VERBOSE) && $trace) {
+            if (isset($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line'])) {
+                self::traceUnshift($trace, $xClass, $a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line']);
+            }
+            $a[Caster::PREFIX_VIRTUAL . 'trace'] = new TraceStub($trace, self::$traceArgs);
+        }
+        if (empty($a[$xPrefix . 'previous'])) {
+            unset($a[$xPrefix . 'previous']);
+        }
+        unset($a[$xPrefix . 'string'], $a[Caster::PREFIX_DYNAMIC . 'xdebug_message'], $a[Caster::PREFIX_DYNAMIC . '__destructorException']);
+
+        if (isset($a[Caster::PREFIX_PROTECTED . 'message']) && false !== strpos($a[Caster::PREFIX_PROTECTED . 'message'], "class@anonymous\0")) {
+            $a[Caster::PREFIX_PROTECTED . 'message'] = preg_replace_callback('/class@anonymous\x00.*?\.php0x?[0-9a-fA-F]++/', function ($m) {
+                return class_exists($m[0], false) ? get_parent_class($m[0]) . '@anonymous' : $m[0];
+            }, $a[Caster::PREFIX_PROTECTED . 'message']);
+        }
+
+        if (isset($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line'])) {
+            $a[Caster::PREFIX_PROTECTED . 'file'] = new LinkStub($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line']);
+        }
+
+        return $a;
+    }
+
+    private static function traceUnshift(&$trace, $class, $file, $line)
+    {
+        if (isset($trace[0]['file'], $trace[0]['line']) && $trace[0]['file'] === $file && $trace[0]['line'] === $line) {
+            return;
+        }
+        array_unshift($trace, [
+            'function' => $class ? 'new ' . $class : null,
+            'file' => $file,
+            'line' => $line,
+        ]);
+    }
+
+    public static function castException(\Exception $e, array $a, Stub $stub, $isNested, $filter = 0)
     {
         return self::filterExceptionArray($stub->class, $a, "\0Exception\0", $filter);
     }
 
-    public static function castErrorException(ErrorException $e, array $a, Stub $stub, $isNested)
+    public static function castErrorException(\ErrorException $e, array $a, Stub $stub, $isNested)
     {
         if (isset($a[$s = Caster::PREFIX_PROTECTED . 'severity'], self::$errorTypes[$a[$s]])) {
             $a[$s] = new ConstStub(self::$errorTypes[$a[$s]], $a[$s]);
@@ -76,12 +114,12 @@ class ExceptionCaster
         $prefix = Caster::PREFIX_PROTECTED;
         $xPrefix = "\0Exception\0";
 
-        if (isset($a[$xPrefix . 'previous'], $a[$trace]) && $a[$xPrefix . 'previous'] instanceof Exception) {
+        if (isset($a[$xPrefix . 'previous'], $a[$trace]) && $a[$xPrefix . 'previous'] instanceof \Exception) {
             $b = (array)$a[$xPrefix . 'previous'];
-            $class = get_class($a[$xPrefix . 'previous']);
+            $class = \get_class($a[$xPrefix . 'previous']);
             $class = 'c' === $class[0] && 0 === strpos($class, "class@anonymous\0") ? get_parent_class($class) . '@anonymous' : $class;
             self::traceUnshift($b[$xPrefix . 'trace'], $class, $b[$prefix . 'file'], $b[$prefix . 'line']);
-            $a[$trace] = new TraceStub($b[$xPrefix . 'trace'], false, 0, -count($a[$trace]->value));
+            $a[$trace] = new TraceStub($b[$xPrefix . 'trace'], false, 0, -\count($a[$trace]->value));
         }
 
         unset($a[$xPrefix . 'previous'], $a[$prefix . 'code'], $a[$prefix . 'file'], $a[$prefix . 'line']);
@@ -127,7 +165,7 @@ class ExceptionCaster
         $prefix = Caster::PREFIX_VIRTUAL;
 
         $a = [];
-        $j = count($frames);
+        $j = \count($frames);
         if (0 > $i = $trace->sliceOffset) {
             $i = max(0, $j + $i);
         }
@@ -184,7 +222,7 @@ class ExceptionCaster
             $lastCall = $call;
         }
         if (null !== $trace->sliceLength) {
-            $a = array_slice($a, 0, $trace->sliceLength, true);
+            $a = \array_slice($a, 0, $trace->sliceLength, true);
         }
 
         return $a;
@@ -208,7 +246,7 @@ class ExceptionCaster
                 $a[$prefix . 'src'] = self::$framesCache[$cacheKey];
             } else {
                 if (preg_match('/\((\d+)\)(?:\([\da-f]{32}\))? : (?:eval\(\)\'d code|runtime-created function)$/', $f['file'], $match)) {
-                    $f['file'] = substr($f['file'], 0, -strlen($match[0]));
+                    $f['file'] = substr($f['file'], 0, -\strlen($match[0]));
                     $f['line'] = (int)$match[1];
                 }
                 $caller = isset($f['function']) ? sprintf('in %s() on line %d', (isset($f['class']) ? $f['class'] . $f['type'] : '') . $f['function'], $f['line']) : null;
@@ -221,7 +259,7 @@ class ExceptionCaster
 
                 if (file_exists($f['file']) && 0 <= self::$srcContext) {
                     if (!empty($f['class']) && (is_subclass_of($f['class'], 'Twig\Template') || is_subclass_of($f['class'], 'Twig_Template')) && method_exists($f['class'], 'getDebugInfo')) {
-                        $template = isset($f['object']) ? $f['object'] : unserialize(sprintf('O:%d:"%s":0:{}', strlen($f['class']), $f['class']));
+                        $template = isset($f['object']) ? $f['object'] : unserialize(sprintf('O:%d:"%s":0:{}', \strlen($f['class']), $f['class']));
 
                         $ellipsis = 0;
                         $templateSrc = method_exists($template, 'getSourceContext') ? $template->getSourceContext()->getCode() : (method_exists($template, 'getSource') ? $template->getSource() : '');
@@ -240,7 +278,7 @@ class ExceptionCaster
                         $src = self::extractSource(file_get_contents($f['file']), $f['line'], self::$srcContext, $caller, 'php', $f['file']);
                         $srcKey .= ':' . $f['line'];
                         if ($ellipsis) {
-                            $ellipsis += 1 + strlen($f['line']);
+                            $ellipsis += 1 + \strlen($f['line']);
                         }
                     }
                     $srcAttr .= sprintf('&separator= &file=%s&line=%d', rawurlencode($f['file']), $f['line']);
@@ -266,51 +304,6 @@ class ExceptionCaster
         }
 
         return $a;
-    }
-
-    private static function filterExceptionArray($xClass, array $a, $xPrefix, $filter)
-    {
-        if (isset($a[$xPrefix . 'trace'])) {
-            $trace = $a[$xPrefix . 'trace'];
-            unset($a[$xPrefix . 'trace']); // Ensures the trace is always last
-        } else {
-            $trace = [];
-        }
-
-        if (!($filter & Caster::EXCLUDE_VERBOSE) && $trace) {
-            if (isset($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line'])) {
-                self::traceUnshift($trace, $xClass, $a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line']);
-            }
-            $a[Caster::PREFIX_VIRTUAL . 'trace'] = new TraceStub($trace, self::$traceArgs);
-        }
-        if (empty($a[$xPrefix . 'previous'])) {
-            unset($a[$xPrefix . 'previous']);
-        }
-        unset($a[$xPrefix . 'string'], $a[Caster::PREFIX_DYNAMIC . 'xdebug_message'], $a[Caster::PREFIX_DYNAMIC . '__destructorException']);
-
-        if (isset($a[Caster::PREFIX_PROTECTED . 'message']) && false !== strpos($a[Caster::PREFIX_PROTECTED . 'message'], "class@anonymous\0")) {
-            $a[Caster::PREFIX_PROTECTED . 'message'] = preg_replace_callback('/class@anonymous\x00.*?\.php0x?[0-9a-fA-F]++/', function ($m) {
-                return class_exists($m[0], false) ? get_parent_class($m[0]) . '@anonymous' : $m[0];
-            }, $a[Caster::PREFIX_PROTECTED . 'message']);
-        }
-
-        if (isset($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line'])) {
-            $a[Caster::PREFIX_PROTECTED . 'file'] = new LinkStub($a[Caster::PREFIX_PROTECTED . 'file'], $a[Caster::PREFIX_PROTECTED . 'line']);
-        }
-
-        return $a;
-    }
-
-    private static function traceUnshift(&$trace, $class, $file, $line)
-    {
-        if (isset($trace[0]['file'], $trace[0]['line']) && $trace[0]['file'] === $file && $trace[0]['line'] === $line) {
-            return;
-        }
-        array_unshift($trace, [
-            'function' => $class ? 'new ' . $class : null,
-            'file' => $file,
-            'line' => $line,
-        ]);
     }
 
     private static function extractSource($srcLines, $line, $srcContext, $title, $lang, $file = null)

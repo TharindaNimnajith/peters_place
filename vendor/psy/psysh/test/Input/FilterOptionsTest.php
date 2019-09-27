@@ -37,6 +37,14 @@ class FilterOptionsTest extends TestCase
         $this->assertEquals($hasFilter, $filterOptions->hasFilter());
     }
 
+    private function getInput($input)
+    {
+        $input = new StringInput($input);
+        $input->bind(new InputDefinition(FilterOptions::getOptions()));
+
+        return $input;
+    }
+
     public function validInputs()
     {
         return [
@@ -95,13 +103,5 @@ class FilterOptionsTest extends TestCase
             ['--grep foo -v', 'food', false],
             ['--grep foo -v', 'whatever', true],
         ];
-    }
-
-    private function getInput($input)
-    {
-        $input = new StringInput($input);
-        $input->bind(new InputDefinition(FilterOptions::getOptions()));
-
-        return $input;
     }
 }

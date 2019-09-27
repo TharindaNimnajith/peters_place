@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Events_SendEventTest extends TestCase
+class Swift_Events_SendEventTest extends \PHPUnit\Framework\TestCase
 {
     public function testMessageCanBeFetchedViaGetter()
     {
@@ -15,6 +13,21 @@ class Swift_Events_SendEventTest extends TestCase
         $this->assertEquals($message, $ref,
             '%s: Message should be returned from getMessage()'
         );
+    }
+
+    private function createMessage()
+    {
+        return $this->getMockBuilder('Swift_Mime_SimpleMessage')->disableOriginalConstructor()->getMock();
+    }
+
+    private function createTransport()
+    {
+        return $this->getMockBuilder('Swift_Transport')->getMock();
+    }
+
+    private function createEvent(Swift_Transport $source, Swift_Mime_SimpleMessage $message)
+    {
+        return new Swift_Events_SendEvent($source, $message);
     }
 
     public function testTransportCanBeFetchViaGetter()
@@ -79,20 +92,5 @@ class Swift_Events_SendEventTest extends TestCase
 
         $evt = $this->createEvent($transport, $message);
         $this->assertEquals([], $evt->getFailedRecipients());
-    }
-
-    private function createMessage()
-    {
-        return $this->getMockBuilder('Swift_Mime_SimpleMessage')->disableOriginalConstructor()->getMock();
-    }
-
-    private function createTransport()
-    {
-        return $this->getMockBuilder('Swift_Transport')->getMock();
-    }
-
-    private function createEvent(Swift_Transport $source, Swift_Mime_SimpleMessage $message)
-    {
-        return new Swift_Events_SendEvent($source, $message);
     }
 }

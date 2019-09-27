@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
+class Swift_Mime_Headers_ParameterizedHeaderTest extends \SwiftMailerTestCase
 {
     private $charset = 'utf-8';
     private $lang = 'en-us';
@@ -11,6 +11,29 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
             $this->getHeaderEncoder('Q', true), $this->getParameterEncoder(true)
         );
         $this->assertEquals(Swift_Mime_Header::TYPE_PARAMETERIZED, $header->getFieldType());
+    }
+
+    private function getHeader($name, $encoder, $paramEncoder)
+    {
+        $header = new Swift_Mime_Headers_ParameterizedHeader($name, $encoder, $paramEncoder);
+        $header->setCharset($this->charset);
+
+        return $header;
+    }
+
+    private function getHeaderEncoder($type, $stub = false)
+    {
+        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
+        $encoder->shouldReceive('getName')
+            ->zeroOrMoreTimes()
+            ->andReturn($type);
+
+        return $encoder;
+    }
+
+    private function getParameterEncoder($stub = false)
+    {
+        return $this->getMockery('Swift_Encoder')->shouldIgnoreMissing();
     }
 
     public function testValueIsReturnedVerbatim()
@@ -97,7 +120,7 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getParameterEncoder();
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), 63, Mockery::any())
+            ->with($value, \Mockery::any(), 63, \Mockery::any())
             ->andReturn(str_repeat('a', 63) . "\r\n" .
                 str_repeat('a', 63) . "\r\n" . str_repeat('a', 54));
 
@@ -146,7 +169,7 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getParameterEncoder();
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, 12, 62, Mockery::any())
+            ->with($value, 12, 62, \Mockery::any())
             ->andReturn(str_repeat('a', 20) . '%8F' . str_repeat('a', 10));
 
         $header = $this->getHeader('Content-Disposition',
@@ -199,7 +222,7 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getParameterEncoder();
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, 12, 62, Mockery::any())
+            ->with($value, 12, 62, \Mockery::any())
             ->andReturn(str_repeat('a', 20) . '%8F' . str_repeat('a', 28) . "\r\n" .
                 str_repeat('a', 32));
 
@@ -237,7 +260,7 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getHeaderEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo=8Fbar');
 
         $header = $this->getHeader('X-Foo', $encoder, $this->getParameterEncoder(true));
@@ -255,13 +278,13 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getHeaderEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo=8Fbar');
 
         $paramEncoder = $this->getParameterEncoder();
         $paramEncoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo%8Fbar');
 
         $header = $this->getHeader('X-Foo', $encoder, $paramEncoder);
@@ -279,7 +302,7 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getHeaderEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo=8Fbar');
 
         $header = $this->getHeader('X-Foo', $encoder, null);
@@ -314,13 +337,13 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getHeaderEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo=8Fbar');
 
         $paramEncoder = $this->getParameterEncoder();
         $paramEncoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo%8Fbar');
 
         $header = $this->getHeader('X-Foo', $encoder, $paramEncoder);
@@ -369,28 +392,5 @@ class Swift_Mime_Headers_ParameterizedHeaderTest extends SwiftMailerTestCase
         );
         $header->setParameters(['charset' => 'utf-8', 'delsp' => 'yes']);
         $this->assertEquals('utf-8', $header->getParameter('charset'));
-    }
-
-    private function getHeader($name, $encoder, $paramEncoder)
-    {
-        $header = new Swift_Mime_Headers_ParameterizedHeader($name, $encoder, $paramEncoder);
-        $header->setCharset($this->charset);
-
-        return $header;
-    }
-
-    private function getHeaderEncoder($type, $stub = false)
-    {
-        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
-        $encoder->shouldReceive('getName')
-            ->zeroOrMoreTimes()
-            ->andReturn($type);
-
-        return $encoder;
-    }
-
-    private function getParameterEncoder($stub = false)
-    {
-        return $this->getMockery('Swift_Encoder')->shouldIgnoreMissing();
     }
 }

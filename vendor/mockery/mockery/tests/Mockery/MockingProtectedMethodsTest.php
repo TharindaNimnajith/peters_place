@@ -105,12 +105,12 @@ abstract class TestWithProtectedMethods
         return $this->abstractProtected();
     }
 
+    abstract protected function abstractProtected();
+
     public function bar()
     {
         return $this->protectedBar();
     }
-
-    abstract protected function abstractProtected();
 
     protected function protectedBar()
     {

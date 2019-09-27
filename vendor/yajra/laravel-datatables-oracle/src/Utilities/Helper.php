@@ -3,10 +3,8 @@
 namespace Yajra\DataTables\Utilities;
 
 use DateTime;
-use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use stdClass;
 
 class Helper
 {
@@ -39,6 +37,18 @@ class Helper
     }
 
     /**
+     * Check if item order is valid.
+     *
+     * @param array $item
+     * @param array $array
+     * @return bool
+     */
+    protected static function isItemOrderInvalid($item, $array)
+    {
+        return $item['order'] === false || $item['order'] >= count($array);
+    }
+
+    /**
      * Determines if content is callable or blade string, processes and returns.
      *
      * @param mixed $content Pre-processed content
@@ -63,7 +73,7 @@ class Helper
      * @param string $str
      * @param array $data
      * @return mixed
-     * @throws Exception
+     * @throws \Exception
      */
     public static function compileBlade($str, $data = [])
     {
@@ -109,7 +119,7 @@ class Helper
      */
     public static function castToArray($param)
     {
-        if ($param instanceof stdClass) {
+        if ($param instanceof \stdClass) {
             $param = (array)$param;
 
             return $param;
@@ -169,6 +179,29 @@ class Helper
         return array_map(function ($row) {
             return self::transformRow($row);
         }, $data);
+    }
+
+    /**
+     * Transform row data into an array.
+     *
+     * @param mixed $row
+     * @return array
+     */
+    protected static function transformRow($row)
+    {
+        foreach ($row as $key => $value) {
+            if ($value instanceof DateTime) {
+                $row[$key] = $value->format('Y-m-d H:i:s');
+            } else {
+                if (is_object($value)) {
+                    $row[$key] = (string)$value;
+                } else {
+                    $row[$key] = $value;
+                }
+            }
+        }
+
+        return $row;
     }
 
     /**
@@ -279,40 +312,5 @@ class Helper
         }
 
         return $wild;
-    }
-
-    /**
-     * Check if item order is valid.
-     *
-     * @param array $item
-     * @param array $array
-     * @return bool
-     */
-    protected static function isItemOrderInvalid($item, $array)
-    {
-        return $item['order'] === false || $item['order'] >= count($array);
-    }
-
-    /**
-     * Transform row data into an array.
-     *
-     * @param mixed $row
-     * @return array
-     */
-    protected static function transformRow($row)
-    {
-        foreach ($row as $key => $value) {
-            if ($value instanceof DateTime) {
-                $row[$key] = $value->format('Y-m-d H:i:s');
-            } else {
-                if (is_object($value)) {
-                    $row[$key] = (string)$value;
-                } else {
-                    $row[$key] = $value;
-                }
-            }
-        }
-
-        return $row;
     }
 }

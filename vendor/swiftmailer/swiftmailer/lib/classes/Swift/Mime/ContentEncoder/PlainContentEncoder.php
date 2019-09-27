@@ -64,49 +64,6 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
     }
 
     /**
-     * Encode stream $in to stream $out.
-     *
-     * @param int $firstLineOffset ignored
-     * @param int $maxLineLength optional, 0 means no wrapping will occur
-     */
-    public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
-    {
-        $leftOver = '';
-        while (false !== $bytes = $os->read(8192)) {
-            $toencode = $leftOver . $bytes;
-            if ($this->canonical) {
-                $toencode = $this->canonicalize($toencode);
-            }
-            $wrapped = $this->safeWordwrap($toencode, $maxLineLength, "\r\n");
-            $lastLinePos = strrpos($wrapped, "\r\n");
-            $leftOver = substr($wrapped, $lastLinePos);
-            $wrapped = substr($wrapped, 0, $lastLinePos);
-
-            $is->write($wrapped);
-        }
-        if (strlen($leftOver)) {
-            $is->write($leftOver);
-        }
-    }
-
-    /**
-     * Get the name of this encoding scheme.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Not used.
-     */
-    public function charsetChanged($charset)
-    {
-    }
-
-    /**
      * Canonicalize string input (fix CRLF).
      *
      * @param string $string
@@ -160,5 +117,48 @@ class Swift_Mime_ContentEncoder_PlainContentEncoder implements Swift_Mime_Conten
         }
 
         return implode("\r\n", $lines);
+    }
+
+    /**
+     * Encode stream $in to stream $out.
+     *
+     * @param int $firstLineOffset ignored
+     * @param int $maxLineLength optional, 0 means no wrapping will occur
+     */
+    public function encodeByteStream(Swift_OutputByteStream $os, Swift_InputByteStream $is, $firstLineOffset = 0, $maxLineLength = 0)
+    {
+        $leftOver = '';
+        while (false !== $bytes = $os->read(8192)) {
+            $toencode = $leftOver . $bytes;
+            if ($this->canonical) {
+                $toencode = $this->canonicalize($toencode);
+            }
+            $wrapped = $this->safeWordwrap($toencode, $maxLineLength, "\r\n");
+            $lastLinePos = strrpos($wrapped, "\r\n");
+            $leftOver = substr($wrapped, $lastLinePos);
+            $wrapped = substr($wrapped, 0, $lastLinePos);
+
+            $is->write($wrapped);
+        }
+        if (strlen($leftOver)) {
+            $is->write($leftOver);
+        }
+    }
+
+    /**
+     * Get the name of this encoding scheme.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Not used.
+     */
+    public function charsetChanged($charset)
+    {
     }
 }

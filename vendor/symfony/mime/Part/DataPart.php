@@ -11,11 +11,9 @@
 
 namespace Symfony\Component\Mime\Part;
 
-use ReflectionProperty;
 use Symfony\Component\Mime\Exception\InvalidArgumentException;
 use Symfony\Component\Mime\Header\Headers;
 use Symfony\Component\Mime\MimeTypes;
-use function is_resource;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -82,6 +80,11 @@ class DataPart extends TextPart
         return $this->cid ?: $this->cid = $this->generateContentId();
     }
 
+    private function generateContentId(): string
+    {
+        return bin2hex(random_bytes(16)) . '@symfony';
+    }
+
     public function hasContentId(): bool
     {
         return null !== $this->cid;
@@ -109,7 +112,7 @@ class DataPart extends TextPart
 
     public function __destruct()
     {
-        if (null !== $this->handle && is_resource($this->handle)) {
+        if (null !== $this->handle && \is_resource($this->handle)) {
             fclose($this->handle);
         }
     }
@@ -121,7 +124,7 @@ class DataPart extends TextPart
 
         $this->_parent = [];
         foreach (['body', 'charset', 'subtype', 'disposition', 'name', 'encoding'] as $name) {
-            $r = new ReflectionProperty(TextPart::class, $name);
+            $r = new \ReflectionProperty(TextPart::class, $name);
             $r->setAccessible(true);
             $this->_parent[$name] = $r->getValue($this);
         }
@@ -132,21 +135,16 @@ class DataPart extends TextPart
 
     public function __wakeup()
     {
-        $r = new ReflectionProperty(AbstractPart::class, 'headers');
+        $r = new \ReflectionProperty(AbstractPart::class, 'headers');
         $r->setAccessible(true);
         $r->setValue($this, $this->_headers);
         unset($this->_headers);
 
         foreach (['body', 'charset', 'subtype', 'disposition', 'name', 'encoding'] as $name) {
-            $r = new ReflectionProperty(TextPart::class, $name);
+            $r = new \ReflectionProperty(TextPart::class, $name);
             $r->setAccessible(true);
             $r->setValue($this, $this->_parent[$name]);
         }
         unset($this->_parent);
-    }
-
-    private function generateContentId(): string
-    {
-        return bin2hex(random_bytes(16)) . '@symfony';
     }
 }

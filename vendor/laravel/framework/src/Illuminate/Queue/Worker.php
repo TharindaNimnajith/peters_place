@@ -124,159 +124,6 @@ class Worker
     }
 
     /**
-     * Sleep the script for a given number of seconds.
-     *
-     * @param int|float $seconds
-     * @return void
-     */
-    public function sleep($seconds)
-    {
-        if ($seconds < 1) {
-            usleep($seconds * 1000000);
-        } else {
-            sleep($seconds);
-        }
-    }
-
-    /**
-     * Stop listening and bail out of the script.
-     *
-     * @param int $status
-     * @return void
-     */
-    public function stop($status = 0)
-    {
-        $this->events->dispatch(new Events\WorkerStopping($status));
-
-        exit($status);
-    }
-
-    /**
-     * Determine if the memory limit has been exceeded.
-     *
-     * @param int $memoryLimit
-     * @return bool
-     */
-    public function memoryExceeded($memoryLimit)
-    {
-        return (memory_get_usage(true) / 1024 / 1024) >= $memoryLimit;
-    }
-
-    /**
-     * Kill the process.
-     *
-     * @param int $status
-     * @return void
-     */
-    public function kill($status = 0)
-    {
-        $this->events->dispatch(new Events\WorkerStopping($status));
-
-        if (extension_loaded('posix')) {
-            posix_kill(getmypid(), SIGKILL);
-        }
-
-        exit($status);
-    }
-
-    /**
-     * Process the given job from the queue.
-     *
-     * @param string $connectionName
-     * @param Job $job
-     * @param WorkerOptions $options
-     * @return void
-     *
-     * @throws Throwable
-     */
-    public function process($connectionName, $job, WorkerOptions $options)
-    {
-        try {
-            // First we will raise the before job event and determine if the job has already ran
-            // over its maximum attempt limits, which could primarily happen when this job is
-            // continually timing out and not actually throwing any exceptions from itself.
-            $this->raiseBeforeJobEvent($connectionName, $job);
-
-            $this->markJobAsFailedIfAlreadyExceedsMaxAttempts(
-                $connectionName, $job, (int)$options->maxTries
-            );
-
-            if ($job->isDeleted()) {
-                return $this->raiseAfterJobEvent($connectionName, $job);
-            }
-
-            // Here we will fire off the job and let it process. We will catch any exceptions so
-            // they can be reported to the developers logs, etc. Once the job is finished the
-            // proper events will be fired to let any listeners know this job has finished.
-            $job->fire();
-
-            $this->raiseAfterJobEvent($connectionName, $job);
-        } catch (Exception $e) {
-            $this->handleJobException($connectionName, $job, $options, $e);
-        } catch (Throwable $e) {
-            $this->handleJobException(
-                $connectionName, $job, $options, new FatalThrowableError($e)
-            );
-        }
-    }
-
-    /**
-     * Process the next job on the queue.
-     *
-     * @param string $connectionName
-     * @param string $queue
-     * @param WorkerOptions $options
-     * @return void
-     */
-    public function runNextJob($connectionName, $queue, WorkerOptions $options)
-    {
-        $job = $this->getNextJob(
-            $this->manager->connection($connectionName), $queue
-        );
-
-        // If we're able to pull a job off of the stack, we will process it and then return
-        // from this method. If there is no job on the queue, we will "sleep" the worker
-        // for the specified number of seconds, then keep processing jobs after sleep.
-        if ($job) {
-            return $this->runJob($job, $connectionName, $options);
-        }
-
-        $this->sleep($options->sleep);
-    }
-
-    /**
-     * Set the cache repository implementation.
-     *
-     * @param CacheContract $cache
-     * @return void
-     */
-    public function setCache(CacheContract $cache)
-    {
-        $this->cache = $cache;
-    }
-
-    /**
-     * Get the queue manager instance.
-     *
-     * @return QueueManager
-     */
-    public function getManager()
-    {
-        return $this->manager;
-    }
-
-    /**
-     * Set the queue manager instance.
-     *
-     * @param QueueManager $manager
-     * @return void
-     */
-    public function setManager(QueueManager $manager)
-    {
-        $this->manager = $manager;
-    }
-
-    /**
      * Determine if "async" signals are supported.
      *
      * @return bool
@@ -350,6 +197,21 @@ class Worker
     }
 
     /**
+     * Sleep the script for a given number of seconds.
+     *
+     * @param int|float $seconds
+     * @return void
+     */
+    public function sleep($seconds)
+    {
+        if ($seconds < 1) {
+            usleep($seconds * 1000000);
+        } else {
+            sleep($seconds);
+        }
+    }
+
+    /**
      * Stop the process if necessary.
      *
      * @param WorkerOptions $options
@@ -367,6 +229,30 @@ class Worker
         } elseif ($options->stopWhenEmpty && is_null($job)) {
             $this->stop();
         }
+    }
+
+    /**
+     * Stop listening and bail out of the script.
+     *
+     * @param int $status
+     * @return void
+     */
+    public function stop($status = 0)
+    {
+        $this->events->dispatch(new Events\WorkerStopping($status));
+
+        exit($status);
+    }
+
+    /**
+     * Determine if the memory limit has been exceeded.
+     *
+     * @param int $memoryLimit
+     * @return bool
+     */
+    public function memoryExceeded($memoryLimit)
+    {
+        return (memory_get_usage(true) / 1024 / 1024) >= $memoryLimit;
     }
 
     /**
@@ -498,6 +384,23 @@ class Worker
     }
 
     /**
+     * Kill the process.
+     *
+     * @param int $status
+     * @return void
+     */
+    public function kill($status = 0)
+    {
+        $this->events->dispatch(new Events\WorkerStopping($status));
+
+        if (extension_loaded('posix')) {
+            posix_kill(getmypid(), SIGKILL);
+        }
+
+        exit($status);
+    }
+
+    /**
      * Get the appropriate timeout for the given job.
      *
      * @param Job|null $job
@@ -529,6 +432,47 @@ class Worker
             $this->exceptions->report($e = new FatalThrowableError($e));
 
             $this->stopWorkerIfLostConnection($e);
+        }
+    }
+
+    /**
+     * Process the given job from the queue.
+     *
+     * @param string $connectionName
+     * @param Job $job
+     * @param WorkerOptions $options
+     * @return void
+     *
+     * @throws Throwable
+     */
+    public function process($connectionName, $job, WorkerOptions $options)
+    {
+        try {
+            // First we will raise the before job event and determine if the job has already ran
+            // over its maximum attempt limits, which could primarily happen when this job is
+            // continually timing out and not actually throwing any exceptions from itself.
+            $this->raiseBeforeJobEvent($connectionName, $job);
+
+            $this->markJobAsFailedIfAlreadyExceedsMaxAttempts(
+                $connectionName, $job, (int)$options->maxTries
+            );
+
+            if ($job->isDeleted()) {
+                return $this->raiseAfterJobEvent($connectionName, $job);
+            }
+
+            // Here we will fire off the job and let it process. We will catch any exceptions so
+            // they can be reported to the developers logs, etc. Once the job is finished the
+            // proper events will be fired to let any listeners know this job has finished.
+            $job->fire();
+
+            $this->raiseAfterJobEvent($connectionName, $job);
+        } catch (Exception $e) {
+            $this->handleJobException($connectionName, $job, $options, $e);
+        } catch (Throwable $e) {
+            $this->handleJobException(
+                $connectionName, $job, $options, new FatalThrowableError($e)
+            );
         }
     }
 
@@ -644,5 +588,61 @@ class Worker
         $this->events->dispatch(new Events\JobExceptionOccurred(
             $connectionName, $job, $e
         ));
+    }
+
+    /**
+     * Process the next job on the queue.
+     *
+     * @param string $connectionName
+     * @param string $queue
+     * @param WorkerOptions $options
+     * @return void
+     */
+    public function runNextJob($connectionName, $queue, WorkerOptions $options)
+    {
+        $job = $this->getNextJob(
+            $this->manager->connection($connectionName), $queue
+        );
+
+        // If we're able to pull a job off of the stack, we will process it and then return
+        // from this method. If there is no job on the queue, we will "sleep" the worker
+        // for the specified number of seconds, then keep processing jobs after sleep.
+        if ($job) {
+            return $this->runJob($job, $connectionName, $options);
+        }
+
+        $this->sleep($options->sleep);
+    }
+
+    /**
+     * Set the cache repository implementation.
+     *
+     * @param CacheContract $cache
+     * @return void
+     */
+    public function setCache(CacheContract $cache)
+    {
+        $this->cache = $cache;
+    }
+
+    /**
+     * Get the queue manager instance.
+     *
+     * @return QueueManager
+     */
+    public function getManager()
+    {
+        return $this->manager;
+    }
+
+    /**
+     * Set the queue manager instance.
+     *
+     * @param QueueManager $manager
+     * @return void
+     */
+    public function setManager(QueueManager $manager)
+    {
+        $this->manager = $manager;
     }
 }

@@ -193,6 +193,26 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
     }
 
     /**
+     * Returns the authenticator list for the given agent.
+     *
+     * @return array
+     */
+    protected function getAuthenticatorsForAgent()
+    {
+        if (!$mode = strtolower($this->auth_mode)) {
+            return $this->authenticators;
+        }
+
+        foreach ($this->authenticators as $authenticator) {
+            if (strtolower($authenticator->getAuthKeyword()) == $mode) {
+                return [$authenticator];
+            }
+        }
+
+        throw new Swift_TransportException('Auth mode ' . $mode . ' is invalid');
+    }
+
+    /**
      * Not used.
      */
     public function getMailParams()
@@ -244,25 +264,5 @@ class Swift_Transport_Esmtp_AuthHandler implements Swift_Transport_EsmtpHandler
      */
     public function resetState()
     {
-    }
-
-    /**
-     * Returns the authenticator list for the given agent.
-     *
-     * @return array
-     */
-    protected function getAuthenticatorsForAgent()
-    {
-        if (!$mode = strtolower($this->auth_mode)) {
-            return $this->authenticators;
-        }
-
-        foreach ($this->authenticators as $authenticator) {
-            if (strtolower($authenticator->getAuthKeyword()) == $mode) {
-                return [$authenticator];
-            }
-        }
-
-        throw new Swift_TransportException('Auth mode ' . $mode . ' is invalid');
     }
 }

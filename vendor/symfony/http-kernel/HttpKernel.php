@@ -11,9 +11,6 @@
 
 namespace Symfony\Component\HttpKernel;
 
-use Exception;
-use LogicException;
-use RuntimeException;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Exception\RequestExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,11 +32,6 @@ use Symfony\Component\HttpKernel\Exception\ControllerDoesNotReturnResponseExcept
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use function get_class;
-use function is_array;
-use function is_object;
-use function is_resource;
-use function is_string;
 
 /**
  * HttpKernel notifies events to convert a Request object to a Response one.
@@ -74,7 +66,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
         try {
             return $this->handleRaw($request, $type);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($e instanceof RequestExceptionInterface) {
                 $e = new BadRequestHttpException($e->getMessage(), $e);
             }
@@ -89,31 +81,6 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     }
 
     /**
-     * @internal
-     */
-    public function terminateWithException(Exception $exception, Request $request = null)
-    {
-        if (!$request = $request ?: $this->requestStack->getMasterRequest()) {
-            throw $exception;
-        }
-
-        $response = $this->handleException($exception, $request, self::MASTER_REQUEST);
-
-        $response->sendHeaders();
-        $response->sendContent();
-
-        $this->terminate($request, $response);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function terminate(Request $request, Response $response)
-    {
-        $this->dispatcher->dispatch(new TerminateEvent($this, $request, $response), KernelEvents::TERMINATE);
-    }
-
-    /**
      * Handles a request to convert it to a response.
      *
      * Exceptions are not caught.
@@ -123,7 +90,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      *
      * @return Response A Response instance
      *
-     * @throws LogicException       If one of the listener does not behave as expected
+     * @throws \LogicException       If one of the listener does not behave as expected
      * @throws NotFoundHttpException When controller cannot be found
      */
     private function handleRaw(Request $request, int $type = self::MASTER_REQUEST)
@@ -189,7 +156,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      *
      * @return Response The filtered Response instance
      *
-     * @throws RuntimeException if the passed object is not a Response instance
+     * @throws \RuntimeException if the passed object is not a Response instance
      */
     private function filterResponse(Response $response, Request $request, int $type)
     {
@@ -220,11 +187,11 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
      */
     private function varToString($var): string
     {
-        if (is_object($var)) {
-            return sprintf('an object of type %s', get_class($var));
+        if (\is_object($var)) {
+            return sprintf('an object of type %s', \get_class($var));
         }
 
-        if (is_array($var)) {
+        if (\is_array($var)) {
             $a = [];
             foreach ($var as $k => $v) {
                 $a[] = sprintf('%s => ...', $k);
@@ -233,7 +200,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
             return sprintf('an array ([%s])', mb_substr(implode(', ', $a), 0, 255));
         }
 
-        if (is_resource($var)) {
+        if (\is_resource($var)) {
             return sprintf('a resource (%s)', get_resource_type($var));
         }
 
@@ -249,7 +216,7 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
             return 'a boolean value (true)';
         }
 
-        if (is_string($var)) {
+        if (\is_string($var)) {
             return sprintf('a string ("%s%s")', mb_substr($var, 0, 255), mb_strlen($var) > 255 ? '...' : '');
         }
 
@@ -263,13 +230,13 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
     /**
      * Handles an exception by trying to convert it to a Response.
      *
-     * @param Exception $e An \Exception instance
+     * @param \Exception $e An \Exception instance
      * @param Request $request A Request instance
      * @param int $type The type of the request (one of HttpKernelInterface::MASTER_REQUEST or HttpKernelInterface::SUB_REQUEST)
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    private function handleException(Exception $e, Request $request, int $type): Response
+    private function handleException(\Exception $e, Request $request, int $type): Response
     {
         $event = new ExceptionEvent($this, $request, $type, $e);
         $this->dispatcher->dispatch($event, KernelEvents::EXCEPTION);
@@ -299,8 +266,33 @@ class HttpKernel implements HttpKernelInterface, TerminableInterface
 
         try {
             return $this->filterResponse($response, $request, $type);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $response;
         }
+    }
+
+    /**
+     * @internal
+     */
+    public function terminateWithException(\Exception $exception, Request $request = null)
+    {
+        if (!$request = $request ?: $this->requestStack->getMasterRequest()) {
+            throw $exception;
+        }
+
+        $response = $this->handleException($exception, $request, self::MASTER_REQUEST);
+
+        $response->sendHeaders();
+        $response->sendContent();
+
+        $this->terminate($request, $response);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function terminate(Request $request, Response $response)
+    {
+        $this->dispatcher->dispatch(new TerminateEvent($this, $request, $response), KernelEvents::TERMINATE);
     }
 }

@@ -50,130 +50,6 @@ class FileStore implements Store
     }
 
     /**
-     * Remove an item from the cache.
-     *
-     * @param string $key
-     * @return bool
-     */
-    public function forget($key)
-    {
-        if ($this->files->exists($file = $this->path($key))) {
-            return $this->files->delete($file);
-        }
-
-        return false;
-    }
-
-    /**
-     * Decrement the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return int
-     */
-    public function decrement($key, $value = 1)
-    {
-        return $this->increment($key, $value * -1);
-    }
-
-    /**
-     * Increment the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return int
-     */
-    public function increment($key, $value = 1)
-    {
-        $raw = $this->getPayload($key);
-
-        return tap(((int)$raw['data']) + $value, function ($newValue) use ($key, $raw) {
-            $this->put($key, $newValue, $raw['time'] ?? 0);
-        });
-    }
-
-    /**
-     * Store an item in the cache for a given number of seconds.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @param int $seconds
-     * @return bool
-     */
-    public function put($key, $value, $seconds)
-    {
-        $this->ensureCacheDirectoryExists($path = $this->path($key));
-
-        $result = $this->files->put(
-            $path, $this->expiration($seconds) . serialize($value), true
-        );
-
-        return $result !== false && $result > 0;
-    }
-
-    /**
-     * Store an item in the cache indefinitely.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return bool
-     */
-    public function forever($key, $value)
-    {
-        return $this->put($key, $value, 0);
-    }
-
-    /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        if (!$this->files->isDirectory($this->directory)) {
-            return false;
-        }
-
-        foreach ($this->files->directories($this->directory) as $directory) {
-            if (!$this->files->deleteDirectory($directory)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Get the Filesystem instance.
-     *
-     * @return Filesystem
-     */
-    public function getFilesystem()
-    {
-        return $this->files;
-    }
-
-    /**
-     * Get the working directory of the cache.
-     *
-     * @return string
-     */
-    public function getDirectory()
-    {
-        return $this->directory;
-    }
-
-    /**
-     * Get the cache key prefix.
-     *
-     * @return string
-     */
-    public function getPrefix()
-    {
-        return '';
-    }
-
-    /**
      * Retrieve an item and expiry time from the cache by key.
      *
      * @param string $key
@@ -243,6 +119,68 @@ class FileStore implements Store
     }
 
     /**
+     * Remove an item from the cache.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function forget($key)
+    {
+        if ($this->files->exists($file = $this->path($key))) {
+            return $this->files->delete($file);
+        }
+
+        return false;
+    }
+
+    /**
+     * Decrement the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return int
+     */
+    public function decrement($key, $value = 1)
+    {
+        return $this->increment($key, $value * -1);
+    }
+
+    /**
+     * Increment the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return int
+     */
+    public function increment($key, $value = 1)
+    {
+        $raw = $this->getPayload($key);
+
+        return tap(((int)$raw['data']) + $value, function ($newValue) use ($key, $raw) {
+            $this->put($key, $newValue, $raw['time'] ?? 0);
+        });
+    }
+
+    /**
+     * Store an item in the cache for a given number of seconds.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param int $seconds
+     * @return bool
+     */
+    public function put($key, $value, $seconds)
+    {
+        $this->ensureCacheDirectoryExists($path = $this->path($key));
+
+        $result = $this->files->put(
+            $path, $this->expiration($seconds) . serialize($value), true
+        );
+
+        return $result !== false && $result > 0;
+    }
+
+    /**
      * Create the file cache directory if necessary.
      *
      * @param string $path
@@ -266,5 +204,67 @@ class FileStore implements Store
         $time = $this->availableAt($seconds);
 
         return $seconds === 0 || $time > 9999999999 ? 9999999999 : $time;
+    }
+
+    /**
+     * Store an item in the cache indefinitely.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    public function forever($key, $value)
+    {
+        return $this->put($key, $value, 0);
+    }
+
+    /**
+     * Remove all items from the cache.
+     *
+     * @return bool
+     */
+    public function flush()
+    {
+        if (!$this->files->isDirectory($this->directory)) {
+            return false;
+        }
+
+        foreach ($this->files->directories($this->directory) as $directory) {
+            if (!$this->files->deleteDirectory($directory)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get the Filesystem instance.
+     *
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Get the working directory of the cache.
+     *
+     * @return string
+     */
+    public function getDirectory()
+    {
+        return $this->directory;
+    }
+
+    /**
+     * Get the cache key prefix.
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return '';
     }
 }

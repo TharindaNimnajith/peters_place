@@ -26,23 +26,6 @@ class PhpRedisConnector implements Connector
     }
 
     /**
-     * Create a new clustered PhpRedis connection.
-     *
-     * @param array $config
-     * @param array $clusterOptions
-     * @param array $options
-     * @return PhpRedisClusterConnection
-     */
-    public function connectToCluster(array $config, array $clusterOptions, array $options)
-    {
-        $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
-
-        return new PhpRedisClusterConnection($this->createRedisClusterInstance(
-            array_map([$this, 'buildClusterConnectionString'], $config), $options
-        ));
-    }
-
-    /**
      * Create the Redis client instance.
      *
      * @param array $config
@@ -95,6 +78,23 @@ class PhpRedisConnector implements Connector
         }
 
         $client->{($persistent ? 'pconnect' : 'connect')}(...$parameters);
+    }
+
+    /**
+     * Create a new clustered PhpRedis connection.
+     *
+     * @param array $config
+     * @param array $clusterOptions
+     * @param array $options
+     * @return PhpRedisClusterConnection
+     */
+    public function connectToCluster(array $config, array $clusterOptions, array $options)
+    {
+        $options = array_merge($options, $clusterOptions, Arr::pull($config, 'options', []));
+
+        return new PhpRedisClusterConnection($this->createRedisClusterInstance(
+            array_map([$this, 'buildClusterConnectionString'], $config), $options
+        ));
     }
 
     /**

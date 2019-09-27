@@ -45,6 +45,15 @@ abstract class AbstractMultipartPart extends AbstractPart
         return $headers;
     }
 
+    private function getBoundary(): string
+    {
+        if (null === $this->boundary) {
+            $this->boundary = '_=_symfony_' . time() . '_' . bin2hex(random_bytes(16)) . '_=_';
+        }
+
+        return $this->boundary;
+    }
+
     public function bodyToString(): string
     {
         $parts = $this->getParts();
@@ -74,14 +83,5 @@ abstract class AbstractMultipartPart extends AbstractPart
             yield "\r\n";
         }
         yield '--' . $this->getBoundary() . "--\r\n";
-    }
-
-    private function getBoundary(): string
-    {
-        if (null === $this->boundary) {
-            $this->boundary = '_=_symfony_' . time() . '_' . bin2hex(random_bytes(16)) . '_=_';
-        }
-
-        return $this->boundary;
     }
 }

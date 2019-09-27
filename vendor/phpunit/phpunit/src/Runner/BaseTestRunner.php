@@ -144,14 +144,6 @@ abstract class BaseTestRunner
     }
 
     /**
-     * Returns the loader to be used.
-     */
-    public function getLoader(): TestSuiteLoader
-    {
-        return new StandardTestSuiteLoader;
-    }
-
-    /**
      * Returns the loaded ReflectionClass for a suite name.
      */
     protected function loadSuiteClass(string $suiteClassName, string $suiteClassFile = ''): ReflectionClass
@@ -159,6 +151,14 @@ abstract class BaseTestRunner
         $loader = $this->getLoader();
 
         return $loader->load($suiteClassName, $suiteClassFile);
+    }
+
+    /**
+     * Returns the loader to be used.
+     */
+    public function getLoader(): TestSuiteLoader
+    {
+        return new StandardTestSuiteLoader;
     }
 
     /**

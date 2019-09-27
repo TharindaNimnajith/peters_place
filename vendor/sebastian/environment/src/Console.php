@@ -10,25 +10,6 @@
 
 namespace SebastianBergmann\Environment;
 
-use function defined;
-use function fclose;
-use function fstat;
-use function function_exists;
-use function getenv;
-use function is_resource;
-use function is_string;
-use function posix_isatty;
-use function preg_match;
-use function proc_close;
-use function proc_open;
-use function shell_exec;
-use function stream_get_contents;
-use function stream_isatty;
-use function trim;
-use const DIRECTORY_SEPARATOR;
-use const STDIN;
-use const STDOUT;
-
 final class Console
 {
     /**
@@ -54,32 +35,37 @@ final class Console
      */
     public function hasColorSupport(): bool
     {
-        if ('Hyper' === getenv('TERM_PROGRAM')) {
+        if ('Hyper' === \getenv('TERM_PROGRAM')) {
             return true;
         }
 
         if ($this->isWindows()) {
             // @codeCoverageIgnoreStart
-            return (defined('STDOUT') && function_exists('sapi_windows_vt100_support') && @sapi_windows_vt100_support(STDOUT))
-                || false !== getenv('ANSICON')
-                || 'ON' === getenv('ConEmuANSI')
-                || 'xterm' === getenv('TERM');
+            return (\defined('STDOUT') && \function_exists('sapi_windows_vt100_support') && @sapi_windows_vt100_support(\STDOUT))
+                || false !== \getenv('ANSICON')
+                || 'ON' === \getenv('ConEmuANSI')
+                || 'xterm' === \getenv('TERM');
             // @codeCoverageIgnoreEnd
         }
 
-        if (!defined('STDOUT')) {
+        if (!\defined('STDOUT')) {
             // @codeCoverageIgnoreStart
             return false;
             // @codeCoverageIgnoreEnd
         }
 
-        if ($this->isInteractive(STDOUT)) {
+        if ($this->isInteractive(\STDOUT)) {
             return true;
         }
 
-        $stat = @fstat(STDOUT);
+        $stat = @\fstat(\STDOUT);
         // Check if formatted mode is S_IFCHR
         return $stat ? 0020000 === ($stat['mode'] & 0170000) : false;
+    }
+
+    private function isWindows(): bool
+    {
+        return \DIRECTORY_SEPARATOR === '\\';
     }
 
     /**
@@ -92,8 +78,8 @@ final class Console
      */
     public function isInteractive($fileDescriptor = self::STDOUT): bool
     {
-        return (is_resource($fileDescriptor) && function_exists('stream_isatty') && @stream_isatty($fileDescriptor)) // stream_isatty requires that descriptor is a real resource, not numeric ID of it
-            || (function_exists('posix_isatty') && @posix_isatty($fileDescriptor));
+        return (\is_resource($fileDescriptor) && \function_exists('stream_isatty') && @\stream_isatty($fileDescriptor)) // stream_isatty requires that descriptor is a real resource, not numeric ID of it
+            || (\function_exists('posix_isatty') && @\posix_isatty($fileDescriptor));
     }
 
     /**
@@ -107,16 +93,11 @@ final class Console
             return $this->getNumberOfColumnsWindows();
         }
 
-        if (!$this->isInteractive(defined('STDIN') ? STDIN : self::STDIN)) {
+        if (!$this->isInteractive(\defined('STDIN') ? \STDIN : self::STDIN)) {
             return 80;
         }
 
         return $this->getNumberOfColumnsInteractive();
-    }
-
-    private function isWindows(): bool
-    {
-        return DIRECTORY_SEPARATOR === '\\';
     }
 
     /**
@@ -124,13 +105,13 @@ final class Console
      */
     private function getNumberOfColumnsWindows(): int
     {
-        $ansicon = getenv('ANSICON');
+        $ansicon = \getenv('ANSICON');
         $columns = 80;
 
-        if (is_string($ansicon) && preg_match('/^(\d+)x\d+ \(\d+x(\d+)\)$/', trim($ansicon), $matches)) {
+        if (\is_string($ansicon) && \preg_match('/^(\d+)x\d+ \(\d+x(\d+)\)$/', \trim($ansicon), $matches)) {
             $columns = $matches[1];
-        } elseif (function_exists('proc_open')) {
-            $process = proc_open(
+        } elseif (\function_exists('proc_open')) {
+            $process = \proc_open(
                 'mode CON',
                 [
                     1 => ['pipe', 'w'],
@@ -142,14 +123,14 @@ final class Console
                 ['suppress_errors' => true]
             );
 
-            if (is_resource($process)) {
-                $info = stream_get_contents($pipes[1]);
+            if (\is_resource($process)) {
+                $info = \stream_get_contents($pipes[1]);
 
-                fclose($pipes[1]);
-                fclose($pipes[2]);
-                proc_close($process);
+                \fclose($pipes[1]);
+                \fclose($pipes[2]);
+                \proc_close($process);
 
-                if (preg_match('/--------+\r?\n.+?(\d+)\r?\n.+?(\d+)\r?\n/', $info, $matches)) {
+                if (\preg_match('/--------+\r?\n.+?(\d+)\r?\n.+?(\d+)\r?\n/', $info, $matches)) {
                     $columns = $matches[2];
                 }
             }
@@ -163,13 +144,13 @@ final class Console
      */
     private function getNumberOfColumnsInteractive(): int
     {
-        if (function_exists('shell_exec') && preg_match('#\d+ (\d+)#', shell_exec('stty size') ?: '', $match) === 1) {
+        if (\function_exists('shell_exec') && \preg_match('#\d+ (\d+)#', \shell_exec('stty size') ?: '', $match) === 1) {
             if ((int)$match[1] > 0) {
                 return (int)$match[1];
             }
         }
 
-        if (function_exists('shell_exec') && preg_match('#columns = (\d+);#', shell_exec('stty') ?: '', $match) === 1) {
+        if (\function_exists('shell_exec') && \preg_match('#columns = (\d+);#', \shell_exec('stty') ?: '', $match) === 1) {
             if ((int)$match[1] > 0) {
                 return (int)$match[1];
             }

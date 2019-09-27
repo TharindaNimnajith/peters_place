@@ -55,6 +55,20 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     }
 
     /**
+     * Get the current page for the request.
+     *
+     * @param int $currentPage
+     * @param string $pageName
+     * @return int
+     */
+    protected function setCurrentPage($currentPage, $pageName)
+    {
+        $currentPage = $currentPage ?: static::resolveCurrentPage($pageName);
+
+        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
+    }
+
+    /**
      * Render the paginator using the given view.
      *
      * @param string|null $view
@@ -79,6 +93,24 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
             'paginator' => $this,
             'elements' => $this->elements(),
         ]))->render());
+    }
+
+    /**
+     * Get the array of elements to pass to the view.
+     *
+     * @return array
+     */
+    protected function elements()
+    {
+        $window = UrlWindow::make($this);
+
+        return array_filter([
+            $window['first'],
+            is_array($window['slider']) ? '...' : null,
+            $window['slider'],
+            is_array($window['last']) ? '...' : null,
+            $window['last'],
+        ]);
     }
 
     /**
@@ -165,37 +197,5 @@ class LengthAwarePaginator extends AbstractPaginator implements Arrayable, Array
     public function total()
     {
         return $this->total;
-    }
-
-    /**
-     * Get the current page for the request.
-     *
-     * @param int $currentPage
-     * @param string $pageName
-     * @return int
-     */
-    protected function setCurrentPage($currentPage, $pageName)
-    {
-        $currentPage = $currentPage ?: static::resolveCurrentPage($pageName);
-
-        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
-    }
-
-    /**
-     * Get the array of elements to pass to the view.
-     *
-     * @return array
-     */
-    protected function elements()
-    {
-        $window = UrlWindow::make($this);
-
-        return array_filter([
-            $window['first'],
-            is_array($window['slider']) ? '...' : null,
-            $window['slider'],
-            is_array($window['last']) ? '...' : null,
-            $window['last'],
-        ]);
     }
 }

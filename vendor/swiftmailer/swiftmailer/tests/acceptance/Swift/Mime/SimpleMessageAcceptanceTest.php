@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
+class Swift_Mime_SimpleMessageAcceptanceTest extends \PHPUnit\Framework\TestCase
 {
     public function testBasicHeaders()
     {
@@ -22,6 +20,11 @@ class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
             $message->toString(),
             '%s: Only required headers, and non-empty headers should be displayed'
         );
+    }
+
+    protected function createMessage()
+    {
+        return new Swift_Message();
     }
 
     public function testSubjectIsDisplayedIfSet()
@@ -650,6 +653,11 @@ class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
         );
     }
 
+    protected function createMimePart()
+    {
+        return new Swift_MimePart();
+    }
+
     public function testAttachmentsBeingAttached()
     {
         $message = $this->createMessage();
@@ -710,6 +718,11 @@ class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
             '$~D',
             $message->toString()
         );
+    }
+
+    protected function createAttachment()
+    {
+        return new Swift_Attachment();
     }
 
     public function testAttachmentsAndEmbeddedFilesBeingAttached()
@@ -796,6 +809,11 @@ class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
             '$~D',
             $message->toString()
         );
+    }
+
+    protected function createEmbeddedFile()
+    {
+        return new Swift_EmbeddedFile();
     }
 
     public function testComplexEmbeddingOfContent()
@@ -1223,26 +1241,6 @@ class Swift_Mime_SimpleMessageAcceptanceTest extends TestCase
             'with a new line',
             $message->toString()
         );
-    }
-
-    protected function createMessage()
-    {
-        return new Swift_Message();
-    }
-
-    protected function createMimePart()
-    {
-        return new Swift_MimePart();
-    }
-
-    protected function createAttachment()
-    {
-        return new Swift_Attachment();
-    }
-
-    protected function createEmbeddedFile()
-    {
-        return new Swift_EmbeddedFile();
     }
 
     protected function setUp()

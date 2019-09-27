@@ -51,17 +51,17 @@ class IsCloseTo extends TypeSafeMatcher
         return $this->_actualDelta($item) <= 0.0;
     }
 
+    private function _actualDelta($item)
+    {
+        return (abs(($item - $this->_value)) - $this->_delta);
+    }
+
+    // -- Private Methods
+
     protected function describeMismatchSafely($item, Description $mismatchDescription)
     {
         $mismatchDescription->appendValue($item)
             ->appendText(' differed by ')
             ->appendValue($this->_actualDelta($item));
-    }
-
-    // -- Private Methods
-
-    private function _actualDelta($item)
-    {
-        return (abs(($item - $this->_value)) - $this->_delta);
     }
 }

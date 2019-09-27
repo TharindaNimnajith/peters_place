@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Bug76Test extends TestCase
+class Swift_Bug76Test extends \PHPUnit\Framework\TestCase
 {
     private $inputFile;
     private $outputFile;
@@ -20,31 +18,6 @@ class Swift_Bug76Test extends TestCase
         $this->assertMaxLineLength(76, $this->outputFile,
             '%s: Line length should not exceed 76 characters'
         );
-    }
-
-    public function assertMaxLineLength($length, $filePath, $message = '%s')
-    {
-        $lines = file($filePath);
-        foreach ($lines as $line) {
-            $this->assertTrue((strlen(trim($line)) <= 76), $message);
-        }
-    }
-
-    protected function setUp()
-    {
-        $this->inputFile = sys_get_temp_dir() . '/in.bin';
-        file_put_contents($this->inputFile, '');
-
-        $this->outputFile = sys_get_temp_dir() . '/out.bin';
-        file_put_contents($this->outputFile, '');
-
-        $this->encoder = $this->createEncoder();
-    }
-
-    protected function tearDown()
-    {
-        unlink($this->inputFile);
-        unlink($this->outputFile);
     }
 
     private function fillFileWithRandomBytes($byteCount, $file)
@@ -66,8 +39,33 @@ class Swift_Bug76Test extends TestCase
         return new Swift_ByteStream_FileByteStream($file, true);
     }
 
+    public function assertMaxLineLength($length, $filePath, $message = '%s')
+    {
+        $lines = file($filePath);
+        foreach ($lines as $line) {
+            $this->assertTrue((strlen(trim($line)) <= 76), $message);
+        }
+    }
+
+    protected function setUp()
+    {
+        $this->inputFile = sys_get_temp_dir() . '/in.bin';
+        file_put_contents($this->inputFile, '');
+
+        $this->outputFile = sys_get_temp_dir() . '/out.bin';
+        file_put_contents($this->outputFile, '');
+
+        $this->encoder = $this->createEncoder();
+    }
+
     private function createEncoder()
     {
         return new Swift_Mime_ContentEncoder_Base64ContentEncoder();
+    }
+
+    protected function tearDown()
+    {
+        unlink($this->inputFile);
+        unlink($this->outputFile);
     }
 }

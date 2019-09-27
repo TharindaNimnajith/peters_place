@@ -40,16 +40,6 @@ class ArrayHasKey extends Constraint
     }
 
     /**
-     * Returns a string representation of the constraint.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function toString(): string
-    {
-        return 'has the key ' . $this->exporter->export($this->key);
-    }
-
-    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
@@ -81,5 +71,15 @@ class ArrayHasKey extends Constraint
     protected function failureDescription($other): string
     {
         return 'an array ' . $this->toString();
+    }
+
+    /**
+     * Returns a string representation of the constraint.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function toString(): string
+    {
+        return 'has the key ' . $this->exporter->export($this->key);
     }
 }

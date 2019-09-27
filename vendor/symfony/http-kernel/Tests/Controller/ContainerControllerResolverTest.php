@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Controller;
 
-use InvalidArgumentException;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Container;
@@ -42,6 +41,20 @@ class ContainerControllerResolverTest extends ControllerResolverTest
 
         $this->assertSame($service, $controller[0]);
         $this->assertSame('action', $controller[1]);
+    }
+
+    protected function createMockContainer()
+    {
+        return $this->getMockBuilder(ContainerInterface::class)->getMock();
+    }
+
+    protected function createControllerResolver(LoggerInterface $logger = null, ContainerInterface $container = null)
+    {
+        if (!$container) {
+            $container = $this->createMockContainer();
+        }
+
+        return new ContainerControllerResolver($container, $logger);
     }
 
     public function testGetControllerService()
@@ -117,7 +130,7 @@ class ContainerControllerResolverTest extends ControllerResolverTest
     /**
      * Tests where the fallback instantiation fails due to required constructor arguments.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Controller "Symfony\Component\HttpKernel\Tests\Controller\ControllerTestService" cannot be fetched from the container because it is private. Did you forget to tag the service with "controller.service_arguments"?
      */
     public function testExceptionWhenUsingRemovedControllerServiceWithClassNameAsName()
@@ -143,7 +156,7 @@ class ContainerControllerResolverTest extends ControllerResolverTest
     /**
      * Tests where the fallback instantiation fails due to non-existing class.
      *
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Controller "app.my_controller" cannot be fetched from the container because it is private. Did you forget to tag the service with "controller.service_arguments"?
      */
     public function testExceptionWhenUsingRemovedControllerService()
@@ -169,39 +182,25 @@ class ContainerControllerResolverTest extends ControllerResolverTest
     public function getUndefinedControllers()
     {
         $tests = parent::getUndefinedControllers();
-        $tests[0] = ['foo', InvalidArgumentException::class, 'Controller "foo" does neither exist as service nor as class'];
-        $tests[1] = ['oof::bar', InvalidArgumentException::class, 'Controller "oof" does neither exist as service nor as class'];
-        $tests[2] = [['oof', 'bar'], InvalidArgumentException::class, 'Controller "oof" does neither exist as service nor as class'];
+        $tests[0] = ['foo', \InvalidArgumentException::class, 'Controller "foo" does neither exist as service nor as class'];
+        $tests[1] = ['oof::bar', \InvalidArgumentException::class, 'Controller "oof" does neither exist as service nor as class'];
+        $tests[2] = [['oof', 'bar'], \InvalidArgumentException::class, 'Controller "oof" does neither exist as service nor as class'];
         $tests[] = [
             [ControllerTestService::class, 'action'],
-            InvalidArgumentException::class,
+            \InvalidArgumentException::class,
             'Controller "Symfony\Component\HttpKernel\Tests\Controller\ControllerTestService" has required constructor arguments and does not exist in the container. Did you forget to define such a service?',
         ];
         $tests[] = [
             ControllerTestService::class . '::action',
-            InvalidArgumentException::class, 'Controller "Symfony\Component\HttpKernel\Tests\Controller\ControllerTestService" has required constructor arguments and does not exist in the container. Did you forget to define such a service?',
+            \InvalidArgumentException::class, 'Controller "Symfony\Component\HttpKernel\Tests\Controller\ControllerTestService" has required constructor arguments and does not exist in the container. Did you forget to define such a service?',
         ];
         $tests[] = [
             InvokableControllerService::class,
-            InvalidArgumentException::class,
+            \InvalidArgumentException::class,
             'Controller "Symfony\Component\HttpKernel\Tests\Controller\InvokableControllerService" has required constructor arguments and does not exist in the container. Did you forget to define such a service?',
         ];
 
         return $tests;
-    }
-
-    protected function createMockContainer()
-    {
-        return $this->getMockBuilder(ContainerInterface::class)->getMock();
-    }
-
-    protected function createControllerResolver(LoggerInterface $logger = null, ContainerInterface $container = null)
-    {
-        if (!$container) {
-            $container = $this->createMockContainer();
-        }
-
-        return new ContainerControllerResolver($container, $logger);
     }
 }
 

@@ -137,6 +137,46 @@ class Factory implements FactoryContract
     }
 
     /**
+     * Resolve a new Validator instance.
+     *
+     * @param array $data
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @return Validator
+     */
+    protected function resolve(array $data, array $rules, array $messages, array $customAttributes)
+    {
+        if (is_null($this->resolver)) {
+            return new Validator($this->translator, $data, $rules, $messages, $customAttributes);
+        }
+
+        return call_user_func($this->resolver, $this->translator, $data, $rules, $messages, $customAttributes);
+    }
+
+    /**
+     * Add the extensions to a validator instance.
+     *
+     * @param Validator $validator
+     * @return void
+     */
+    protected function addExtensions(Validator $validator)
+    {
+        $validator->addExtensions($this->extensions);
+
+        // Next, we will add the implicit extensions, which are similar to the required
+        // and accepted rule in that they are run even if the attributes is not in a
+        // array of data that is given to a validator instances via instantiation.
+        $validator->addImplicitExtensions($this->implicitExtensions);
+
+        $validator->addDependentExtensions($this->dependentExtensions);
+
+        $validator->addReplacers($this->replacers);
+
+        $validator->setFallbackMessages($this->fallbackMessages);
+    }
+
+    /**
      * Register a custom validator extension.
      *
      * @param string $rule
@@ -239,45 +279,5 @@ class Factory implements FactoryContract
     public function setPresenceVerifier(PresenceVerifierInterface $presenceVerifier)
     {
         $this->verifier = $presenceVerifier;
-    }
-
-    /**
-     * Resolve a new Validator instance.
-     *
-     * @param array $data
-     * @param array $rules
-     * @param array $messages
-     * @param array $customAttributes
-     * @return Validator
-     */
-    protected function resolve(array $data, array $rules, array $messages, array $customAttributes)
-    {
-        if (is_null($this->resolver)) {
-            return new Validator($this->translator, $data, $rules, $messages, $customAttributes);
-        }
-
-        return call_user_func($this->resolver, $this->translator, $data, $rules, $messages, $customAttributes);
-    }
-
-    /**
-     * Add the extensions to a validator instance.
-     *
-     * @param Validator $validator
-     * @return void
-     */
-    protected function addExtensions(Validator $validator)
-    {
-        $validator->addExtensions($this->extensions);
-
-        // Next, we will add the implicit extensions, which are similar to the required
-        // and accepted rule in that they are run even if the attributes is not in a
-        // array of data that is given to a validator instances via instantiation.
-        $validator->addImplicitExtensions($this->implicitExtensions);
-
-        $validator->addDependentExtensions($this->dependentExtensions);
-
-        $validator->addReplacers($this->replacers);
-
-        $validator->setFallbackMessages($this->fallbackMessages);
     }
 }

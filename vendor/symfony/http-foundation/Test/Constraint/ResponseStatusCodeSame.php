@@ -24,14 +24,6 @@ final class ResponseStatusCodeSame extends Constraint
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function toString(): string
-    {
-        return 'status code is ' . $this->statusCode;
-    }
-
-    /**
      * @param Response $response
      *
      * {@inheritdoc}
@@ -49,6 +41,14 @@ final class ResponseStatusCodeSame extends Constraint
     protected function failureDescription($response): string
     {
         return 'the Response ' . $this->toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        return 'status code is ' . $this->statusCode;
     }
 
     /**

@@ -636,6 +636,31 @@ class Standard extends PrettyPrinterAbstract
         }
     }
 
+    private function pMaybeMultiline(array $nodes, $trailingComma = false)
+    {
+        if (!$this->hasNodeWithComments($nodes)) {
+            return $this->pCommaSeparated($nodes);
+        } else {
+            return $this->pCommaSeparatedMultiline($nodes, $trailingComma) . $this->nl;
+        }
+    }
+
+    /**
+     * @param Node[] $nodes
+     * @return bool
+     */
+    private function hasNodeWithComments(array $nodes)
+    {
+        foreach ($nodes as $node) {
+            if ($node && $node->getComments()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Other
+
     protected function pExpr_MethodCall(Expr\MethodCall $node)
     {
         return $this->pDereferenceLhs($node->var) . '->' . $this->pObjectProperty($node->name)
@@ -650,8 +675,6 @@ class Standard extends PrettyPrinterAbstract
             return '(' . $this->p($node) . ')';
         }
     }
-
-    // Other
 
     protected function pObjectProperty($node)
     {
@@ -764,6 +787,8 @@ class Standard extends PrettyPrinterAbstract
         return $this->pDereferenceLhs($node->class) . '::$' . $this->pObjectProperty($node->name);
     }
 
+    // Declarations
+
     protected function pExpr_ShellExec(Expr\ShellExec $node)
     {
         return '`' . $this->pEncapsList($node->parts, '`') . '`';
@@ -778,8 +803,6 @@ class Standard extends PrettyPrinterAbstract
             . (null !== $node->returnType ? ' : ' . $this->p($node->returnType) : '')
             . ' {' . $this->pStmts($node->stmts) . $this->nl . '}';
     }
-
-    // Declarations
 
     protected function pExpr_ArrowFunction(Expr\ArrowFunction $node)
     {
@@ -906,6 +929,8 @@ class Standard extends PrettyPrinterAbstract
             . $this->nl . '{' . $this->pStmts($node->stmts) . $this->nl . '}';
     }
 
+    // Control flow
+
     protected function pStmt_TraitUse(Stmt\TraitUse $node)
     {
         return 'use ' . $this->pCommaSeparated($node->traits)
@@ -919,8 +944,6 @@ class Standard extends PrettyPrinterAbstract
         return $this->p($node->trait) . '::' . $node->method
             . ' insteadof ' . $this->pCommaSeparated($node->insteadof) . ';';
     }
-
-    // Control flow
 
     protected function pStmt_TraitUseAdaptation_Alias(Stmt\TraitUseAdaptation\Alias $node)
     {
@@ -1033,6 +1056,8 @@ class Standard extends PrettyPrinterAbstract
             . '} while (' . $this->p($node->cond) . ');';
     }
 
+    // Other
+
     protected function pStmt_Switch(Stmt\Switch_ $node)
     {
         return 'switch (' . $this->p($node->cond) . ') {'
@@ -1044,8 +1069,6 @@ class Standard extends PrettyPrinterAbstract
         return (null !== $node->cond ? 'case ' . $this->p($node->cond) : 'default') . ':'
             . $this->pStmts($node->stmts);
     }
-
-    // Other
 
     protected function pStmt_TryCatch(Stmt\TryCatch $node)
     {
@@ -1086,6 +1109,8 @@ class Standard extends PrettyPrinterAbstract
         return 'throw ' . $this->p($node->expr) . ';';
     }
 
+    // Helpers
+
     protected function pStmt_Label(Stmt\Label $node)
     {
         return $node->name . ':';
@@ -1095,8 +1120,6 @@ class Standard extends PrettyPrinterAbstract
     {
         return 'goto ' . $node->name . ';';
     }
-
-    // Helpers
 
     protected function pStmt_Expression(Stmt\Expression $node)
     {
@@ -1143,28 +1166,5 @@ class Standard extends PrettyPrinterAbstract
     protected function pStmt_Nop(Stmt\Nop $node)
     {
         return '';
-    }
-
-    private function pMaybeMultiline(array $nodes, $trailingComma = false)
-    {
-        if (!$this->hasNodeWithComments($nodes)) {
-            return $this->pCommaSeparated($nodes);
-        } else {
-            return $this->pCommaSeparatedMultiline($nodes, $trailingComma) . $this->nl;
-        }
-    }
-
-    /**
-     * @param Node[] $nodes
-     * @return bool
-     */
-    private function hasNodeWithComments(array $nodes)
-    {
-        foreach ($nodes as $node) {
-            if ($node && $node->getComments()) {
-                return true;
-            }
-        }
-        return false;
     }
 }

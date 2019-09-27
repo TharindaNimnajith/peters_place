@@ -2,9 +2,7 @@
 
 namespace JakubOnderka\PhpConsoleHighlighter;
 
-use PHPUnit_Framework_TestCase;
-
-class HighlighterTest extends PHPUnit_Framework_TestCase
+class HighlighterTest extends \PHPUnit_Framework_TestCase
 {
     /** @var Highlighter */
     private $uut;
@@ -22,6 +20,12 @@ EOL
 <token_keyword>echo </token_keyword><token_default>\$a</token_default><token_keyword>;</token_keyword>
 EOL
         );
+    }
+
+    protected function compare($original, $expected)
+    {
+        $output = $this->uut->getWholeFile($original);
+        $this->assertEquals($expected, $output);
     }
 
     public function testInteger()
@@ -176,6 +180,10 @@ EOL
         );
     }
 
+    /*
+     * Constants
+     */
+
     public function testDocComment()
     {
         $this->compare(
@@ -192,7 +200,7 @@ EOL
     }
 
     /*
-     * Constants
+     * Comments
      */
 
     public function testInlineComment()
@@ -209,10 +217,6 @@ EOL
 EOL
         );
     }
-
-    /*
-     * Comments
-     */
 
     public function testHashComment()
     {
@@ -245,12 +249,6 @@ EOL
             ,
             '<token_html> </token_html>'
         );
-    }
-
-    protected function compare($original, $expected)
-    {
-        $output = $this->uut->getWholeFile($original);
-        $this->assertEquals($expected, $output);
     }
 
     protected function setUp()

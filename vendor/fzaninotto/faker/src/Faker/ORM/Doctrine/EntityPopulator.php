@@ -4,10 +4,6 @@ namespace Faker\ORM\Doctrine;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Faker\Generator;
-use Faker\Guesser\Name;
-use InvalidArgumentException;
 
 /**
  * Service class for populating a table through a Doctrine Entity class.
@@ -75,13 +71,13 @@ class EntityPopulator
     }
 
     /**
-     * @param Generator $generator
+     * @param \Faker\Generator $generator
      * @return array
      */
-    public function guessColumnFormatters(Generator $generator)
+    public function guessColumnFormatters(\Faker\Generator $generator)
     {
         $formatters = array();
-        $nameGuesser = new Name($generator);
+        $nameGuesser = new \Faker\Guesser\Name($generator);
         $columnTypeGuesser = new ColumnTypeGuesser($generator);
         foreach ($this->class->getFieldNames() as $fieldName) {
             if ($this->class->isIdentifier($fieldName) || !$this->class->hasField($fieldName)) {
@@ -182,22 +178,6 @@ class EntityPopulator
         return $obj;
     }
 
-    /**
-     * @return array
-     */
-    public function getModifiers()
-    {
-        return $this->modifiers;
-    }
-
-    /**
-     * @param array $modifiers
-     */
-    public function setModifiers(array $modifiers)
-    {
-        $this->modifiers = $modifiers;
-    }
-
     private function fillColumns($obj, $insertedEntities)
     {
         foreach ($this->columnFormatters as $field => $format) {
@@ -205,8 +185,8 @@ class EntityPopulator
                 // Add some extended debugging information to any errors thrown by the formatter
                 try {
                     $value = is_callable($format) ? $format($insertedEntities, $obj) : $format;
-                } catch (InvalidArgumentException $ex) {
-                    throw new InvalidArgumentException(sprintf(
+                } catch (\InvalidArgumentException $ex) {
+                    throw new \InvalidArgumentException(sprintf(
                         "Failed to generate a value for %s::%s: %s",
                         get_class($obj),
                         $field,
@@ -232,12 +212,28 @@ class EntityPopulator
     }
 
     /**
+     * @return array
+     */
+    public function getModifiers()
+    {
+        return $this->modifiers;
+    }
+
+    /**
+     * @param array $modifiers
+     */
+    public function setModifiers(array $modifiers)
+    {
+        $this->modifiers = $modifiers;
+    }
+
+    /**
      * @param ObjectManager $manager
      * @return int|null
      */
     private function generateId($obj, $column, ObjectManager $manager)
     {
-        /* @var $repository ObjectRepository */
+        /* @var $repository \Doctrine\Common\Persistence\ObjectRepository */
         $repository = $manager->getRepository(get_class($obj));
         $result = $repository->createQueryBuilder('e')
             ->select(sprintf('e.%s', $column))

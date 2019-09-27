@@ -26,6 +26,25 @@ class Luhn
     }
 
     /**
+     * @param string $number
+     * @return int
+     */
+    private static function checksum($number)
+    {
+        $number = (string)$number;
+        $length = strlen($number);
+        $sum = 0;
+        for ($i = $length - 1; $i >= 0; $i -= 2) {
+            $sum += $number{$i};
+        }
+        for ($i = $length - 2; $i >= 0; $i -= 2) {
+            $sum += array_sum(str_split($number{$i} * 2));
+        }
+
+        return $sum % 10;
+    }
+
+    /**
      * Generate a Luhn compliant number.
      *
      * @param string $partialValue
@@ -52,24 +71,5 @@ class Luhn
         }
 
         return (string)(10 - $checkDigit);
-    }
-
-    /**
-     * @param string $number
-     * @return int
-     */
-    private static function checksum($number)
-    {
-        $number = (string)$number;
-        $length = strlen($number);
-        $sum = 0;
-        for ($i = $length - 1; $i >= 0; $i -= 2) {
-            $sum += $number{$i};
-        }
-        for ($i = $length - 2; $i >= 0; $i -= 2) {
-            $sum += array_sum(str_split($number{$i} * 2));
-        }
-
-        return $sum % 10;
     }
 }

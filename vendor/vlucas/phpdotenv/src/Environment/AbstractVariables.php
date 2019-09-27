@@ -78,6 +78,15 @@ abstract class AbstractVariables implements VariablesInterface
     }
 
     /**
+     * Get an environment variable.
+     *
+     * @param string $name
+     *
+     * @return string|null
+     */
+    protected abstract function getInternal($name);
+
+    /**
      * {@inheritdoc}
      */
     public function offsetGet($offset)
@@ -130,6 +139,16 @@ abstract class AbstractVariables implements VariablesInterface
     }
 
     /**
+     * Set an environment variable.
+     *
+     * @param string $name
+     * @param string|null $value
+     *
+     * @return void
+     */
+    protected abstract function setInternal($name, $value = null);
+
+    /**
      * {@inheritdoc}
      */
     public function offsetUnset($offset)
@@ -159,25 +178,6 @@ abstract class AbstractVariables implements VariablesInterface
 
         $this->clearInternal($name);
     }
-
-    /**
-     * Get an environment variable.
-     *
-     * @param string $name
-     *
-     * @return string|null
-     */
-    protected abstract function getInternal($name);
-
-    /**
-     * Set an environment variable.
-     *
-     * @param string $name
-     * @param string|null $value
-     *
-     * @return void
-     */
-    protected abstract function setInternal($name, $value = null);
 
     /**
      * Clear an environment variable.

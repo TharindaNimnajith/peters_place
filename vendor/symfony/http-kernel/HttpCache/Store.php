@@ -14,13 +14,8 @@
 
 namespace Symfony\Component\HttpKernel\HttpCache;
 
-use RuntimeException;
-use SplObjectStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use function dirname;
-use function strlen;
-use const DIRECTORY_SEPARATOR;
 
 /**
  * Store implements all the logic for storing cache metadata (Request and Response headers).
@@ -34,15 +29,15 @@ class Store implements StoreInterface
     private $locks;
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function __construct(string $root)
     {
         $this->root = $root;
         if (!file_exists($this->root) && !@mkdir($this->root, 0777, true) && !is_dir($this->root)) {
-            throw new RuntimeException(sprintf('Unable to create the store directory (%s).', $this->root));
+            throw new \RuntimeException(sprintf('Unable to create the store directory (%s).', $this->root));
         }
-        $this->keyCache = new SplObjectStorage();
+        $this->keyCache = new \SplObjectStorage();
         $this->locks = [];
     }
 
@@ -71,7 +66,7 @@ class Store implements StoreInterface
 
         if (!isset($this->locks[$key])) {
             $path = $this->getPath($key);
-            if (!file_exists(dirname($path)) && false === @mkdir(dirname($path), 0777, true) && !is_dir(dirname($path))) {
+            if (!file_exists(\dirname($path)) && false === @mkdir(\dirname($path), 0777, true) && !is_dir(\dirname($path))) {
                 return $path;
             }
             $h = fopen($path, 'cb');
@@ -87,9 +82,40 @@ class Store implements StoreInterface
         return true;
     }
 
+    /**
+     * Returns a cache key for the given Request.
+     *
+     * @return string A key for the given Request
+     */
+    private function getCacheKey(Request $request)
+    {
+        if (isset($this->keyCache[$request])) {
+            return $this->keyCache[$request];
+        }
+
+        return $this->keyCache[$request] = $this->generateCacheKey($request);
+    }
+
+    /**
+     * Generates a cache key for the given Request.
+     *
+     * This method should return a key that must only depend on a
+     * normalized version of the request URI.
+     *
+     * If the same URI can have more than one representation, based on some
+     * headers, use a Vary header to indicate them, and each representation will
+     * be stored independently under the same cache key.
+     *
+     * @return string A key for the given Request
+     */
+    protected function generateCacheKey(Request $request)
+    {
+        return 'md' . hash('sha256', $request->getUri());
+    }
+
     public function getPath($key)
     {
-        return $this->root . DIRECTORY_SEPARATOR . substr($key, 0, 2) . DIRECTORY_SEPARATOR . substr($key, 2, 2) . DIRECTORY_SEPARATOR . substr($key, 4, 2) . DIRECTORY_SEPARATOR . substr($key, 6);
+        return $this->root . \DIRECTORY_SEPARATOR . substr($key, 0, 2) . \DIRECTORY_SEPARATOR . substr($key, 2, 2) . \DIRECTORY_SEPARATOR . substr($key, 4, 2) . \DIRECTORY_SEPARATOR . substr($key, 6);
     }
 
     /**
@@ -167,149 +193,6 @@ class Store implements StoreInterface
         // TODO the metaStore referenced an entity that doesn't exist in
         // the entityStore. We definitely want to return nil but we should
         // also purge the entry from the meta-store when this is detected.
-    }
-
-    /**
-     * Writes a cache entry to the store for the given Request and Response.
-     *
-     * Existing entries are read and any that match the response are removed. This
-     * method calls write with the new list of cache entries.
-     *
-     * @return string The key under which the response is stored
-     *
-     * @throws RuntimeException
-     */
-    public function write(Request $request, Response $response)
-    {
-        $key = $this->getCacheKey($request);
-        $storedEnv = $this->persistRequest($request);
-
-        // write the response body to the entity store if this is the original response
-        if (!$response->headers->has('X-Content-Digest')) {
-            $digest = $this->generateContentDigest($response);
-
-            if (false === $this->save($digest, $response->getContent())) {
-                throw new RuntimeException('Unable to store the entity.');
-            }
-
-            $response->headers->set('X-Content-Digest', $digest);
-
-            if (!$response->headers->has('Transfer-Encoding')) {
-                $response->headers->set('Content-Length', strlen($response->getContent()));
-            }
-        }
-
-        // read existing cache entries, remove non-varying, and add this one to the list
-        $entries = [];
-        $vary = $response->headers->get('vary');
-        foreach ($this->getMetadata($key) as $entry) {
-            if (!isset($entry[1]['vary'][0])) {
-                $entry[1]['vary'] = [''];
-            }
-
-            if ($entry[1]['vary'][0] != $vary || !$this->requestsMatch($vary, $entry[0], $storedEnv)) {
-                $entries[] = $entry;
-            }
-        }
-
-        $headers = $this->persistResponse($response);
-        unset($headers['age']);
-
-        array_unshift($entries, [$storedEnv, $headers]);
-
-        if (false === $this->save($key, serialize($entries))) {
-            throw new RuntimeException('Unable to store the metadata.');
-        }
-
-        return $key;
-    }
-
-    /**
-     * Invalidates all cache entries that match the request.
-     *
-     * @throws RuntimeException
-     */
-    public function invalidate(Request $request)
-    {
-        $modified = false;
-        $key = $this->getCacheKey($request);
-
-        $entries = [];
-        foreach ($this->getMetadata($key) as $entry) {
-            $response = $this->restoreResponse($entry[1]);
-            if ($response->isFresh()) {
-                $response->expire();
-                $modified = true;
-                $entries[] = [$entry[0], $this->persistResponse($response)];
-            } else {
-                $entries[] = $entry;
-            }
-        }
-
-        if ($modified && false === $this->save($key, serialize($entries))) {
-            throw new RuntimeException('Unable to store the metadata.');
-        }
-    }
-
-    /**
-     * Purges data for the given URL.
-     *
-     * This method purges both the HTTP and the HTTPS version of the cache entry.
-     *
-     * @param string $url A URL
-     *
-     * @return bool true if the URL exists with either HTTP or HTTPS scheme and has been purged, false otherwise
-     */
-    public function purge($url)
-    {
-        $http = preg_replace('#^https:#', 'http:', $url);
-        $https = preg_replace('#^http:#', 'https:', $url);
-
-        $purgedHttp = $this->doPurge($http);
-        $purgedHttps = $this->doPurge($https);
-
-        return $purgedHttp || $purgedHttps;
-    }
-
-    /**
-     * Generates a cache key for the given Request.
-     *
-     * This method should return a key that must only depend on a
-     * normalized version of the request URI.
-     *
-     * If the same URI can have more than one representation, based on some
-     * headers, use a Vary header to indicate them, and each representation will
-     * be stored independently under the same cache key.
-     *
-     * @return string A key for the given Request
-     */
-    protected function generateCacheKey(Request $request)
-    {
-        return 'md' . hash('sha256', $request->getUri());
-    }
-
-    /**
-     * Returns content digest for $response.
-     *
-     * @return string
-     */
-    protected function generateContentDigest(Response $response)
-    {
-        return 'en' . hash('sha256', $response->getContent());
-    }
-
-    /**
-     * Returns a cache key for the given Request.
-     *
-     * @return string A key for the given Request
-     */
-    private function getCacheKey(Request $request)
-    {
-        if (isset($this->keyCache[$request])) {
-            return $this->keyCache[$request];
-        }
-
-        return $this->keyCache[$request] = $this->generateCacheKey($request);
     }
 
     /**
@@ -393,6 +276,61 @@ class Store implements StoreInterface
     }
 
     /**
+     * Writes a cache entry to the store for the given Request and Response.
+     *
+     * Existing entries are read and any that match the response are removed. This
+     * method calls write with the new list of cache entries.
+     *
+     * @return string The key under which the response is stored
+     *
+     * @throws \RuntimeException
+     */
+    public function write(Request $request, Response $response)
+    {
+        $key = $this->getCacheKey($request);
+        $storedEnv = $this->persistRequest($request);
+
+        // write the response body to the entity store if this is the original response
+        if (!$response->headers->has('X-Content-Digest')) {
+            $digest = $this->generateContentDigest($response);
+
+            if (false === $this->save($digest, $response->getContent())) {
+                throw new \RuntimeException('Unable to store the entity.');
+            }
+
+            $response->headers->set('X-Content-Digest', $digest);
+
+            if (!$response->headers->has('Transfer-Encoding')) {
+                $response->headers->set('Content-Length', \strlen($response->getContent()));
+            }
+        }
+
+        // read existing cache entries, remove non-varying, and add this one to the list
+        $entries = [];
+        $vary = $response->headers->get('vary');
+        foreach ($this->getMetadata($key) as $entry) {
+            if (!isset($entry[1]['vary'][0])) {
+                $entry[1]['vary'] = [''];
+            }
+
+            if ($entry[1]['vary'][0] != $vary || !$this->requestsMatch($vary, $entry[0], $storedEnv)) {
+                $entries[] = $entry;
+            }
+        }
+
+        $headers = $this->persistResponse($response);
+        unset($headers['age']);
+
+        array_unshift($entries, [$storedEnv, $headers]);
+
+        if (false === $this->save($key, serialize($entries))) {
+            throw new \RuntimeException('Unable to store the metadata.');
+        }
+
+        return $key;
+    }
+
+    /**
      * Persists the Request HTTP headers.
      *
      * @return array An array of HTTP headers
@@ -400,6 +338,16 @@ class Store implements StoreInterface
     private function persistRequest(Request $request)
     {
         return $request->headers->all();
+    }
+
+    /**
+     * Returns content digest for $response.
+     *
+     * @return string
+     */
+    protected function generateContentDigest(Response $response)
+    {
+        return 'en' . hash('sha256', $response->getContent());
     }
 
     /**
@@ -419,17 +367,17 @@ class Store implements StoreInterface
             @ftruncate($fp, 0);
             @fseek($fp, 0);
             $len = @fwrite($fp, $data);
-            if (strlen($data) !== $len) {
+            if (\strlen($data) !== $len) {
                 @ftruncate($fp, 0);
 
                 return false;
             }
         } else {
-            if (!file_exists(dirname($path)) && false === @mkdir(dirname($path), 0777, true) && !is_dir(dirname($path))) {
+            if (!file_exists(\dirname($path)) && false === @mkdir(\dirname($path), 0777, true) && !is_dir(\dirname($path))) {
                 return false;
             }
 
-            $tmpFile = tempnam(dirname($path), basename($path));
+            $tmpFile = tempnam(\dirname($path), basename($path));
             if (false === $fp = @fopen($tmpFile, 'wb')) {
                 @unlink($tmpFile);
 
@@ -465,6 +413,53 @@ class Store implements StoreInterface
         $headers['X-Status'] = [$response->getStatusCode()];
 
         return $headers;
+    }
+
+    /**
+     * Invalidates all cache entries that match the request.
+     *
+     * @throws \RuntimeException
+     */
+    public function invalidate(Request $request)
+    {
+        $modified = false;
+        $key = $this->getCacheKey($request);
+
+        $entries = [];
+        foreach ($this->getMetadata($key) as $entry) {
+            $response = $this->restoreResponse($entry[1]);
+            if ($response->isFresh()) {
+                $response->expire();
+                $modified = true;
+                $entries[] = [$entry[0], $this->persistResponse($response)];
+            } else {
+                $entries[] = $entry;
+            }
+        }
+
+        if ($modified && false === $this->save($key, serialize($entries))) {
+            throw new \RuntimeException('Unable to store the metadata.');
+        }
+    }
+
+    /**
+     * Purges data for the given URL.
+     *
+     * This method purges both the HTTP and the HTTPS version of the cache entry.
+     *
+     * @param string $url A URL
+     *
+     * @return bool true if the URL exists with either HTTP or HTTPS scheme and has been purged, false otherwise
+     */
+    public function purge($url)
+    {
+        $http = preg_replace('#^https:#', 'http:', $url);
+        $https = preg_replace('#^http:#', 'https:', $url);
+
+        $purgedHttp = $this->doPurge($http);
+        $purgedHttps = $this->doPurge($https);
+
+        return $purgedHttp || $purgedHttps;
     }
 
     /**

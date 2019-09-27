@@ -50,11 +50,6 @@ class HistoryCommand extends Command
         parent::__construct($name);
     }
 
-    public static function escape($string)
-    {
-        return OutputFormatter::escape($string);
-    }
-
     /**
      * Set the Shell's Readline service.
      *
@@ -245,6 +240,11 @@ HELP
         }
 
         throw new InvalidArgumentException('Unexpected range: ' . $range);
+    }
+
+    public static function escape($string)
+    {
+        return OutputFormatter::escape($string);
     }
 
     /**

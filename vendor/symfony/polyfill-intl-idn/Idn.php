@@ -27,10 +27,6 @@
 
 namespace Symfony\Polyfill\Intl\Idn;
 
-use function count;
-use function strlen;
-use const PHP_VERSION_ID;
-
 /**
  * Partial intl implementation in pure PHP.
  *
@@ -67,7 +63,7 @@ final class Idn
 
     public static function idn_to_ascii($domain, $options, $variant, &$idna_info = array())
     {
-        if (PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
+        if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
             @trigger_error('idn_to_ascii(): INTL_IDNA_VARIANT_2003 is deprecated', E_USER_DEPRECATED);
         }
 
@@ -78,7 +74,7 @@ final class Idn
         $parts = explode('.', $domain);
 
         foreach ($parts as $i => &$part) {
-            if ('' === $part && count($parts) > 1 + $i) {
+            if ('' === $part && \count($parts) > 1 + $i) {
                 return false;
             }
             if (false === $part = self::encodePart($part)) {
@@ -89,39 +85,7 @@ final class Idn
         $output = implode('.', $parts);
 
         $idna_info = array(
-            'result' => strlen($output) > 255 ? false : $output,
-            'isTransitionalDifferent' => false,
-            'errors' => 0,
-        );
-
-        return $idna_info['result'];
-    }
-
-    public static function idn_to_utf8($domain, $options, $variant, &$idna_info = array())
-    {
-        if (PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
-            @trigger_error('idn_to_utf8(): INTL_IDNA_VARIANT_2003 is deprecated', E_USER_DEPRECATED);
-        }
-
-        $parts = explode('.', $domain);
-
-        foreach ($parts as &$part) {
-            $length = strlen($part);
-            if ($length < 1 || 63 < $length) {
-                continue;
-            }
-            if (0 !== strpos($part, 'xn--')) {
-                continue;
-            }
-
-            $part = substr($part, 4);
-            $part = self::decodePart($part);
-        }
-
-        $output = implode('.', $parts);
-
-        $idna_info = array(
-            'result' => strlen($output) > 255 ? false : $output,
+            'result' => \strlen($output) > 255 ? false : $output,
             'isTransitionalDifferent' => false,
             'errors' => 0,
         );
@@ -136,7 +100,7 @@ final class Idn
         $n = 128;
         $bias = 72;
         $delta = 0;
-        $h = $b = count($codePoints['basic']);
+        $h = $b = \count($codePoints['basic']);
 
         $output = '';
         foreach ($codePoints['basic'] as $code) {
@@ -190,7 +154,7 @@ final class Idn
 
         $output = 'xn--' . $output;
 
-        return strlen($output) < 1 || 63 < strlen($output) ? false : strtolower($output);
+        return \strlen($output) < 1 || 63 < \strlen($output) ? false : strtolower($output);
     }
 
     private static function listCodePoints($input)
@@ -241,6 +205,38 @@ final class Idn
         return $k + (int)(36 * $delta / ($delta + 38));
     }
 
+    public static function idn_to_utf8($domain, $options, $variant, &$idna_info = array())
+    {
+        if (\PHP_VERSION_ID >= 70200 && self::INTL_IDNA_VARIANT_2003 === $variant) {
+            @trigger_error('idn_to_utf8(): INTL_IDNA_VARIANT_2003 is deprecated', E_USER_DEPRECATED);
+        }
+
+        $parts = explode('.', $domain);
+
+        foreach ($parts as &$part) {
+            $length = \strlen($part);
+            if ($length < 1 || 63 < $length) {
+                continue;
+            }
+            if (0 !== strpos($part, 'xn--')) {
+                continue;
+            }
+
+            $part = substr($part, 4);
+            $part = self::decodePart($part);
+        }
+
+        $output = implode('.', $parts);
+
+        $idna_info = array(
+            'result' => \strlen($output) > 255 ? false : $output,
+            'isTransitionalDifferent' => false,
+            'errors' => 0,
+        );
+
+        return $idna_info['result'];
+    }
+
     private static function decodePart($input)
     {
         $n = 128;
@@ -255,8 +251,8 @@ final class Idn
             $pos = 0;
         }
 
-        $outputLength = strlen($output);
-        $inputLength = strlen($input);
+        $outputLength = \strlen($output);
+        $inputLength = \strlen($input);
 
         while ($pos < $inputLength) {
             $oldi = $i;

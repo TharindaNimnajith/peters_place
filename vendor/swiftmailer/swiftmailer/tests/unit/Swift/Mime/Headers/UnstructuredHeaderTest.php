@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
+class Swift_Mime_Headers_UnstructuredHeaderTest extends \SwiftMailerTestCase
 {
     private $charset = 'utf-8';
 
@@ -8,6 +8,24 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
     {
         $header = $this->getHeader('Subject', $this->getEncoder('Q', true));
         $this->assertEquals(Swift_Mime_Header::TYPE_TEXT, $header->getFieldType());
+    }
+
+    private function getHeader($name, $encoder)
+    {
+        $header = new Swift_Mime_Headers_UnstructuredHeader($name, $encoder);
+        $header->setCharset($this->charset);
+
+        return $header;
+    }
+
+    private function getEncoder($type, $stub = false)
+    {
+        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
+        $encoder->shouldReceive('getName')
+            ->zeroOrMoreTimes()
+            ->andReturn($type);
+
+        return $encoder;
     }
 
     public function testGetNameReturnsNameVerbatim()
@@ -115,7 +133,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($nonAsciiChar, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($nonAsciiChar, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('=8F');
 
         $header = $this->getHeader('X-Test', $encoder);
@@ -140,7 +158,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
             $encoder = $this->getEncoder('Q');
             $encoder->shouldReceive('encodeString')
                 ->once()
-                ->with($char, Mockery::any(), Mockery::any(), Mockery::any())
+                ->with($char, \Mockery::any(), \Mockery::any(), \Mockery::any())
                 ->andReturn($encodedChar);
 
             $header = $this->getHeader('X-A', $encoder);
@@ -162,7 +180,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
             $encoder = $this->getEncoder('Q');
             $encoder->shouldReceive('encodeString')
                 ->once()
-                ->with($char, Mockery::any(), Mockery::any(), Mockery::any())
+                ->with($char, \Mockery::any(), \Mockery::any(), \Mockery::any())
                 ->andReturn($encodedChar);
 
             $header = $this->getHeader('X-A', $encoder);
@@ -193,7 +211,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($nonAsciiChar, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($nonAsciiChar, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('=8F');
         //Note that multi-line headers begin with LWSP which makes 75 + 1 = 76
         //Note also that =?utf-8?q??= is 12 chars which makes 75 - 12 = 63
@@ -223,7 +241,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($nonAsciiChar, 8, 63, Mockery::any())
+            ->with($nonAsciiChar, 8, 63, \Mockery::any())
             ->andReturn('line_one_here' . "\r\n" . 'line_two_here');
 
         //Note that multi-line headers begin with LWSP which makes 75 + 1 = 76
@@ -265,11 +283,11 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($word . ' ' . $word, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($word . ' ' . $word, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('w=8Frd_w=8Frd');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($word, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($word, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('w=8Frd');
 
         $header = $this->getHeader('X-Test', $encoder);
@@ -308,7 +326,7 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($value, Mockery::any(), Mockery::any(), Mockery::any())
+            ->with($value, \Mockery::any(), \Mockery::any(), \Mockery::any())
             ->andReturn('fo=8Fbar');
 
         $header = $this->getHeader('Subject', $encoder);
@@ -331,23 +349,5 @@ class Swift_Mime_Headers_UnstructuredHeaderTest extends SwiftMailerTestCase
         $header = $this->getHeader('Subject', $this->getEncoder('Q', true));
         $header->setValue('test');
         $this->assertEquals('test', $header->getFieldBodyModel());
-    }
-
-    private function getHeader($name, $encoder)
-    {
-        $header = new Swift_Mime_Headers_UnstructuredHeader($name, $encoder);
-        $header->setCharset($this->charset);
-
-        return $header;
-    }
-
-    private function getEncoder($type, $stub = false)
-    {
-        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
-        $encoder->shouldReceive('getName')
-            ->zeroOrMoreTimes()
-            ->andReturn($type);
-
-        return $encoder;
     }
 }

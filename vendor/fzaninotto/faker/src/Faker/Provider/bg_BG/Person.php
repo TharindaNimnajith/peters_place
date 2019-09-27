@@ -87,16 +87,6 @@ class Person extends \Faker\Provider\Person
     protected static $titleMale = array('Г-н', 'Др.');
     protected static $titleFemale = array('Г-жа', 'Г-ца', 'Др.');
 
-    public static function lastNameMale()
-    {
-        return static::randomElement(static::$lastNameMale);
-    }
-
-    public static function lastNameFemale()
-    {
-        return static::randomElement(static::$lastNameFemale);
-    }
-
     /**
      * @param string|null $gender 'male', 'female' or null for any
      * @example 'Чанталиев'
@@ -110,5 +100,15 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$lastNameFormat));
+    }
+
+    public static function lastNameMale()
+    {
+        return static::randomElement(static::$lastNameMale);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::randomElement(static::$lastNameFemale);
     }
 }

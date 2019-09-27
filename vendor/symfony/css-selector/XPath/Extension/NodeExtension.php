@@ -139,6 +139,11 @@ class NodeExtension extends AbstractExtension
         return $translator->addAttributeMatching($xpath, $node->getOperator(), $attribute, $value);
     }
 
+    private function isSafeName(string $name): bool
+    {
+        return 0 < preg_match('~^[a-zA-Z_][a-zA-Z0-9_.-]*$~', $name);
+    }
+
     public function translateClass(Node\ClassNode $node, Translator $translator): XPathExpr
     {
         $xpath = $translator->nodeToXPath($node->getSelector());
@@ -188,10 +193,5 @@ class NodeExtension extends AbstractExtension
     public function getName()
     {
         return 'node';
-    }
-
-    private function isSafeName(string $name): bool
-    {
-        return 0 < preg_match('~^[a-zA-Z_][a-zA-Z0-9_.-]*$~', $name);
     }
 }

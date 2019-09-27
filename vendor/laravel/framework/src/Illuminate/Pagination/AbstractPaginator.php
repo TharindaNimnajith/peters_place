@@ -260,6 +260,16 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
+     * Build the full fragment portion of a URL.
+     *
+     * @return string
+     */
+    protected function buildFragment()
+    {
+        return $this->fragment ? '#' . $this->fragment : '';
+    }
+
+    /**
      * Create a range of pagination URLs.
      *
      * @param int $start
@@ -308,6 +318,37 @@ abstract class AbstractPaginator implements Htmlable
         }
 
         return $this->addQuery($key, $value);
+    }
+
+    /**
+     * Add an array of query string values.
+     *
+     * @param array $keys
+     * @return $this
+     */
+    protected function appendArray(array $keys)
+    {
+        foreach ($keys as $key => $value) {
+            $this->addQuery($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add a query string value to the paginator.
+     *
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
+    protected function addQuery($key, $value)
+    {
+        if ($key !== $this->pageName) {
+            $this->query[$key] = $value;
+        }
+
+        return $this;
     }
 
     /**
@@ -592,47 +633,6 @@ abstract class AbstractPaginator implements Htmlable
     public function __toString()
     {
         return (string)$this->render();
-    }
-
-    /**
-     * Build the full fragment portion of a URL.
-     *
-     * @return string
-     */
-    protected function buildFragment()
-    {
-        return $this->fragment ? '#' . $this->fragment : '';
-    }
-
-    /**
-     * Add an array of query string values.
-     *
-     * @param array $keys
-     * @return $this
-     */
-    protected function appendArray(array $keys)
-    {
-        foreach ($keys as $key => $value) {
-            $this->addQuery($key, $value);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add a query string value to the paginator.
-     *
-     * @param string $key
-     * @param string $value
-     * @return $this
-     */
-    protected function addQuery($key, $value)
-    {
-        if ($key !== $this->pageName) {
-            $this->query[$key] = $value;
-        }
-
-        return $this;
     }
 
     /**

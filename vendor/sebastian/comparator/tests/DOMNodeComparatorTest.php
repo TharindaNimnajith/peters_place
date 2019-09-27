@@ -83,6 +83,15 @@ final class DOMNodeComparatorTest extends TestCase
         ];
     }
 
+    private function createDOMDocument($content)
+    {
+        $document = new DOMDocument;
+        $document->preserveWhiteSpace = false;
+        $document->loadXML($content);
+
+        return $document;
+    }
+
     public function assertEqualsFailsProvider()
     {
         return [
@@ -168,14 +177,5 @@ final class DOMNodeComparatorTest extends TestCase
     protected function setUp(): void
     {
         $this->comparator = new DOMNodeComparator;
-    }
-
-    private function createDOMDocument($content)
-    {
-        $document = new DOMDocument;
-        $document->preserveWhiteSpace = false;
-        $document->loadXML($content);
-
-        return $document;
     }
 }

@@ -11,9 +11,6 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-use InvalidArgumentException;
-use function in_array;
-
 /**
  * HTTP header utility functions.
  *
@@ -71,6 +68,35 @@ class HeaderUtils
         return self::groupParts($matches, $separators);
     }
 
+    private static function groupParts(array $matches, string $separators): array
+    {
+        $separator = $separators[0];
+        $partSeparators = substr($separators, 1);
+
+        $i = 0;
+        $partMatches = [];
+        foreach ($matches as $match) {
+            if (isset($match['separator']) && $match['separator'] === $separator) {
+                ++$i;
+            } else {
+                $partMatches[$i][] = $match;
+            }
+        }
+
+        $parts = [];
+        if ($partSeparators) {
+            foreach ($partMatches as $matches) {
+                $parts[] = self::groupParts($matches, $partSeparators);
+            }
+        } else {
+            foreach ($partMatches as $matches) {
+                $parts[] = self::unquote($matches[0][0]);
+            }
+        }
+
+        return $parts;
+    }
+
     /**
      * Decodes a quoted string.
      *
@@ -118,14 +144,14 @@ class HeaderUtils
      *
      * @return string A string suitable for use as a Content-Disposition field-value
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @see RFC 6266
      */
     public static function makeDisposition(string $disposition, string $filename, string $filenameFallback = ''): string
     {
-        if (!in_array($disposition, [self::DISPOSITION_ATTACHMENT, self::DISPOSITION_INLINE])) {
-            throw new InvalidArgumentException(sprintf('The disposition must be either "%s" or "%s".', self::DISPOSITION_ATTACHMENT, self::DISPOSITION_INLINE));
+        if (!\in_array($disposition, [self::DISPOSITION_ATTACHMENT, self::DISPOSITION_INLINE])) {
+            throw new \InvalidArgumentException(sprintf('The disposition must be either "%s" or "%s".', self::DISPOSITION_ATTACHMENT, self::DISPOSITION_INLINE));
         }
 
         if ('' === $filenameFallback) {
@@ -134,17 +160,17 @@ class HeaderUtils
 
         // filenameFallback is not ASCII.
         if (!preg_match('/^[\x20-\x7e]*$/', $filenameFallback)) {
-            throw new InvalidArgumentException('The filename fallback must only contain ASCII characters.');
+            throw new \InvalidArgumentException('The filename fallback must only contain ASCII characters.');
         }
 
         // percent characters aren't safe in fallback.
         if (false !== strpos($filenameFallback, '%')) {
-            throw new InvalidArgumentException('The filename fallback cannot contain the "%" character.');
+            throw new \InvalidArgumentException('The filename fallback cannot contain the "%" character.');
         }
 
         // path separators aren't allowed in either.
         if (false !== strpos($filename, '/') || false !== strpos($filename, '\\') || false !== strpos($filenameFallback, '/') || false !== strpos($filenameFallback, '\\')) {
-            throw new InvalidArgumentException('The filename and the fallback cannot contain the "/" and "\\" characters.');
+            throw new \InvalidArgumentException('The filename and the fallback cannot contain the "/" and "\\" characters.');
         }
 
         $params = ['filename' => $filenameFallback];
@@ -195,34 +221,5 @@ class HeaderUtils
         }
 
         return '"' . addcslashes($s, '"\\"') . '"';
-    }
-
-    private static function groupParts(array $matches, string $separators): array
-    {
-        $separator = $separators[0];
-        $partSeparators = substr($separators, 1);
-
-        $i = 0;
-        $partMatches = [];
-        foreach ($matches as $match) {
-            if (isset($match['separator']) && $match['separator'] === $separator) {
-                ++$i;
-            } else {
-                $partMatches[$i][] = $match;
-            }
-        }
-
-        $parts = [];
-        if ($partSeparators) {
-            foreach ($partMatches as $matches) {
-                $parts[] = self::groupParts($matches, $partSeparators);
-            }
-        } else {
-            foreach ($partMatches as $matches) {
-                $parts[] = self::unquote($matches[0][0]);
-            }
-        }
-
-        return $parts;
     }
 }

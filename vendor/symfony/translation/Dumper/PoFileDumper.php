@@ -58,14 +58,6 @@ class PoFileDumper extends FileDumper
         return $output;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtension()
-    {
-        return 'po';
-    }
-
     private function formatComments($comments, string $prefix = ''): ?string
     {
         $output = null;
@@ -80,5 +72,13 @@ class PoFileDumper extends FileDumper
     private function escape($str)
     {
         return addcslashes($str, "\0..\37\42\134");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtension()
+    {
+        return 'po';
     }
 }

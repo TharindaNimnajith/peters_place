@@ -39,6 +39,22 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
     }
 
     /**
+     * Generates a complete phone number.
+     * @param string $type [def: landline] One of "landline" or "cellphone". Defaults to "landline" on invalid values.
+     * @param bool $formatted [def: true] If the number should be formatted or not.
+     * @return string
+     */
+    protected static function anyPhoneNumber($type, $formatted = true)
+    {
+        $area = static::areaCode();
+        $number = ($type == 'cellphone') ?
+            static::cellphone($formatted) :
+            static::landline($formatted);
+
+        return $formatted ? "($area) $number" : $area . $number;
+    }
+
+    /**
      * Generates a 2-digit area code not composed by zeroes.
      * @link http://www.anatel.gov.br/legislacao/resolucoes/16-2001/383-resolucao-263.
      * @return string
@@ -107,22 +123,6 @@ class PhoneNumber extends \Faker\Provider\PhoneNumber
     {
         $method = static::randomElement(array('cellphoneNumber', 'landlineNumber'));
         return call_user_func("static::$method", false);
-    }
-
-    /**
-     * Generates a complete phone number.
-     * @param string $type [def: landline] One of "landline" or "cellphone". Defaults to "landline" on invalid values.
-     * @param bool $formatted [def: true] If the number should be formatted or not.
-     * @return string
-     */
-    protected static function anyPhoneNumber($type, $formatted = true)
-    {
-        $area = static::areaCode();
-        $number = ($type == 'cellphone') ?
-            static::cellphone($formatted) :
-            static::landline($formatted);
-
-        return $formatted ? "($area) $number" : $area . $number;
     }
 
     /**

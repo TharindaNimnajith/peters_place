@@ -151,6 +151,78 @@ class Generator
     }
 
     /**
+     * @param array|string $type
+     * @param string $className
+     * @param string $prefix
+     *
+     * @return array
+     */
+    private function generateClassName($type, $className, $prefix)
+    {
+        if (is_array($type)) {
+            $type = implode('_', $type);
+        }
+
+        if ($type[0] === '\\') {
+            $type = substr($type, 1);
+        }
+
+        $classNameParts = explode('\\', $type);
+
+        if (count($classNameParts) > 1) {
+            $type = array_pop($classNameParts);
+            $namespaceName = implode('\\', $classNameParts);
+            $fullClassName = $namespaceName . '\\' . $type;
+        } else {
+            $namespaceName = '';
+            $fullClassName = $type;
+        }
+
+        if ($className === '') {
+            do {
+                $className = $prefix . $type . '_' .
+                    substr(md5(mt_rand()), 0, 8);
+            } while (class_exists($className, false));
+        }
+
+        return [
+            'className' => $className,
+            'originalClassName' => $type,
+            'fullClassName' => $fullClassName,
+            'namespaceName' => $namespaceName,
+        ];
+    }
+
+    /**
+     * @param string $template
+     *
+     * @return Text_Template
+     * @throws InvalidArgumentException
+     *
+     */
+    private function getTemplate($template)
+    {
+        $filename = __DIR__ . DIRECTORY_SEPARATOR . 'Generator' . DIRECTORY_SEPARATOR . $template;
+
+        if (!isset(self::$templates[$filename])) {
+            self::$templates[$filename] = new Text_Template($filename);
+        }
+
+        return self::$templates[$filename];
+    }
+
+    /**
+     * @param string $code
+     * @param string $className
+     */
+    private function evalClass($code, $className): void
+    {
+        if (!class_exists($className, false)) {
+            eval($code);
+        }
+    }
+
+    /**
      * Returns a mock object for the specified abstract class with all abstract
      * methods of the class mocked. Concrete methods to mock can be specified with
      * the last parameter
@@ -415,262 +487,6 @@ class Generator
     }
 
     /**
-     * @param string $className
-     *
-     * @return string[]
-     * @throws ReflectionException
-     *
-     */
-    public function getClassMethods($className): array
-    {
-        $class = new ReflectionClass($className);
-        $methods = [];
-
-        foreach ($class->getMethods() as $method) {
-            if ($method->isPublic() || $method->isAbstract()) {
-                $methods[] = $method->getName();
-            }
-        }
-
-        return $methods;
-    }
-
-    /**
-     * @return MockMethod[]
-     * @throws ReflectionException
-     *
-     */
-    public function mockClassMethods(string $className, bool $callOriginalMethods, bool $cloneArguments): array
-    {
-        $class = new ReflectionClass($className);
-        $methods = [];
-
-        foreach ($class->getMethods() as $method) {
-            if (($method->isPublic() || $method->isAbstract()) && $this->canMockMethod($method)) {
-                $methods[] = MockMethod::fromReflection($method, $callOriginalMethods, $cloneArguments);
-            }
-        }
-
-        return $methods;
-    }
-
-    /**
-     * Returns an object for the specified trait.
-     *
-     * @param string $traitName
-     * @param string $traitClassName
-     * @param bool $callOriginalConstructor
-     * @param bool $callOriginalClone
-     * @param bool $callAutoload
-     *
-     * @return object
-     * @throws RuntimeException
-     * @throws Exception
-     *
-     * @throws ReflectionException
-     */
-    public function getObjectForTrait($traitName, array $arguments = [], $traitClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true)
-    {
-        if (!is_string($traitName)) {
-            throw InvalidArgumentHelper::factory(1, 'string');
-        }
-
-        if (!is_string($traitClassName)) {
-            throw InvalidArgumentHelper::factory(3, 'string');
-        }
-
-        if (!trait_exists($traitName, $callAutoload)) {
-            throw new RuntimeException(
-                sprintf(
-                    'Trait "%s" does not exist.',
-                    $traitName
-                )
-            );
-        }
-
-        $className = $this->generateClassName(
-            $traitName,
-            $traitClassName,
-            'Trait_'
-        );
-
-        $classTemplate = $this->getTemplate('trait_class.tpl');
-
-        $classTemplate->setVar(
-            [
-                'prologue' => '',
-                'class_name' => $className['className'],
-                'trait_name' => $traitName,
-            ]
-        );
-
-        return $this->getObject(
-            $classTemplate->render(),
-            $className['className'],
-            '',
-            $callOriginalConstructor,
-            $callAutoload,
-            $arguments
-        );
-    }
-
-    /**
-     * @param string $wsdlFile
-     * @param string $className
-     *
-     * @return string
-     * @throws RuntimeException
-     *
-     */
-    public function generateClassFromWsdl($wsdlFile, $className, array $methods = [], array $options = [])
-    {
-        if (!extension_loaded('soap')) {
-            throw new RuntimeException(
-                'The SOAP extension is required to generate a mock object from WSDL.'
-            );
-        }
-
-        $options = array_merge($options, ['cache_wsdl' => WSDL_CACHE_NONE]);
-        $client = new SoapClient($wsdlFile, $options);
-        $_methods = array_unique($client->__getFunctions());
-        unset($client);
-
-        sort($_methods);
-
-        $methodTemplate = $this->getTemplate('wsdl_method.tpl');
-        $methodsBuffer = '';
-
-        foreach ($_methods as $method) {
-            preg_match_all('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\(/', $method, $matches, PREG_OFFSET_CAPTURE);
-            $lastFunction = array_pop($matches[0]);
-            $nameStart = $lastFunction[1];
-            $nameEnd = $nameStart + strlen($lastFunction[0]) - 1;
-            $name = str_replace('(', '', $lastFunction[0]);
-
-            if (empty($methods) || in_array($name, $methods, true)) {
-                $args = explode(
-                    ',',
-                    str_replace(')', '', substr($method, $nameEnd + 1))
-                );
-
-                foreach (range(0, count($args) - 1) as $i) {
-                    $args[$i] = substr($args[$i], strpos($args[$i], '$'));
-                }
-
-                $methodTemplate->setVar(
-                    [
-                        'method_name' => $name,
-                        'arguments' => implode(', ', $args),
-                    ]
-                );
-
-                $methodsBuffer .= $methodTemplate->render();
-            }
-        }
-
-        $optionsBuffer = '[';
-
-        foreach ($options as $key => $value) {
-            $optionsBuffer .= $key . ' => ' . $value;
-        }
-
-        $optionsBuffer .= ']';
-
-        $classTemplate = $this->getTemplate('wsdl_class.tpl');
-        $namespace = '';
-
-        if (strpos($className, '\\') !== false) {
-            $parts = explode('\\', $className);
-            $className = array_pop($parts);
-            $namespace = 'namespace ' . implode('\\', $parts) . ';' . "\n\n";
-        }
-
-        $classTemplate->setVar(
-            [
-                'namespace' => $namespace,
-                'class_name' => $className,
-                'wsdl' => $wsdlFile,
-                'options' => $optionsBuffer,
-                'methods' => $methodsBuffer,
-            ]
-        );
-
-        return $classTemplate->render();
-    }
-
-    /**
-     * @param array|string $type
-     * @param string $className
-     * @param string $prefix
-     *
-     * @return array
-     */
-    private function generateClassName($type, $className, $prefix)
-    {
-        if (is_array($type)) {
-            $type = implode('_', $type);
-        }
-
-        if ($type[0] === '\\') {
-            $type = substr($type, 1);
-        }
-
-        $classNameParts = explode('\\', $type);
-
-        if (count($classNameParts) > 1) {
-            $type = array_pop($classNameParts);
-            $namespaceName = implode('\\', $classNameParts);
-            $fullClassName = $namespaceName . '\\' . $type;
-        } else {
-            $namespaceName = '';
-            $fullClassName = $type;
-        }
-
-        if ($className === '') {
-            do {
-                $className = $prefix . $type . '_' .
-                    substr(md5(mt_rand()), 0, 8);
-            } while (class_exists($className, false));
-        }
-
-        return [
-            'className' => $className,
-            'originalClassName' => $type,
-            'fullClassName' => $fullClassName,
-            'namespaceName' => $namespaceName,
-        ];
-    }
-
-    /**
-     * @param string $template
-     *
-     * @return Text_Template
-     * @throws InvalidArgumentException
-     *
-     */
-    private function getTemplate($template)
-    {
-        $filename = __DIR__ . DIRECTORY_SEPARATOR . 'Generator' . DIRECTORY_SEPARATOR . $template;
-
-        if (!isset(self::$templates[$filename])) {
-            self::$templates[$filename] = new Text_Template($filename);
-        }
-
-        return self::$templates[$filename];
-    }
-
-    /**
-     * @param string $code
-     * @param string $className
-     */
-    private function evalClass($code, $className): void
-    {
-        if (!class_exists($className, false)) {
-            eval($code);
-        }
-    }
-
-    /**
      * @param array|string $type
      * @param null|array $explicitMethods
      * @param string $mockClassName
@@ -928,6 +744,27 @@ class Generator
     }
 
     /**
+     * @param string $className
+     *
+     * @return string[]
+     * @throws ReflectionException
+     *
+     */
+    public function getClassMethods($className): array
+    {
+        $class = new ReflectionClass($className);
+        $methods = [];
+
+        foreach ($class->getMethods() as $method) {
+            if ($method->isPublic() || $method->isAbstract()) {
+                $methods[] = $method->getName();
+            }
+        }
+
+        return $methods;
+    }
+
+    /**
      * @return bool
      */
     private function canMockMethod(ReflectionMethod $method)
@@ -960,6 +797,25 @@ class Generator
         foreach ($reflect->getMethods() as $method) {
             if ($method->getDeclaringClass()->getName() === $interfaceName) {
                 $methods[] = $method;
+            }
+        }
+
+        return $methods;
+    }
+
+    /**
+     * @return MockMethod[]
+     * @throws ReflectionException
+     *
+     */
+    public function mockClassMethods(string $className, bool $callOriginalMethods, bool $cloneArguments): array
+    {
+        $class = new ReflectionClass($className);
+        $methods = [];
+
+        foreach ($class->getMethods() as $method) {
+            if (($method->isPublic() || $method->isAbstract()) && $this->canMockMethod($method)) {
+                $methods[] = MockMethod::fromReflection($method, $callOriginalMethods, $cloneArguments);
             }
         }
 
@@ -1060,5 +916,149 @@ class Generator
         }
 
         return $object;
+    }
+
+    /**
+     * Returns an object for the specified trait.
+     *
+     * @param string $traitName
+     * @param string $traitClassName
+     * @param bool $callOriginalConstructor
+     * @param bool $callOriginalClone
+     * @param bool $callAutoload
+     *
+     * @return object
+     * @throws RuntimeException
+     * @throws Exception
+     *
+     * @throws ReflectionException
+     */
+    public function getObjectForTrait($traitName, array $arguments = [], $traitClassName = '', $callOriginalConstructor = true, $callOriginalClone = true, $callAutoload = true)
+    {
+        if (!is_string($traitName)) {
+            throw InvalidArgumentHelper::factory(1, 'string');
+        }
+
+        if (!is_string($traitClassName)) {
+            throw InvalidArgumentHelper::factory(3, 'string');
+        }
+
+        if (!trait_exists($traitName, $callAutoload)) {
+            throw new RuntimeException(
+                sprintf(
+                    'Trait "%s" does not exist.',
+                    $traitName
+                )
+            );
+        }
+
+        $className = $this->generateClassName(
+            $traitName,
+            $traitClassName,
+            'Trait_'
+        );
+
+        $classTemplate = $this->getTemplate('trait_class.tpl');
+
+        $classTemplate->setVar(
+            [
+                'prologue' => '',
+                'class_name' => $className['className'],
+                'trait_name' => $traitName,
+            ]
+        );
+
+        return $this->getObject(
+            $classTemplate->render(),
+            $className['className'],
+            '',
+            $callOriginalConstructor,
+            $callAutoload,
+            $arguments
+        );
+    }
+
+    /**
+     * @param string $wsdlFile
+     * @param string $className
+     *
+     * @return string
+     * @throws RuntimeException
+     *
+     */
+    public function generateClassFromWsdl($wsdlFile, $className, array $methods = [], array $options = [])
+    {
+        if (!extension_loaded('soap')) {
+            throw new RuntimeException(
+                'The SOAP extension is required to generate a mock object from WSDL.'
+            );
+        }
+
+        $options = array_merge($options, ['cache_wsdl' => WSDL_CACHE_NONE]);
+        $client = new SoapClient($wsdlFile, $options);
+        $_methods = array_unique($client->__getFunctions());
+        unset($client);
+
+        sort($_methods);
+
+        $methodTemplate = $this->getTemplate('wsdl_method.tpl');
+        $methodsBuffer = '';
+
+        foreach ($_methods as $method) {
+            preg_match_all('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\(/', $method, $matches, PREG_OFFSET_CAPTURE);
+            $lastFunction = array_pop($matches[0]);
+            $nameStart = $lastFunction[1];
+            $nameEnd = $nameStart + strlen($lastFunction[0]) - 1;
+            $name = str_replace('(', '', $lastFunction[0]);
+
+            if (empty($methods) || in_array($name, $methods, true)) {
+                $args = explode(
+                    ',',
+                    str_replace(')', '', substr($method, $nameEnd + 1))
+                );
+
+                foreach (range(0, count($args) - 1) as $i) {
+                    $args[$i] = substr($args[$i], strpos($args[$i], '$'));
+                }
+
+                $methodTemplate->setVar(
+                    [
+                        'method_name' => $name,
+                        'arguments' => implode(', ', $args),
+                    ]
+                );
+
+                $methodsBuffer .= $methodTemplate->render();
+            }
+        }
+
+        $optionsBuffer = '[';
+
+        foreach ($options as $key => $value) {
+            $optionsBuffer .= $key . ' => ' . $value;
+        }
+
+        $optionsBuffer .= ']';
+
+        $classTemplate = $this->getTemplate('wsdl_class.tpl');
+        $namespace = '';
+
+        if (strpos($className, '\\') !== false) {
+            $parts = explode('\\', $className);
+            $className = array_pop($parts);
+            $namespace = 'namespace ' . implode('\\', $parts) . ';' . "\n\n";
+        }
+
+        $classTemplate->setVar(
+            [
+                'namespace' => $namespace,
+                'class_name' => $className,
+                'wsdl' => $wsdlFile,
+                'options' => $optionsBuffer,
+                'methods' => $methodsBuffer,
+            ]
+        );
+
+        return $classTemplate->render();
     }
 }

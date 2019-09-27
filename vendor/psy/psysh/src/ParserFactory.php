@@ -31,16 +31,6 @@ class ParserFactory
     const PREFER_PHP7 = 'PREFER_PHP7';
 
     /**
-     * Possible kinds of parsers for the factory, from PHP parser library.
-     *
-     * @return array
-     */
-    public static function getPossibleKinds()
-    {
-        return ['ONLY_PHP5', 'ONLY_PHP7', 'PREFER_PHP5', 'PREFER_PHP7'];
-    }
-
-    /**
      * New parser instance with given kind.
      *
      * @param string|null $kind One of class constants (only for PHP parser 2.0 and above)
@@ -92,5 +82,15 @@ class ParserFactory
         if ($this->hasKindsSupport()) {
             return version_compare(PHP_VERSION, '7.0', '>=') ? static::ONLY_PHP7 : static::ONLY_PHP5;
         }
+    }
+
+    /**
+     * Possible kinds of parsers for the factory, from PHP parser library.
+     *
+     * @return array
+     */
+    public static function getPossibleKinds()
+    {
+        return ['ONLY_PHP5', 'ONLY_PHP7', 'PREFER_PHP5', 'PREFER_PHP7'];
     }
 }

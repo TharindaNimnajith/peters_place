@@ -76,13 +76,6 @@ class ConsecutiveParameters extends StatelessInvocation
         return false;
     }
 
-    public function verify(): void
-    {
-        foreach ($this->invocations as $callIndex => $invocation) {
-            $this->verifyInvocation($invocation, $callIndex);
-        }
-    }
-
     /**
      * Verify a single invocation
      *
@@ -125,6 +118,13 @@ class ConsecutiveParameters extends StatelessInvocation
                     $invocation->toString()
                 )
             );
+        }
+    }
+
+    public function verify(): void
+    {
+        foreach ($this->invocations as $callIndex => $invocation) {
+            $this->verifyInvocation($invocation, $callIndex);
         }
     }
 }

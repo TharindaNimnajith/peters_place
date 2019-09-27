@@ -257,6 +257,24 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
+     * Extract the query string from the given path.
+     *
+     * @param string $path
+     * @return array
+     */
+    protected function extractQueryString($path)
+    {
+        if (($queryPosition = strpos($path, '?')) !== false) {
+            return [
+                substr($path, 0, $queryPosition),
+                substr($path, $queryPosition),
+            ];
+        }
+
+        return [$path, ''];
+    }
+
+    /**
      * Format the given URL segments into a single URL.
      *
      * @param string $root
@@ -298,6 +316,30 @@ class UrlGenerator implements UrlGeneratorContract
         }
 
         return $this->to('/');
+    }
+
+    /**
+     * Get the previous URL from the session if possible.
+     *
+     * @return string|null
+     */
+    protected function getPreviousUrlFromSession()
+    {
+        $session = $this->getSession();
+
+        return $session ? $session->previousUrl() : null;
+    }
+
+    /**
+     * Get the session implementation from the resolver.
+     *
+     * @return Store|null
+     */
+    protected function getSession()
+    {
+        if ($this->sessionResolver) {
+            return call_user_func($this->sessionResolver);
+        }
     }
 
     /**
@@ -344,6 +386,19 @@ class UrlGenerator implements UrlGeneratorContract
             : $this->formatRoot($this->formatScheme($secure));
 
         return $this->removeIndex($root) . '/' . trim($path, '/');
+    }
+
+    /**
+     * Remove the index.php file from a path.
+     *
+     * @param string $root
+     * @return string
+     */
+    protected function removeIndex($root)
+    {
+        $i = 'index.php';
+
+        return Str::contains($root, $i) ? str_replace('/' . $i, '', $root) : $root;
     }
 
     /**
@@ -424,6 +479,37 @@ class UrlGenerator implements UrlGeneratorContract
     }
 
     /**
+     * Get the URL for a given route instance.
+     *
+     * @param Route $route
+     * @param mixed $parameters
+     * @param bool $absolute
+     * @return string
+     *
+     * @throws UrlGenerationException
+     */
+    protected function toRoute($route, $parameters, $absolute)
+    {
+        return $this->routeUrl()->to(
+            $route, $this->formatParameters($parameters), $absolute
+        );
+    }
+
+    /**
+     * Get the Route URL generator instance.
+     *
+     * @return RouteUrlGenerator
+     */
+    protected function routeUrl()
+    {
+        if (!$this->routeGenerator) {
+            $this->routeGenerator = new RouteUrlGenerator($this, $this->request);
+        }
+
+        return $this->routeGenerator;
+    }
+
+    /**
      * Determine if the given request has a valid signature.
      *
      * @param Request $request
@@ -463,6 +549,25 @@ class UrlGenerator implements UrlGeneratorContract
         }
 
         return $this->toRoute($route, $parameters, $absolute);
+    }
+
+    /**
+     * Format the given controller action.
+     *
+     * @param string|array $action
+     * @return string
+     */
+    protected function formatAction($action)
+    {
+        if (is_array($action)) {
+            $action = '\\' . implode('@', $action);
+        }
+
+        if ($this->rootNamespace && strpos($action, '\\') !== 0) {
+            return $this->rootNamespace . '\\' . $action;
+        } else {
+            return trim($action, '\\');
+        }
     }
 
     /**
@@ -625,110 +730,5 @@ class UrlGenerator implements UrlGeneratorContract
         $this->rootNamespace = $rootNamespace;
 
         return $this;
-    }
-
-    /**
-     * Extract the query string from the given path.
-     *
-     * @param string $path
-     * @return array
-     */
-    protected function extractQueryString($path)
-    {
-        if (($queryPosition = strpos($path, '?')) !== false) {
-            return [
-                substr($path, 0, $queryPosition),
-                substr($path, $queryPosition),
-            ];
-        }
-
-        return [$path, ''];
-    }
-
-    /**
-     * Get the previous URL from the session if possible.
-     *
-     * @return string|null
-     */
-    protected function getPreviousUrlFromSession()
-    {
-        $session = $this->getSession();
-
-        return $session ? $session->previousUrl() : null;
-    }
-
-    /**
-     * Get the session implementation from the resolver.
-     *
-     * @return Store|null
-     */
-    protected function getSession()
-    {
-        if ($this->sessionResolver) {
-            return call_user_func($this->sessionResolver);
-        }
-    }
-
-    /**
-     * Remove the index.php file from a path.
-     *
-     * @param string $root
-     * @return string
-     */
-    protected function removeIndex($root)
-    {
-        $i = 'index.php';
-
-        return Str::contains($root, $i) ? str_replace('/' . $i, '', $root) : $root;
-    }
-
-    /**
-     * Get the URL for a given route instance.
-     *
-     * @param Route $route
-     * @param mixed $parameters
-     * @param bool $absolute
-     * @return string
-     *
-     * @throws UrlGenerationException
-     */
-    protected function toRoute($route, $parameters, $absolute)
-    {
-        return $this->routeUrl()->to(
-            $route, $this->formatParameters($parameters), $absolute
-        );
-    }
-
-    /**
-     * Get the Route URL generator instance.
-     *
-     * @return RouteUrlGenerator
-     */
-    protected function routeUrl()
-    {
-        if (!$this->routeGenerator) {
-            $this->routeGenerator = new RouteUrlGenerator($this, $this->request);
-        }
-
-        return $this->routeGenerator;
-    }
-
-    /**
-     * Format the given controller action.
-     *
-     * @param string|array $action
-     * @return string
-     */
-    protected function formatAction($action)
-    {
-        if (is_array($action)) {
-            $action = '\\' . implode('@', $action);
-        }
-
-        if ($this->rootNamespace && strpos($action, '\\') !== 0) {
-            return $this->rootNamespace . '\\' . $action;
-        } else {
-            return trim($action, '\\');
-        }
     }
 }

@@ -21,6 +21,24 @@ trait ManagesFrequencies
     }
 
     /**
+     * Schedule the event to run between start and end time.
+     *
+     * @param string $startTime
+     * @param string $endTime
+     * @return Closure
+     */
+    private function inTimeInterval($startTime, $endTime)
+    {
+        return function () use ($startTime, $endTime) {
+            return Carbon::now($this->timezone)->between(
+                Carbon::parse($startTime, $this->timezone),
+                Carbon::parse($endTime, $this->timezone),
+                true
+            );
+        };
+    }
+
+    /**
      * Schedule the event to not run between start and end time.
      *
      * @param string $startTime
@@ -40,6 +58,22 @@ trait ManagesFrequencies
     public function everyMinute()
     {
         return $this->spliceIntoPosition(1, '*');
+    }
+
+    /**
+     * Splice the given value into the given position of the expression.
+     *
+     * @param int $position
+     * @param string $value
+     * @return $this
+     */
+    protected function spliceIntoPosition($position, $value)
+    {
+        $segments = explode(' ', $this->expression);
+
+        $segments[$position - 1] = $value;
+
+        return $this->cron(implode(' ', $segments));
     }
 
     /**
@@ -377,39 +411,5 @@ trait ManagesFrequencies
         $this->timezone = $timezone;
 
         return $this;
-    }
-
-    /**
-     * Splice the given value into the given position of the expression.
-     *
-     * @param int $position
-     * @param string $value
-     * @return $this
-     */
-    protected function spliceIntoPosition($position, $value)
-    {
-        $segments = explode(' ', $this->expression);
-
-        $segments[$position - 1] = $value;
-
-        return $this->cron(implode(' ', $segments));
-    }
-
-    /**
-     * Schedule the event to run between start and end time.
-     *
-     * @param string $startTime
-     * @param string $endTime
-     * @return Closure
-     */
-    private function inTimeInterval($startTime, $endTime)
-    {
-        return function () use ($startTime, $endTime) {
-            return Carbon::now($this->timezone)->between(
-                Carbon::parse($startTime, $this->timezone),
-                Carbon::parse($endTime, $this->timezone),
-                true
-            );
-        };
     }
 }

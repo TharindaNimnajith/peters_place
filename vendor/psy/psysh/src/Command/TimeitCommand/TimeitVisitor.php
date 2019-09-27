@@ -64,6 +64,24 @@ class TimeitVisitor extends NodeVisitorAbstract
     }
 
     /**
+     * Get PhpParser AST nodes for a `markEnd` call.
+     *
+     * Optionally pass in a return value.
+     *
+     * @param Expr|null $arg
+     *
+     * @return PhpParser\Node\Expr\StaticCall
+     */
+    private function getEndCall(Expr $arg = null)
+    {
+        if ($arg === null) {
+            $arg = NoReturnValue::create();
+        }
+
+        return new StaticCall(new FullyQualifiedName('Psy\Command\TimeitCommand'), 'markEnd', [new Arg($arg)]);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function leaveNode(Node $node)
@@ -96,24 +114,6 @@ class TimeitVisitor extends NodeVisitorAbstract
         }
 
         return $nodes;
-    }
-
-    /**
-     * Get PhpParser AST nodes for a `markEnd` call.
-     *
-     * Optionally pass in a return value.
-     *
-     * @param Expr|null $arg
-     *
-     * @return PhpParser\Node\Expr\StaticCall
-     */
-    private function getEndCall(Expr $arg = null)
-    {
-        if ($arg === null) {
-            $arg = NoReturnValue::create();
-        }
-
-        return new StaticCall(new FullyQualifiedName('Psy\Command\TimeitCommand'), 'markEnd', [new Arg($arg)]);
     }
 
     /**

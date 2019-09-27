@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Encoder_QpEncoderTest extends SwiftMailerTestCase
+class Swift_Encoder_QpEncoderTest extends \SwiftMailerTestCase
 {
     /* -- RFC 2045, 6.7 --
     (1)   (General 8bit representation) Any octet, except a CR or
@@ -49,6 +49,11 @@ class Swift_Encoder_QpEncoderTest extends SwiftMailerTestCase
 
             $this->assertIdenticalBinary($char, $encoder->encodeString($char));
         }
+    }
+
+    private function createCharStream()
+    {
+        return $this->getMockery('Swift_CharacterStream')->shouldIgnoreMissing();
     }
 
     public function testWhiteSpaceAtLineEndingIsEncoded()
@@ -383,11 +388,6 @@ class Swift_Encoder_QpEncoderTest extends SwiftMailerTestCase
         $this->assertEquals(
             $input, $encoder->encodeString($input)
         );
-    }
-
-    private function createCharStream()
-    {
-        return $this->getMockery('Swift_CharacterStream')->shouldIgnoreMissing();
     }
 
     private function createEncoder()

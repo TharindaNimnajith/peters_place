@@ -139,6 +139,20 @@ trait Localization
     }
 
     /**
+     * Initialize the default translator instance if necessary.
+     *
+     * @return TranslatorInterface
+     */
+    protected static function translator()
+    {
+        if (static::$translator === null) {
+            static::$translator = Translator::get();
+        }
+
+        return static::$translator;
+    }
+
+    /**
      * Get the fallback locale.
      *
      * @see https://symfony.com/doc/current/components/translation.html#fallback-locales
@@ -387,125 +401,6 @@ trait Localization
     }
 
     /**
-     * Translate a time string from a locale to an other.
-     *
-     * @param string $timeString time string to translate
-     * @param string|null $from input locale of the $timeString parameter (`Carbon::getLocale()` by default)
-     * @param string|null $to output locale of the result returned (`"en"` by default)
-     * @param int $mode specify what to translate with options:
-     *                                - CarbonInterface::TRANSLATE_ALL (default)
-     *                                - CarbonInterface::TRANSLATE_MONTHS
-     *                                - CarbonInterface::TRANSLATE_DAYS
-     *                                - CarbonInterface::TRANSLATE_UNITS
-     *                                - CarbonInterface::TRANSLATE_MERIDIEM
-     *                                You can use pipe to group: CarbonInterface::TRANSLATE_MONTHS | CarbonInterface::TRANSLATE_DAYS
-     *
-     * @return string
-     */
-    public static function translateTimeString($timeString, $from = null, $to = null, $mode = CarbonInterface::TRANSLATE_ALL)
-    {
-        $from = $from ?: static::getLocale();
-        $to = $to ?: 'en';
-
-        if ($from === $to) {
-            return $timeString;
-        }
-
-        $cleanWord = function ($word) {
-            $word = str_replace([':count', '%count', ':time'], '', $word);
-            $word = preg_replace('/({\d+(,(\d+|Inf))?}|[\[\]]\d+(,(\d+|Inf))?[\[\]])/', '', $word);
-
-            return trim($word);
-        };
-
-        $fromTranslations = [];
-        $toTranslations = [];
-
-        foreach (['from', 'to'] as $key) {
-            $language = $$key;
-            $translator = Translator::get($language);
-            $translations = $translator->getMessages();
-
-            if (!isset($translations[$language])) {
-                return $timeString;
-            }
-
-            $translationKey = $key . 'Translations';
-            $messages = $translations[$language];
-            $months = $messages['months'];
-            $weekdays = $messages['weekdays'];
-            $meridiem = $messages['meridiem'] ?? ['AM', 'PM'];
-
-            if ($key === 'from') {
-                foreach (['months', 'weekdays'] as $variable) {
-                    $list = $messages[$variable . '_standalone'] ?? null;
-
-                    if ($list) {
-                        foreach ($$variable as $index => &$name) {
-                            $name .= '|' . $messages[$variable . '_standalone'][$index];
-                        }
-                    }
-                }
-            }
-
-            $$translationKey = array_merge(
-                $mode & CarbonInterface::TRANSLATE_MONTHS ? array_pad($months, 12, '>>DO NOT REPLACE<<') : [],
-                $mode & CarbonInterface::TRANSLATE_MONTHS ? array_pad($messages['months_short'], 12, '>>DO NOT REPLACE<<') : [],
-                $mode & CarbonInterface::TRANSLATE_DAYS ? array_pad($weekdays, 7, '>>DO NOT REPLACE<<') : [],
-                $mode & CarbonInterface::TRANSLATE_DAYS ? array_pad($messages['weekdays_short'], 7, '>>DO NOT REPLACE<<') : [],
-                $mode & CarbonInterface::TRANSLATE_UNITS ? array_map(function ($unit) use ($messages, $key, $cleanWord) {
-                    $parts = explode('|', $messages[$unit]);
-
-                    return $key === 'to'
-                        ? $cleanWord(end($parts))
-                        : '(?:' . implode('|', array_map($cleanWord, $parts)) . ')';
-                }, [
-                    'year',
-                    'month',
-                    'week',
-                    'day',
-                    'hour',
-                    'minute',
-                    'second',
-                ]) : [],
-                $mode & CarbonInterface::TRANSLATE_MERIDIEM ? array_map(function ($hour) use ($meridiem) {
-                    if (is_array($meridiem)) {
-                        return $meridiem[$hour < 12 ? 0 : 1];
-                    }
-
-                    return $meridiem($hour, 0, false);
-                }, range(0, 23)) : []
-            );
-        }
-
-        return substr(preg_replace_callback('/(?<=[\d\s+.\/,_-])(' . implode('|', $fromTranslations) . ')(?=[\d\s+.\/,_-])/i', function ($match) use ($fromTranslations, $toTranslations) {
-            [$chunk] = $match;
-
-            foreach ($fromTranslations as $index => $word) {
-                if (preg_match("/^$word\$/i", $chunk)) {
-                    return $toTranslations[$index] ?? '';
-                }
-            }
-
-            return $chunk; // @codeCoverageIgnore
-        }, " $timeString "), 1, -1);
-    }
-
-    /**
-     * Initialize the default translator instance if necessary.
-     *
-     * @return TranslatorInterface
-     */
-    protected static function translator()
-    {
-        if (static::$translator === null) {
-            static::$translator = Translator::get();
-        }
-
-        return static::$translator;
-    }
-
-    /**
      * Returns raw translation message for a given key.
      *
      * @param string $key key to find
@@ -626,6 +521,111 @@ trait Localization
     public function translateTimeStringTo($timeString, $to = null)
     {
         return static::translateTimeString($timeString, $this->getLocalTranslator()->getLocale(), $to);
+    }
+
+    /**
+     * Translate a time string from a locale to an other.
+     *
+     * @param string $timeString time string to translate
+     * @param string|null $from input locale of the $timeString parameter (`Carbon::getLocale()` by default)
+     * @param string|null $to output locale of the result returned (`"en"` by default)
+     * @param int $mode specify what to translate with options:
+     *                                - CarbonInterface::TRANSLATE_ALL (default)
+     *                                - CarbonInterface::TRANSLATE_MONTHS
+     *                                - CarbonInterface::TRANSLATE_DAYS
+     *                                - CarbonInterface::TRANSLATE_UNITS
+     *                                - CarbonInterface::TRANSLATE_MERIDIEM
+     *                                You can use pipe to group: CarbonInterface::TRANSLATE_MONTHS | CarbonInterface::TRANSLATE_DAYS
+     *
+     * @return string
+     */
+    public static function translateTimeString($timeString, $from = null, $to = null, $mode = CarbonInterface::TRANSLATE_ALL)
+    {
+        $from = $from ?: static::getLocale();
+        $to = $to ?: 'en';
+
+        if ($from === $to) {
+            return $timeString;
+        }
+
+        $cleanWord = function ($word) {
+            $word = str_replace([':count', '%count', ':time'], '', $word);
+            $word = preg_replace('/({\d+(,(\d+|Inf))?}|[\[\]]\d+(,(\d+|Inf))?[\[\]])/', '', $word);
+
+            return trim($word);
+        };
+
+        $fromTranslations = [];
+        $toTranslations = [];
+
+        foreach (['from', 'to'] as $key) {
+            $language = $$key;
+            $translator = Translator::get($language);
+            $translations = $translator->getMessages();
+
+            if (!isset($translations[$language])) {
+                return $timeString;
+            }
+
+            $translationKey = $key . 'Translations';
+            $messages = $translations[$language];
+            $months = $messages['months'];
+            $weekdays = $messages['weekdays'];
+            $meridiem = $messages['meridiem'] ?? ['AM', 'PM'];
+
+            if ($key === 'from') {
+                foreach (['months', 'weekdays'] as $variable) {
+                    $list = $messages[$variable . '_standalone'] ?? null;
+
+                    if ($list) {
+                        foreach ($$variable as $index => &$name) {
+                            $name .= '|' . $messages[$variable . '_standalone'][$index];
+                        }
+                    }
+                }
+            }
+
+            $$translationKey = array_merge(
+                $mode & CarbonInterface::TRANSLATE_MONTHS ? array_pad($months, 12, '>>DO NOT REPLACE<<') : [],
+                $mode & CarbonInterface::TRANSLATE_MONTHS ? array_pad($messages['months_short'], 12, '>>DO NOT REPLACE<<') : [],
+                $mode & CarbonInterface::TRANSLATE_DAYS ? array_pad($weekdays, 7, '>>DO NOT REPLACE<<') : [],
+                $mode & CarbonInterface::TRANSLATE_DAYS ? array_pad($messages['weekdays_short'], 7, '>>DO NOT REPLACE<<') : [],
+                $mode & CarbonInterface::TRANSLATE_UNITS ? array_map(function ($unit) use ($messages, $key, $cleanWord) {
+                    $parts = explode('|', $messages[$unit]);
+
+                    return $key === 'to'
+                        ? $cleanWord(end($parts))
+                        : '(?:' . implode('|', array_map($cleanWord, $parts)) . ')';
+                }, [
+                    'year',
+                    'month',
+                    'week',
+                    'day',
+                    'hour',
+                    'minute',
+                    'second',
+                ]) : [],
+                $mode & CarbonInterface::TRANSLATE_MERIDIEM ? array_map(function ($hour) use ($meridiem) {
+                    if (is_array($meridiem)) {
+                        return $meridiem[$hour < 12 ? 0 : 1];
+                    }
+
+                    return $meridiem($hour, 0, false);
+                }, range(0, 23)) : []
+            );
+        }
+
+        return substr(preg_replace_callback('/(?<=[\d\s+.\/,_-])(' . implode('|', $fromTranslations) . ')(?=[\d\s+.\/,_-])/i', function ($match) use ($fromTranslations, $toTranslations) {
+            [$chunk] = $match;
+
+            foreach ($fromTranslations as $index => $word) {
+                if (preg_match("/^$word\$/i", $chunk)) {
+                    return $toTranslations[$index] ?? '';
+                }
+            }
+
+            return $chunk; // @codeCoverageIgnore
+        }, " $timeString "), 1, -1);
     }
 
     /**

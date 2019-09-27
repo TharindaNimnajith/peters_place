@@ -16,7 +16,6 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Contracts\EventDispatcher\Event as ContractsEvent;
-use TypeError;
 
 class EventDispatcherTest extends TestCase
 {
@@ -286,6 +285,11 @@ class EventDispatcherTest extends TestCase
         $this->assertTrue($dispatcher->hasListeners('bug.62976'));
     }
 
+    protected function createEventDispatcher()
+    {
+        return new EventDispatcher();
+    }
+
     public function testHasListenersWhenAddedCallbackListenerIsRemoved()
     {
         $listener = function () {
@@ -428,17 +432,12 @@ class EventDispatcherTest extends TestCase
     }
 
     /**
-     * @expectedException TypeError
+     * @expectedException \TypeError
      * @expectedExceptionMessage Argument 1 passed to "Symfony\Component\EventDispatcher\EventDispatcherInterface::dispatch()" must be an object, string given.
      */
     public function testLegacySignatureWithNewEventObject()
     {
         $this->dispatcher->dispatch('foo', new ContractsEvent());
-    }
-
-    protected function createEventDispatcher()
-    {
-        return new EventDispatcher();
     }
 
     protected function setUp()

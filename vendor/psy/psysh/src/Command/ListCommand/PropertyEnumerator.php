@@ -88,6 +88,24 @@ class PropertyEnumerator extends Enumerator
     }
 
     /**
+     * Get output style for the given property's visibility.
+     *
+     * @param ReflectionProperty $property
+     *
+     * @return string
+     */
+    private function getVisibilityStyle(ReflectionProperty $property)
+    {
+        if ($property->isPublic()) {
+            return self::IS_PUBLIC;
+        } elseif ($property->isProtected()) {
+            return self::IS_PROTECTED;
+        } else {
+            return self::IS_PRIVATE;
+        }
+    }
+
+    /**
      * Present the $target's current value for a reflection property.
      *
      * @param ReflectionProperty $property
@@ -165,24 +183,6 @@ class PropertyEnumerator extends Enumerator
             return 'Trait Properties';
         } else {
             return 'Class Properties';
-        }
-    }
-
-    /**
-     * Get output style for the given property's visibility.
-     *
-     * @param ReflectionProperty $property
-     *
-     * @return string
-     */
-    private function getVisibilityStyle(ReflectionProperty $property)
-    {
-        if ($property->isPublic()) {
-            return self::IS_PUBLIC;
-        } elseif ($property->isProtected()) {
-            return self::IS_PROTECTED;
-        } else {
-            return self::IS_PRIVATE;
         }
     }
 }

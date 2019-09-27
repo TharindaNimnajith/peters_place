@@ -55,53 +55,6 @@ class RotatingFileHandler extends StreamHandler
         parent::__construct($this->getTimedFilename(), $level, $bubble, $filePermission, $useLocking);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function reset()
-    {
-        parent::reset();
-
-        if (true === $this->mustRotate) {
-            $this->rotate();
-        }
-    }
-
-    public function setFilenameFormat($filenameFormat, $dateFormat)
-    {
-        if (!preg_match('{^Y(([/_.-]?m)([/_.-]?d)?)?$}', $dateFormat)) {
-            trigger_error(
-                'Invalid date format - format must be one of ' .
-                'RotatingFileHandler::FILE_PER_DAY ("Y-m-d"), RotatingFileHandler::FILE_PER_MONTH ("Y-m") ' .
-                'or RotatingFileHandler::FILE_PER_YEAR ("Y"), or you can set one of the ' .
-                'date formats using slashes, underscores and/or dots instead of dashes.',
-                E_USER_DEPRECATED
-            );
-        }
-        if (substr_count($filenameFormat, '{date}') === 0) {
-            trigger_error(
-                'Invalid filename format - format should contain at least `{date}`, because otherwise rotating is impossible.',
-                E_USER_DEPRECATED
-            );
-        }
-        $this->filenameFormat = $filenameFormat;
-        $this->dateFormat = $dateFormat;
-        $this->url = $this->getTimedFilename();
-        $this->close();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function close()
-    {
-        parent::close();
-
-        if (true === $this->mustRotate) {
-            $this->rotate();
-        }
-    }
-
     protected function getTimedFilename()
     {
         $fileInfo = pathinfo($this->filename);
@@ -116,6 +69,18 @@ class RotatingFileHandler extends StreamHandler
         }
 
         return $timedFilename;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function reset()
+    {
+        parent::reset();
+
+        if (true === $this->mustRotate) {
+            $this->rotate();
+        }
     }
 
     /**
@@ -170,6 +135,41 @@ class RotatingFileHandler extends StreamHandler
         }
 
         return $glob;
+    }
+
+    public function setFilenameFormat($filenameFormat, $dateFormat)
+    {
+        if (!preg_match('{^Y(([/_.-]?m)([/_.-]?d)?)?$}', $dateFormat)) {
+            trigger_error(
+                'Invalid date format - format must be one of ' .
+                'RotatingFileHandler::FILE_PER_DAY ("Y-m-d"), RotatingFileHandler::FILE_PER_MONTH ("Y-m") ' .
+                'or RotatingFileHandler::FILE_PER_YEAR ("Y"), or you can set one of the ' .
+                'date formats using slashes, underscores and/or dots instead of dashes.',
+                E_USER_DEPRECATED
+            );
+        }
+        if (substr_count($filenameFormat, '{date}') === 0) {
+            trigger_error(
+                'Invalid filename format - format should contain at least `{date}`, because otherwise rotating is impossible.',
+                E_USER_DEPRECATED
+            );
+        }
+        $this->filenameFormat = $filenameFormat;
+        $this->dateFormat = $dateFormat;
+        $this->url = $this->getTimedFilename();
+        $this->close();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+        parent::close();
+
+        if (true === $this->mustRotate) {
+            $this->rotate();
+        }
     }
 
     /**

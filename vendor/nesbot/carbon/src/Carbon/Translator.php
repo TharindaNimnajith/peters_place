@@ -333,6 +333,22 @@ class Translator extends Translation\Translator
     }
 
     /**
+     * Init messages language from matching file in Lang directory.
+     *
+     * @param string $locale
+     *
+     * @return bool
+     */
+    protected function loadMessagesFromFile($locale)
+    {
+        if (isset($this->messages[$locale])) {
+            return true;
+        }
+
+        return $this->resetMessages($locale);
+    }
+
+    /**
      * Reset messages of a locale (all locale if no locale passed).
      * Remove custom messages and reload initial messages from matching
      * file in Lang directory.
@@ -372,21 +388,5 @@ class Translator extends Translation\Translator
         return [
             'locale' => $this->getLocale(),
         ];
-    }
-
-    /**
-     * Init messages language from matching file in Lang directory.
-     *
-     * @param string $locale
-     *
-     * @return bool
-     */
-    protected function loadMessagesFromFile($locale)
-    {
-        if (isset($this->messages[$locale])) {
-            return true;
-        }
-
-        return $this->resetMessages($locale);
     }
 }

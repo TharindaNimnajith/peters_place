@@ -161,16 +161,6 @@ class Person extends \Faker\Provider\Person
 
     protected static $titleFemale = array('Cụ', 'Bà', 'Bác', 'Cô', 'Chị', 'Em');
 
-    public static function middleNameMale()
-    {
-        return static::randomElement(static::$middleNameMale);
-    }
-
-    public static function middleNameFemale()
-    {
-        return static::randomElement(static::$middleNameFemale);
-    }
-
     public function middleName($gender = null)
     {
         if ($gender === static::GENDER_MALE) {
@@ -180,5 +170,15 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$middleNameFormat));
+    }
+
+    public static function middleNameMale()
+    {
+        return static::randomElement(static::$middleNameMale);
+    }
+
+    public static function middleNameFemale()
+    {
+        return static::randomElement(static::$middleNameFemale);
     }
 }

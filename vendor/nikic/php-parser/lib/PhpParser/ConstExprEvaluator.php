@@ -84,28 +84,6 @@ class ConstExprEvaluator
         }
     }
 
-    /**
-     * Directly evaluates a constant expression into a PHP value.
-     *
-     * May generate Error exceptions, warnings or notices. Use evaluateSilently() to convert these
-     * into a ConstExprEvaluationException.
-     *
-     * If some part of the expression cannot be evaluated, the fallback evaluator passed to the
-     * constructor will be invoked. By default, if no fallback is provided, an exception of type
-     * ConstExprEvaluationException is thrown.
-     *
-     * See class doc comment for caveats and limitations.
-     *
-     * @param Expr $expr Constant expression to evaluate
-     * @return mixed Result of evaluation
-     *
-     * @throws ConstExprEvaluationException if the expression cannot be evaluated
-     */
-    public function evaluateDirectly(Expr $expr)
-    {
-        return $this->evaluate($expr);
-    }
-
     private function evaluate(Expr $expr)
     {
         if ($expr instanceof Scalar\LNumber
@@ -263,5 +241,27 @@ class ConstExprEvaluator
         }
 
         return ($this->fallbackEvaluator)($expr);
+    }
+
+    /**
+     * Directly evaluates a constant expression into a PHP value.
+     *
+     * May generate Error exceptions, warnings or notices. Use evaluateSilently() to convert these
+     * into a ConstExprEvaluationException.
+     *
+     * If some part of the expression cannot be evaluated, the fallback evaluator passed to the
+     * constructor will be invoked. By default, if no fallback is provided, an exception of type
+     * ConstExprEvaluationException is thrown.
+     *
+     * See class doc comment for caveats and limitations.
+     *
+     * @param Expr $expr Constant expression to evaluate
+     * @return mixed Result of evaluation
+     *
+     * @throws ConstExprEvaluationException if the expression cannot be evaluated
+     */
+    public function evaluateDirectly(Expr $expr)
+    {
+        return $this->evaluate($expr);
     }
 }

@@ -43,26 +43,6 @@ class ArrayCountToken implements TokenInterface
     }
 
     /**
-     * Returns false.
-     *
-     * @return boolean
-     */
-    public function isLast()
-    {
-        return false;
-    }
-
-    /**
-     * Returns string representation for token.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return sprintf('count(%s)', $this->count);
-    }
-
-    /**
      * Returns true if object is either array or instance of \Countable
      *
      * @param $argument
@@ -83,5 +63,25 @@ class ArrayCountToken implements TokenInterface
     private function hasProperCount($argument)
     {
         return $this->count === count($argument);
+    }
+
+    /**
+     * Returns false.
+     *
+     * @return boolean
+     */
+    public function isLast()
+    {
+        return false;
+    }
+
+    /**
+     * Returns string representation for token.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return sprintf('count(%s)', $this->count);
     }
 }

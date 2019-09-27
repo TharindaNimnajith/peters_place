@@ -24,6 +24,11 @@ class MessageFormatterTest extends TestCase
         $this->assertEquals($expected, $this->getMessageFormatter()->format($message, 'en', $parameters));
     }
 
+    private function getMessageFormatter()
+    {
+        return new MessageFormatter();
+    }
+
     /**
      * @dataProvider getTransChoiceMessages
      * @group legacy
@@ -74,10 +79,5 @@ class MessageFormatterTest extends TestCase
 
             ['Il y a 0 pomme', '[0,1] Il y a %count% pomme|]1,Inf] Il y a %count% pommes', 0, ['%count%' => 0]],
         ];
-    }
-
-    private function getMessageFormatter()
-    {
-        return new MessageFormatter();
     }
 }

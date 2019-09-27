@@ -33,19 +33,6 @@ class SqlServerProcessor extends Processor
     }
 
     /**
-     * Process the results of a column listing query.
-     *
-     * @param array $results
-     * @return array
-     */
-    public function processColumnListing($results)
-    {
-        return array_map(function ($result) {
-            return ((object)$result)->name;
-        }, $results);
-    }
-
-    /**
      * Process an "insert get ID" query for ODBC.
      *
      * @param Connection $connection
@@ -66,5 +53,18 @@ class SqlServerProcessor extends Processor
         $row = $result[0];
 
         return is_object($row) ? $row->insertid : $row['insertid'];
+    }
+
+    /**
+     * Process the results of a column listing query.
+     *
+     * @param array $results
+     * @return array
+     */
+    public function processColumnListing($results)
+    {
+        return array_map(function ($result) {
+            return ((object)$result)->name;
+        }, $results);
     }
 }

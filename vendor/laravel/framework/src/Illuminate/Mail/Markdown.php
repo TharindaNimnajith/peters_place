@@ -45,6 +45,17 @@ class Markdown
     }
 
     /**
+     * Register new mail component paths.
+     *
+     * @param array $paths
+     * @return void
+     */
+    public function loadComponentsFrom(array $paths = [])
+    {
+        $this->componentPaths = $paths;
+    }
+
+    /**
      * Parse the given Markdown text into HTML.
      *
      * @param string $text
@@ -55,17 +66,6 @@ class Markdown
         $parsedown = new Parsedown;
 
         return new HtmlString($parsedown->text($text));
-    }
-
-    /**
-     * Register new mail component paths.
-     *
-     * @param array $paths
-     * @return void
-     */
-    public function loadComponentsFrom(array $paths = [])
-    {
-        $this->componentPaths = $paths;
     }
 
     /**
@@ -99,6 +99,18 @@ class Markdown
         return array_map(function ($path) {
             return $path . '/html';
         }, $this->componentPaths());
+    }
+
+    /**
+     * Get the component paths.
+     *
+     * @return array
+     */
+    protected function componentPaths()
+    {
+        return array_unique(array_merge($this->componentPaths, [
+            __DIR__ . '/resources/views',
+        ]));
     }
 
     /**
@@ -144,17 +156,5 @@ class Markdown
         $this->theme = $theme;
 
         return $this;
-    }
-
-    /**
-     * Get the component paths.
-     *
-     * @return array
-     */
-    protected function componentPaths()
-    {
-        return array_unique(array_merge($this->componentPaths, [
-            __DIR__ . '/resources/views',
-        ]));
     }
 }

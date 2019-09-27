@@ -88,147 +88,6 @@ class CodeCleaner
     }
 
     /**
-     * Search the stack trace for a file in which the user called Psy\debug.
-     *
-     * @return string|null
-     */
-    private static function getDebugFile()
-    {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-
-        foreach (array_reverse($trace) as $stackFrame) {
-            if (!self::isDebugCall($stackFrame)) {
-                continue;
-            }
-
-            if (preg_match('/eval\(/', $stackFrame['file'])) {
-                preg_match_all('/([^\(]+)\((\d+)/', $stackFrame['file'], $matches);
-
-                return $matches[1][0];
-            }
-
-            return $stackFrame['file'];
-        }
-    }
-
-    /**
-     * Check whether a given backtrace frame is a call to Psy\debug.
-     *
-     * @param array $stackFrame
-     *
-     * @return bool
-     */
-    private static function isDebugCall(array $stackFrame)
-    {
-        $class = isset($stackFrame['class']) ? $stackFrame['class'] : null;
-        $function = isset($stackFrame['function']) ? $stackFrame['function'] : null;
-
-        return ($class === null && $function === 'Psy\debug') ||
-            ($class === 'Psy\Shell' && $function === 'debug');
-    }
-
-    /**
-     * Clean the given array of code.
-     *
-     * @param array $codeLines
-     * @param bool $requireSemicolons
-     *
-     * @return string|false Cleaned PHP code, False if the input is incomplete
-     * @throws ParseErrorException if the code is invalid PHP, and cannot be coerced into valid PHP
-     *
-     */
-    public function clean(array $codeLines, $requireSemicolons = false)
-    {
-        $stmts = $this->parse('<?php ' . implode(PHP_EOL, $codeLines) . PHP_EOL, $requireSemicolons);
-        if ($stmts === false) {
-            return false;
-        }
-
-        // Catch fatal errors before they happen
-        $stmts = $this->traverser->traverse($stmts);
-
-        // Work around https://github.com/nikic/PHP-Parser/issues/399
-        $oldLocale = setlocale(LC_NUMERIC, 0);
-        setlocale(LC_NUMERIC, 'C');
-
-        $code = $this->printer->prettyPrint($stmts);
-
-        // Now put the locale back
-        setlocale(LC_NUMERIC, $oldLocale);
-
-        return $code;
-    }
-
-    /**
-     * Get the current local namespace.
-     *
-     * @return null|array
-     */
-    public function getNamespace()
-    {
-        return $this->namespace;
-    }
-
-    /**
-     * Set the current local namespace.
-     *
-     * @param null|array $namespace (default: null)
-     *
-     * @return null|array
-     */
-    public function setNamespace(array $namespace = null)
-    {
-        $this->namespace = $namespace;
-    }
-
-    /**
-     * Lex and parse a block of code.
-     *
-     * @param string $code
-     * @param bool $requireSemicolons
-     *
-     * @return array|false A set of statements, or false if incomplete
-     * @throws ParseErrorException for parse errors that can't be resolved by
-     *                             waiting a line to see what comes next
-     *
-     * @see Parser::parse
-     *
-     */
-    protected function parse($code, $requireSemicolons = false)
-    {
-        try {
-            return $this->parser->parse($code);
-        } catch (Error $e) {
-            if ($this->parseErrorIsUnclosedString($e, $code)) {
-                return false;
-            }
-
-            if ($this->parseErrorIsUnterminatedComment($e, $code)) {
-                return false;
-            }
-
-            if ($this->parseErrorIsTrailingComma($e, $code)) {
-                return false;
-            }
-
-            if (!$this->parseErrorIsEOF($e)) {
-                throw ParseErrorException::fromParseError($e);
-            }
-
-            if ($requireSemicolons) {
-                return false;
-            }
-
-            try {
-                // Unexpected EOF, try again with an implicit semicolon
-                return $this->parser->parse($code . ';');
-            } catch (Error $e) {
-                return false;
-            }
-        }
-    }
-
-    /**
      * Get default CodeCleaner passes.
      *
      * @return array
@@ -317,6 +176,93 @@ class CodeCleaner
     }
 
     /**
+     * Search the stack trace for a file in which the user called Psy\debug.
+     *
+     * @return string|null
+     */
+    private static function getDebugFile()
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach (array_reverse($trace) as $stackFrame) {
+            if (!self::isDebugCall($stackFrame)) {
+                continue;
+            }
+
+            if (preg_match('/eval\(/', $stackFrame['file'])) {
+                preg_match_all('/([^\(]+)\((\d+)/', $stackFrame['file'], $matches);
+
+                return $matches[1][0];
+            }
+
+            return $stackFrame['file'];
+        }
+    }
+
+    /**
+     * Check whether a given backtrace frame is a call to Psy\debug.
+     *
+     * @param array $stackFrame
+     *
+     * @return bool
+     */
+    private static function isDebugCall(array $stackFrame)
+    {
+        $class = isset($stackFrame['class']) ? $stackFrame['class'] : null;
+        $function = isset($stackFrame['function']) ? $stackFrame['function'] : null;
+
+        return ($class === null && $function === 'Psy\debug') ||
+            ($class === 'Psy\Shell' && $function === 'debug');
+    }
+
+    /**
+     * Lex and parse a block of code.
+     *
+     * @param string $code
+     * @param bool $requireSemicolons
+     *
+     * @return array|false A set of statements, or false if incomplete
+     * @throws ParseErrorException for parse errors that can't be resolved by
+     *                             waiting a line to see what comes next
+     *
+     * @see Parser::parse
+     *
+     */
+    protected function parse($code, $requireSemicolons = false)
+    {
+        try {
+            return $this->parser->parse($code);
+        } catch (Error $e) {
+            if ($this->parseErrorIsUnclosedString($e, $code)) {
+                return false;
+            }
+
+            if ($this->parseErrorIsUnterminatedComment($e, $code)) {
+                return false;
+            }
+
+            if ($this->parseErrorIsTrailingComma($e, $code)) {
+                return false;
+            }
+
+            if (!$this->parseErrorIsEOF($e)) {
+                throw ParseErrorException::fromParseError($e);
+            }
+
+            if ($requireSemicolons) {
+                return false;
+            }
+
+            try {
+                // Unexpected EOF, try again with an implicit semicolon
+                return $this->parser->parse($code . ';');
+            } catch (Error $e) {
+                return false;
+            }
+        }
+    }
+
+    /**
      * A special test for unclosed single-quoted strings.
      *
      * Unlike (all?) other unclosed statements, single quoted strings have
@@ -358,5 +304,59 @@ class CodeCleaner
         $msg = $e->getRawMessage();
 
         return ($msg === 'Unexpected token EOF') || (strpos($msg, 'Syntax error, unexpected EOF') !== false);
+    }
+
+    /**
+     * Clean the given array of code.
+     *
+     * @param array $codeLines
+     * @param bool $requireSemicolons
+     *
+     * @return string|false Cleaned PHP code, False if the input is incomplete
+     * @throws ParseErrorException if the code is invalid PHP, and cannot be coerced into valid PHP
+     *
+     */
+    public function clean(array $codeLines, $requireSemicolons = false)
+    {
+        $stmts = $this->parse('<?php ' . implode(PHP_EOL, $codeLines) . PHP_EOL, $requireSemicolons);
+        if ($stmts === false) {
+            return false;
+        }
+
+        // Catch fatal errors before they happen
+        $stmts = $this->traverser->traverse($stmts);
+
+        // Work around https://github.com/nikic/PHP-Parser/issues/399
+        $oldLocale = setlocale(LC_NUMERIC, 0);
+        setlocale(LC_NUMERIC, 'C');
+
+        $code = $this->printer->prettyPrint($stmts);
+
+        // Now put the locale back
+        setlocale(LC_NUMERIC, $oldLocale);
+
+        return $code;
+    }
+
+    /**
+     * Get the current local namespace.
+     *
+     * @return null|array
+     */
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    /**
+     * Set the current local namespace.
+     *
+     * @param null|array $namespace (default: null)
+     *
+     * @return null|array
+     */
+    public function setNamespace(array $namespace = null)
+    {
+        $this->namespace = $namespace;
     }
 }

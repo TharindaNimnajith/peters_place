@@ -207,6 +207,22 @@ class Person extends \Faker\Provider\Person
     }
 
     /**
+     * @param integer $year
+     *
+     * @return integer|null
+     */
+    private static function getCenturyByYear($year)
+    {
+        if ($year >= 2000 && $year <= DateTime::year()) {
+            return self::CENTURY_21ST;
+        } elseif ($year >= 1900) {
+            return self::CENTURY_20TH;
+        } elseif ($year >= 1800) {
+            return self::CENTURY_19TH;
+        }
+    }
+
+    /**
      * @param string $iinValue
      *
      * @return integer
@@ -237,21 +253,5 @@ class Person extends \Faker\Provider\Person
         }
 
         return $sum % 11;
-    }
-
-    /**
-     * @param integer $year
-     *
-     * @return integer|null
-     */
-    private static function getCenturyByYear($year)
-    {
-        if ($year >= 2000 && $year <= DateTime::year()) {
-            return self::CENTURY_21ST;
-        } elseif ($year >= 1900) {
-            return self::CENTURY_20TH;
-        } elseif ($year >= 1800) {
-            return self::CENTURY_19TH;
-        }
     }
 }

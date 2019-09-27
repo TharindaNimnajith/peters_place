@@ -39,6 +39,21 @@ class ErrorListener implements EventSubscriberInterface
         ];
     }
 
+    public function onConsoleError(ConsoleErrorEvent $event)
+    {
+        if (null === $this->logger) {
+            return;
+        }
+
+        $error = $event->getError();
+
+        if (!$inputString = $this->getInputString($event)) {
+            return $this->logger->error('An error occurred while using the console. Message: "{message}"', ['exception' => $error, 'message' => $error->getMessage()]);
+        }
+
+        $this->logger->error('Error thrown while running command "{command}". Message: "{message}"', ['exception' => $error, 'command' => $inputString, 'message' => $error->getMessage()]);
+    }
+
     private static function getInputString(ConsoleEvent $event)
     {
         $commandName = $event->getCommand() ? $event->getCommand()->getName() : null;
@@ -53,21 +68,6 @@ class ErrorListener implements EventSubscriberInterface
         }
 
         return $commandName;
-    }
-
-    public function onConsoleError(ConsoleErrorEvent $event)
-    {
-        if (null === $this->logger) {
-            return;
-        }
-
-        $error = $event->getError();
-
-        if (!$inputString = $this->getInputString($event)) {
-            return $this->logger->error('An error occurred while using the console. Message: "{message}"', ['exception' => $error, 'message' => $error->getMessage()]);
-        }
-
-        $this->logger->error('Error thrown while running command "{command}". Message: "{message}"', ['exception' => $error, 'command' => $inputString, 'message' => $error->getMessage()]);
     }
 
     public function onConsoleTerminate(ConsoleTerminateEvent $event)

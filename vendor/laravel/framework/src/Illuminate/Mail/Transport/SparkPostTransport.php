@@ -77,6 +77,33 @@ class SparkPostTransport extends Transport
     }
 
     /**
+     * Get all the addresses this message should be sent to.
+     *
+     * Note that SparkPost still respects CC, BCC headers in raw message itself.
+     *
+     * @param Swift_Mime_SimpleMessage $message
+     * @return array
+     */
+    protected function getRecipients(Swift_Mime_SimpleMessage $message)
+    {
+        $recipients = [];
+
+        foreach ((array)$message->getTo() as $email => $name) {
+            $recipients[] = ['address' => compact('name', 'email')];
+        }
+
+        foreach ((array)$message->getCc() as $email => $name) {
+            $recipients[] = ['address' => compact('name', 'email')];
+        }
+
+        foreach ((array)$message->getBcc() as $email => $name) {
+            $recipients[] = ['address' => compact('name', 'email')];
+        }
+
+        return $recipients;
+    }
+
+    /**
      * Get the SparkPost API endpoint.
      *
      * @return string
@@ -108,6 +135,19 @@ class SparkPostTransport extends Transport
     }
 
     /**
+     * Get the transmission ID from the response.
+     *
+     * @param Response $response
+     * @return string
+     */
+    protected function getTransmissionId($response)
+    {
+        return object_get(
+            json_decode($response->getBody()->getContents()), 'results.id'
+        );
+    }
+
+    /**
      * Get the API key being used by the transport.
      *
      * @return string
@@ -126,45 +166,5 @@ class SparkPostTransport extends Transport
     public function setKey($key)
     {
         return $this->key = $key;
-    }
-
-    /**
-     * Get all the addresses this message should be sent to.
-     *
-     * Note that SparkPost still respects CC, BCC headers in raw message itself.
-     *
-     * @param Swift_Mime_SimpleMessage $message
-     * @return array
-     */
-    protected function getRecipients(Swift_Mime_SimpleMessage $message)
-    {
-        $recipients = [];
-
-        foreach ((array)$message->getTo() as $email => $name) {
-            $recipients[] = ['address' => compact('name', 'email')];
-        }
-
-        foreach ((array)$message->getCc() as $email => $name) {
-            $recipients[] = ['address' => compact('name', 'email')];
-        }
-
-        foreach ((array)$message->getBcc() as $email => $name) {
-            $recipients[] = ['address' => compact('name', 'email')];
-        }
-
-        return $recipients;
-    }
-
-    /**
-     * Get the transmission ID from the response.
-     *
-     * @param Response $response
-     * @return string
-     */
-    protected function getTransmissionId($response)
-    {
-        return object_get(
-            json_decode($response->getBody()->getContents()), 'results.id'
-        );
     }
 }

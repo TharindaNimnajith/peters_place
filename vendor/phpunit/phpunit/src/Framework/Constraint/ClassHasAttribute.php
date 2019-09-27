@@ -36,17 +36,6 @@ class ClassHasAttribute extends Constraint
     }
 
     /**
-     * Returns a string representation of the constraint.
-     */
-    public function toString(): string
-    {
-        return sprintf(
-            'has attribute "%s"',
-            $this->attributeName
-        );
-    }
-
-    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
@@ -74,6 +63,17 @@ class ClassHasAttribute extends Constraint
             is_object($other) ? 'object of ' : '',
             is_object($other) ? get_class($other) : $other,
             $this->toString()
+        );
+    }
+
+    /**
+     * Returns a string representation of the constraint.
+     */
+    public function toString(): string
+    {
+        return sprintf(
+            'has attribute "%s"',
+            $this->attributeName
         );
     }
 

@@ -12,7 +12,6 @@
 namespace Symfony\Component\HttpKernel\Tests;
 
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,10 +21,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ControllerDoesNotReturnResponseException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -33,24 +30,47 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class HttpKernelTest extends TestCase
 {
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testHandleWhenControllerThrowsAnExceptionAndCatchIsTrue()
     {
         $kernel = $this->getHttpKernel(new EventDispatcher(), function () {
-            throw new RuntimeException();
+            throw new \RuntimeException();
         });
 
         $kernel->handle(new Request(), HttpKernelInterface::MASTER_REQUEST, true);
     }
 
+    private function getHttpKernel(EventDispatcherInterface $eventDispatcher, $controller = null, RequestStack $requestStack = null, array $arguments = [])
+    {
+        if (null === $controller) {
+            $controller = function () {
+                return new Response('Hello');
+            };
+        }
+
+        $controllerResolver = $this->getMockBuilder(ControllerResolverInterface::class)->getMock();
+        $controllerResolver
+            ->expects($this->any())
+            ->method('getController')
+            ->willReturn($controller);
+
+        $argumentResolver = $this->getMockBuilder(ArgumentResolverInterface::class)->getMock();
+        $argumentResolver
+            ->expects($this->any())
+            ->method('getArguments')
+            ->willReturn($arguments);
+
+        return new HttpKernel($eventDispatcher, $controllerResolver, $requestStack, $argumentResolver);
+    }
+
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testHandleWhenControllerThrowsAnExceptionAndCatchIsFalseAndNoListenerIsRegistered()
     {
         $kernel = $this->getHttpKernel(new EventDispatcher(), function () {
-            throw new RuntimeException();
+            throw new \RuntimeException();
         });
 
         $kernel->handle(new Request(), HttpKernelInterface::MASTER_REQUEST, false);
@@ -64,7 +84,7 @@ class HttpKernelTest extends TestCase
         });
 
         $kernel = $this->getHttpKernel($dispatcher, function () {
-            throw new RuntimeException('foo');
+            throw new \RuntimeException('foo');
         });
         $response = $kernel->handle(new Request(), HttpKernelInterface::MASTER_REQUEST, true);
 
@@ -74,7 +94,7 @@ class HttpKernelTest extends TestCase
 
     public function testHandleWhenControllerThrowsAnExceptionAndCatchIsTrueWithANonHandlingListener()
     {
-        $exception = new RuntimeException();
+        $exception = new \RuntimeException();
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addListener(KernelEvents::EXCEPTION, function ($event) {
@@ -88,7 +108,7 @@ class HttpKernelTest extends TestCase
         try {
             $kernel->handle(new Request(), HttpKernelInterface::MASTER_REQUEST, true);
             $this->fail('LogicException expected');
-        } catch (RuntimeException $e) {
+        } catch (\RuntimeException $e) {
             $this->assertSame($exception, $e);
         }
     }
@@ -147,7 +167,7 @@ class HttpKernelTest extends TestCase
         });
 
         $kernel = $this->getHttpKernel($dispatcher, function () {
-            throw new RuntimeException();
+            throw new \RuntimeException();
         });
         $response = $kernel->handle(new Request());
 
@@ -176,7 +196,7 @@ class HttpKernelTest extends TestCase
     }
 
     /**
-     * @expectedException NotFoundHttpException
+     * @expectedException \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function testHandleWhenNoControllerIsFound()
     {
@@ -203,6 +223,12 @@ class HttpKernelTest extends TestCase
         $kernel = $this->getHttpKernel($dispatcher, new TestController());
 
         $this->assertResponseEquals(new Response('foo'), $kernel->handle(new Request()));
+    }
+
+    private function assertResponseEquals(Response $expected, Response $actual)
+    {
+        $expected->setDate($actual->getDate());
+        $this->assertEquals($expected, $actual);
     }
 
     public function testHandleWhenTheControllerIsAFunction()
@@ -346,7 +372,7 @@ class HttpKernelTest extends TestCase
     }
 
     /**
-     * @expectedException BadRequestHttpException
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function testInconsistentClientIpsOnMasterRequests()
     {
@@ -365,35 +391,6 @@ class HttpKernelTest extends TestCase
         $kernel->handle($request, $kernel::MASTER_REQUEST, false);
 
         Request::setTrustedProxies([], -1);
-    }
-
-    private function getHttpKernel(EventDispatcherInterface $eventDispatcher, $controller = null, RequestStack $requestStack = null, array $arguments = [])
-    {
-        if (null === $controller) {
-            $controller = function () {
-                return new Response('Hello');
-            };
-        }
-
-        $controllerResolver = $this->getMockBuilder(ControllerResolverInterface::class)->getMock();
-        $controllerResolver
-            ->expects($this->any())
-            ->method('getController')
-            ->willReturn($controller);
-
-        $argumentResolver = $this->getMockBuilder(ArgumentResolverInterface::class)->getMock();
-        $argumentResolver
-            ->expects($this->any())
-            ->method('getArguments')
-            ->willReturn($arguments);
-
-        return new HttpKernel($eventDispatcher, $controllerResolver, $requestStack, $argumentResolver);
-    }
-
-    private function assertResponseEquals(Response $expected, Response $actual)
-    {
-        $expected->setDate($actual->getDate());
-        $this->assertEquals($expected, $actual);
     }
 }
 

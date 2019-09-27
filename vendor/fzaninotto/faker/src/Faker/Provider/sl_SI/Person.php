@@ -125,11 +125,6 @@ class Person extends \Faker\Provider\Person
         return static::lastName();
     }
 
-    public static function lastNameFemale()
-    {
-        return static::lastName();
-    }
-
     /**
      * @param string|null $gender 'male', 'female' or null for any
      * @example 'Novak'
@@ -137,6 +132,11 @@ class Person extends \Faker\Provider\Person
     public function lastName($gender = null)
     {
         return static::randomElement(static::$lastName);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::lastName();
     }
 
     /**

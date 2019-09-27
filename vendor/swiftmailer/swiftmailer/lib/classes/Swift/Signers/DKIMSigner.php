@@ -192,6 +192,71 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
      * @throws Swift_IoException
      */
     // TODO fix return
+    protected function canonicalizeBody($string)
+    {
+        $len = strlen($string);
+        $canon = '';
+        $method = ('relaxed' == $this->bodyCanon);
+        for ($i = 0; $i < $len; ++$i) {
+            if ($this->bodyCanonIgnoreStart > 0) {
+                --$this->bodyCanonIgnoreStart;
+                continue;
+            }
+            switch ($string[$i]) {
+                case "\r":
+                    $this->bodyCanonLastChar = "\r";
+                    break;
+                case "\n":
+                    if ("\r" == $this->bodyCanonLastChar) {
+                        if ($method) {
+                            $this->bodyCanonSpace = false;
+                        }
+                        if ('' == $this->bodyCanonLine) {
+                            ++$this->bodyCanonEmptyCounter;
+                        } else {
+                            $this->bodyCanonLine = '';
+                            $canon .= "\r\n";
+                        }
+                    } else {
+                        // Wooops Error
+                        // todo handle it but should never happen
+                    }
+                    break;
+                case ' ':
+                case "\t":
+                    if ($method) {
+                        $this->bodyCanonSpace = true;
+                        break;
+                    }
+                // no break
+                default:
+                    if ($this->bodyCanonEmptyCounter > 0) {
+                        $canon .= str_repeat("\r\n", $this->bodyCanonEmptyCounter);
+                        $this->bodyCanonEmptyCounter = 0;
+                    }
+                    if ($this->bodyCanonSpace) {
+                        $this->bodyCanonLine .= ' ';
+                        $canon .= ' ';
+                        $this->bodyCanonSpace = false;
+                    }
+                    $this->bodyCanonLine .= $string[$i];
+                    $canon .= $string[$i];
+            }
+        }
+        $this->addToBodyHash($canon);
+    }
+
+    private function addToBodyHash($string)
+    {
+        $len = strlen($string);
+        if ($len > ($new_len = ($this->maxLen - $this->bodyLen))) {
+            $string = substr($string, 0, $new_len);
+            $len = $new_len;
+        }
+        hash_update($this->bodyHashHandler, $string);
+        $this->bodyLen += $len;
+    }
+
     /**
      * For any bytes that are currently buffered inside the stream, force them
      * off the buffer.
@@ -431,6 +496,15 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
         $this->endOfBody();
     }
 
+    protected function endOfBody()
+    {
+        // Add trailing Line return if last line is non empty
+        if (strlen($this->bodyCanonLine) > 0) {
+            $this->addToBodyHash("\r\n");
+        }
+        $this->bodyHash = hash_final($this->bodyHashHandler, true);
+    }
+
     /**
      * Returns the list of Headers Tampered by this plugin.
      *
@@ -444,6 +518,8 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
             return ['DKIM-Signature'];
         }
     }
+
+    /* Private helpers */
 
     /**
      * Adds an ignored Header.
@@ -485,6 +561,31 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
         }
 
         return $this;
+    }
+
+    protected function addHeader($header, $is_sig = false)
+    {
+        switch ($this->headerCanon) {
+            case 'relaxed':
+                // Prepare Header and cascade
+                $exploded = explode(':', $header, 2);
+                $name = strtolower(trim($exploded[0]));
+                $value = str_replace("\r\n", '', $exploded[1]);
+                $value = preg_replace("/[ \t][ \t]+/", ' ', $value);
+                $header = $name . ':' . trim($value) . ($is_sig ? '' : "\r\n");
+            // no break
+            case 'simple':
+                // Nothing to do
+        }
+        $this->addToHeaderHash($header);
+    }
+
+    private function addToHeaderHash($header)
+    {
+        if ($this->debugHeaders) {
+            $this->debugHeadersData[] = trim($header);
+        }
+        $this->headerCanonData .= $header;
     }
 
     /**
@@ -536,108 +637,6 @@ class Swift_Signers_DKIMSigner implements Swift_Signers_HeaderSigner
         $this->dkimHeader->setValue($string . ' b=' . trim(chunk_split(base64_encode($this->getEncryptedHash()), 73, ' ')));
 
         return $this;
-    }
-
-    /* Private helpers */
-
-
-    protected function canonicalizeBody($string)
-    {
-        $len = strlen($string);
-        $canon = '';
-        $method = ('relaxed' == $this->bodyCanon);
-        for ($i = 0; $i < $len; ++$i) {
-            if ($this->bodyCanonIgnoreStart > 0) {
-                --$this->bodyCanonIgnoreStart;
-                continue;
-            }
-            switch ($string[$i]) {
-                case "\r":
-                    $this->bodyCanonLastChar = "\r";
-                    break;
-                case "\n":
-                    if ("\r" == $this->bodyCanonLastChar) {
-                        if ($method) {
-                            $this->bodyCanonSpace = false;
-                        }
-                        if ('' == $this->bodyCanonLine) {
-                            ++$this->bodyCanonEmptyCounter;
-                        } else {
-                            $this->bodyCanonLine = '';
-                            $canon .= "\r\n";
-                        }
-                    } else {
-                        // Wooops Error
-                        // todo handle it but should never happen
-                    }
-                    break;
-                case ' ':
-                case "\t":
-                    if ($method) {
-                        $this->bodyCanonSpace = true;
-                        break;
-                    }
-                // no break
-                default:
-                    if ($this->bodyCanonEmptyCounter > 0) {
-                        $canon .= str_repeat("\r\n", $this->bodyCanonEmptyCounter);
-                        $this->bodyCanonEmptyCounter = 0;
-                    }
-                    if ($this->bodyCanonSpace) {
-                        $this->bodyCanonLine .= ' ';
-                        $canon .= ' ';
-                        $this->bodyCanonSpace = false;
-                    }
-                    $this->bodyCanonLine .= $string[$i];
-                    $canon .= $string[$i];
-            }
-        }
-        $this->addToBodyHash($canon);
-    }
-
-    protected function endOfBody()
-    {
-        // Add trailing Line return if last line is non empty
-        if (strlen($this->bodyCanonLine) > 0) {
-            $this->addToBodyHash("\r\n");
-        }
-        $this->bodyHash = hash_final($this->bodyHashHandler, true);
-    }
-
-    protected function addHeader($header, $is_sig = false)
-    {
-        switch ($this->headerCanon) {
-            case 'relaxed':
-                // Prepare Header and cascade
-                $exploded = explode(':', $header, 2);
-                $name = strtolower(trim($exploded[0]));
-                $value = str_replace("\r\n", '', $exploded[1]);
-                $value = preg_replace("/[ \t][ \t]+/", ' ', $value);
-                $header = $name . ':' . trim($value) . ($is_sig ? '' : "\r\n");
-            // no break
-            case 'simple':
-                // Nothing to do
-        }
-        $this->addToHeaderHash($header);
-    }
-
-    private function addToBodyHash($string)
-    {
-        $len = strlen($string);
-        if ($len > ($new_len = ($this->maxLen - $this->bodyLen))) {
-            $string = substr($string, 0, $new_len);
-            $len = $new_len;
-        }
-        hash_update($this->bodyHashHandler, $string);
-        $this->bodyLen += $len;
-    }
-
-    private function addToHeaderHash($header)
-    {
-        if ($this->debugHeaders) {
-            $this->debugHeadersData[] = trim($header);
-        }
-        $this->headerCanonData .= $header;
     }
 
     /**

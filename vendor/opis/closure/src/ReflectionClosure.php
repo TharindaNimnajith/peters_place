@@ -548,69 +548,6 @@ class ReflectionClosure extends ReflectionFunction
     /**
      * @return array
      */
-    public function getUseVariables()
-    {
-        if ($this->useVariables !== null) {
-            return $this->useVariables;
-        }
-
-        $tokens = $this->getTokens();
-        $use = array();
-        $state = 'start';
-
-        foreach ($tokens as &$token) {
-            $is_array = is_array($token);
-
-            switch ($state) {
-                case 'start':
-                    if ($is_array && $token[0] === T_USE) {
-                        $state = 'use';
-                    }
-                    break;
-                case 'use':
-                    if ($is_array) {
-                        if ($token[0] === T_VARIABLE) {
-                            $use[] = substr($token[1], 1);
-                        }
-                    } elseif ($token == ')') {
-                        break 2;
-                    }
-                    break;
-            }
-        }
-
-        $this->useVariables = empty($use) ? $use : array_intersect_key($this->getStaticVariables(), array_flip($use));
-
-        return $this->useVariables;
-    }
-
-    /**
-     * return bool
-     */
-    public function isBindingRequired()
-    {
-        if ($this->isBindingRequired === null) {
-            $this->getCode();
-        }
-
-        return $this->isBindingRequired;
-    }
-
-    /**
-     * return bool
-     */
-    public function isScopeRequired()
-    {
-        if ($this->isScopeRequired === null) {
-            $this->getCode();
-        }
-
-        return $this->isScopeRequired;
-    }
-
-    /**
-     * @return array
-     */
     protected function getTokens()
     {
         if ($this->tokens === null) {
@@ -934,5 +871,68 @@ class ReflectionClosure extends ReflectionFunction
         }
 
         return static::$constants[$key];
+    }
+
+    /**
+     * @return array
+     */
+    public function getUseVariables()
+    {
+        if ($this->useVariables !== null) {
+            return $this->useVariables;
+        }
+
+        $tokens = $this->getTokens();
+        $use = array();
+        $state = 'start';
+
+        foreach ($tokens as &$token) {
+            $is_array = is_array($token);
+
+            switch ($state) {
+                case 'start':
+                    if ($is_array && $token[0] === T_USE) {
+                        $state = 'use';
+                    }
+                    break;
+                case 'use':
+                    if ($is_array) {
+                        if ($token[0] === T_VARIABLE) {
+                            $use[] = substr($token[1], 1);
+                        }
+                    } elseif ($token == ')') {
+                        break 2;
+                    }
+                    break;
+            }
+        }
+
+        $this->useVariables = empty($use) ? $use : array_intersect_key($this->getStaticVariables(), array_flip($use));
+
+        return $this->useVariables;
+    }
+
+    /**
+     * return bool
+     */
+    public function isBindingRequired()
+    {
+        if ($this->isBindingRequired === null) {
+            $this->getCode();
+        }
+
+        return $this->isBindingRequired;
+    }
+
+    /**
+     * return bool
+     */
+    public function isScopeRequired()
+    {
+        if ($this->isScopeRequired === null) {
+            $this->getCode();
+        }
+
+        return $this->isScopeRequired;
     }
 }

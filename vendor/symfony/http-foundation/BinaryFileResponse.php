@@ -11,13 +11,8 @@
 
 namespace Symfony\Component\HttpFoundation;
 
-use DateTime;
-use LogicException;
-use SplFileInfo;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\File;
-use function ord;
-use function strlen;
 
 /**
  * BinaryFileResponse represents an HTTP response delivering a file.
@@ -41,7 +36,7 @@ class BinaryFileResponse extends Response
     protected $deleteFileAfterSend = false;
 
     /**
-     * @param SplFileInfo|string $file The file to stream
+     * @param \SplFileInfo|string $file The file to stream
      * @param int $status The response status code
      * @param array $headers An array of response headers
      * @param bool $public Files are public by default
@@ -61,7 +56,7 @@ class BinaryFileResponse extends Response
     }
 
     /**
-     * @param SplFileInfo|string $file The file to stream
+     * @param \SplFileInfo|string $file The file to stream
      * @param int $status The response status code
      * @param array $headers An array of response headers
      * @param bool $public Files are public by default
@@ -97,7 +92,7 @@ class BinaryFileResponse extends Response
     /**
      * Sets the file to stream.
      *
-     * @param SplFileInfo|string $file The file to stream
+     * @param \SplFileInfo|string $file The file to stream
      * @param string $contentDisposition
      * @param bool $autoEtag
      * @param bool $autoLastModified
@@ -109,7 +104,7 @@ class BinaryFileResponse extends Response
     public function setFile($file, $contentDisposition = null, $autoEtag = false, $autoLastModified = true)
     {
         if (!$file instanceof File) {
-            if ($file instanceof SplFileInfo) {
+            if ($file instanceof \SplFileInfo) {
                 $file = new File($file->getPathname());
             } else {
                 $file = new File((string)$file);
@@ -142,7 +137,7 @@ class BinaryFileResponse extends Response
      */
     public function setAutoLastModified()
     {
-        $this->setLastModified(DateTime::createFromFormat('U', $this->file->getMTime()));
+        $this->setLastModified(\DateTime::createFromFormat('U', $this->file->getMTime()));
 
         return $this;
     }
@@ -178,7 +173,7 @@ class BinaryFileResponse extends Response
             for ($i = 0, $filenameLength = mb_strlen($filename, $encoding); $i < $filenameLength; ++$i) {
                 $char = mb_substr($filename, $i, 1, $encoding);
 
-                if ('%' === $char || ord($char) < 32 || ord($char) > 126) {
+                if ('%' === $char || \ord($char) < 32 || \ord($char) > 126) {
                     $filenameFallback .= '_';
                 } else {
                     $filenameFallback .= $char;
@@ -234,8 +229,8 @@ class BinaryFileResponse extends Response
                 $parts = HeaderUtils::split($request->headers->get('X-Accel-Mapping', ''), ',=');
                 foreach ($parts as $part) {
                     list($pathPrefix, $location) = $part;
-                    if (substr($path, 0, strlen($pathPrefix)) === $pathPrefix) {
-                        $path = $location . substr($path, strlen($pathPrefix));
+                    if (substr($path, 0, \strlen($pathPrefix)) === $pathPrefix) {
+                        $path = $location . substr($path, \strlen($pathPrefix));
                         // Only set X-Accel-Redirect header if a valid URI can be produced
                         // as nginx does not serve arbitrary file paths.
                         $this->headers->set($type, $path);
@@ -282,6 +277,19 @@ class BinaryFileResponse extends Response
         return $this;
     }
 
+    private function hasValidIfRangeHeader($header)
+    {
+        if ($this->getEtag() === $header) {
+            return true;
+        }
+
+        if (null === $lastModified = $this->getLastModified()) {
+            return false;
+        }
+
+        return $lastModified->format('D, d M Y H:i:s') . ' GMT' === $header;
+    }
+
     /**
      * Sends the file.
      *
@@ -315,12 +323,12 @@ class BinaryFileResponse extends Response
     /**
      * {@inheritdoc}
      *
-     * @throws LogicException when the content is not null
+     * @throws \LogicException when the content is not null
      */
     public function setContent($content)
     {
         if (null !== $content) {
-            throw new LogicException('The content cannot be set on a BinaryFileResponse instance.');
+            throw new \LogicException('The content cannot be set on a BinaryFileResponse instance.');
         }
     }
 
@@ -347,18 +355,5 @@ class BinaryFileResponse extends Response
         $this->deleteFileAfterSend = $shouldDelete;
 
         return $this;
-    }
-
-    private function hasValidIfRangeHeader($header)
-    {
-        if ($this->getEtag() === $header) {
-            return true;
-        }
-
-        if (null === $lastModified = $this->getLastModified()) {
-            return false;
-        }
-
-        return $lastModified->format('D, d M Y H:i:s') . ' GMT' === $header;
     }
 }

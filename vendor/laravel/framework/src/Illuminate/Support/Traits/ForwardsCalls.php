@@ -8,21 +8,6 @@ use Error;
 trait ForwardsCalls
 {
     /**
-     * Throw a bad method call exception for the given method.
-     *
-     * @param string $method
-     * @return void
-     *
-     * @throws BadMethodCallException
-     */
-    protected static function throwBadMethodCallException($method)
-    {
-        throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
-        ));
-    }
-
-    /**
      * Forward a method call to the given object.
      *
      * @param mixed $object
@@ -50,5 +35,20 @@ trait ForwardsCalls
 
             static::throwBadMethodCallException($method);
         }
+    }
+
+    /**
+     * Throw a bad method call exception for the given method.
+     *
+     * @param string $method
+     * @return void
+     *
+     * @throws BadMethodCallException
+     */
+    protected static function throwBadMethodCallException($method)
+    {
+        throw new BadMethodCallException(sprintf(
+            'Call to undefined method %s::%s()', static::class, $method
+        ));
     }
 }

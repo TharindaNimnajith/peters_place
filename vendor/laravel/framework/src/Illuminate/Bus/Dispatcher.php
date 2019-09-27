@@ -77,6 +77,17 @@ class Dispatcher implements QueueingDispatcher
     }
 
     /**
+     * Determine if the given command should be queued.
+     *
+     * @param mixed $command
+     * @return bool
+     */
+    protected function commandShouldBeQueued($command)
+    {
+        return $command instanceof ShouldQueue;
+    }
+
+    /**
      * Dispatch a command to its appropriate handler behind a queue.
      *
      * @param mixed $command
@@ -99,6 +110,30 @@ class Dispatcher implements QueueingDispatcher
         }
 
         return $this->pushCommandToQueue($queue, $command);
+    }
+
+    /**
+     * Push the command onto the given queue instance.
+     *
+     * @param Queue $queue
+     * @param mixed $command
+     * @return mixed
+     */
+    protected function pushCommandToQueue($queue, $command)
+    {
+        if (isset($command->queue, $command->delay)) {
+            return $queue->laterOn($command->queue, $command->delay, $command);
+        }
+
+        if (isset($command->queue)) {
+            return $queue->pushOn($command->queue, $command);
+        }
+
+        if (isset($command->delay)) {
+            return $queue->later($command->delay, $command);
+        }
+
+        return $queue->push($command);
     }
 
     /**
@@ -173,40 +208,5 @@ class Dispatcher implements QueueingDispatcher
         $this->handlers = array_merge($this->handlers, $map);
 
         return $this;
-    }
-
-    /**
-     * Determine if the given command should be queued.
-     *
-     * @param mixed $command
-     * @return bool
-     */
-    protected function commandShouldBeQueued($command)
-    {
-        return $command instanceof ShouldQueue;
-    }
-
-    /**
-     * Push the command onto the given queue instance.
-     *
-     * @param Queue $queue
-     * @param mixed $command
-     * @return mixed
-     */
-    protected function pushCommandToQueue($queue, $command)
-    {
-        if (isset($command->queue, $command->delay)) {
-            return $queue->laterOn($command->queue, $command->delay, $command);
-        }
-
-        if (isset($command->queue)) {
-            return $queue->pushOn($command->queue, $command);
-        }
-
-        if (isset($command->delay)) {
-            return $queue->later($command->delay, $command);
-        }
-
-        return $queue->push($command);
     }
 }

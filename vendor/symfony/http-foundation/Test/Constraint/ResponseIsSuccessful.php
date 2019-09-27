@@ -17,14 +17,6 @@ use Symfony\Component\HttpFoundation\Response;
 final class ResponseIsSuccessful extends Constraint
 {
     /**
-     * {@inheritdoc}
-     */
-    public function toString(): string
-    {
-        return 'is successful';
-    }
-
-    /**
      * @param Response $response
      *
      * {@inheritdoc}
@@ -42,6 +34,14 @@ final class ResponseIsSuccessful extends Constraint
     protected function failureDescription($response): string
     {
         return 'the Response ' . $this->toString();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        return 'is successful';
     }
 
     /**

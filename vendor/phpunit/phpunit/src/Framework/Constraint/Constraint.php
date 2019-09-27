@@ -65,14 +65,6 @@ abstract class Constraint implements Countable, SelfDescribing
     }
 
     /**
-     * Counts the number of constraint elements.
-     */
-    public function count(): int
-    {
-        return 1;
-    }
-
-    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
@@ -147,5 +139,13 @@ abstract class Constraint implements Countable, SelfDescribing
     protected function additionalFailureDescription($other): string
     {
         return '';
+    }
+
+    /**
+     * Counts the number of constraint elements.
+     */
+    public function count(): int
+    {
+        return 1;
     }
 }

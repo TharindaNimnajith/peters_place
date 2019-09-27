@@ -1,9 +1,8 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
-use PHPUnit\Framework\TestCase;
 
-class Swift_Bug206Test extends TestCase
+class Swift_Bug206Test extends \PHPUnit\Framework\TestCase
 {
     private $factory;
 
@@ -13,6 +12,17 @@ class Swift_Bug206Test extends TestCase
         $this->doTestHeaderIsFullyEncoded('email@example.org', 'Family Namé, Name', ' Family =?utf-8?Q?Nam=C3=A9=2C?= Name');
         $this->doTestHeaderIsFullyEncoded('email@example.org', 'Family Namé , Name', ' Family =?utf-8?Q?Nam=C3=A9_=2C?= Name');
         $this->doTestHeaderIsFullyEncoded('email@example.org', 'Family Namé ;Name', ' Family =?utf-8?Q?Nam=C3=A9_=3BName?= ');
+    }
+
+    private function doTestHeaderIsFullyEncoded($email, $name, $expected)
+    {
+        $mailboxHeader = $this->factory->createMailboxHeader('To', [
+            $email => $name,
+        ]);
+
+        $headerBody = substr($mailboxHeader->toString(), 3, strlen($expected));
+
+        $this->assertEquals($expected, $headerBody);
     }
 
     protected function setUp()
@@ -26,16 +36,5 @@ class Swift_Bug206Test extends TestCase
         );
         $emailValidator = new EmailValidator();
         $this->factory = new Swift_Mime_SimpleHeaderFactory($headerEncoder, $paramEncoder, $emailValidator);
-    }
-
-    private function doTestHeaderIsFullyEncoded($email, $name, $expected)
-    {
-        $mailboxHeader = $this->factory->createMailboxHeader('To', [
-            $email => $name,
-        ]);
-
-        $headerBody = substr($mailboxHeader->toString(), 3, strlen($expected));
-
-        $this->assertEquals($expected, $headerBody);
     }
 }

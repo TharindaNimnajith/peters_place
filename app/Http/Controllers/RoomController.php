@@ -353,8 +353,21 @@ class RoomController extends Controller
     {
         $details = room::find($id);
 
+        //$type_id = $details->t_id;
+
+        //$rt_details = room_type::where('id', $type_id)->first();
+
+        $rt_details = room_type::all();
+        
+        //dd($rt_details);
+        //dd($rt_details->id);
+
+        /*
         return view('update_room')
             ->with('details', $details);
+        */
+        
+        return view('update_room', ['details' => $details, 'rt_details' => $rt_details]);
     }
 
 
@@ -373,7 +386,9 @@ class RoomController extends Controller
 
         $cust_details = customer::where('id', $cid)->first();
 
-        $rt_details = room_type::where('id', $type_id)->first();
+        //$rt_details = room_type::where('id', $type_id)->first();
+
+        $rt_details = room_type::all();
 
         /*
         return view('update_room_reservation')

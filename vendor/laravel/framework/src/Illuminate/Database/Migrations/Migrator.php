@@ -156,6 +156,21 @@ class Migrator
     }
 
     /**
+     * Get the migration files that have not yet run.
+     *
+     * @param array $files
+     * @param array $ran
+     * @return array
+     */
+    protected function pendingMigrations($files, $ran)
+    {
+        return Collection::make($files)
+            ->reject(function ($file) use ($ran) {
+                return in_array($this->getMigrationName($file), $ran);
+            })->values()->all();
+    }
+
+    /**
      * Run an array of migrations.
      *
      * @param array $migrations
@@ -199,195 +214,6 @@ class Migrator
     }
 
     /**
-     * Fire the given event for the migration.
-     *
-     * @param MigrationEvent $event
-     * @return void
-     */
-    public function fireMigrationEvent($event)
-    {
-        if ($this->events) {
-            $this->events->dispatch($event);
-        }
-    }
-
-    /**
-     * Resolve a migration instance from a file.
-     *
-     * @param string $file
-     * @return object
-     */
-    public function resolve($file)
-    {
-        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
-
-        return new $class;
-    }
-
-    /**
-     * Resolve the database connection instance.
-     *
-     * @param string $connection
-     * @return Connection
-     */
-    public function resolveConnection($connection)
-    {
-        return $this->resolver->connection($connection ?: $this->connection);
-    }
-
-    /**
-     * Rollback the last migration operation.
-     *
-     * @param array|string $paths
-     * @param array $options
-     * @return array
-     */
-    public function rollback($paths = [], array $options = [])
-    {
-        // We want to pull in the last batch of migrations that ran on the previous
-        // migration operation. We'll then reverse those migrations and run each
-        // of them "down" to reverse the last migration "operation" which ran.
-        $migrations = $this->getMigrationsForRollback($options);
-
-        if (count($migrations) === 0) {
-            $this->note('<info>Nothing to rollback.</info>');
-
-            return [];
-        }
-
-        return $this->rollbackMigrations($migrations, $paths, $options);
-    }
-
-    /**
-     * Rolls all of the currently applied migrations back.
-     *
-     * @param array|string $paths
-     * @param bool $pretend
-     * @return array
-     */
-    public function reset($paths = [], $pretend = false)
-    {
-        // Next, we will reverse the migration list so we can run them back in the
-        // correct order for resetting this database. This will allow us to get
-        // the database back into its "empty" state ready for the migrations.
-        $migrations = array_reverse($this->repository->getRan());
-
-        if (count($migrations) === 0) {
-            $this->note('<info>Nothing to rollback.</info>');
-
-            return [];
-        }
-
-        return $this->resetMigrations($migrations, $paths, $pretend);
-    }
-
-    /**
-     * Register a custom migration path.
-     *
-     * @param string $path
-     * @return void
-     */
-    public function path($path)
-    {
-        $this->paths = array_unique(array_merge($this->paths, [$path]));
-    }
-
-    /**
-     * Get all of the custom migration paths.
-     *
-     * @return array
-     */
-    public function paths()
-    {
-        return $this->paths;
-    }
-
-    /**
-     * Get the default connection name.
-     *
-     * @return string
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Set the default connection name.
-     *
-     * @param string $name
-     * @return void
-     */
-    public function setConnection($name)
-    {
-        if (!is_null($name)) {
-            $this->resolver->setDefaultConnection($name);
-        }
-
-        $this->repository->setSource($name);
-
-        $this->connection = $name;
-    }
-
-    /**
-     * Get the migration repository instance.
-     *
-     * @return MigrationRepositoryInterface
-     */
-    public function getRepository()
-    {
-        return $this->repository;
-    }
-
-    /**
-     * Determine if the migration repository exists.
-     *
-     * @return bool
-     */
-    public function repositoryExists()
-    {
-        return $this->repository->repositoryExists();
-    }
-
-    /**
-     * Get the file system instance.
-     *
-     * @return Filesystem
-     */
-    public function getFilesystem()
-    {
-        return $this->files;
-    }
-
-    /**
-     * Set the output implementation that should be used by the console.
-     *
-     * @param OutputStyle $output
-     * @return $this
-     */
-    public function setOutput(OutputStyle $output)
-    {
-        $this->output = $output;
-
-        return $this;
-    }
-
-    /**
-     * Get the migration files that have not yet run.
-     *
-     * @param array $files
-     * @param array $ran
-     * @return array
-     */
-    protected function pendingMigrations($files, $ran)
-    {
-        return Collection::make($files)
-            ->reject(function ($file) use ($ran) {
-                return in_array($this->getMigrationName($file), $ran);
-            })->values()->all();
-    }
-
-    /**
      * Write a note to the console's output.
      *
      * @param string $message
@@ -397,6 +223,19 @@ class Migrator
     {
         if ($this->output) {
             $this->output->writeln($message);
+        }
+    }
+
+    /**
+     * Fire the given event for the migration.
+     *
+     * @param MigrationEvent $event
+     * @return void
+     */
+    public function fireMigrationEvent($event)
+    {
+        if ($this->events) {
+            $this->events->dispatch($event);
         }
     }
 
@@ -438,6 +277,19 @@ class Migrator
     }
 
     /**
+     * Resolve a migration instance from a file.
+     *
+     * @param string $file
+     * @return object
+     */
+    public function resolve($file)
+    {
+        $class = Str::studly(implode('_', array_slice(explode('_', $file), 4)));
+
+        return new $class;
+    }
+
+    /**
      * Pretend to run the migrations.
      *
      * @param object $migration
@@ -474,6 +326,17 @@ class Migrator
                 $migration->{$method}();
             }
         });
+    }
+
+    /**
+     * Resolve the database connection instance.
+     *
+     * @param string $connection
+     * @return Connection
+     */
+    public function resolveConnection($connection)
+    {
+        return $this->resolver->connection($connection ?: $this->connection);
     }
 
     /**
@@ -520,6 +383,29 @@ class Migrator
         }
 
         return $grammar;
+    }
+
+    /**
+     * Rollback the last migration operation.
+     *
+     * @param array|string $paths
+     * @param array $options
+     * @return array
+     */
+    public function rollback($paths = [], array $options = [])
+    {
+        // We want to pull in the last batch of migrations that ran on the previous
+        // migration operation. We'll then reverse those migrations and run each
+        // of them "down" to reverse the last migration "operation" which ran.
+        $migrations = $this->getMigrationsForRollback($options);
+
+        if (count($migrations) === 0) {
+            $this->note('<info>Nothing to rollback.</info>');
+
+            return [];
+        }
+
+        return $this->rollbackMigrations($migrations, $paths, $options);
     }
 
     /**
@@ -616,6 +502,29 @@ class Migrator
     }
 
     /**
+     * Rolls all of the currently applied migrations back.
+     *
+     * @param array|string $paths
+     * @param bool $pretend
+     * @return array
+     */
+    public function reset($paths = [], $pretend = false)
+    {
+        // Next, we will reverse the migration list so we can run them back in the
+        // correct order for resetting this database. This will allow us to get
+        // the database back into its "empty" state ready for the migrations.
+        $migrations = array_reverse($this->repository->getRan());
+
+        if (count($migrations) === 0) {
+            $this->note('<info>Nothing to rollback.</info>');
+
+            return [];
+        }
+
+        return $this->resetMigrations($migrations, $paths, $pretend);
+    }
+
+    /**
      * Reset the given migrations.
      *
      * @param array $migrations
@@ -635,5 +544,96 @@ class Migrator
         return $this->rollbackMigrations(
             $migrations, $paths, compact('pretend')
         );
+    }
+
+    /**
+     * Register a custom migration path.
+     *
+     * @param string $path
+     * @return void
+     */
+    public function path($path)
+    {
+        $this->paths = array_unique(array_merge($this->paths, [$path]));
+    }
+
+    /**
+     * Get all of the custom migration paths.
+     *
+     * @return array
+     */
+    public function paths()
+    {
+        return $this->paths;
+    }
+
+    /**
+     * Get the default connection name.
+     *
+     * @return string
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Set the default connection name.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setConnection($name)
+    {
+        if (!is_null($name)) {
+            $this->resolver->setDefaultConnection($name);
+        }
+
+        $this->repository->setSource($name);
+
+        $this->connection = $name;
+    }
+
+    /**
+     * Get the migration repository instance.
+     *
+     * @return MigrationRepositoryInterface
+     */
+    public function getRepository()
+    {
+        return $this->repository;
+    }
+
+    /**
+     * Determine if the migration repository exists.
+     *
+     * @return bool
+     */
+    public function repositoryExists()
+    {
+        return $this->repository->repositoryExists();
+    }
+
+    /**
+     * Get the file system instance.
+     *
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->files;
+    }
+
+    /**
+     * Set the output implementation that should be used by the console.
+     *
+     * @param OutputStyle $output
+     * @return $this
+     */
+    public function setOutput(OutputStyle $output)
+    {
+        $this->output = $output;
+
+        return $this;
     }
 }

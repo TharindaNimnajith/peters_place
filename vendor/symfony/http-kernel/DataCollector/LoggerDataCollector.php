@@ -11,14 +11,11 @@
 
 namespace Symfony\Component\HttpKernel\DataCollector;
 
-use ErrorException;
-use Exception;
 use Symfony\Component\Debug\Exception\SilencedErrorContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
-use function in_array;
 
 /**
  * LogDataCollector.
@@ -45,7 +42,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, Exception $exception = null)
+    public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->currentRequest = $this->requestStack && $this->requestStack->getMasterRequest() !== $request ? $request : null;
     }
@@ -76,54 +73,6 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
             $this->data = $this->cloneVar($this->data);
         }
         $this->currentRequest = null;
-    }
-
-    /**
-     * Gets the logs.
-     *
-     * @return array An array of logs
-     */
-    public function getLogs()
-    {
-        return isset($this->data['logs']) ? $this->data['logs'] : [];
-    }
-
-    public function getPriorities()
-    {
-        return isset($this->data['priorities']) ? $this->data['priorities'] : [];
-    }
-
-    public function countErrors()
-    {
-        return isset($this->data['error_count']) ? $this->data['error_count'] : 0;
-    }
-
-    public function countDeprecations()
-    {
-        return isset($this->data['deprecation_count']) ? $this->data['deprecation_count'] : 0;
-    }
-
-    public function countWarnings()
-    {
-        return isset($this->data['warning_count']) ? $this->data['warning_count'] : 0;
-    }
-
-    public function countScreams()
-    {
-        return isset($this->data['scream_count']) ? $this->data['scream_count'] : 0;
-    }
-
-    public function getCompilerLogs()
-    {
-        return $this->cloneVar($this->getContainerCompilerLogs($this->data['compiler_logs_filepath'] ?? null));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'logger';
     }
 
     private function getContainerDeprecationLogs()
@@ -211,7 +160,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
             return true;
         }
 
-        if ($exception instanceof ErrorException && in_array($exception->getSeverity(), [E_DEPRECATED, E_USER_DEPRECATED], true)) {
+        if ($exception instanceof \ErrorException && \in_array($exception->getSeverity(), [E_DEPRECATED, E_USER_DEPRECATED], true)) {
             return true;
         }
 
@@ -267,6 +216,46 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
         return array_values($sanitizedLogs);
     }
 
+    /**
+     * Gets the logs.
+     *
+     * @return array An array of logs
+     */
+    public function getLogs()
+    {
+        return isset($this->data['logs']) ? $this->data['logs'] : [];
+    }
+
+    public function getPriorities()
+    {
+        return isset($this->data['priorities']) ? $this->data['priorities'] : [];
+    }
+
+    public function countErrors()
+    {
+        return isset($this->data['error_count']) ? $this->data['error_count'] : 0;
+    }
+
+    public function countDeprecations()
+    {
+        return isset($this->data['deprecation_count']) ? $this->data['deprecation_count'] : 0;
+    }
+
+    public function countWarnings()
+    {
+        return isset($this->data['warning_count']) ? $this->data['warning_count'] : 0;
+    }
+
+    public function countScreams()
+    {
+        return isset($this->data['scream_count']) ? $this->data['scream_count'] : 0;
+    }
+
+    public function getCompilerLogs()
+    {
+        return $this->cloneVar($this->getContainerCompilerLogs($this->data['compiler_logs_filepath'] ?? null));
+    }
+
     private function getContainerCompilerLogs(string $compilerLogsFilepath = null): array
     {
         if (!file_exists($compilerLogsFilepath)) {
@@ -284,5 +273,13 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
         }
 
         return $logs;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'logger';
     }
 }

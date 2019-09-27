@@ -13,6 +13,13 @@ class Swift_Mime_AttachmentTest extends Swift_Mime_AbstractMimeEntityTest
         );
     }
 
+    protected function createAttachment($headers, $encoder, $cache, $mimeTypes = [])
+    {
+        $idGenerator = new Swift_Mime_IdGenerator('example.com');
+
+        return new Swift_Mime_Attachment($headers, $encoder, $cache, $idGenerator, $mimeTypes);
+    }
+
     public function testDispositionIsReturnedFromHeader()
     {
         /* -- RFC 2183, 2.1, 2.2.
@@ -195,6 +202,30 @@ class Swift_Mime_AttachmentTest extends Swift_Mime_AbstractMimeEntityTest
         $attachment->setFile($file);
     }
 
+    protected function createFileStream($path, $data, $stub = true)
+    {
+        $file = $this->getMockery('Swift_FileStream');
+        $file->shouldReceive('getPath')
+            ->zeroOrMoreTimes()
+            ->andReturn($path);
+        $file->shouldReceive('read')
+            ->zeroOrMoreTimes()
+            ->andReturnUsing(function () use ($data) {
+                static $first = true;
+                if (!$first) {
+                    return false;
+                }
+
+                $first = false;
+
+                return $data;
+            });
+        $file->shouldReceive('setReadPointer')
+            ->zeroOrMoreTimes();
+
+        return $file;
+    }
+
     public function testContentTypeCanBeSetViaSetFile()
     {
         $file = $this->createFileStream('/bar/file.ext', '');
@@ -281,37 +312,6 @@ class Swift_Mime_AttachmentTest extends Swift_Mime_AbstractMimeEntityTest
                 ->setSize(123)
                 ->setFile($this->createFileStream('foo.txt', ''))
         );
-    }
-
-    protected function createAttachment($headers, $encoder, $cache, $mimeTypes = [])
-    {
-        $idGenerator = new Swift_Mime_IdGenerator('example.com');
-
-        return new Swift_Mime_Attachment($headers, $encoder, $cache, $idGenerator, $mimeTypes);
-    }
-
-    protected function createFileStream($path, $data, $stub = true)
-    {
-        $file = $this->getMockery('Swift_FileStream');
-        $file->shouldReceive('getPath')
-            ->zeroOrMoreTimes()
-            ->andReturn($path);
-        $file->shouldReceive('read')
-            ->zeroOrMoreTimes()
-            ->andReturnUsing(function () use ($data) {
-                static $first = true;
-                if (!$first) {
-                    return false;
-                }
-
-                $first = false;
-
-                return $data;
-            });
-        $file->shouldReceive('setReadPointer')
-            ->zeroOrMoreTimes();
-
-        return $file;
     }
 
     protected function createEntity($headers, $encoder, $cache)

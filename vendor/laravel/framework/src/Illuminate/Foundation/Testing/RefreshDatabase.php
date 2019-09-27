@@ -19,37 +19,6 @@ trait RefreshDatabase
     }
 
     /**
-     * Begin a database transaction on the testing database.
-     *
-     * @return void
-     */
-    public function beginDatabaseTransaction()
-    {
-        $database = $this->app->make('db');
-
-        foreach ($this->connectionsToTransact() as $name) {
-            $connection = $database->connection($name);
-            $dispatcher = $connection->getEventDispatcher();
-
-            $connection->unsetEventDispatcher();
-            $connection->beginTransaction();
-            $connection->setEventDispatcher($dispatcher);
-        }
-
-        $this->beforeApplicationDestroyed(function () use ($database) {
-            foreach ($this->connectionsToTransact() as $name) {
-                $connection = $database->connection($name);
-                $dispatcher = $connection->getEventDispatcher();
-
-                $connection->unsetEventDispatcher();
-                $connection->rollback();
-                $connection->setEventDispatcher($dispatcher);
-                $connection->disconnect();
-            }
-        });
-    }
-
-    /**
      * Determine if an in-memory database is being used.
      *
      * @return bool
@@ -114,6 +83,37 @@ trait RefreshDatabase
     {
         return property_exists($this, 'dropTypes')
             ? $this->dropTypes : false;
+    }
+
+    /**
+     * Begin a database transaction on the testing database.
+     *
+     * @return void
+     */
+    public function beginDatabaseTransaction()
+    {
+        $database = $this->app->make('db');
+
+        foreach ($this->connectionsToTransact() as $name) {
+            $connection = $database->connection($name);
+            $dispatcher = $connection->getEventDispatcher();
+
+            $connection->unsetEventDispatcher();
+            $connection->beginTransaction();
+            $connection->setEventDispatcher($dispatcher);
+        }
+
+        $this->beforeApplicationDestroyed(function () use ($database) {
+            foreach ($this->connectionsToTransact() as $name) {
+                $connection = $database->connection($name);
+                $dispatcher = $connection->getEventDispatcher();
+
+                $connection->unsetEventDispatcher();
+                $connection->rollback();
+                $connection->setEventDispatcher($dispatcher);
+                $connection->disconnect();
+            }
+        });
     }
 
     /**

@@ -82,6 +82,17 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
         return $this;
     }
 
+    /** Encode charset when charset is not utf-8 */
+    protected function convertString($string)
+    {
+        $charset = strtolower($this->getCharset());
+        if (!in_array($charset, ['utf-8', 'iso-8859-1', 'iso-8859-15', ''])) {
+            return mb_convert_encoding($string, $charset, 'utf-8');
+        }
+
+        return $string;
+    }
+
     /**
      * Get the character set of this entity.
      *
@@ -141,6 +152,21 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
         $this->setCharset($charset);
     }
 
+    /** Fix the content-type and encoding of this entity */
+    protected function fixHeaders()
+    {
+        parent::fixHeaders();
+        if (count($this->getChildren())) {
+            $this->setHeaderParameter('Content-Type', 'charset', null);
+            $this->setHeaderParameter('Content-Type', 'format', null);
+            $this->setHeaderParameter('Content-Type', 'delsp', null);
+        } else {
+            $this->setCharset($this->userCharset);
+            $this->setFormat($this->userFormat);
+            $this->setDelSp($this->userDelSp);
+        }
+    }
+
     /**
      * Set the format of this entity (flowed or fixed).
      *
@@ -169,31 +195,5 @@ class Swift_Mime_MimePart extends Swift_Mime_SimpleMimeEntity
         $this->userDelSp = $delsp;
 
         return $this;
-    }
-
-    /** Encode charset when charset is not utf-8 */
-    protected function convertString($string)
-    {
-        $charset = strtolower($this->getCharset());
-        if (!in_array($charset, ['utf-8', 'iso-8859-1', 'iso-8859-15', ''])) {
-            return mb_convert_encoding($string, $charset, 'utf-8');
-        }
-
-        return $string;
-    }
-
-    /** Fix the content-type and encoding of this entity */
-    protected function fixHeaders()
-    {
-        parent::fixHeaders();
-        if (count($this->getChildren())) {
-            $this->setHeaderParameter('Content-Type', 'charset', null);
-            $this->setHeaderParameter('Content-Type', 'format', null);
-            $this->setHeaderParameter('Content-Type', 'delsp', null);
-        } else {
-            $this->setCharset($this->userCharset);
-            $this->setFormat($this->userFormat);
-            $this->setDelSp($this->userDelSp);
-        }
     }
 }

@@ -31,6 +31,15 @@ class FunctionsTest extends TestCase
         $this->assertEquals($var1, $return);
     }
 
+    protected function setupVarDumper()
+    {
+        $cloner = new VarCloner();
+        $dumper = new CliDumper('php://output');
+        VarDumper::setHandler(function ($var) use ($cloner, $dumper) {
+            $dumper->dump($cloner->cloneVar($var));
+        });
+    }
+
     public function testDumpReturnsAllArgsInArray()
     {
         $this->setupVarDumper();
@@ -44,14 +53,5 @@ class FunctionsTest extends TestCase
         $out = ob_get_clean();
 
         $this->assertEquals([$var1, $var2, $var3], $return);
-    }
-
-    protected function setupVarDumper()
-    {
-        $cloner = new VarCloner();
-        $dumper = new CliDumper('php://output');
-        VarDumper::setHandler(function ($var) use ($cloner, $dumper) {
-            $dumper->dump($cloner->cloneVar($var));
-        });
     }
 }

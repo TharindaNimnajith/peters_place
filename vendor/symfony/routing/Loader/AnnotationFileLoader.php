@@ -11,18 +11,10 @@
 
 namespace Symfony\Component\Routing\Loader;
 
-use InvalidArgumentException;
-use LogicException;
-use ReflectionClass;
-use RuntimeException;
 use Symfony\Component\Config\FileLocatorInterface;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\RouteCollection;
-use function count;
-use function function_exists;
-use function in_array;
-use function is_string;
 
 /**
  * AnnotationFileLoader loads routing information from annotations set
@@ -35,12 +27,12 @@ class AnnotationFileLoader extends FileLoader
     protected $loader;
 
     /**
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function __construct(FileLocatorInterface $locator, AnnotationClassLoader $loader)
     {
-        if (!function_exists('token_get_all')) {
-            throw new LogicException('The Tokenizer extension is required for the routing annotation loaders.');
+        if (!\function_exists('token_get_all')) {
+            throw new \LogicException('The Tokenizer extension is required for the routing annotation loaders.');
         }
 
         parent::__construct($locator);
@@ -56,7 +48,7 @@ class AnnotationFileLoader extends FileLoader
      *
      * @return RouteCollection A RouteCollection instance
      *
-     * @throws InvalidArgumentException When the file does not exist or its routes cannot be parsed
+     * @throws \InvalidArgumentException When the file does not exist or its routes cannot be parsed
      */
     public function load($file, $type = null)
     {
@@ -64,7 +56,7 @@ class AnnotationFileLoader extends FileLoader
 
         $collection = new RouteCollection();
         if ($class = $this->findClass($path)) {
-            $refl = new ReflectionClass($class);
+            $refl = new \ReflectionClass($class);
             if ($refl->isAbstract()) {
                 return;
             }
@@ -76,14 +68,6 @@ class AnnotationFileLoader extends FileLoader
         gc_mem_caches();
 
         return $collection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null)
-    {
-        return is_string($resource) && 'php' === pathinfo($resource, PATHINFO_EXTENSION) && (!$type || 'annotation' === $type);
     }
 
     /**
@@ -99,8 +83,8 @@ class AnnotationFileLoader extends FileLoader
         $namespace = false;
         $tokens = token_get_all(file_get_contents($file));
 
-        if (1 === count($tokens) && T_INLINE_HTML === $tokens[0][0]) {
-            throw new InvalidArgumentException(sprintf('The file "%s" does not contain PHP code. Did you forgot to add the "<?php" start tag at the beginning of the file?', $file));
+        if (1 === \count($tokens) && T_INLINE_HTML === $tokens[0][0]) {
+            throw new \InvalidArgumentException(sprintf('The file "%s" does not contain PHP code. Did you forgot to add the "<?php" start tag at the beginning of the file?', $file));
         }
 
         for ($i = 0; isset($tokens[$i]); ++$i) {
@@ -116,7 +100,7 @@ class AnnotationFileLoader extends FileLoader
 
             if (true === $namespace && T_STRING === $token[0]) {
                 $namespace = $token[1];
-                while (isset($tokens[++$i][1]) && in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING])) {
+                while (isset($tokens[++$i][1]) && \in_array($tokens[$i][0], [T_NS_SEPARATOR, T_STRING])) {
                     $namespace .= $tokens[$i][1];
                 }
                 $token = $tokens[$i];
@@ -133,7 +117,7 @@ class AnnotationFileLoader extends FileLoader
                     if (T_DOUBLE_COLON === $tokens[$j][0] || T_NEW === $tokens[$j][0]) {
                         $skipClassToken = true;
                         break;
-                    } elseif (!in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT])) {
+                    } elseif (!\in_array($tokens[$j][0], [T_WHITESPACE, T_DOC_COMMENT, T_COMMENT])) {
                         break;
                     }
                 }
@@ -149,5 +133,13 @@ class AnnotationFileLoader extends FileLoader
         }
 
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($resource, $type = null)
+    {
+        return \is_string($resource) && 'php' === pathinfo($resource, PATHINFO_EXTENSION) && (!$type || 'annotation' === $type);
     }
 }

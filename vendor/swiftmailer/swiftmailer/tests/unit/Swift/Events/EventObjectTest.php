@@ -1,8 +1,6 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
-class Swift_Events_EventObjectTest extends TestCase
+class Swift_Events_EventObjectTest extends \PHPUnit\Framework\TestCase
 {
     public function testEventSourceCanBeReturnedViaGetter()
     {
@@ -10,6 +8,11 @@ class Swift_Events_EventObjectTest extends TestCase
         $evt = $this->createEvent($source);
         $ref = $evt->getSource();
         $this->assertEquals($source, $ref);
+    }
+
+    private function createEvent($source)
+    {
+        return new Swift_Events_EventObject($source);
     }
 
     public function testEventDoesNotHaveCancelledBubbleWhenNew()
@@ -25,10 +28,5 @@ class Swift_Events_EventObjectTest extends TestCase
         $evt = $this->createEvent($source);
         $evt->cancelBubble();
         $this->assertTrue($evt->bubbleCancelled());
-    }
-
-    private function createEvent($source)
-    {
-        return new Swift_Events_EventObject($source);
     }
 }

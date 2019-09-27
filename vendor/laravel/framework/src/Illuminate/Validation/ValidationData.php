@@ -24,6 +24,26 @@ class ValidationData
     }
 
     /**
+     * Gather a copy of the attribute data filled with any missing attributes.
+     *
+     * @param string $attribute
+     * @param array $masterData
+     * @return array
+     */
+    protected static function initializeAttributeOnData($attribute, $masterData)
+    {
+        $explicitPath = static::getLeadingExplicitAttributePath($attribute);
+
+        $data = static::extractDataFromPath($explicitPath, $masterData);
+
+        if (!Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
+            return $data;
+        }
+
+        return data_set($data, $attribute, null, true);
+    }
+
+    /**
      * Get the explicit part of the attribute name.
      *
      * E.g. 'foo.bar.*.baz' -> 'foo.bar'
@@ -58,26 +78,6 @@ class ValidationData
         }
 
         return $results;
-    }
-
-    /**
-     * Gather a copy of the attribute data filled with any missing attributes.
-     *
-     * @param string $attribute
-     * @param array $masterData
-     * @return array
-     */
-    protected static function initializeAttributeOnData($attribute, $masterData)
-    {
-        $explicitPath = static::getLeadingExplicitAttributePath($attribute);
-
-        $data = static::extractDataFromPath($explicitPath, $masterData);
-
-        if (!Str::contains($attribute, '*') || Str::endsWith($attribute, '*')) {
-            return $data;
-        }
-
-        return data_set($data, $attribute, null, true);
     }
 
     /**

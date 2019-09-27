@@ -71,6 +71,23 @@ class TraitUseAdaptation implements Builder
         return $this;
     }
 
+    protected function setModifier(int $modifier)
+    {
+        if ($this->type === self::TYPE_UNDEFINED) {
+            $this->type = self::TYPE_ALIAS;
+        }
+
+        if ($this->type !== self::TYPE_ALIAS) {
+            throw new LogicException('Cannot set access modifier for not alias adaptation buider');
+        }
+
+        if (is_null($this->modifier)) {
+            $this->modifier = $modifier;
+        } else {
+            throw new LogicException('Multiple access type modifiers are not allowed');
+        }
+    }
+
     /**
      * Sets adaptated method protected.
      *
@@ -135,23 +152,6 @@ class TraitUseAdaptation implements Builder
                 return new Stmt\TraitUseAdaptation\Precedence($this->trait, $this->method, $this->insteadof);
             default:
                 throw new LogicException('Type of adaptation is not defined');
-        }
-    }
-
-    protected function setModifier(int $modifier)
-    {
-        if ($this->type === self::TYPE_UNDEFINED) {
-            $this->type = self::TYPE_ALIAS;
-        }
-
-        if ($this->type !== self::TYPE_ALIAS) {
-            throw new LogicException('Cannot set access modifier for not alias adaptation buider');
-        }
-
-        if (is_null($this->modifier)) {
-            $this->modifier = $modifier;
-        } else {
-            throw new LogicException('Multiple access type modifiers are not allowed');
         }
     }
 }

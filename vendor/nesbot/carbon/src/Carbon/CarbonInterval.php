@@ -296,6 +296,30 @@ class CarbonInterval extends DateInterval
         return null;
     }
 
+    private static function standardizeUnit($unit)
+    {
+        $unit = rtrim($unit, 'sz') . 's';
+
+        return $unit === 'days' ? 'dayz' : $unit;
+    }
+
+    private static function getFlipCascadeFactors()
+    {
+        if (!self::$flipCascadeFactors) {
+            self::$flipCascadeFactors = [];
+
+            foreach (static::getCascadeFactors() as $to => [$factor, $from]) {
+                self::$flipCascadeFactors[self::standardizeUnit($from)] = [self::standardizeUnit($to), $factor];
+            }
+        }
+
+        return self::$flipCascadeFactors;
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    //////////////////////////// CONSTRUCTORS /////////////////////////
+    ///////////////////////////////////////////////////////////////////
+
     /**
      * Mapping of units and factors for cascading.
      *
@@ -326,10 +350,6 @@ class CarbonInterval extends DateInterval
         self::$flipCascadeFactors = null;
         static::$cascadeFactors = $cascadeFactors;
     }
-
-    ///////////////////////////////////////////////////////////////////
-    //////////////////////////// CONSTRUCTORS /////////////////////////
-    ///////////////////////////////////////////////////////////////////
 
     /**
      * Create a new CarbonInterval instance from specific values.
@@ -662,256 +682,6 @@ class CarbonInterval extends DateInterval
     }
 
     /**
-     * Get the interval_spec string of a date interval.
-     *
-     * @param DateInterval $interval
-     *
-     * @return string
-     */
-    public static function getDateIntervalSpec(DateInterval $interval)
-    {
-        $date = array_filter([
-            static::PERIOD_YEARS => abs($interval->y),
-            static::PERIOD_MONTHS => abs($interval->m),
-            static::PERIOD_DAYS => abs($interval->d),
-        ]);
-
-        $time = array_filter([
-            static::PERIOD_HOURS => abs($interval->h),
-            static::PERIOD_MINUTES => abs($interval->i),
-            static::PERIOD_SECONDS => abs($interval->s),
-        ]);
-
-        $specString = static::PERIOD_PREFIX;
-
-        foreach ($date as $key => $value) {
-            $specString .= $value . $key;
-        }
-
-        if (count($time) > 0) {
-            $specString .= static::PERIOD_TIME_PREFIX;
-            foreach ($time as $key => $value) {
-                $specString .= $value . $key;
-            }
-        }
-
-        return $specString === static::PERIOD_PREFIX ? 'PT0S' : $specString;
-    }
-
-    /**
-     * Check if macro is registered.
-     *
-     * @param string $name
-     *
-     * @return bool
-     */
-    public static function hasMacro($name)
-    {
-        return isset(static::$macros[$name]);
-    }
-
-    /**
-     * Make a CarbonInterval instance from given variable if possible.
-     *
-     * Always return a new instance. Parse only strings and only these likely to be intervals (skip dates
-     * and recurrences). Throw an exception for invalid format, but otherwise return null.
-     *
-     * @param mixed $var
-     *
-     * @return static|null
-     */
-    public static function make($var)
-    {
-        if ($var instanceof DateInterval) {
-            return static::instance($var);
-        }
-
-        if (!is_string($var)) {
-            return null;
-        }
-
-        $var = trim($var);
-
-        if (preg_match('/^P[T0-9]/', $var)) {
-            return new static($var);
-        }
-
-        if (preg_match('/^(?:\h*\d+(?:\.\d+)?\h*[a-z]+)+$/i', $var)) {
-            return static::fromString($var);
-        }
-
-        /** @var static $interval */
-        $interval = static::createFromDateString($var);
-
-        return !$interval || $interval->isEmpty() ? null : $interval;
-    }
-
-    /**
-     * Create a CarbonInterval instance from a DateInterval one.  Can not instance
-     * DateInterval objects created from DateTime::diff() as you can't externally
-     * set the $days field.
-     *
-     * @param DateInterval $interval
-     *
-     * @return static
-     */
-    public static function instance(DateInterval $interval)
-    {
-        return self::castIntervalToClass($interval, static::class);
-    }
-
-    /**
-     * Sets up a DateInterval from the relative parts of the string.
-     *
-     * @param string $time
-     *
-     * @return static
-     *
-     * @link http://php.net/manual/en/dateinterval.createfromdatestring.php
-     */
-    public static function createFromDateString($time)
-    {
-        $interval = @parent::createFromDateString(strtr($time, [
-            ',' => ' ',
-            ' and ' => ' ',
-        ]));
-
-        if ($interval instanceof DateInterval) {
-            $interval = static::instance($interval);
-        }
-
-        return $interval;
-    }
-
-    /**
-     * Provide static helpers to create instances.  Allows CarbonInterval::years(3).
-     *
-     * Note: This is done using the magic method to allow static and instance methods to
-     *       have the same names.
-     *
-     * @param string $method magic method name called
-     * @param array $parameters parameters list
-     *
-     * @return static|null
-     */
-    public static function __callStatic($method, $parameters)
-    {
-        $arg = count($parameters) === 0 ? 1 : $parameters[0];
-
-        switch (Carbon::singularUnit(rtrim($method, 'z'))) {
-            case 'year':
-                return new static($arg);
-
-            case 'month':
-                return new static(null, $arg);
-
-            case 'week':
-                return new static(null, null, $arg);
-
-            case 'day':
-                return new static(null, null, null, $arg);
-
-            case 'hour':
-                return new static(null, null, null, null, $arg);
-
-            case 'minute':
-                return new static(null, null, null, null, null, $arg);
-
-            case 'second':
-                return new static(null, null, null, null, null, null, $arg);
-
-            case 'millisecond':
-            case 'milli':
-                return new static(null, null, null, null, null, null, null, $arg * Carbon::MICROSECONDS_PER_MILLISECOND);
-
-            case 'microsecond':
-            case 'micro':
-                return new static(null, null, null, null, null, null, null, $arg);
-        }
-
-        if (static::hasMacro($method)) {
-            return (new static(0))->$method(...$parameters);
-        }
-
-        if (Carbon::isStrictModeEnabled()) {
-            throw new BadMethodCallException(sprintf("Unknown fluent constructor '%s'.", $method));
-        }
-
-        return null;
-    }
-
-    /**
-     * Comparing 2 date intervals.
-     *
-     * @param DateInterval $first
-     * @param DateInterval $second
-     *
-     * @return int
-     */
-    public static function compareDateIntervals(DateInterval $first, DateInterval $second)
-    {
-        $current = Carbon::now();
-        $passed = $current->copy()->add($second);
-        $current->add($first);
-
-        if ($current < $passed) {
-            return -1;
-        }
-        if ($current > $passed) {
-            return 1;
-        }
-
-        return 0;
-    }
-
-    private static function standardizeUnit($unit)
-    {
-        $unit = rtrim($unit, 'sz') . 's';
-
-        return $unit === 'days' ? 'dayz' : $unit;
-    }
-
-    private static function getFlipCascadeFactors()
-    {
-        if (!self::$flipCascadeFactors) {
-            self::$flipCascadeFactors = [];
-
-            foreach (static::getCascadeFactors() as $to => [$factor, $from]) {
-                self::$flipCascadeFactors[self::standardizeUnit($from)] = [self::standardizeUnit($to), $factor];
-            }
-        }
-
-        return self::$flipCascadeFactors;
-    }
-
-    private static function castIntervalToClass(DateInterval $interval, string $className)
-    {
-        $mainClass = DateInterval::class;
-
-        if (!is_a($className, $mainClass, true)) {
-            throw new InvalidArgumentException("$className is not a sub-class of $mainClass.");
-        }
-
-        $microseconds = $interval->f;
-        $instance = new $className(static::getDateIntervalSpec($interval));
-        if ($microseconds) {
-            $instance->f = $microseconds;
-        }
-        $instance->invert = $interval->invert;
-        foreach (['y', 'm', 'd', 'h', 'i', 's'] as $unit) {
-            if ($interval->$unit < 0) {
-                $instance->$unit *= -1;
-            }
-        }
-
-        return $instance;
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    ///////////////////////// GETTERS AND SETTERS /////////////////////
-    ///////////////////////////////////////////////////////////////////
-
-    /**
      * Set the instance's timezone from a string or object and add/subtract the offset difference.
      *
      * @param DateTimeZone|string $tzName
@@ -960,6 +730,43 @@ class CarbonInterval extends DateInterval
     }
 
     /**
+     * Get the interval_spec string of a date interval.
+     *
+     * @param DateInterval $interval
+     *
+     * @return string
+     */
+    public static function getDateIntervalSpec(DateInterval $interval)
+    {
+        $date = array_filter([
+            static::PERIOD_YEARS => abs($interval->y),
+            static::PERIOD_MONTHS => abs($interval->m),
+            static::PERIOD_DAYS => abs($interval->d),
+        ]);
+
+        $time = array_filter([
+            static::PERIOD_HOURS => abs($interval->h),
+            static::PERIOD_MINUTES => abs($interval->i),
+            static::PERIOD_SECONDS => abs($interval->s),
+        ]);
+
+        $specString = static::PERIOD_PREFIX;
+
+        foreach ($date as $key => $value) {
+            $specString .= $value . $key;
+        }
+
+        if (count($time) > 0) {
+            $specString .= static::PERIOD_TIME_PREFIX;
+            foreach ($time as $key => $value) {
+                $specString .= $value . $key;
+            }
+        }
+
+        return $specString === static::PERIOD_PREFIX ? 'PT0S' : $specString;
+    }
+
+    /**
      * Cast the current instance into the given class.
      *
      * @param string $className The $className::instance() method will be called to cast the current object.
@@ -969,6 +776,29 @@ class CarbonInterval extends DateInterval
     public function cast(string $className)
     {
         return self::castIntervalToClass($this, $className);
+    }
+
+    private static function castIntervalToClass(DateInterval $interval, string $className)
+    {
+        $mainClass = DateInterval::class;
+
+        if (!is_a($className, $mainClass, true)) {
+            throw new InvalidArgumentException("$className is not a sub-class of $mainClass.");
+        }
+
+        $microseconds = $interval->f;
+        $instance = new $className(static::getDateIntervalSpec($interval));
+        if ($microseconds) {
+            $instance->f = $microseconds;
+        }
+        $instance->invert = $interval->invert;
+        foreach (['y', 'm', 'd', 'h', 'i', 's'] as $unit) {
+            if ($interval->$unit < 0) {
+                $instance->$unit *= -1;
+            }
+        }
+
+        return $instance;
     }
 
     /**
@@ -1027,6 +857,10 @@ class CarbonInterval extends DateInterval
                 throw new InvalidArgumentException(sprintf("Unknown getter '%s'", $name));
         }
     }
+
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////// GETTERS AND SETTERS /////////////////////
+    ///////////////////////////////////////////////////////////////////
 
     /**
      * Set a part of the CarbonInterval object.
@@ -1278,6 +1112,37 @@ class CarbonInterval extends DateInterval
     }
 
     /**
+     * Check if macro is registered.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function hasMacro($name)
+    {
+        return isset(static::$macros[$name]);
+    }
+
+    /**
+     * Call given macro.
+     *
+     * @param string $name
+     * @param array $parameters
+     *
+     * @return mixed
+     */
+    protected function callMacro($name, $parameters)
+    {
+        $macro = static::$macros[$name];
+
+        if ($macro instanceof Closure) {
+            return call_user_func_array($macro->bindTo($this, static::class), $parameters);
+        }
+
+        return call_user_func_array($macro, $parameters);
+    }
+
+    /**
      * Format the instance as a string using the forHumans() function.
      *
      * @return string
@@ -1438,6 +1303,78 @@ class CarbonInterval extends DateInterval
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     *
+     * @param mixed $syntax
+     * @param mixed $short
+     * @param mixed $parts
+     * @param mixed $options
+     *
+     * @return array
+     */
+    protected function getForHumansParameters($syntax = null, $short = false, $parts = -1, $options = null)
+    {
+        $join = ' ';
+        $altNumbers = false;
+        $aUnit = false;
+        if (is_array($syntax)) {
+            extract($syntax);
+        } else {
+            if (is_int($short)) {
+                $parts = $short;
+                $short = false;
+            }
+            if (is_bool($syntax)) {
+                $short = $syntax;
+                $syntax = CarbonInterface::DIFF_ABSOLUTE;
+            }
+        }
+        if (is_null($syntax)) {
+            $syntax = CarbonInterface::DIFF_ABSOLUTE;
+        }
+        if ($parts === -1) {
+            $parts = INF;
+        }
+        if (is_null($options)) {
+            $options = static::getHumanDiffOptions();
+        }
+        if ($join === true) {
+            $default = $this->getTranslationMessage('list.0') ?? $this->getTranslationMessage('list') ?? ' ';
+            $join = [
+                $default,
+                $this->getTranslationMessage('list.1') ?? $default,
+            ];
+        }
+        if ($altNumbers) {
+            if ($altNumbers !== true) {
+                $language = new Language($this->locale);
+                $altNumbers = in_array($language->getCode(), (array)$altNumbers);
+            }
+        }
+        if (is_array($join)) {
+            [$default, $last] = $join;
+
+            $join = function ($list) use ($default, $last) {
+                if (count($list) < 2) {
+                    return implode('', $list);
+                }
+
+                $end = array_pop($list);
+
+                return implode($default, $list) . $last . $end;
+            };
+        }
+        if (is_string($join)) {
+            $glue = $join;
+            $join = function ($list) use ($glue) {
+                return implode($glue, $list);
+            };
+        }
+
+        return [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers];
+    }
+
+    /**
      * Return native DateInterval PHP object matching the current instance.
      *
      * @return DateInterval
@@ -1535,6 +1472,79 @@ class CarbonInterval extends DateInterval
     }
 
     /**
+     * Make a CarbonInterval instance from given variable if possible.
+     *
+     * Always return a new instance. Parse only strings and only these likely to be intervals (skip dates
+     * and recurrences). Throw an exception for invalid format, but otherwise return null.
+     *
+     * @param mixed $var
+     *
+     * @return static|null
+     */
+    public static function make($var)
+    {
+        if ($var instanceof DateInterval) {
+            return static::instance($var);
+        }
+
+        if (!is_string($var)) {
+            return null;
+        }
+
+        $var = trim($var);
+
+        if (preg_match('/^P[T0-9]/', $var)) {
+            return new static($var);
+        }
+
+        if (preg_match('/^(?:\h*\d+(?:\.\d+)?\h*[a-z]+)+$/i', $var)) {
+            return static::fromString($var);
+        }
+
+        /** @var static $interval */
+        $interval = static::createFromDateString($var);
+
+        return !$interval || $interval->isEmpty() ? null : $interval;
+    }
+
+    /**
+     * Create a CarbonInterval instance from a DateInterval one.  Can not instance
+     * DateInterval objects created from DateTime::diff() as you can't externally
+     * set the $days field.
+     *
+     * @param DateInterval $interval
+     *
+     * @return static
+     */
+    public static function instance(DateInterval $interval)
+    {
+        return self::castIntervalToClass($interval, static::class);
+    }
+
+    /**
+     * Sets up a DateInterval from the relative parts of the string.
+     *
+     * @param string $time
+     *
+     * @return static
+     *
+     * @link http://php.net/manual/en/dateinterval.createfromdatestring.php
+     */
+    public static function createFromDateString($time)
+    {
+        $interval = @parent::createFromDateString(strtr($time, [
+            ',' => ' ',
+            ' and ' => ' ',
+        ]));
+
+        if ($interval instanceof DateInterval) {
+            $interval = static::instance($interval);
+        }
+
+        return $interval;
+    }
+
+    /**
      * Returns true if the interval is empty for each unit.
      *
      * @return bool
@@ -1580,6 +1590,22 @@ class CarbonInterval extends DateInterval
         $this->minutes = (int)round($this->minutes * $factor);
         $this->seconds = (int)round($this->seconds * $factor);
         $this->microseconds = (int)round($this->microseconds * $factor);
+
+        return $this;
+    }
+
+    protected function solveNegativeInterval()
+    {
+        if (!$this->isEmpty() && $this->years <= 0 && $this->months <= 0 && $this->dayz <= 0 && $this->hours <= 0 && $this->minutes <= 0 && $this->seconds <= 0 && $this->microseconds <= 0) {
+            $this->years *= -1;
+            $this->months *= -1;
+            $this->dayz *= -1;
+            $this->hours *= -1;
+            $this->minutes *= -1;
+            $this->seconds *= -1;
+            $this->microseconds *= -1;
+            $this->invert();
+        }
 
         return $this;
     }
@@ -1656,6 +1682,23 @@ class CarbonInterval extends DateInterval
         );
     }
 
+    protected function copyProperties(self $interval, $ignoreSign = false)
+    {
+        $this->years = $interval->years;
+        $this->months = $interval->months;
+        $this->dayz = $interval->dayz;
+        $this->hours = $interval->hours;
+        $this->minutes = $interval->minutes;
+        $this->seconds = $interval->seconds;
+        $this->microseconds = $interval->microseconds;
+
+        if (!$ignoreSign) {
+            $this->invert = $interval->invert;
+        }
+
+        return $this;
+    }
+
     /**
      * Convert overflowed values into bigger units.
      *
@@ -1681,6 +1724,63 @@ class CarbonInterval extends DateInterval
     }
 
     /**
+     * Provide static helpers to create instances.  Allows CarbonInterval::years(3).
+     *
+     * Note: This is done using the magic method to allow static and instance methods to
+     *       have the same names.
+     *
+     * @param string $method magic method name called
+     * @param array $parameters parameters list
+     *
+     * @return static|null
+     */
+    public static function __callStatic($method, $parameters)
+    {
+        $arg = count($parameters) === 0 ? 1 : $parameters[0];
+
+        switch (Carbon::singularUnit(rtrim($method, 'z'))) {
+            case 'year':
+                return new static($arg);
+
+            case 'month':
+                return new static(null, $arg);
+
+            case 'week':
+                return new static(null, null, $arg);
+
+            case 'day':
+                return new static(null, null, null, $arg);
+
+            case 'hour':
+                return new static(null, null, null, null, $arg);
+
+            case 'minute':
+                return new static(null, null, null, null, null, $arg);
+
+            case 'second':
+                return new static(null, null, null, null, null, null, $arg);
+
+            case 'millisecond':
+            case 'milli':
+                return new static(null, null, null, null, null, null, null, $arg * Carbon::MICROSECONDS_PER_MILLISECOND);
+
+            case 'microsecond':
+            case 'micro':
+                return new static(null, null, null, null, null, null, null, $arg);
+        }
+
+        if (static::hasMacro($method)) {
+            return (new static(0))->$method(...$parameters);
+        }
+
+        if (Carbon::isStrictModeEnabled()) {
+            throw new BadMethodCallException(sprintf("Unknown fluent constructor '%s'.", $method));
+        }
+
+        return null;
+    }
+
+    /**
      * Comparing with passed interval.
      *
      * @param DateInterval $interval
@@ -1690,6 +1790,30 @@ class CarbonInterval extends DateInterval
     public function compare(DateInterval $interval)
     {
         return static::compareDateIntervals($this, $interval);
+    }
+
+    /**
+     * Comparing 2 date intervals.
+     *
+     * @param DateInterval $first
+     * @param DateInterval $second
+     *
+     * @return int
+     */
+    public static function compareDateIntervals(DateInterval $first, DateInterval $second)
+    {
+        $current = Carbon::now();
+        $passed = $current->copy()->add($second);
+        $current->add($first);
+
+        if ($current < $passed) {
+            return -1;
+        }
+        if ($current > $passed) {
+            return 1;
+        }
+
+        return 0;
     }
 
     /**
@@ -1744,6 +1868,15 @@ class CarbonInterval extends DateInterval
         $interval = $this->resolveInterval($interval);
 
         return $interval !== null && $this->totalMicroseconds === $interval->totalMicroseconds;
+    }
+
+    protected function resolveInterval($interval)
+    {
+        if (!($interval instanceof self)) {
+            return self::make($interval);
+        }
+
+        return $interval;
     }
 
     /**
@@ -2017,138 +2150,5 @@ class CarbonInterval extends DateInterval
     public function ceil($precision = 1)
     {
         return $this->round($precision, 'ceil');
-    }
-
-    /**
-     * Call given macro.
-     *
-     * @param string $name
-     * @param array $parameters
-     *
-     * @return mixed
-     */
-    protected function callMacro($name, $parameters)
-    {
-        $macro = static::$macros[$name];
-
-        if ($macro instanceof Closure) {
-            return call_user_func_array($macro->bindTo($this, static::class), $parameters);
-        }
-
-        return call_user_func_array($macro, $parameters);
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.ElseExpression)
-     *
-     * @param mixed $syntax
-     * @param mixed $short
-     * @param mixed $parts
-     * @param mixed $options
-     *
-     * @return array
-     */
-    protected function getForHumansParameters($syntax = null, $short = false, $parts = -1, $options = null)
-    {
-        $join = ' ';
-        $altNumbers = false;
-        $aUnit = false;
-        if (is_array($syntax)) {
-            extract($syntax);
-        } else {
-            if (is_int($short)) {
-                $parts = $short;
-                $short = false;
-            }
-            if (is_bool($syntax)) {
-                $short = $syntax;
-                $syntax = CarbonInterface::DIFF_ABSOLUTE;
-            }
-        }
-        if (is_null($syntax)) {
-            $syntax = CarbonInterface::DIFF_ABSOLUTE;
-        }
-        if ($parts === -1) {
-            $parts = INF;
-        }
-        if (is_null($options)) {
-            $options = static::getHumanDiffOptions();
-        }
-        if ($join === true) {
-            $default = $this->getTranslationMessage('list.0') ?? $this->getTranslationMessage('list') ?? ' ';
-            $join = [
-                $default,
-                $this->getTranslationMessage('list.1') ?? $default,
-            ];
-        }
-        if ($altNumbers) {
-            if ($altNumbers !== true) {
-                $language = new Language($this->locale);
-                $altNumbers = in_array($language->getCode(), (array)$altNumbers);
-            }
-        }
-        if (is_array($join)) {
-            [$default, $last] = $join;
-
-            $join = function ($list) use ($default, $last) {
-                if (count($list) < 2) {
-                    return implode('', $list);
-                }
-
-                $end = array_pop($list);
-
-                return implode($default, $list) . $last . $end;
-            };
-        }
-        if (is_string($join)) {
-            $glue = $join;
-            $join = function ($list) use ($glue) {
-                return implode($glue, $list);
-            };
-        }
-
-        return [$syntax, $short, $parts, $options, $join, $aUnit, $altNumbers];
-    }
-
-    protected function solveNegativeInterval()
-    {
-        if (!$this->isEmpty() && $this->years <= 0 && $this->months <= 0 && $this->dayz <= 0 && $this->hours <= 0 && $this->minutes <= 0 && $this->seconds <= 0 && $this->microseconds <= 0) {
-            $this->years *= -1;
-            $this->months *= -1;
-            $this->dayz *= -1;
-            $this->hours *= -1;
-            $this->minutes *= -1;
-            $this->seconds *= -1;
-            $this->microseconds *= -1;
-            $this->invert();
-        }
-
-        return $this;
-    }
-
-    protected function copyProperties(self $interval, $ignoreSign = false)
-    {
-        $this->years = $interval->years;
-        $this->months = $interval->months;
-        $this->dayz = $interval->dayz;
-        $this->hours = $interval->hours;
-        $this->minutes = $interval->minutes;
-        $this->seconds = $interval->seconds;
-        $this->microseconds = $interval->microseconds;
-
-        if (!$ignoreSign) {
-            $this->invert = $interval->invert;
-        }
-
-        return $this;
-    }
-
-    protected function resolveInterval($interval)
-    {
-        if (!($interval instanceof self)) {
-            return self::make($interval);
-        }
-
-        return $interval;
     }
 }

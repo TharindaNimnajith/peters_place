@@ -223,6 +223,74 @@ abstract class Swift_Transport_AbstractSmtpTransport implements Swift_Transport
         }
     }
 
+    /** Return an array of params for the Buffer */
+    abstract protected function getBufferParams();
+
+    /** Throw a TransportException, first sending it to any listeners */
+    protected function throwException(Swift_TransportException $e)
+    {
+        if ($evt = $this->eventDispatcher->createTransportExceptionEvent($this, $e)) {
+            $this->eventDispatcher->dispatchEvent($evt, 'exceptionThrown');
+            if (!$evt->bubbleCancelled()) {
+                throw $e;
+            }
+        } else {
+            throw $e;
+        }
+    }
+
+    /** Read the opening SMTP greeting */
+    protected function readGreeting()
+    {
+        $this->assertResponseCode($this->getFullResponse(0), [220]);
+    }
+
+    /** Throws an Exception if a response code is incorrect */
+    protected function assertResponseCode($response, $wanted)
+    {
+        if (!$response) {
+            $this->throwException(new Swift_TransportException('Expected response code ' . implode('/', $wanted) . ' but got an empty response'));
+        }
+
+        list($code) = sscanf($response, '%3d');
+        $valid = (empty($wanted) || in_array($code, $wanted));
+
+        if ($evt = $this->eventDispatcher->createResponseEvent($this, $response,
+            $valid)) {
+            $this->eventDispatcher->dispatchEvent($evt, 'responseReceived');
+        }
+
+        if (!$valid) {
+            $this->throwException(new Swift_TransportException('Expected response code ' . implode('/', $wanted) . ' but got code "' . $code . '", with message "' . $response . '"', $code));
+        }
+    }
+
+    /** Get an entire multi-line response using its sequence number */
+    protected function getFullResponse($seq)
+    {
+        $response = '';
+        try {
+            do {
+                $line = $this->buffer->readLine($seq);
+                $response .= $line;
+            } while (null !== $line && false !== $line && ' ' != $line[3]);
+        } catch (Swift_TransportException $e) {
+            $this->throwException($e);
+        } catch (Swift_IoException $e) {
+            $this->throwException(new Swift_TransportException($e->getMessage(), 0, $e));
+        }
+
+        return $response;
+    }
+
+    /** Send the HELO welcome */
+    protected function doHeloCommand()
+    {
+        $this->executeCommand(
+            sprintf("HELO %s\r\n", $this->domain), [250]
+        );
+    }
+
     /**
      * Run a command against the buffer, expecting the given response codes.
      *
@@ -269,12 +337,125 @@ abstract class Swift_Transport_AbstractSmtpTransport implements Swift_Transport
         return $response;
     }
 
+    /** Determine the best-use reverse path for this message */
+    protected function getReversePath(Swift_Mime_SimpleMessage $message)
+    {
+        $return = $message->getReturnPath();
+        $sender = $message->getSender();
+        $from = $message->getFrom();
+        $path = null;
+        if (!empty($return)) {
+            $path = $return;
+        } elseif (!empty($sender)) {
+            // Don't use array_keys
+            reset($sender); // Reset Pointer to first pos
+            $path = key($sender); // Get key
+        } elseif (!empty($from)) {
+            reset($from); // Reset Pointer to first pos
+            $path = key($from); // Get key
+        }
+
+        return $path;
+    }
+
+    /** Send a message to the given To: recipients */
+    private function sendTo(Swift_Mime_SimpleMessage $message, $reversePath, array $to, array &$failedRecipients)
+    {
+        if (empty($to)) {
+            return 0;
+        }
+
+        return $this->doMailTransaction($message, $reversePath, array_keys($to),
+            $failedRecipients);
+    }
+
+    /** Send an email to the given recipients from the given reverse path */
+    private function doMailTransaction($message, $reversePath, array $recipients, array &$failedRecipients)
+    {
+        $sent = 0;
+        $this->doMailFromCommand($reversePath);
+        foreach ($recipients as $forwardPath) {
+            try {
+                $this->doRcptToCommand($forwardPath);
+                ++$sent;
+            } catch (Swift_TransportException $e) {
+                $failedRecipients[] = $forwardPath;
+            } catch (Swift_AddressEncoderException $e) {
+                $failedRecipients[] = $forwardPath;
+            }
+        }
+
+        if (0 != $sent) {
+            $sent += count($failedRecipients);
+            $this->doDataCommand($failedRecipients);
+            $sent -= count($failedRecipients);
+
+            $this->streamMessage($message);
+        } else {
+            $this->reset();
+        }
+
+        return $sent;
+    }
+
+    /** Send the MAIL FROM command */
+    protected function doMailFromCommand($address)
+    {
+        $address = $this->addressEncoder->encodeString($address);
+        $this->executeCommand(
+            sprintf("MAIL FROM:<%s>\r\n", $address), [250], $failures, true
+        );
+    }
+
+    /** Send the RCPT TO command */
+    protected function doRcptToCommand($address)
+    {
+        $address = $this->addressEncoder->encodeString($address);
+        $this->executeCommand(
+            sprintf("RCPT TO:<%s>\r\n", $address), [250, 251, 252], $failures, true, $address
+        );
+    }
+
+    /** Send the DATA command */
+    protected function doDataCommand(&$failedRecipients)
+    {
+        $this->executeCommand("DATA\r\n", [354], $failedRecipients);
+    }
+
+    /** Stream the contents of the message over the buffer */
+    protected function streamMessage(Swift_Mime_SimpleMessage $message)
+    {
+        $this->buffer->setWriteTranslations(["\r\n." => "\r\n.."]);
+        try {
+            $message->toByteStream($this->buffer);
+            $this->buffer->flushBuffers();
+        } catch (Swift_TransportException $e) {
+            $this->throwException($e);
+        }
+        $this->buffer->setWriteTranslations([]);
+        $this->executeCommand("\r\n.\r\n", [250]);
+    }
+
     /**
      * Reset the current mail transaction.
      */
     public function reset()
     {
         $this->executeCommand("RSET\r\n", [250], $failures, true);
+    }
+
+    /** Send a message to all Bcc: recipients */
+    private function sendBcc(Swift_Mime_SimpleMessage $message, $reversePath, array $bcc, array &$failedRecipients)
+    {
+        $sent = 0;
+        foreach ($bcc as $forwardPath => $name) {
+            $message->setBcc([$forwardPath => $name]);
+            $sent += $this->doMailTransaction(
+                $message, $reversePath, [$forwardPath], $failedRecipients
+            );
+        }
+
+        return $sent;
     }
 
     /**
@@ -358,186 +539,5 @@ abstract class Swift_Transport_AbstractSmtpTransport implements Swift_Transport
             $this->stop();
         } catch (Exception $e) {
         }
-    }
-
-    /** Return an array of params for the Buffer */
-    abstract protected function getBufferParams();
-
-    /** Throw a TransportException, first sending it to any listeners */
-    protected function throwException(Swift_TransportException $e)
-    {
-        if ($evt = $this->eventDispatcher->createTransportExceptionEvent($this, $e)) {
-            $this->eventDispatcher->dispatchEvent($evt, 'exceptionThrown');
-            if (!$evt->bubbleCancelled()) {
-                throw $e;
-            }
-        } else {
-            throw $e;
-        }
-    }
-
-    /** Read the opening SMTP greeting */
-    protected function readGreeting()
-    {
-        $this->assertResponseCode($this->getFullResponse(0), [220]);
-    }
-
-    /** Throws an Exception if a response code is incorrect */
-    protected function assertResponseCode($response, $wanted)
-    {
-        if (!$response) {
-            $this->throwException(new Swift_TransportException('Expected response code ' . implode('/', $wanted) . ' but got an empty response'));
-        }
-
-        list($code) = sscanf($response, '%3d');
-        $valid = (empty($wanted) || in_array($code, $wanted));
-
-        if ($evt = $this->eventDispatcher->createResponseEvent($this, $response,
-            $valid)) {
-            $this->eventDispatcher->dispatchEvent($evt, 'responseReceived');
-        }
-
-        if (!$valid) {
-            $this->throwException(new Swift_TransportException('Expected response code ' . implode('/', $wanted) . ' but got code "' . $code . '", with message "' . $response . '"', $code));
-        }
-    }
-
-    /** Get an entire multi-line response using its sequence number */
-    protected function getFullResponse($seq)
-    {
-        $response = '';
-        try {
-            do {
-                $line = $this->buffer->readLine($seq);
-                $response .= $line;
-            } while (null !== $line && false !== $line && ' ' != $line[3]);
-        } catch (Swift_TransportException $e) {
-            $this->throwException($e);
-        } catch (Swift_IoException $e) {
-            $this->throwException(new Swift_TransportException($e->getMessage(), 0, $e));
-        }
-
-        return $response;
-    }
-
-    /** Send the HELO welcome */
-    protected function doHeloCommand()
-    {
-        $this->executeCommand(
-            sprintf("HELO %s\r\n", $this->domain), [250]
-        );
-    }
-
-    /** Determine the best-use reverse path for this message */
-    protected function getReversePath(Swift_Mime_SimpleMessage $message)
-    {
-        $return = $message->getReturnPath();
-        $sender = $message->getSender();
-        $from = $message->getFrom();
-        $path = null;
-        if (!empty($return)) {
-            $path = $return;
-        } elseif (!empty($sender)) {
-            // Don't use array_keys
-            reset($sender); // Reset Pointer to first pos
-            $path = key($sender); // Get key
-        } elseif (!empty($from)) {
-            reset($from); // Reset Pointer to first pos
-            $path = key($from); // Get key
-        }
-
-        return $path;
-    }
-
-    /** Send the MAIL FROM command */
-    protected function doMailFromCommand($address)
-    {
-        $address = $this->addressEncoder->encodeString($address);
-        $this->executeCommand(
-            sprintf("MAIL FROM:<%s>\r\n", $address), [250], $failures, true
-        );
-    }
-
-    /** Send the RCPT TO command */
-    protected function doRcptToCommand($address)
-    {
-        $address = $this->addressEncoder->encodeString($address);
-        $this->executeCommand(
-            sprintf("RCPT TO:<%s>\r\n", $address), [250, 251, 252], $failures, true, $address
-        );
-    }
-
-    /** Send the DATA command */
-    protected function doDataCommand(&$failedRecipients)
-    {
-        $this->executeCommand("DATA\r\n", [354], $failedRecipients);
-    }
-
-    /** Stream the contents of the message over the buffer */
-    protected function streamMessage(Swift_Mime_SimpleMessage $message)
-    {
-        $this->buffer->setWriteTranslations(["\r\n." => "\r\n.."]);
-        try {
-            $message->toByteStream($this->buffer);
-            $this->buffer->flushBuffers();
-        } catch (Swift_TransportException $e) {
-            $this->throwException($e);
-        }
-        $this->buffer->setWriteTranslations([]);
-        $this->executeCommand("\r\n.\r\n", [250]);
-    }
-
-    /** Send a message to the given To: recipients */
-    private function sendTo(Swift_Mime_SimpleMessage $message, $reversePath, array $to, array &$failedRecipients)
-    {
-        if (empty($to)) {
-            return 0;
-        }
-
-        return $this->doMailTransaction($message, $reversePath, array_keys($to),
-            $failedRecipients);
-    }
-
-    /** Send an email to the given recipients from the given reverse path */
-    private function doMailTransaction($message, $reversePath, array $recipients, array &$failedRecipients)
-    {
-        $sent = 0;
-        $this->doMailFromCommand($reversePath);
-        foreach ($recipients as $forwardPath) {
-            try {
-                $this->doRcptToCommand($forwardPath);
-                ++$sent;
-            } catch (Swift_TransportException $e) {
-                $failedRecipients[] = $forwardPath;
-            } catch (Swift_AddressEncoderException $e) {
-                $failedRecipients[] = $forwardPath;
-            }
-        }
-
-        if (0 != $sent) {
-            $sent += count($failedRecipients);
-            $this->doDataCommand($failedRecipients);
-            $sent -= count($failedRecipients);
-
-            $this->streamMessage($message);
-        } else {
-            $this->reset();
-        }
-
-        return $sent;
-    }
-
-    /** Send a message to all Bcc: recipients */
-    private function sendBcc(Swift_Mime_SimpleMessage $message, $reversePath, array $bcc, array &$failedRecipients)
-    {
-        $sent = 0;
-        foreach ($bcc as $forwardPath => $name) {
-            $message->setBcc([$forwardPath => $name]);
-            $sent += $this->doMailTransaction(
-                $message, $reversePath, [$forwardPath], $failedRecipients
-            );
-        }
-
-        return $sent;
     }
 }

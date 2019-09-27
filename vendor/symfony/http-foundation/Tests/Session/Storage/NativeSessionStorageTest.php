@@ -11,19 +11,13 @@
 
 namespace Symfony\Component\HttpFoundation\Tests\Session\Storage;
 
-use InvalidArgumentException;
-use LogicException;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use stdClass;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\NativeFileSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\Proxy\SessionHandlerProxy;
-use function defined;
-use const PHP_VERSION_ID;
 
 /**
  * Test class for NativeSessionStorage.
@@ -48,7 +42,18 @@ class NativeSessionStorageTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @return NativeSessionStorage
+     */
+    protected function getStorage(array $options = [])
+    {
+        $storage = new NativeSessionStorage($options);
+        $storage->registerBag(new AttributeBag());
+
+        return $storage;
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
      */
     public function testRegisterBagException()
     {
@@ -57,7 +62,7 @@ class NativeSessionStorageTest extends TestCase
     }
 
     /**
-     * @expectedException LogicException
+     * @expectedException \LogicException
      */
     public function testRegisterBagForAStartedSessionThrowsException()
     {
@@ -146,7 +151,7 @@ class NativeSessionStorageTest extends TestCase
             'cookie_httponly' => false,
         ];
 
-        if (PHP_VERSION_ID >= 70300) {
+        if (\PHP_VERSION_ID >= 70300) {
             $options['cookie_samesite'] = 'lax';
         }
 
@@ -163,7 +168,7 @@ class NativeSessionStorageTest extends TestCase
 
     public function testSessionOptions()
     {
-        if (defined('HHVM_VERSION')) {
+        if (\defined('HHVM_VERSION')) {
             $this->markTestSkipped('HHVM is not handled in this test case.');
         }
 
@@ -179,12 +184,12 @@ class NativeSessionStorageTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testSetSaveHandlerException()
     {
         $storage = $this->getStorage();
-        $storage->setSaveHandler(new stdClass());
+        $storage->setSaveHandler(new \stdClass());
     }
 
     public function testSetSaveHandler()
@@ -206,7 +211,7 @@ class NativeSessionStorageTest extends TestCase
     }
 
     /**
-     * @expectedException RuntimeException
+     * @expectedException \RuntimeException
      */
     public function testStarted()
     {
@@ -269,17 +274,6 @@ class NativeSessionStorageTest extends TestCase
         $storage->registerBag($bag);
 
         $this->assertEquals($storage->getBag('flashes'), $bag);
-    }
-
-    /**
-     * @return NativeSessionStorage
-     */
-    protected function getStorage(array $options = [])
-    {
-        $storage = new NativeSessionStorage($options);
-        $storage->registerBag(new AttributeBag());
-
-        return $storage;
     }
 
     protected function setUp()

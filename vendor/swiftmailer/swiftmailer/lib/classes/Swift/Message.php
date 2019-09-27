@@ -154,48 +154,6 @@ class Swift_Message extends Swift_Mime_SimpleMessage
     }
 
     /**
-     * Write this message to a {@link Swift_InputByteStream}.
-     */
-    public function toByteStream(Swift_InputByteStream $is)
-    {
-        if (empty($this->headerSigners) && empty($this->bodySigners)) {
-            parent::toByteStream($is);
-
-            return;
-        }
-
-        $this->saveMessage();
-
-        $this->doSign();
-
-        parent::toByteStream($is);
-
-        $this->restoreMessage();
-    }
-
-    public function __wakeup()
-    {
-        Swift_DependencyContainer::getInstance()->createDependenciesFor('mime.message');
-    }
-
-    /**
-     * Clone Message Signers.
-     *
-     * @see Swift_Mime_SimpleMimeEntity::__clone()
-     */
-    public function __clone()
-    {
-        parent::__clone();
-        foreach ($this->bodySigners as $key => $bodySigner) {
-            $this->bodySigners[$key] = clone $bodySigner;
-        }
-
-        foreach ($this->headerSigners as $key => $headerSigner) {
-            $this->headerSigners[$key] = clone $headerSigner;
-        }
-    }
-
-    /**
      * save the message before any signature is applied.
      */
     protected function saveMessage()
@@ -274,6 +232,48 @@ class Swift_Message extends Swift_Mime_SimpleMessage
                     $this->getHeaders()->remove($name, $key);
                 }
             }
+        }
+    }
+
+    /**
+     * Write this message to a {@link Swift_InputByteStream}.
+     */
+    public function toByteStream(Swift_InputByteStream $is)
+    {
+        if (empty($this->headerSigners) && empty($this->bodySigners)) {
+            parent::toByteStream($is);
+
+            return;
+        }
+
+        $this->saveMessage();
+
+        $this->doSign();
+
+        parent::toByteStream($is);
+
+        $this->restoreMessage();
+    }
+
+    public function __wakeup()
+    {
+        Swift_DependencyContainer::getInstance()->createDependenciesFor('mime.message');
+    }
+
+    /**
+     * Clone Message Signers.
+     *
+     * @see Swift_Mime_SimpleMimeEntity::__clone()
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        foreach ($this->bodySigners as $key => $bodySigner) {
+            $this->bodySigners[$key] = clone $bodySigner;
+        }
+
+        foreach ($this->headerSigners as $key => $headerSigner) {
+            $this->headerSigners[$key] = clone $headerSigner;
         }
     }
 }

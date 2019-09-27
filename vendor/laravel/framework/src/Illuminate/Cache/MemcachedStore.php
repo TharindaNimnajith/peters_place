@@ -113,6 +113,28 @@ class MemcachedStore extends TaggableStore implements LockProvider
     }
 
     /**
+     * Get the expiration time of the key.
+     *
+     * @param int $seconds
+     * @return int
+     */
+    protected function calculateExpiration($seconds)
+    {
+        return $this->toTimestamp($seconds);
+    }
+
+    /**
+     * Get the UNIX timestamp for the given number of seconds.
+     *
+     * @param int $seconds
+     * @return int
+     */
+    protected function toTimestamp($seconds)
+    {
+        return $seconds > 0 ? $this->availableAt($seconds) : 0;
+    }
+
+    /**
      * Store an item in the cache if the key doesn't exist.
      *
      * @param string $key
@@ -253,27 +275,5 @@ class MemcachedStore extends TaggableStore implements LockProvider
     public function setPrefix($prefix)
     {
         $this->prefix = !empty($prefix) ? $prefix . ':' : '';
-    }
-
-    /**
-     * Get the expiration time of the key.
-     *
-     * @param int $seconds
-     * @return int
-     */
-    protected function calculateExpiration($seconds)
-    {
-        return $this->toTimestamp($seconds);
-    }
-
-    /**
-     * Get the UNIX timestamp for the given number of seconds.
-     *
-     * @param int $seconds
-     * @return int
-     */
-    protected function toTimestamp($seconds)
-    {
-        return $seconds > 0 ? $this->availableAt($seconds) : 0;
     }
 }

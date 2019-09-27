@@ -51,6 +51,19 @@ class ListenCommand extends Command
     }
 
     /**
+     * Set the options on the queue listener.
+     *
+     * @param Listener $listener
+     * @return void
+     */
+    protected function setOutputHandler(Listener $listener)
+    {
+        $listener->setOutputHandler(function ($type, $line) {
+            $this->output->write($line);
+        });
+    }
+
+    /**
      * Execute the console command.
      *
      * @return void
@@ -67,19 +80,6 @@ class ListenCommand extends Command
         $this->listener->listen(
             $connection, $queue, $this->gatherOptions()
         );
-    }
-
-    /**
-     * Set the options on the queue listener.
-     *
-     * @param Listener $listener
-     * @return void
-     */
-    protected function setOutputHandler(Listener $listener)
-    {
-        $listener->setOutputHandler(function ($type, $line) {
-            $this->output->write($line);
-        });
     }
 
     /**

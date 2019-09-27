@@ -11,12 +11,6 @@
 
 namespace Symfony\Component\Console\Tests\Helper;
 
-use ArrayIterator;
-use Exception;
-use InvalidArgumentException;
-use IteratorAggregate;
-use LogicException;
-use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -25,8 +19,6 @@ use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use function in_array;
-use const DIRECTORY_SEPARATOR;
 
 /**
  * @group tty
@@ -68,7 +60,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
             $question->setMaxAttempts(1);
             $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream), $output = $this->createOutputInterface(), $question);
             $this->fail();
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->assertEquals('Value "Fabien" is invalid', $e->getMessage());
         }
 
@@ -95,6 +87,20 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         $question = new ChoiceQuestion('What is your favorite superhero?', $heroes, 0);
         // We are supposed to get the default value since we are not in interactive mode
         $this->assertEquals('Superman', $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream, true), $this->createOutputInterface(), $question));
+    }
+
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fwrite($stream, $input);
+        rewind($stream);
+
+        return $stream;
+    }
+
+    protected function createOutputInterface()
+    {
+        return new StreamOutput(fopen('php://memory', 'r+', false));
     }
 
     public function testAskChoiceNonInteractive()
@@ -124,7 +130,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         try {
             $question = new ChoiceQuestion('What is your favorite superhero?', $heroes, null);
             $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream, false), $this->createOutputInterface(), $question);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->assertSame('Value "" is invalid', $e->getMessage());
         }
 
@@ -152,7 +158,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
             $question = new ChoiceQuestion('Who are your favorite superheros?', $heroes, '');
             $question->setMultiselect(true);
             $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream, false), $this->createOutputInterface(), $question);
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->assertSame('Value "" is invalid', $e->getMessage());
         }
     }
@@ -204,6 +210,13 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         $this->assertEquals('AcmeDemoBundle', $dialog->ask($this->createStreamableInputInterfaceMock($inputStream), $this->createOutputInterface(), $question));
         $this->assertEquals('AsseticBundle', $dialog->ask($this->createStreamableInputInterfaceMock($inputStream), $this->createOutputInterface(), $question));
         $this->assertEquals('FooBundle', $dialog->ask($this->createStreamableInputInterfaceMock($inputStream), $this->createOutputInterface(), $question));
+    }
+
+    private function hasSttyAvailable()
+    {
+        exec('stty 2>&1', $output, $exitcode);
+
+        return 0 === $exitcode;
     }
 
     public function testAskWithAutocompleteCallback()
@@ -369,7 +382,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
 
     public function testAskHiddenResponse()
     {
-        if ('\\' === DIRECTORY_SEPARATOR) {
+        if ('\\' === \DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('This test is not supported on Windows');
         }
 
@@ -424,8 +437,8 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
 
         $error = 'This is not a color!';
         $validator = function ($color) use ($error) {
-            if (!in_array($color, ['white', 'black'])) {
-                throw new InvalidArgumentException($error);
+            if (!\in_array($color, ['white', 'black'])) {
+                throw new \InvalidArgumentException($error);
             }
 
             return $color;
@@ -442,7 +455,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         try {
             $dialog->ask($this->createStreamableInputInterfaceMock($this->getInputStream("green\nyellow\norange\n")), $this->createOutputInterface(), $question);
             $this->fail();
-        } catch (InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException $e) {
             $this->assertEquals($error, $e->getMessage());
         }
     }
@@ -570,7 +583,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException        InvalidArgumentException
+     * @expectedException        \InvalidArgumentException
      * @expectedExceptionMessage The provided answer is ambiguous. Value should be one of env_2 or env_3.
      */
     public function testAmbiguousChoiceFromChoicelist()
@@ -639,7 +652,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException        RuntimeException
+     * @expectedException        \Symfony\Component\Console\Exception\RuntimeException
      * @expectedExceptionMessage Aborted.
      */
     public function testAskThrowsExceptionOnMissingInput()
@@ -649,7 +662,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException        RuntimeException
+     * @expectedException        \Symfony\Component\Console\Exception\RuntimeException
      * @expectedExceptionMessage Aborted.
      */
     public function testAskThrowsExceptionOnMissingInputForChoiceQuestion()
@@ -659,7 +672,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException        RuntimeException
+     * @expectedException        \Symfony\Component\Console\Exception\RuntimeException
      * @expectedExceptionMessage Aborted.
      */
     public function testAskThrowsExceptionOnMissingInputWithValidator()
@@ -669,7 +682,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         $question = new Question('What\'s your name?');
         $question->setValidator(function () {
             if (!$value) {
-                throw new Exception('A value is required.');
+                throw new \Exception('A value is required.');
             }
         });
 
@@ -677,7 +690,7 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException LogicException
+     * @expectedException \LogicException
      * @expectedExceptionMessage Choice question must have at least 1 choice available.
      */
     public function testEmptyChoices()
@@ -749,20 +762,6 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
         $this->assertEquals(['AcmeDemoBundle', 'AsseticBundle'], $dialog->ask($this->createStreamableInputInterfaceMock($inputStream), $this->createOutputInterface(), $question));
     }
 
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fwrite($stream, $input);
-        rewind($stream);
-
-        return $stream;
-    }
-
-    protected function createOutputInterface()
-    {
-        return new StreamOutput(fopen('php://memory', 'r+', false));
-    }
-
     protected function createInputInterfaceMock($interactive = true)
     {
         $mock = $this->getMockBuilder('Symfony\Component\Console\Input\InputInterface')->getMock();
@@ -772,16 +771,9 @@ class QuestionHelperTest extends AbstractQuestionHelperTest
 
         return $mock;
     }
-
-    private function hasSttyAvailable()
-    {
-        exec('stty 2>&1', $output, $exitcode);
-
-        return 0 === $exitcode;
-    }
 }
 
-class AutocompleteValues implements IteratorAggregate
+class AutocompleteValues implements \IteratorAggregate
 {
     private $values;
 
@@ -792,6 +784,6 @@ class AutocompleteValues implements IteratorAggregate
 
     public function getIterator()
     {
-        return new ArrayIterator($this->values);
+        return new \ArrayIterator($this->values);
     }
 }

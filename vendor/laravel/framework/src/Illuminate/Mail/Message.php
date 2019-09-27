@@ -101,6 +101,25 @@ class Message
     }
 
     /**
+     * Add a recipient to the message.
+     *
+     * @param string|array $address
+     * @param string $name
+     * @param string $type
+     * @return $this
+     */
+    protected function addAddresses($address, $name, $type)
+    {
+        if (is_array($address)) {
+            $this->swift->{"set{$type}"}($address, $name);
+        } else {
+            $this->swift->{"add{$type}"}($address, $name);
+        }
+
+        return $this;
+    }
+
+    /**
      * Add a carbon copy to the message.
      *
      * @param string|array $address
@@ -191,6 +210,45 @@ class Message
     }
 
     /**
+     * Create a Swift Attachment instance.
+     *
+     * @param string $file
+     * @return Swift_Mime_Attachment
+     */
+    protected function createAttachmentFromPath($file)
+    {
+        return Swift_Attachment::fromPath($file);
+    }
+
+    /**
+     * Prepare and attach the given attachment.
+     *
+     * @param Swift_Attachment $attachment
+     * @param array $options
+     * @return $this
+     */
+    protected function prepAttachment($attachment, $options = [])
+    {
+        // First we will check for a MIME type on the message, which instructs the
+        // mail client on what type of attachment the file is so that it may be
+        // downloaded correctly by the user. The MIME option is not required.
+        if (isset($options['mime'])) {
+            $attachment->setContentType($options['mime']);
+        }
+
+        // If an alternative name was given as an option, we will set that on this
+        // attachment so that it will be downloaded with the desired names from
+        // the developer, otherwise the default file names will get assigned.
+        if (isset($options['as'])) {
+            $attachment->setFilename($options['as']);
+        }
+
+        $this->swift->attach($attachment);
+
+        return $this;
+    }
+
+    /**
      * Attach in-memory data as an attachment.
      *
      * @param string $data
@@ -203,6 +261,18 @@ class Message
         $attachment = $this->createAttachmentFromData($data, $name);
 
         return $this->prepAttachment($attachment, $options);
+    }
+
+    /**
+     * Create a Swift Attachment instance from data.
+     *
+     * @param string $data
+     * @param string $name
+     * @return Swift_Attachment
+     */
+    protected function createAttachmentFromData($data, $name)
+    {
+        return new Swift_Attachment($data, $name);
     }
 
     /**
@@ -257,75 +327,5 @@ class Message
     public function __call($method, $parameters)
     {
         return $this->forwardCallTo($this->swift, $method, $parameters);
-    }
-
-    /**
-     * Add a recipient to the message.
-     *
-     * @param string|array $address
-     * @param string $name
-     * @param string $type
-     * @return $this
-     */
-    protected function addAddresses($address, $name, $type)
-    {
-        if (is_array($address)) {
-            $this->swift->{"set{$type}"}($address, $name);
-        } else {
-            $this->swift->{"add{$type}"}($address, $name);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Create a Swift Attachment instance.
-     *
-     * @param string $file
-     * @return Swift_Mime_Attachment
-     */
-    protected function createAttachmentFromPath($file)
-    {
-        return Swift_Attachment::fromPath($file);
-    }
-
-    /**
-     * Prepare and attach the given attachment.
-     *
-     * @param Swift_Attachment $attachment
-     * @param array $options
-     * @return $this
-     */
-    protected function prepAttachment($attachment, $options = [])
-    {
-        // First we will check for a MIME type on the message, which instructs the
-        // mail client on what type of attachment the file is so that it may be
-        // downloaded correctly by the user. The MIME option is not required.
-        if (isset($options['mime'])) {
-            $attachment->setContentType($options['mime']);
-        }
-
-        // If an alternative name was given as an option, we will set that on this
-        // attachment so that it will be downloaded with the desired names from
-        // the developer, otherwise the default file names will get assigned.
-        if (isset($options['as'])) {
-            $attachment->setFilename($options['as']);
-        }
-
-        $this->swift->attach($attachment);
-
-        return $this;
-    }
-
-    /**
-     * Create a Swift Attachment instance from data.
-     *
-     * @param string $data
-     * @param string $name
-     * @return Swift_Attachment
-     */
-    protected function createAttachmentFromData($data, $name)
-    {
-        return new Swift_Attachment($data, $name);
     }
 }

@@ -203,6 +203,22 @@ class Payment extends Base
     }
 
     /**
+     * @param boolean $valid True (by default) to get a valid expiration date, false to get a maybe valid date
+     * @return array
+     */
+    public function creditCardDetails($valid = true)
+    {
+        $type = static::creditCardType();
+
+        return array(
+            'type' => $type,
+            'number' => static::creditCardNumber($type),
+            'name' => $this->generator->name(),
+            'expirationDate' => $this->creditCardExpirationDateString($valid)
+        );
+    }
+
+    /**
      * @return string Returns a credit card vendor name
      *
      * @example 'MasterCard'
@@ -241,22 +257,6 @@ class Payment extends Base
         }
 
         return $number;
-    }
-
-    /**
-     * @param boolean $valid True (by default) to get a valid expiration date, false to get a maybe valid date
-     * @return array
-     */
-    public function creditCardDetails($valid = true)
-    {
-        $type = static::creditCardType();
-
-        return array(
-            'type' => $type,
-            'number' => static::creditCardNumber($type),
-            'name' => $this->generator->name(),
-            'expirationDate' => $this->creditCardExpirationDateString($valid)
-        );
     }
 
     /**

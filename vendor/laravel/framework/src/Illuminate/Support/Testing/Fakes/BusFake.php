@@ -35,6 +35,21 @@ class BusFake implements Dispatcher
     }
 
     /**
+     * Assert if a job was pushed a number of times.
+     *
+     * @param string $command
+     * @param int $times
+     * @return void
+     */
+    protected function assertDispatchedTimes($command, $times = 1)
+    {
+        PHPUnit::assertTrue(
+            ($count = $this->dispatched($command)->count()) === $times,
+            "The expected [{$command}] job was pushed {$count} times instead of {$times} times."
+        );
+    }
+
+    /**
      * Get all of the jobs matching a truth-test callback.
      *
      * @param string $command
@@ -147,20 +162,5 @@ class BusFake implements Dispatcher
     public function map(array $map)
     {
         return $this;
-    }
-
-    /**
-     * Assert if a job was pushed a number of times.
-     *
-     * @param string $command
-     * @param int $times
-     * @return void
-     */
-    protected function assertDispatchedTimes($command, $times = 1)
-    {
-        PHPUnit::assertTrue(
-            ($count = $this->dispatched($command)->count()) === $times,
-            "The expected [{$command}] job was pushed {$count} times instead of {$times} times."
-        );
     }
 }

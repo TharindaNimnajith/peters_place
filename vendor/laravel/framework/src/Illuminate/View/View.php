@@ -123,6 +123,40 @@ class View implements ArrayAccess, ViewContract
     }
 
     /**
+     * Get the contents of the view instance.
+     *
+     * @return string
+     */
+    protected function renderContents()
+    {
+        // We will keep track of the amount of views being rendered so we can flush
+        // the section after the complete rendering operation is done. This will
+        // clear out the sections for any separate views that may be rendered.
+        $this->factory->incrementRender();
+
+        $this->factory->callComposer($this);
+
+        $contents = $this->getContents();
+
+        // Once we've finished rendering the view, we'll decrement the render count
+        // so that each sections get flushed out next time a view is created and
+        // no old sections are staying around in the memory of an environment.
+        $this->factory->decrementRender();
+
+        return $contents;
+    }
+
+    /**
+     * Get the evaluated contents of the view.
+     *
+     * @return string
+     */
+    protected function getContents()
+    {
+        return $this->engine->get($this->path, $this->gatherData());
+    }
+
+    /**
      * Get the data bound to the view instance.
      *
      * @return array
@@ -182,6 +216,18 @@ class View implements ArrayAccess, ViewContract
         $this->with('errors', $this->formatErrors($provider));
 
         return $this;
+    }
+
+    /**
+     * Format the given message provider into a MessageBag.
+     *
+     * @param MessageProvider|array $provider
+     * @return MessageBag
+     */
+    protected function formatErrors($provider)
+    {
+        return $provider instanceof MessageProvider
+            ? $provider->getMessageBag() : new MessageBag((array)$provider);
     }
 
     /**
@@ -379,51 +425,5 @@ class View implements ArrayAccess, ViewContract
     public function __toString()
     {
         return $this->render();
-    }
-
-    /**
-     * Get the contents of the view instance.
-     *
-     * @return string
-     */
-    protected function renderContents()
-    {
-        // We will keep track of the amount of views being rendered so we can flush
-        // the section after the complete rendering operation is done. This will
-        // clear out the sections for any separate views that may be rendered.
-        $this->factory->incrementRender();
-
-        $this->factory->callComposer($this);
-
-        $contents = $this->getContents();
-
-        // Once we've finished rendering the view, we'll decrement the render count
-        // so that each sections get flushed out next time a view is created and
-        // no old sections are staying around in the memory of an environment.
-        $this->factory->decrementRender();
-
-        return $contents;
-    }
-
-    /**
-     * Get the evaluated contents of the view.
-     *
-     * @return string
-     */
-    protected function getContents()
-    {
-        return $this->engine->get($this->path, $this->gatherData());
-    }
-
-    /**
-     * Format the given message provider into a MessageBag.
-     *
-     * @param MessageProvider|array $provider
-     * @return MessageBag
-     */
-    protected function formatErrors($provider)
-    {
-        return $provider instanceof MessageProvider
-            ? $provider->getMessageBag() : new MessageBag((array)$provider);
     }
 }

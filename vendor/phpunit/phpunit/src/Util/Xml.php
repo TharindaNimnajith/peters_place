@@ -191,6 +191,42 @@ final class Xml
         );
     }
 
+    private static function convertToUtf8(string $string): string
+    {
+        if (!self::isUtf8($string)) {
+            $string = mb_convert_encoding($string, 'UTF-8');
+        }
+
+        return $string;
+    }
+
+    private static function isUtf8(string $string): bool
+    {
+        $length = strlen($string);
+
+        for ($i = 0; $i < $length; $i++) {
+            if (ord($string[$i]) < 0x80) {
+                $n = 0;
+            } elseif ((ord($string[$i]) & 0xE0) === 0xC0) {
+                $n = 1;
+            } elseif ((ord($string[$i]) & 0xF0) === 0xE0) {
+                $n = 2;
+            } elseif ((ord($string[$i]) & 0xF0) === 0xF0) {
+                $n = 3;
+            } else {
+                return false;
+            }
+
+            for ($j = 0; $j < $n; $j++) {
+                if ((++$i === $length) || ((ord($string[$i]) & 0xC0) !== 0x80)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * "Convert" a DOMElement object into a PHP variable.
      */
@@ -260,41 +296,5 @@ final class Xml
         }
 
         return $variable;
-    }
-
-    private static function convertToUtf8(string $string): string
-    {
-        if (!self::isUtf8($string)) {
-            $string = mb_convert_encoding($string, 'UTF-8');
-        }
-
-        return $string;
-    }
-
-    private static function isUtf8(string $string): bool
-    {
-        $length = strlen($string);
-
-        for ($i = 0; $i < $length; $i++) {
-            if (ord($string[$i]) < 0x80) {
-                $n = 0;
-            } elseif ((ord($string[$i]) & 0xE0) === 0xC0) {
-                $n = 1;
-            } elseif ((ord($string[$i]) & 0xF0) === 0xE0) {
-                $n = 2;
-            } elseif ((ord($string[$i]) & 0xF0) === 0xF0) {
-                $n = 3;
-            } else {
-                return false;
-            }
-
-            for ($j = 0; $j < $n; $j++) {
-                if ((++$i === $length) || ((ord($string[$i]) & 0xC0) !== 0x80)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 }

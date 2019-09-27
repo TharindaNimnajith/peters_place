@@ -10,6 +10,14 @@ class Swift_Transport_EsmtpTransportTest extends Swift_Transport_AbstractSmtpEve
         $this->assertEquals('foo', $smtp->getHost(), '%s: Host should be returned');
     }
 
+    protected function getTransport($buf, $dispatcher = null, $addressEncoder = null)
+    {
+        $dispatcher = $dispatcher ?? $this->createEventDispatcher();
+        $addressEncoder = $addressEncoder ?? new Swift_AddressEncoder_IdnAddressEncoder();
+
+        return new Swift_Transport_EsmtpTransport($buf, [], $dispatcher, 'example.org', $addressEncoder);
+    }
+
     public function testPortCanBeSetAndFetched()
     {
         $buf = $this->getBuffer();
@@ -638,13 +646,5 @@ class Swift_Transport_EsmtpTransportTest extends Swift_Transport_AbstractSmtpEve
             ->setTimeout(30)
             ->setPipelining(false);
         $this->assertEquals($ref, $smtp);
-    }
-
-    protected function getTransport($buf, $dispatcher = null, $addressEncoder = null)
-    {
-        $dispatcher = $dispatcher ?? $this->createEventDispatcher();
-        $addressEncoder = $addressEncoder ?? new Swift_AddressEncoder_IdnAddressEncoder();
-
-        return new Swift_Transport_EsmtpTransport($buf, [], $dispatcher, 'example.org', $addressEncoder);
     }
 }

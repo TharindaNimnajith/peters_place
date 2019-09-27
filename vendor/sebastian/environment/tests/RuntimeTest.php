@@ -11,8 +11,6 @@
 namespace SebastianBergmann\Environment;
 
 use PHPUnit\Framework\TestCase;
-use const PHP_SAPI;
-use const PHP_VERSION;
 
 /**
  * @covers \SebastianBergmann\Environment\Runtime
@@ -20,7 +18,7 @@ use const PHP_VERSION;
 final class RuntimeTest extends TestCase
 {
     /**
-     * @var Runtime
+     * @var \SebastianBergmann\Environment\Runtime
      */
     private $env;
 
@@ -47,6 +45,20 @@ final class RuntimeTest extends TestCase
         $this->assertTrue($this->env->canCollectCodeCoverage());
     }
 
+    private function markTestSkippedWhenNotRunningOnPhpdbg(): void
+    {
+        if ($this->isRunningOnPhpdbg()) {
+            return;
+        }
+
+        $this->markTestSkipped('PHPDBG is required.');
+    }
+
+    private function isRunningOnPhpdbg(): bool
+    {
+        return \PHP_SAPI === 'phpdbg';
+    }
+
     public function testBinaryCanBeRetrieved(): void
     {
         $this->assertNotEmpty($this->env->getBinary());
@@ -68,6 +80,15 @@ final class RuntimeTest extends TestCase
         $this->markTestSkippedWhenRunningOnPhpdbg();
 
         $this->assertTrue($this->env->isPHP());
+    }
+
+    private function markTestSkippedWhenRunningOnPhpdbg(): void
+    {
+        if (!$this->isRunningOnPhpdbg()) {
+            return;
+        }
+
+        $this->markTestSkipped('Cannot run on PHPDBG');
     }
 
     /**
@@ -127,7 +148,7 @@ final class RuntimeTest extends TestCase
      */
     public function testGetVersionReturnsPhpVersionWhenRunningPhp(): void
     {
-        $this->assertSame(PHP_VERSION, $this->env->getVersion());
+        $this->assertSame(\PHP_VERSION, $this->env->getVersion());
     }
 
     /**
@@ -141,28 +162,5 @@ final class RuntimeTest extends TestCase
     protected function setUp(): void
     {
         $this->env = new Runtime;
-    }
-
-    private function markTestSkippedWhenNotRunningOnPhpdbg(): void
-    {
-        if ($this->isRunningOnPhpdbg()) {
-            return;
-        }
-
-        $this->markTestSkipped('PHPDBG is required.');
-    }
-
-    private function isRunningOnPhpdbg(): bool
-    {
-        return PHP_SAPI === 'phpdbg';
-    }
-
-    private function markTestSkippedWhenRunningOnPhpdbg(): void
-    {
-        if (!$this->isRunningOnPhpdbg()) {
-            return;
-        }
-
-        $this->markTestSkipped('Cannot run on PHPDBG');
     }
 }

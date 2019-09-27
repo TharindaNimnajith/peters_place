@@ -41,16 +41,6 @@ class LogTransport extends Transport
     }
 
     /**
-     * Get the logger for the LogTransport instance.
-     *
-     * @return LoggerInterface
-     */
-    public function logger()
-    {
-        return $this->logger;
-    }
-
-    /**
      * Get a loggable string out of a Swiftmailer entity.
      *
      * @param Swift_Mime_SimpleMimeEntity $entity
@@ -65,5 +55,15 @@ class LogTransport extends Transport
         }
 
         return $string;
+    }
+
+    /**
+     * Get the logger for the LogTransport instance.
+     *
+     * @return LoggerInterface
+     */
+    public function logger()
+    {
+        return $this->logger;
     }
 }

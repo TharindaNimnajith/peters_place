@@ -11,9 +11,7 @@
 
 namespace Symfony\Component\HttpKernel\Tests\EventListener;
 
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -24,7 +22,6 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\EventListener\ExceptionListener;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\EventListener\ValidateRequestListener;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\Routing\Exception\NoConfigurationException;
@@ -58,6 +55,15 @@ class RouterListenerTest extends TestCase
         $this->assertEquals(0 === strpos($uri, 'https') ? 'https' : 'http', $context->getScheme());
     }
 
+    private function createRequestEventForUri(string $uri): RequestEvent
+    {
+        $kernel = $this->getMockBuilder(HttpKernelInterface::class)->getMock();
+        $request = Request::create($uri);
+        $request->attributes->set('_controller', null); // Prevents going in to routing process
+
+        return new RequestEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
+    }
+
     public function getPortData()
     {
         return [
@@ -69,11 +75,11 @@ class RouterListenerTest extends TestCase
     }
 
     /**
-     * @expectedException InvalidArgumentException
+     * @expectedException \InvalidArgumentException
      */
     public function testInvalidMatcher()
     {
-        new RouterListener(new stdClass(), $this->requestStack);
+        new RouterListener(new \stdClass(), $this->requestStack);
     }
 
     public function testRequestMatcher()
@@ -193,7 +199,7 @@ class RouterListenerTest extends TestCase
     }
 
     /**
-     * @expectedException BadRequestHttpException
+     * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
      */
     public function testRequestWithBadHost()
     {
@@ -210,14 +216,5 @@ class RouterListenerTest extends TestCase
     protected function setUp()
     {
         $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')->disableOriginalConstructor()->getMock();
-    }
-
-    private function createRequestEventForUri(string $uri): RequestEvent
-    {
-        $kernel = $this->getMockBuilder(HttpKernelInterface::class)->getMock();
-        $request = Request::create($uri);
-        $request->attributes->set('_controller', null); // Prevents going in to routing process
-
-        return new RequestEvent($kernel, $request, HttpKernelInterface::MASTER_REQUEST);
     }
 }

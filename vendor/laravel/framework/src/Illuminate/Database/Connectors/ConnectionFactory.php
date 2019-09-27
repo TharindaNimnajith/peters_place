@@ -53,38 +53,6 @@ class ConnectionFactory
     }
 
     /**
-     * Create a connector instance based on the configuration.
-     *
-     * @param array $config
-     * @return ConnectorInterface
-     *
-     * @throws InvalidArgumentException
-     */
-    public function createConnector(array $config)
-    {
-        if (!isset($config['driver'])) {
-            throw new InvalidArgumentException('A driver must be specified.');
-        }
-
-        if ($this->container->bound($key = "db.connector.{$config['driver']}")) {
-            return $this->container->make($key);
-        }
-
-        switch ($config['driver']) {
-            case 'mysql':
-                return new MySqlConnector;
-            case 'pgsql':
-                return new PostgresConnector;
-            case 'sqlite':
-                return new SQLiteConnector;
-            case 'sqlsrv':
-                return new SqlServerConnector;
-        }
-
-        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
-    }
-
-    /**
      * Parse and prepare the database configuration.
      *
      * @param array $config
@@ -175,6 +143,38 @@ class ConnectionFactory
         }
 
         return $hosts;
+    }
+
+    /**
+     * Create a connector instance based on the configuration.
+     *
+     * @param array $config
+     * @return ConnectorInterface
+     *
+     * @throws InvalidArgumentException
+     */
+    public function createConnector(array $config)
+    {
+        if (!isset($config['driver'])) {
+            throw new InvalidArgumentException('A driver must be specified.');
+        }
+
+        if ($this->container->bound($key = "db.connector.{$config['driver']}")) {
+            return $this->container->make($key);
+        }
+
+        switch ($config['driver']) {
+            case 'mysql':
+                return new MySqlConnector;
+            case 'pgsql':
+                return new PostgresConnector;
+            case 'sqlite':
+                return new SQLiteConnector;
+            case 'sqlsrv':
+                return new SqlServerConnector;
+        }
+
+        throw new InvalidArgumentException("Unsupported driver [{$config['driver']}]");
     }
 
     /**

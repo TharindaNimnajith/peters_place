@@ -180,22 +180,6 @@ class EntityPopulator
     }
 
     /**
-     * @return array
-     */
-    public function getModifiers()
-    {
-        return $this->modifiers;
-    }
-
-    /**
-     * @param array $modifiers
-     */
-    public function setModifiers(array $modifiers)
-    {
-        $this->modifiers = $modifiers;
-    }
-
-    /**
      * @param $obj
      * @param $insertedEntities
      */
@@ -218,5 +202,21 @@ class EntityPopulator
         foreach ($this->getModifiers() as $modifier) {
             $modifier($obj, $insertedEntities);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getModifiers()
+    {
+        return $this->modifiers;
+    }
+
+    /**
+     * @param array $modifiers
+     */
+    public function setModifiers(array $modifiers)
+    {
+        $this->modifiers = $modifiers;
     }
 }

@@ -34,32 +34,6 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
     }
 
     /**
-     * Register the connectors on the queue manager.
-     *
-     * @param QueueManager $manager
-     * @return void
-     */
-    public function registerConnectors($manager)
-    {
-        foreach (['Null', 'Sync', 'Database', 'Redis', 'Beanstalkd', 'Sqs'] as $connector) {
-            $this->{"register{$connector}Connector"}($manager);
-        }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'queue', 'queue.worker', 'queue.listener',
-            'queue.failer', 'queue.connection',
-        ];
-    }
-
-    /**
      * Register the queue manager.
      *
      * @return void
@@ -74,6 +48,19 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
                 $this->registerConnectors($manager);
             });
         });
+    }
+
+    /**
+     * Register the connectors on the queue manager.
+     *
+     * @param QueueManager $manager
+     * @return void
+     */
+    public function registerConnectors($manager)
+    {
+        foreach (['Null', 'Sync', 'Database', 'Redis', 'Beanstalkd', 'Sqs'] as $connector) {
+            $this->{"register{$connector}Connector"}($manager);
+        }
     }
 
     /**
@@ -155,6 +142,19 @@ class QueueServiceProvider extends ServiceProvider implements DeferrableProvider
         }
 
         SerializableClosure::setSecretKey($key);
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'queue', 'queue.worker', 'queue.listener',
+            'queue.failer', 'queue.connection',
+        ];
     }
 
     /**

@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\Constraint\Constraint;
-
 /**
  * A binary safe string comparison.
  *
  * @author Chris Corbyn
  */
-class IdenticalBinaryConstraint extends Constraint
+class IdenticalBinaryConstraint extends \PHPUnit\Framework\Constraint\Constraint
 {
     protected $value;
 
@@ -33,16 +31,6 @@ class IdenticalBinaryConstraint extends Constraint
     }
 
     /**
-     * Returns a string representation of the constraint.
-     *
-     * @return string
-     */
-    public function toString()
-    {
-        return 'identical binary';
-    }
-
-    /**
      * Get the given string of bytes as a stirng of Hexadecimal sequences.
      *
      * @param string $binary
@@ -60,5 +48,15 @@ class IdenticalBinaryConstraint extends Constraint
         }
 
         return implode('', $bytes);
+    }
+
+    /**
+     * Returns a string representation of the constraint.
+     *
+     * @return string
+     */
+    public function toString()
+    {
+        return 'identical binary';
     }
 }

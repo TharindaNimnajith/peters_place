@@ -40,16 +40,6 @@ class DNSCheckValidation implements EmailValidation
         return $this->checkDNS($host);
     }
 
-    public function getError()
-    {
-        return $this->error;
-    }
-
-    public function getWarnings()
-    {
-        return $this->warnings;
-    }
-
     protected function checkDNS($host)
     {
         $variant = INTL_IDNA_VARIANT_2003;
@@ -69,5 +59,15 @@ class DNSCheckValidation implements EmailValidation
             }
         }
         return $MXresult || $Aresult;
+    }
+
+    public function getError()
+    {
+        return $this->error;
+    }
+
+    public function getWarnings()
+    {
+        return $this->warnings;
     }
 }

@@ -201,10 +201,21 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
+                        <!--
                         <select name="rtype" class="form-control">
                             <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
                             <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
                             <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
+                        </select>
+                        -->
+                        
+                        <select name="rtype" class="form-control">
+                            @foreach ($rt as $item)
+                                @if (isset($item))
+                                    <option value="{{ $item->id }}" @if (old('rtype') == $item->id) selected
+                                        @endif>{{ $item->name }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
 

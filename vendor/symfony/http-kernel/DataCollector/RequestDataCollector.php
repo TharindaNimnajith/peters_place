@@ -11,14 +11,6 @@
 
 namespace Symfony\Component\HttpKernel\DataCollector;
 
-use Closure;
-use Exception;
-use LogicException;
-use ReflectionClass;
-use ReflectionException;
-use ReflectionFunction;
-use ReflectionMethod;
-use SplObjectStorage;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -27,11 +19,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use function get_class;
-use function is_array;
-use function is_callable;
-use function is_object;
-use function is_string;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -42,7 +29,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
 
     public function __construct()
     {
-        $this->controllers = new SplObjectStorage();
+        $this->controllers = new \SplObjectStorage();
     }
 
     public static function getSubscribedEvents()
@@ -56,14 +43,14 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     /**
      * {@inheritdoc}
      */
-    public function collect(Request $request, Response $response, Exception $exception = null)
+    public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         // attributes are serialized and as they can be anything, they need to be converted to strings.
         $attributes = [];
         $route = '';
         foreach ($request->attributes->all() as $key => $value) {
             if ('_route' === $key) {
-                $route = is_object($value) ? $value->getPath() : $value;
+                $route = \is_object($value) ? $value->getPath() : $value;
                 $attributes[$key] = $route;
             } else {
                 $attributes[$key] = $value;
@@ -73,7 +60,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         $content = null;
         try {
             $content = $request->getContent();
-        } catch (LogicException $e) {
+        } catch (\LogicException $e) {
             // the user already got the request content as a resource
             $content = false;
         }
@@ -146,7 +133,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
         }
 
         foreach ($this->data as $key => $value) {
-            if (!is_array($value)) {
+            if (!\is_array($value)) {
                 continue;
             }
             if ('request_headers' === $key || 'response_headers' === $key) {
@@ -182,11 +169,85 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
             ));
         }
 
-        $this->data['identifier'] = $this->data['route'] ?: (is_array($this->data['controller']) ? $this->data['controller']['class'] . '::' . $this->data['controller']['method'] . '()' : $this->data['controller']);
+        $this->data['identifier'] = $this->data['route'] ?: (\is_array($this->data['controller']) ? $this->data['controller']['class'] . '::' . $this->data['controller']['method'] . '()' : $this->data['controller']);
 
         if ($response->headers->has('x-previous-debug-token')) {
             $this->data['forward_token'] = $response->headers->get('x-previous-debug-token');
         }
+    }
+
+    /**
+     * Parse a controller.
+     *
+     * @param mixed $controller The controller to parse
+     *
+     * @return array|string An array of controller data or a simple string
+     */
+    protected function parseController($controller)
+    {
+        if (\is_string($controller) && false !== strpos($controller, '::')) {
+            $controller = explode('::', $controller);
+        }
+
+        if (\is_array($controller)) {
+            try {
+                $r = new \ReflectionMethod($controller[0], $controller[1]);
+
+                return [
+                    'class' => \is_object($controller[0]) ? \get_class($controller[0]) : $controller[0],
+                    'method' => $controller[1],
+                    'file' => $r->getFileName(),
+                    'line' => $r->getStartLine(),
+                ];
+            } catch (\ReflectionException $e) {
+                if (\is_callable($controller)) {
+                    // using __call or  __callStatic
+                    return [
+                        'class' => \is_object($controller[0]) ? \get_class($controller[0]) : $controller[0],
+                        'method' => $controller[1],
+                        'file' => 'n/a',
+                        'line' => 'n/a',
+                    ];
+                }
+            }
+        }
+
+        if ($controller instanceof \Closure) {
+            $r = new \ReflectionFunction($controller);
+
+            $controller = [
+                'class' => $r->getName(),
+                'method' => null,
+                'file' => $r->getFileName(),
+                'line' => $r->getStartLine(),
+            ];
+
+            if (false !== strpos($r->name, '{closure}')) {
+                return $controller;
+            }
+            $controller['method'] = $r->name;
+
+            if ($class = $r->getClosureScopeClass()) {
+                $controller['class'] = $class->name;
+            } else {
+                return $r->name;
+            }
+
+            return $controller;
+        }
+
+        if (\is_object($controller)) {
+            $r = new \ReflectionClass($controller);
+
+            return [
+                'class' => $r->getName(),
+                'method' => null,
+                'file' => $r->getFileName(),
+                'line' => $r->getStartLine(),
+            ];
+        }
+
+        return \is_string($controller) ? $controller : 'n/a';
     }
 
     public function lateCollect()
@@ -197,7 +258,7 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     public function reset()
     {
         $this->data = [];
-        $this->controllers = new SplObjectStorage();
+        $this->controllers = new \SplObjectStorage();
     }
 
     public function getMethod()
@@ -401,79 +462,5 @@ class RequestDataCollector extends DataCollector implements EventSubscriberInter
     public function getName()
     {
         return 'request';
-    }
-
-    /**
-     * Parse a controller.
-     *
-     * @param mixed $controller The controller to parse
-     *
-     * @return array|string An array of controller data or a simple string
-     */
-    protected function parseController($controller)
-    {
-        if (is_string($controller) && false !== strpos($controller, '::')) {
-            $controller = explode('::', $controller);
-        }
-
-        if (is_array($controller)) {
-            try {
-                $r = new ReflectionMethod($controller[0], $controller[1]);
-
-                return [
-                    'class' => is_object($controller[0]) ? get_class($controller[0]) : $controller[0],
-                    'method' => $controller[1],
-                    'file' => $r->getFileName(),
-                    'line' => $r->getStartLine(),
-                ];
-            } catch (ReflectionException $e) {
-                if (is_callable($controller)) {
-                    // using __call or  __callStatic
-                    return [
-                        'class' => is_object($controller[0]) ? get_class($controller[0]) : $controller[0],
-                        'method' => $controller[1],
-                        'file' => 'n/a',
-                        'line' => 'n/a',
-                    ];
-                }
-            }
-        }
-
-        if ($controller instanceof Closure) {
-            $r = new ReflectionFunction($controller);
-
-            $controller = [
-                'class' => $r->getName(),
-                'method' => null,
-                'file' => $r->getFileName(),
-                'line' => $r->getStartLine(),
-            ];
-
-            if (false !== strpos($r->name, '{closure}')) {
-                return $controller;
-            }
-            $controller['method'] = $r->name;
-
-            if ($class = $r->getClosureScopeClass()) {
-                $controller['class'] = $class->name;
-            } else {
-                return $r->name;
-            }
-
-            return $controller;
-        }
-
-        if (is_object($controller)) {
-            $r = new ReflectionClass($controller);
-
-            return [
-                'class' => $r->getName(),
-                'method' => null,
-                'file' => $r->getFileName(),
-                'line' => $r->getStartLine(),
-            ];
-        }
-
-        return is_string($controller) ? $controller : 'n/a';
     }
 }

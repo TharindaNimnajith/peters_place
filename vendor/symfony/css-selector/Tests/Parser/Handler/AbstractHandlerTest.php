@@ -12,11 +12,9 @@
 namespace Symfony\Component\CssSelector\Tests\Parser\Handler;
 
 use PHPUnit\Framework\TestCase;
-use ReflectionProperty;
 use Symfony\Component\CssSelector\Parser\Reader;
 use Symfony\Component\CssSelector\Parser\Token;
 use Symfony\Component\CssSelector\Parser\TokenStream;
-use function strlen;
 
 /**
  * @author Jean-François Simon <contact@jfsimon.fr>
@@ -34,6 +32,19 @@ abstract class AbstractHandlerTest extends TestCase
         $this->assertRemainingContent($reader, $remainingContent);
     }
 
+    abstract protected function generateHandler();
+
+    protected function assertRemainingContent(Reader $reader, $remainingContent)
+    {
+        if ('' === $remainingContent) {
+            $this->assertEquals(0, $reader->getRemainingLength());
+            $this->assertTrue($reader->isEOF());
+        } else {
+            $this->assertEquals(\strlen($remainingContent), $reader->getRemainingLength());
+            $this->assertEquals(0, $reader->getOffset($remainingContent));
+        }
+    }
+
     /** @dataProvider getDontHandleValueTestData */
     public function testDontHandleValue($value)
     {
@@ -45,28 +56,15 @@ abstract class AbstractHandlerTest extends TestCase
         $this->assertRemainingContent($reader, $value);
     }
 
-    abstract public function getHandleValueTestData();
-
-    abstract public function getDontHandleValueTestData();
-
-    abstract protected function generateHandler();
-
-    protected function assertRemainingContent(Reader $reader, $remainingContent)
-    {
-        if ('' === $remainingContent) {
-            $this->assertEquals(0, $reader->getRemainingLength());
-            $this->assertTrue($reader->isEOF());
-        } else {
-            $this->assertEquals(strlen($remainingContent), $reader->getRemainingLength());
-            $this->assertEquals(0, $reader->getOffset($remainingContent));
-        }
-    }
-
     protected function assertStreamEmpty(TokenStream $stream)
     {
-        $property = new ReflectionProperty($stream, 'tokens');
+        $property = new \ReflectionProperty($stream, 'tokens');
         $property->setAccessible(true);
 
         $this->assertEquals([], $property->getValue($stream));
     }
+
+    abstract public function getHandleValueTestData();
+
+    abstract public function getDontHandleValueTestData();
 }

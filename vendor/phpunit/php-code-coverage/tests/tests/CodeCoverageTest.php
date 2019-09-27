@@ -13,7 +13,6 @@ namespace SebastianBergmann\CodeCoverage;
 require __DIR__ . '/../_files/BankAccount.php';
 require __DIR__ . '/../_files/BankAccountTest.php';
 
-use ReflectionMethod;
 use SebastianBergmann\CodeCoverage\Driver\Driver;
 use SebastianBergmann\CodeCoverage\Driver\PHPDBG;
 use SebastianBergmann\CodeCoverage\Driver\Xdebug;
@@ -312,6 +311,21 @@ class CodeCoverageTest extends TestCase
         );
     }
 
+    /**
+     * @return \ReflectionMethod
+     */
+    private function getLinesToBeIgnored()
+    {
+        $getLinesToBeIgnored = new \ReflectionMethod(
+            'SebastianBergmann\CodeCoverage\CodeCoverage',
+            'getLinesToBeIgnored'
+        );
+
+        $getLinesToBeIgnored->setAccessible(true);
+
+        return $getLinesToBeIgnored;
+    }
+
     public function testGetLinesToBeIgnored2()
     {
         $this->assertEquals(
@@ -481,20 +495,5 @@ class CodeCoverageTest extends TestCase
     protected function setUp()
     {
         $this->coverage = new CodeCoverage;
-    }
-
-    /**
-     * @return ReflectionMethod
-     */
-    private function getLinesToBeIgnored()
-    {
-        $getLinesToBeIgnored = new ReflectionMethod(
-            'SebastianBergmann\CodeCoverage\CodeCoverage',
-            'getLinesToBeIgnored'
-        );
-
-        $getLinesToBeIgnored->setAccessible(true);
-
-        return $getLinesToBeIgnored;
     }
 }

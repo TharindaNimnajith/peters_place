@@ -102,39 +102,6 @@ class FormRequest extends Request implements ValidatesWhenResolved
     }
 
     /**
-     * Get custom messages for validator errors.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        return [];
-    }
-
-    /**
-     * Get custom attributes for validator errors.
-     *
-     * @return array
-     */
-    public function attributes()
-    {
-        return [];
-    }
-
-    /**
-     * Set the Validator instance.
-     *
-     * @param Validator $validator
-     * @return $this
-     */
-    public function setValidator(Validator $validator)
-    {
-        $this->validator = $validator;
-
-        return $this;
-    }
-
-    /**
      * Get the validator instance for the request.
      *
      * @return Validator
@@ -184,6 +151,39 @@ class FormRequest extends Request implements ValidatesWhenResolved
     protected function validationData()
     {
         return $this->all();
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array
+     */
+    public function attributes()
+    {
+        return [];
+    }
+
+    /**
+     * Set the Validator instance.
+     *
+     * @param Validator $validator
+     * @return $this
+     */
+    public function setValidator(Validator $validator)
+    {
+        $this->validator = $validator;
+
+        return $this;
     }
 
     /**
