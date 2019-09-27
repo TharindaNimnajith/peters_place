@@ -38,20 +38,6 @@ return [{$this->generateDeclaredRoutes()}
 EOF;
     }
 
-    /**
-     * Generates PHP code representing an array of defined routes
-     * together with the routes properties (e.g. requirements).
-     */
-    private function generateDeclaredRoutes(): string
-    {
-        $routes = '';
-        foreach ($this->getCompiledRoutes() as $name => $properties) {
-            $routes .= sprintf("\n    '%s' => %s,", $name, CompiledUrlMatcherDumper::export($properties));
-        }
-
-        return $routes;
-    }
-
     public function getCompiledRoutes(): array
     {
         $compiledRoutes = [];
@@ -69,5 +55,19 @@ EOF;
         }
 
         return $compiledRoutes;
+    }
+
+    /**
+     * Generates PHP code representing an array of defined routes
+     * together with the routes properties (e.g. requirements).
+     */
+    private function generateDeclaredRoutes(): string
+    {
+        $routes = '';
+        foreach ($this->getCompiledRoutes() as $name => $properties) {
+            $routes .= sprintf("\n    '%s' => %s,", $name, CompiledUrlMatcherDumper::export($properties));
+        }
+
+        return $routes;
     }
 }

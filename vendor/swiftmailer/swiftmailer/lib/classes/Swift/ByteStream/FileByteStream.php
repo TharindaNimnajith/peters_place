@@ -95,6 +95,33 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
         return false;
     }
 
+    /**
+     * Move the internal read pointer to $byteOffset in the stream.
+     *
+     * @param int $byteOffset
+     *
+     * @return bool
+     */
+    public function setReadPointer($byteOffset)
+    {
+        if (isset($this->reader)) {
+            $this->seekReadStreamToPosition($byteOffset);
+        }
+        $this->offset = $byteOffset;
+    }
+
+    /** Just write the bytes to the file */
+    protected function doCommit($bytes)
+    {
+        fwrite($this->getWriteHandle(), $bytes);
+        $this->resetReadHandle();
+    }
+
+    /** Not used */
+    protected function flush()
+    {
+    }
+
     /** Get the resource for reading */
     private function getReadHandle()
     {
@@ -173,28 +200,6 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
         }
     }
 
-    /**
-     * Move the internal read pointer to $byteOffset in the stream.
-     *
-     * @param int $byteOffset
-     *
-     * @return bool
-     */
-    public function setReadPointer($byteOffset)
-    {
-        if (isset($this->reader)) {
-            $this->seekReadStreamToPosition($byteOffset);
-        }
-        $this->offset = $byteOffset;
-    }
-
-    /** Just write the bytes to the file */
-    protected function doCommit($bytes)
-    {
-        fwrite($this->getWriteHandle(), $bytes);
-        $this->resetReadHandle();
-    }
-
     /** Get the resource for writing */
     private function getWriteHandle()
     {
@@ -207,10 +212,5 @@ class Swift_ByteStream_FileByteStream extends Swift_ByteStream_AbstractFilterabl
         }
 
         return $this->writer;
-    }
-
-    /** Not used */
-    protected function flush()
-    {
     }
 }

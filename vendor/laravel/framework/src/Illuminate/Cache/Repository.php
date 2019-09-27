@@ -131,57 +131,6 @@ class Repository implements CacheContract, ArrayAccess
     }
 
     /**
-     * Handle a result for the "many" method.
-     *
-     * @param array $keys
-     * @param string $key
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function handleManyResult($keys, $key, $value)
-    {
-        // If we could not find the cache value, we will fire the missed event and get
-        // the default value for this cache value. This default could be a callback
-        // so we will execute the value function which will resolve it if needed.
-        if (is_null($value)) {
-            $this->event(new CacheMissed($key));
-
-            return isset($keys[$key]) ? value($keys[$key]) : null;
-        }
-
-        // If we found a valid value we will fire the "hit" event and return the value
-        // back from this function. The "hit" event gives developers an opportunity
-        // to listen for every possible cache "hit" throughout this applications.
-        $this->event(new CacheHit($key, $value));
-
-        return $value;
-    }
-
-    /**
-     * Fire an event for this cache instance.
-     *
-     * @param string $event
-     * @return void
-     */
-    protected function event($event)
-    {
-        if (isset($this->events)) {
-            $this->events->dispatch($event);
-        }
-    }
-
-    /**
-     * Format the key for a cache item.
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function itemKey($key)
-    {
-        return $key;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getMultiple($keys, $default = null)
@@ -296,25 +245,6 @@ class Repository implements CacheContract, ArrayAccess
     }
 
     /**
-     * Store multiple items in the cache indefinitely.
-     *
-     * @param array $values
-     * @return bool
-     */
-    protected function putManyForever(array $values)
-    {
-        $result = true;
-
-        foreach ($values as $key => $value) {
-            if (!$this->forever($key, $value)) {
-                $result = false;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Store an item in the cache indefinitely.
      *
      * @param string $key
@@ -330,23 +260,6 @@ class Repository implements CacheContract, ArrayAccess
         }
 
         return $result;
-    }
-
-    /**
-     * Calculate the number of seconds for the given TTL.
-     *
-     * @param DateTimeInterface|DateInterval|int $ttl
-     * @return int
-     */
-    protected function getSeconds($ttl)
-    {
-        $duration = $this->parseDateInterval($ttl);
-
-        if ($duration instanceof DateTimeInterface) {
-            $duration = Carbon::now()->diffInRealSeconds($duration, false);
-        }
-
-        return (int)$duration > 0 ? $duration : 0;
     }
 
     /**
@@ -645,5 +558,92 @@ class Repository implements CacheContract, ArrayAccess
     public function __clone()
     {
         $this->store = clone $this->store;
+    }
+
+    /**
+     * Handle a result for the "many" method.
+     *
+     * @param array $keys
+     * @param string $key
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function handleManyResult($keys, $key, $value)
+    {
+        // If we could not find the cache value, we will fire the missed event and get
+        // the default value for this cache value. This default could be a callback
+        // so we will execute the value function which will resolve it if needed.
+        if (is_null($value)) {
+            $this->event(new CacheMissed($key));
+
+            return isset($keys[$key]) ? value($keys[$key]) : null;
+        }
+
+        // If we found a valid value we will fire the "hit" event and return the value
+        // back from this function. The "hit" event gives developers an opportunity
+        // to listen for every possible cache "hit" throughout this applications.
+        $this->event(new CacheHit($key, $value));
+
+        return $value;
+    }
+
+    /**
+     * Fire an event for this cache instance.
+     *
+     * @param string $event
+     * @return void
+     */
+    protected function event($event)
+    {
+        if (isset($this->events)) {
+            $this->events->dispatch($event);
+        }
+    }
+
+    /**
+     * Format the key for a cache item.
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function itemKey($key)
+    {
+        return $key;
+    }
+
+    /**
+     * Store multiple items in the cache indefinitely.
+     *
+     * @param array $values
+     * @return bool
+     */
+    protected function putManyForever(array $values)
+    {
+        $result = true;
+
+        foreach ($values as $key => $value) {
+            if (!$this->forever($key, $value)) {
+                $result = false;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Calculate the number of seconds for the given TTL.
+     *
+     * @param DateTimeInterface|DateInterval|int $ttl
+     * @return int
+     */
+    protected function getSeconds($ttl)
+    {
+        $duration = $this->parseDateInterval($ttl);
+
+        if ($duration instanceof DateTimeInterface) {
+            $duration = Carbon::now()->diffInRealSeconds($duration, false);
+        }
+
+        return (int)$duration > 0 ? $duration : 0;
     }
 }

@@ -56,16 +56,6 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     }
 
     /**
-     * Get a query builder for the migration table.
-     *
-     * @return Builder
-     */
-    protected function table()
-    {
-        return $this->getConnection()->table($this->table)->useWritePdo();
-    }
-
-    /**
      * Resolve the database connection instance.
      *
      * @return Connection
@@ -210,5 +200,15 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     public function setSource($name)
     {
         $this->connection = $name;
+    }
+
+    /**
+     * Get a query builder for the migration table.
+     *
+     * @return Builder
+     */
+    protected function table()
+    {
+        return $this->getConnection()->table($this->table)->useWritePdo();
     }
 }

@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\EventListener\FragmentListener;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\UriSigner;
 
@@ -35,11 +36,6 @@ class FragmentListenerTest extends TestCase
         $this->assertTrue($request->query->has('_path'));
     }
 
-    private function createRequestEvent(Request $request, $requestType = HttpKernelInterface::MASTER_REQUEST)
-    {
-        return new RequestEvent($this->getMockBuilder(HttpKernelInterface::class)->getMock(), $request, $requestType);
-    }
-
     public function testOnlyTriggeredIfControllerWasNotDefinedYet()
     {
         $request = Request::create('http://example.com/_fragment?_path=foo%3Dbar%26_controller%3Dfoo');
@@ -56,7 +52,7 @@ class FragmentListenerTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @expectedException AccessDeniedHttpException
      */
     public function testAccessDeniedWithNonSafeMethods()
     {
@@ -69,7 +65,7 @@ class FragmentListenerTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @expectedException AccessDeniedHttpException
      */
     public function testAccessDeniedWithWrongSignature()
     {
@@ -118,5 +114,10 @@ class FragmentListenerTest extends TestCase
         $listener->onKernelRequest($event);
 
         $this->assertFalse($request->query->has('_path'));
+    }
+
+    private function createRequestEvent(Request $request, $requestType = HttpKernelInterface::MASTER_REQUEST)
+    {
+        return new RequestEvent($this->getMockBuilder(HttpKernelInterface::class)->getMock(), $request, $requestType);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Faker\Provider;
 
+use InvalidArgumentException;
+
 class Lorem extends Base
 {
     protected static $wordList = array(
@@ -81,11 +83,6 @@ class Lorem extends Base
         }
 
         return implode(static::sentences($nbSentences), ' ');
-    }
-
-    protected static function randomizeNbElements($nbElements)
-    {
-        return (int)($nbElements * mt_rand(60, 140) / 100) + 1;
     }
 
     /**
@@ -170,7 +167,7 @@ class Lorem extends Base
     public static function text($maxNbChars = 200)
     {
         if ($maxNbChars < 5) {
-            throw new \InvalidArgumentException('text() can only generate text of at least 5 characters');
+            throw new InvalidArgumentException('text() can only generate text of at least 5 characters');
         }
 
         $type = ($maxNbChars < 25) ? 'word' : (($maxNbChars < 100) ? 'sentence' : 'paragraph');
@@ -199,5 +196,10 @@ class Lorem extends Base
         }
 
         return implode($text, '');
+    }
+
+    protected static function randomizeNbElements($nbElements)
+    {
+        return (int)($nbElements * mt_rand(60, 140) / 100) + 1;
     }
 }

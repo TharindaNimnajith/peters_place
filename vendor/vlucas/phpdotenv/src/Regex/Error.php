@@ -26,6 +26,18 @@ class Error extends Result
     }
 
     /**
+     * Create a new error value.
+     *
+     * @param string $value
+     *
+     * @return Result
+     */
+    public static function create($value)
+    {
+        return new self($value);
+    }
+
+    /**
      * Get the success option value.
      *
      * @return Option
@@ -45,18 +57,6 @@ class Error extends Result
     public function mapSuccess(callable $f)
     {
         return self::create($this->value);
-    }
-
-    /**
-     * Create a new error value.
-     *
-     * @param string $value
-     *
-     * @return Result
-     */
-    public static function create($value)
-    {
-        return new self($value);
     }
 
     /**

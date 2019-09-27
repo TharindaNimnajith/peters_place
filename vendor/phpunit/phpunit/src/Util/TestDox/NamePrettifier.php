@@ -122,47 +122,6 @@ final class NamePrettifier
     }
 
     /**
-     * @throws ReflectionException
-     */
-    private function mapTestMethodParameterNamesToProvidedDataValues(TestCase $test): array
-    {
-        $reflector = new ReflectionMethod(get_class($test), $test->getName(false));
-        $providedData = [];
-        $providedDataValues = array_values($test->getProvidedData());
-        $i = 0;
-
-        foreach ($reflector->getParameters() as $parameter) {
-            if (!array_key_exists($i, $providedDataValues) && $parameter->isDefaultValueAvailable()) {
-                $providedDataValues[$i] = $parameter->getDefaultValue();
-            }
-
-            $value = $providedDataValues[$i++] ?? null;
-
-            if (is_object($value)) {
-                $reflector = new ReflectionObject($value);
-
-                if ($reflector->hasMethod('__toString')) {
-                    $value = (string)$value;
-                }
-            }
-
-            if (!is_scalar($value)) {
-                $value = gettype($value);
-            }
-
-            if (is_bool($value) || is_int($value) || is_float($value)) {
-                $exporter = new Exporter;
-
-                $value = $exporter->export($value);
-            }
-
-            $providedData['$' . $parameter->getName()] = $value;
-        }
-
-        return $providedData;
-    }
-
-    /**
      * Prettifies the name of a test method.
      */
     public function prettifyTestMethod(string $name): string
@@ -220,5 +179,46 @@ final class NamePrettifier
         }
 
         return $buffer;
+    }
+
+    /**
+     * @throws ReflectionException
+     */
+    private function mapTestMethodParameterNamesToProvidedDataValues(TestCase $test): array
+    {
+        $reflector = new ReflectionMethod(get_class($test), $test->getName(false));
+        $providedData = [];
+        $providedDataValues = array_values($test->getProvidedData());
+        $i = 0;
+
+        foreach ($reflector->getParameters() as $parameter) {
+            if (!array_key_exists($i, $providedDataValues) && $parameter->isDefaultValueAvailable()) {
+                $providedDataValues[$i] = $parameter->getDefaultValue();
+            }
+
+            $value = $providedDataValues[$i++] ?? null;
+
+            if (is_object($value)) {
+                $reflector = new ReflectionObject($value);
+
+                if ($reflector->hasMethod('__toString')) {
+                    $value = (string)$value;
+                }
+            }
+
+            if (!is_scalar($value)) {
+                $value = gettype($value);
+            }
+
+            if (is_bool($value) || is_int($value) || is_float($value)) {
+                $exporter = new Exporter;
+
+                $value = $exporter->export($value);
+            }
+
+            $providedData['$' . $parameter->getName()] = $value;
+        }
+
+        return $providedData;
     }
 }

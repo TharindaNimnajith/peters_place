@@ -85,16 +85,6 @@ class DatabaseStore implements Store
     }
 
     /**
-     * Get a query builder for the cache table.
-     *
-     * @return Builder
-     */
-    protected function table()
-    {
-        return $this->connection->table($this->table);
-    }
-
-    /**
      * Remove an item from the cache.
      *
      * @param string $key
@@ -105,6 +95,113 @@ class DatabaseStore implements Store
         $this->table()->where('key', '=', $this->prefix . $key)->delete();
 
         return true;
+    }
+
+    /**
+     * Increment the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return int|bool
+     */
+    public function increment($key, $value = 1)
+    {
+        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
+            return $current + $value;
+        });
+    }
+
+    /**
+     * Decrement the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return int|bool
+     */
+    public function decrement($key, $value = 1)
+    {
+        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
+            return $current - $value;
+        });
+    }
+
+    /**
+     * Store an item in the cache indefinitely.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    public function forever($key, $value)
+    {
+        return $this->put($key, $value, 315360000);
+    }
+
+    /**
+     * Store an item in the cache for a given number of seconds.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @param int $seconds
+     * @return bool
+     */
+    public function put($key, $value, $seconds)
+    {
+        $key = $this->prefix . $key;
+
+        $value = $this->serialize($value);
+
+        $expiration = $this->getTime() + $seconds;
+
+        try {
+            return $this->table()->insert(compact('key', 'value', 'expiration'));
+        } catch (Exception $e) {
+            $result = $this->table()->where('key', $key)->update(compact('value', 'expiration'));
+
+            return $result > 0;
+        }
+    }
+
+    /**
+     * Remove all items from the cache.
+     *
+     * @return bool
+     */
+    public function flush()
+    {
+        $this->table()->delete();
+
+        return true;
+    }
+
+    /**
+     * Get the underlying database connection.
+     *
+     * @return ConnectionInterface
+     */
+    public function getConnection()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Get the cache key prefix.
+     *
+     * @return string
+     */
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Get a query builder for the cache table.
+     *
+     * @return Builder
+     */
+    protected function table()
+    {
+        return $this->connection->table($this->table);
     }
 
     /**
@@ -120,20 +217,6 @@ class DatabaseStore implements Store
         }
 
         return unserialize($value);
-    }
-
-    /**
-     * Increment the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return int|bool
-     */
-    public function increment($key, $value = 1)
-    {
-        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
-            return $current + $value;
-        });
     }
 
     /**
@@ -201,57 +284,6 @@ class DatabaseStore implements Store
     }
 
     /**
-     * Decrement the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return int|bool
-     */
-    public function decrement($key, $value = 1)
-    {
-        return $this->incrementOrDecrement($key, $value, function ($current, $value) {
-            return $current - $value;
-        });
-    }
-
-    /**
-     * Store an item in the cache indefinitely.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return bool
-     */
-    public function forever($key, $value)
-    {
-        return $this->put($key, $value, 315360000);
-    }
-
-    /**
-     * Store an item in the cache for a given number of seconds.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @param int $seconds
-     * @return bool
-     */
-    public function put($key, $value, $seconds)
-    {
-        $key = $this->prefix . $key;
-
-        $value = $this->serialize($value);
-
-        $expiration = $this->getTime() + $seconds;
-
-        try {
-            return $this->table()->insert(compact('key', 'value', 'expiration'));
-        } catch (Exception $e) {
-            $result = $this->table()->where('key', $key)->update(compact('value', 'expiration'));
-
-            return $result > 0;
-        }
-    }
-
-    /**
      * Get the current system time.
      *
      * @return int
@@ -259,37 +291,5 @@ class DatabaseStore implements Store
     protected function getTime()
     {
         return $this->currentTime();
-    }
-
-    /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        $this->table()->delete();
-
-        return true;
-    }
-
-    /**
-     * Get the underlying database connection.
-     *
-     * @return ConnectionInterface
-     */
-    public function getConnection()
-    {
-        return $this->connection;
-    }
-
-    /**
-     * Get the cache key prefix.
-     *
-     * @return string
-     */
-    public function getPrefix()
-    {
-        return $this->prefix;
     }
 }

@@ -45,13 +45,6 @@ class ConfigurationTest extends TestCase
         $this->assertNull($config->getStartupMessage());
     }
 
-    private function getConfig($configFile = null)
-    {
-        return new Configuration([
-            'configFile' => $configFile ?: __DIR__ . '/fixtures/empty.php',
-        ]);
-    }
-
     public function testGettersAndSetters()
     {
         $config = $this->getConfig();
@@ -147,11 +140,6 @@ class ConfigurationTest extends TestCase
         $this->assertSame(function_exists('readline'), $config->useReadline());
         $this->assertFalse($config->usePcntl());
         $this->assertSame(E_ALL & ~E_NOTICE, $config->errorLoggingLevel());
-    }
-
-    private function joinPath()
-    {
-        return implode(DIRECTORY_SEPARATOR, func_get_args());
     }
 
     public function testLoadLocalConfigFile()
@@ -265,5 +253,17 @@ class ConfigurationTest extends TestCase
         $config->setChecker($checker);
 
         $this->assertSame($checker, $config->getChecker());
+    }
+
+    private function getConfig($configFile = null)
+    {
+        return new Configuration([
+            'configFile' => $configFile ?: __DIR__ . '/fixtures/empty.php',
+        ]);
+    }
+
+    private function joinPath()
+    {
+        return implode(DIRECTORY_SEPARATOR, func_get_args());
     }
 }

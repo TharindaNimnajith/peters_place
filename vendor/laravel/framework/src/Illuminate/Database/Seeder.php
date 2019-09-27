@@ -75,29 +75,6 @@ abstract class Seeder
     }
 
     /**
-     * Resolve an instance of the given seeder class.
-     *
-     * @param string $class
-     * @return Seeder
-     */
-    protected function resolve($class)
-    {
-        if (isset($this->container)) {
-            $instance = $this->container->make($class);
-
-            $instance->setContainer($this->container);
-        } else {
-            $instance = new $class;
-        }
-
-        if (isset($this->command)) {
-            $instance->setCommand($this->command);
-        }
-
-        return $instance;
-    }
-
-    /**
      * Set the IoC container instance.
      *
      * @param Container $container
@@ -121,5 +98,28 @@ abstract class Seeder
         $this->command = $command;
 
         return $this;
+    }
+
+    /**
+     * Resolve an instance of the given seeder class.
+     *
+     * @param string $class
+     * @return Seeder
+     */
+    protected function resolve($class)
+    {
+        if (isset($this->container)) {
+            $instance = $this->container->make($class);
+
+            $instance->setContainer($this->container);
+        } else {
+            $instance = new $class;
+        }
+
+        if (isset($this->command)) {
+            $instance->setCommand($this->command);
+        }
+
+        return $instance;
     }
 }

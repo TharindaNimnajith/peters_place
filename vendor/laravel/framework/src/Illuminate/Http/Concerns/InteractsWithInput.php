@@ -23,23 +23,6 @@ trait InteractsWithInput
     }
 
     /**
-     * Retrieve a parameter item from a given source.
-     *
-     * @param string $source
-     * @param string $key
-     * @param string|array|null $default
-     * @return string|array|null
-     */
-    protected function retrieveItem($source, $key, $default)
-    {
-        if (is_null($key)) {
-            return $this->$source->all();
-        }
-
-        return $this->$source->get($key, $default);
-    }
-
-    /**
      * Determine if a header is set on the request.
      *
      * @param string $key
@@ -158,25 +141,6 @@ trait InteractsWithInput
     }
 
     /**
-     * Convert the given array of Symfony UploadedFiles to custom Laravel UploadedFiles.
-     *
-     * @param array $files
-     * @return array
-     */
-    protected function convertUploadedFiles(array $files)
-    {
-        return array_map(function ($file) {
-            if (is_null($file) || (is_array($file) && empty(array_filter($file)))) {
-                return $file;
-            }
-
-            return is_array($file)
-                ? $this->convertUploadedFiles($file)
-                : UploadedFile::createFromBase($file);
-        }, $files);
-    }
-
-    /**
      * Determine if the request contains any of the given inputs.
      *
      * @param string|array $keys
@@ -233,19 +197,6 @@ trait InteractsWithInput
         }
 
         return true;
-    }
-
-    /**
-     * Determine if the given input key is an empty string for "has".
-     *
-     * @param string $key
-     * @return bool
-     */
-    protected function isEmptyString($key)
-    {
-        $value = $this->input($key);
-
-        return !is_bool($value) && !is_array($value) && trim((string)$value) === '';
     }
 
     /**
@@ -378,6 +329,55 @@ trait InteractsWithInput
     public function file($key = null, $default = null)
     {
         return data_get($this->allFiles(), $key, $default);
+    }
+
+    /**
+     * Retrieve a parameter item from a given source.
+     *
+     * @param string $source
+     * @param string $key
+     * @param string|array|null $default
+     * @return string|array|null
+     */
+    protected function retrieveItem($source, $key, $default)
+    {
+        if (is_null($key)) {
+            return $this->$source->all();
+        }
+
+        return $this->$source->get($key, $default);
+    }
+
+    /**
+     * Convert the given array of Symfony UploadedFiles to custom Laravel UploadedFiles.
+     *
+     * @param array $files
+     * @return array
+     */
+    protected function convertUploadedFiles(array $files)
+    {
+        return array_map(function ($file) {
+            if (is_null($file) || (is_array($file) && empty(array_filter($file)))) {
+                return $file;
+            }
+
+            return is_array($file)
+                ? $this->convertUploadedFiles($file)
+                : UploadedFile::createFromBase($file);
+        }, $files);
+    }
+
+    /**
+     * Determine if the given input key is an empty string for "has".
+     *
+     * @param string $key
+     * @return bool
+     */
+    protected function isEmptyString($key)
+    {
+        $value = $this->input($key);
+
+        return !is_bool($value) && !is_array($value) && trim((string)$value) === '';
     }
 
     /**

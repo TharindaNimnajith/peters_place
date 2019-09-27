@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Customer Details</title>
     <link href="{{ asset('css/app.css')}}" rel="stylesheet"/>
     <script src="{{asset('js/jquery.min.js')}}" type="text/javascript"></script>
 </head>
+
 <body>
 
 <div class="container">
@@ -14,4 +16,5 @@
 </div>
 
 </body>
+
 </html>

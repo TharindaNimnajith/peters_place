@@ -135,6 +135,126 @@ class PlainTextHandler extends Handler
     }
 
     /**
+     * Add error trace to output.
+     * @param bool|null $addTraceToOutput
+     * @return bool|$this
+     */
+    public function addTraceToOutput($addTraceToOutput = null)
+    {
+        if (func_num_args() == 0) {
+            return $this->addTraceToOutput;
+        }
+
+        $this->addTraceToOutput = (bool)$addTraceToOutput;
+        return $this;
+    }
+
+    /**
+     * Add error trace function arguments to output.
+     * Set to True for all frame args, or integer for the n first frame args.
+     * @param bool|integer|null $addTraceFunctionArgsToOutput
+     * @return null|bool|integer
+     */
+    public function addTraceFunctionArgsToOutput($addTraceFunctionArgsToOutput = null)
+    {
+        if (func_num_args() == 0) {
+            return $this->addTraceFunctionArgsToOutput;
+        }
+
+        if (!is_integer($addTraceFunctionArgsToOutput)) {
+            $this->addTraceFunctionArgsToOutput = (bool)$addTraceFunctionArgsToOutput;
+        } else {
+            $this->addTraceFunctionArgsToOutput = $addTraceFunctionArgsToOutput;
+        }
+    }
+
+    /**
+     * Get the size limit in bytes of frame arguments var_dump output.
+     * If the limit is reached, the var_dump output is discarded.
+     * Prevent memory limit errors.
+     * @return integer
+     */
+    public function getTraceFunctionArgsOutputLimit()
+    {
+        return $this->traceFunctionArgsOutputLimit;
+    }
+
+    /**
+     * Set the size limit in bytes of frame arguments var_dump output.
+     * If the limit is reached, the var_dump output is discarded.
+     * Prevent memory limit errors.
+     * @var integer
+     */
+    public function setTraceFunctionArgsOutputLimit($traceFunctionArgsOutputLimit)
+    {
+        $this->traceFunctionArgsOutputLimit = (integer)$traceFunctionArgsOutputLimit;
+    }
+
+    /**
+     * @return LoggerInterface|null
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * Set the output logger interface.
+     * @param LoggerInterface|null $logger
+     * @throws InvalidArgumentException     If argument is not null or a LoggerInterface
+     */
+    public function setLogger($logger = null)
+    {
+        if (!(is_null($logger)
+            || $logger instanceof LoggerInterface)) {
+            throw new InvalidArgumentException(
+                'Argument to ' . __METHOD__ .
+                " must be a valid Logger Interface (aka. Monolog), " .
+                get_class($logger) . ' given.'
+            );
+        }
+
+        $this->logger = $logger;
+    }
+
+    /**
+     * Only output to logger.
+     * @param bool|null $loggerOnly
+     * @return null|bool
+     */
+    public function loggerOnly($loggerOnly = null)
+    {
+        if (func_num_args() == 0) {
+            return $this->loggerOnly;
+        }
+
+        $this->loggerOnly = (bool)$loggerOnly;
+    }
+
+    /**
+     * @return string
+     */
+    public function contentType()
+    {
+        return 'text/plain';
+    }
+
+    /**
+     * Dump variable.
+     *
+     * @param mixed $var
+     * @return void
+     */
+    protected function dump($var)
+    {
+        if ($this->dumper) {
+            call_user_func($this->dumper, $var);
+        } else {
+            var_dump($var);
+        }
+    }
+
+    /**
      * Get the exception as plain text.
      * @param Throwable $exception
      * @return string
@@ -192,21 +312,6 @@ class PlainTextHandler extends Handler
     }
 
     /**
-     * Add error trace to output.
-     * @param bool|null $addTraceToOutput
-     * @return bool|$this
-     */
-    public function addTraceToOutput($addTraceToOutput = null)
-    {
-        if (func_num_args() == 0) {
-            return $this->addTraceToOutput;
-        }
-
-        $this->addTraceToOutput = (bool)$addTraceToOutput;
-        return $this;
-    }
-
-    /**
      * Get the frame args var_dump.
      * @param Frame $frame [description]
      * @param integer $line [description]
@@ -240,116 +345,11 @@ class PlainTextHandler extends Handler
     }
 
     /**
-     * Add error trace function arguments to output.
-     * Set to True for all frame args, or integer for the n first frame args.
-     * @param bool|integer|null $addTraceFunctionArgsToOutput
-     * @return null|bool|integer
-     */
-    public function addTraceFunctionArgsToOutput($addTraceFunctionArgsToOutput = null)
-    {
-        if (func_num_args() == 0) {
-            return $this->addTraceFunctionArgsToOutput;
-        }
-
-        if (!is_integer($addTraceFunctionArgsToOutput)) {
-            $this->addTraceFunctionArgsToOutput = (bool)$addTraceFunctionArgsToOutput;
-        } else {
-            $this->addTraceFunctionArgsToOutput = $addTraceFunctionArgsToOutput;
-        }
-    }
-
-    /**
-     * Dump variable.
-     *
-     * @param mixed $var
-     * @return void
-     */
-    protected function dump($var)
-    {
-        if ($this->dumper) {
-            call_user_func($this->dumper, $var);
-        } else {
-            var_dump($var);
-        }
-    }
-
-    /**
-     * Get the size limit in bytes of frame arguments var_dump output.
-     * If the limit is reached, the var_dump output is discarded.
-     * Prevent memory limit errors.
-     * @return integer
-     */
-    public function getTraceFunctionArgsOutputLimit()
-    {
-        return $this->traceFunctionArgsOutputLimit;
-    }
-
-    /**
-     * Set the size limit in bytes of frame arguments var_dump output.
-     * If the limit is reached, the var_dump output is discarded.
-     * Prevent memory limit errors.
-     * @var integer
-     */
-    public function setTraceFunctionArgsOutputLimit($traceFunctionArgsOutputLimit)
-    {
-        $this->traceFunctionArgsOutputLimit = (integer)$traceFunctionArgsOutputLimit;
-    }
-
-    /**
-     * @return LoggerInterface|null
-     */
-    public function getLogger()
-    {
-        return $this->logger;
-    }
-
-    /**
-     * Set the output logger interface.
-     * @param LoggerInterface|null $logger
-     * @throws InvalidArgumentException     If argument is not null or a LoggerInterface
-     */
-    public function setLogger($logger = null)
-    {
-        if (!(is_null($logger)
-            || $logger instanceof LoggerInterface)) {
-            throw new InvalidArgumentException(
-                'Argument to ' . __METHOD__ .
-                " must be a valid Logger Interface (aka. Monolog), " .
-                get_class($logger) . ' given.'
-            );
-        }
-
-        $this->logger = $logger;
-    }
-
-    /**
      * Test if handler can output to stdout.
      * @return bool
      */
     private function canOutput()
     {
         return !$this->loggerOnly();
-    }
-
-    /**
-     * Only output to logger.
-     * @param bool|null $loggerOnly
-     * @return null|bool
-     */
-    public function loggerOnly($loggerOnly = null)
-    {
-        if (func_num_args() == 0) {
-            return $this->loggerOnly;
-        }
-
-        $this->loggerOnly = (bool)$loggerOnly;
-    }
-
-    /**
-     * @return string
-     */
-    public function contentType()
-    {
-        return 'text/plain';
     }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -63,8 +64,8 @@
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
-                    <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                -->
+                        <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                        -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -197,18 +198,18 @@
                         <label>Room Type</label>
 
                     <!--
-                        <select name="roomtype" class="form-control">
-                            <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
-                            <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
-                            <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
-                        </select>
-                        -->
+                            <select name="roomtype" class="form-control">
+                                <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
+                                <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
+                                <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
+                            </select>
+                            -->
 
                         <select name="roomtype" class="form-control">
                             @foreach ($dat as $item)
                                 @if (isset($item))
-                                    <option value="{{ $item->id }}"
-                                            @if (old('roomtype') == '{{ $item->id }}') selected @endif>{{ $item->name }}</option>
+                                    <option value="{{ $item->id }}" @if (old('roomtype')=='{{ $item->id }}' ) selected
+                                        @endif>{{ $item->name }}</option>
                                 @endif
                             @endforeach
                         </select>
@@ -218,9 +219,9 @@
                         <label>Floor</label>
 
                         <select name="floor" class="form-control">
-                            <option value="1" @if (old('floor') == '1') selected @endif>1</option>
-                            <option value="2" @if (old('floor') == '2') selected @endif>2</option>
-                            <option value="3" @if (old('floor') == '3') selected @endif>3</option>
+                            <option value="1" @if (old('floor')=='1' ) selected @endif>1</option>
+                            <option value="2" @if (old('floor')=='2' ) selected @endif>2</option>
+                            <option value="3" @if (old('floor')=='3' ) selected @endif>3</option>
                         </select>
                     </div>
 
@@ -369,4 +370,5 @@
     });
 </script>
 </body>
+
 </html>

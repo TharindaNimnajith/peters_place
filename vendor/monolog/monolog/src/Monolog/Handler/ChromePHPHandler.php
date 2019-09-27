@@ -94,6 +94,30 @@ class ChromePHPHandler extends AbstractProcessingHandler
     }
 
     /**
+     * BC getter for the sendHeaders property that has been made static
+     */
+    public function __get($property)
+    {
+        if ('sendHeaders' !== $property) {
+            throw new InvalidArgumentException('Undefined property ' . $property);
+        }
+
+        return static::$sendHeaders;
+    }
+
+    /**
+     * BC setter for the sendHeaders property that has been made static
+     */
+    public function __set($property, $value)
+    {
+        if ('sendHeaders' !== $property) {
+            throw new InvalidArgumentException('Undefined property ' . $property);
+        }
+
+        static::$sendHeaders = $value;
+    }
+
+    /**
      * Sends the log header
      *
      * @see sendHeader()
@@ -164,30 +188,6 @@ class ChromePHPHandler extends AbstractProcessingHandler
         if (!headers_sent() && self::$sendHeaders) {
             header(sprintf('%s: %s', $header, $content));
         }
-    }
-
-    /**
-     * BC getter for the sendHeaders property that has been made static
-     */
-    public function __get($property)
-    {
-        if ('sendHeaders' !== $property) {
-            throw new InvalidArgumentException('Undefined property ' . $property);
-        }
-
-        return static::$sendHeaders;
-    }
-
-    /**
-     * BC setter for the sendHeaders property that has been made static
-     */
-    public function __set($property, $value)
-    {
-        if ('sendHeaders' !== $property) {
-            throw new InvalidArgumentException('Undefined property ' . $property);
-        }
-
-        static::$sendHeaders = $value;
     }
 
     /**

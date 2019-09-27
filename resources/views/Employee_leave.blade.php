@@ -116,6 +116,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -125,12 +126,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -145,7 +146,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -158,7 +160,8 @@
                         <thead class="thead-dark">
                         <tr class="btn">
                             <th class="text-center" scope="row"
-                                style="width:300px;height:10px;background-color:#264348"><b>LEAVE MANAGEMENT</b></th>
+                                style="width:300px;height:10px;background-color:#264348"><b>LEAVE MANAGEMENT</b>
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -167,7 +170,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px"><b>ATTENDANCE</b></th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">
+                                <b>ATTENDANCE</b></th>
                         </tr>
                         </thead>
                     </table>
@@ -176,7 +180,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -190,7 +196,8 @@
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
+                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    </li>
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
@@ -206,8 +213,8 @@
                     <div class="input-group input-group-sm mb-3">
                         <input type="search" name="search" class="form-control">
                         <span class="input-group-prepend" style="width: 510px">
-					<button type="submit" class="btn btn-primary"> Search</button>
-				</span>
+                                <button type="submit" class="btn btn-primary"> Search</button>
+                            </span>
                     </div>
                 </form>
             </div>
@@ -284,11 +291,12 @@
         var date = d.getDate();
         var year = d.getFullYear();
         var month = d.getMonth();
-        var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+            "October", "November", "December"
+        ];
         month = monthArr[month];
         document.getElementById("date").innerHTML = date + " " + month + ", " + year;
     }
-
 
 </script>
 </body>

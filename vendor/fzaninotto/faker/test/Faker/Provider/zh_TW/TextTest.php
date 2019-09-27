@@ -3,6 +3,7 @@
 namespace Faker\Test\Provider\zh_TW;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class TextTest extends TestCase
 {
@@ -10,7 +11,7 @@ class TextTest extends TestCase
 
     public function setUp()
     {
-        $this->textClass = new \ReflectionClass('Faker\Provider\zh_TW\Text');
+        $this->textClass = new ReflectionClass('Faker\Provider\zh_TW\Text');
     }
 
     /** @test */
@@ -25,15 +26,6 @@ class TextTest extends TestCase
             array('標', '點', '，', '符', '號', '！'),
             $this->getMethod('explode')->invokeArgs(null, array('標點，符號！'))
         );
-    }
-
-    protected function getMethod($name)
-    {
-        $method = $this->textClass->getMethod($name);
-
-        $method->setAccessible(true);
-
-        return $method;
     }
 
     /** @test */
@@ -76,5 +68,14 @@ class TextTest extends TestCase
             '中文測試真有趣！',
             $this->getMethod('appendEnd')->invokeArgs(null, array('中文測試真有趣！'))
         );
+    }
+
+    protected function getMethod($name)
+    {
+        $method = $this->textClass->getMethod($name);
+
+        $method->setAccessible(true);
+
+        return $method;
     }
 }

@@ -10,7 +10,9 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
+use FilesystemIterator;
 use SebastianBergmann\CodeCoverage\TestCase;
+use SplFileInfo;
 
 class XmlTest extends TestCase
 {
@@ -31,37 +33,6 @@ class XmlTest extends TestCase
         $xml->process($this->getCoverageForBankAccount(), self::$TEST_TMP_PATH);
 
         $this->assertFilesEquals($expectedFilesPath, self::$TEST_TMP_PATH);
-    }
-
-    /**
-     * @param string $expectedFilesPath
-     * @param string $actualFilesPath
-     */
-    private function assertFilesEquals($expectedFilesPath, $actualFilesPath)
-    {
-        $expectedFilesIterator = new \FilesystemIterator($expectedFilesPath);
-        $actualFilesIterator = new \FilesystemIterator($actualFilesPath);
-
-        $this->assertEquals(
-            iterator_count($expectedFilesIterator),
-            iterator_count($actualFilesIterator),
-            'Generated files and expected files not match'
-        );
-
-        foreach ($expectedFilesIterator as $path => $fileInfo) {
-            /* @var \SplFileInfo $fileInfo */
-            $filename = $fileInfo->getFilename();
-
-            $actualFile = $actualFilesPath . DIRECTORY_SEPARATOR . $filename;
-
-            $this->assertFileExists($actualFile);
-
-            $this->assertStringMatchesFormatFile(
-                $fileInfo->getPathname(),
-                file_get_contents($actualFile),
-                "${filename} not match"
-            );
-        }
     }
 
     public function testForFileWithIgnoredLines()
@@ -88,11 +59,42 @@ class XmlTest extends TestCase
     {
         parent::tearDown();
 
-        $tmpFilesIterator = new \FilesystemIterator(self::$TEST_TMP_PATH);
+        $tmpFilesIterator = new FilesystemIterator(self::$TEST_TMP_PATH);
 
         foreach ($tmpFilesIterator as $path => $fileInfo) {
-            /* @var \SplFileInfo $fileInfo */
+            /* @var SplFileInfo $fileInfo */
             unlink($fileInfo->getPathname());
+        }
+    }
+
+    /**
+     * @param string $expectedFilesPath
+     * @param string $actualFilesPath
+     */
+    private function assertFilesEquals($expectedFilesPath, $actualFilesPath)
+    {
+        $expectedFilesIterator = new FilesystemIterator($expectedFilesPath);
+        $actualFilesIterator = new FilesystemIterator($actualFilesPath);
+
+        $this->assertEquals(
+            iterator_count($expectedFilesIterator),
+            iterator_count($actualFilesIterator),
+            'Generated files and expected files not match'
+        );
+
+        foreach ($expectedFilesIterator as $path => $fileInfo) {
+            /* @var SplFileInfo $fileInfo */
+            $filename = $fileInfo->getFilename();
+
+            $actualFile = $actualFilesPath . DIRECTORY_SEPARATOR . $filename;
+
+            $this->assertFileExists($actualFile);
+
+            $this->assertStringMatchesFormatFile(
+                $fileInfo->getPathname(),
+                file_get_contents($actualFile),
+                "${filename} not match"
+            );
         }
     }
 }

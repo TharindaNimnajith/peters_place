@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link href="{{URL::asset('css/indexs.css')}}" rel="stylesheet " media="all">
     <meta charset="utf-8">
@@ -39,4 +40,5 @@
 
 </section>
 </body>
+
 </html>

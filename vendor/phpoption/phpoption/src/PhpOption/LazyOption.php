@@ -18,6 +18,10 @@
 
 namespace PhpOption;
 
+use Exception;
+use InvalidArgumentException;
+use RuntimeException;
+
 final class LazyOption extends Option
 {
     /** @var callable */
@@ -38,7 +42,7 @@ final class LazyOption extends Option
     public function __construct($callback, array $arguments = array())
     {
         if (!is_callable($callback)) {
-            throw new \InvalidArgumentException('Invalid callback given');
+            throw new InvalidArgumentException('Invalid callback given');
         }
 
         $this->callback = $callback;
@@ -63,22 +67,6 @@ final class LazyOption extends Option
         return $this->option()->isDefined();
     }
 
-    /**
-     * @return Option
-     */
-    private function option()
-    {
-        if (null === $this->option) {
-            $this->option = call_user_func_array($this->callback, $this->arguments);
-            if (!$this->option instanceof Option) {
-                $this->option = null;
-                throw new \RuntimeException('Expected instance of \PhpOption\Option');
-            }
-        }
-
-        return $this->option;
-    }
-
     public function isEmpty()
     {
         return $this->option()->isEmpty();
@@ -99,7 +87,7 @@ final class LazyOption extends Option
         return $this->option()->getOrCall($callable);
     }
 
-    public function getOrThrow(\Exception $ex)
+    public function getOrThrow(Exception $ex)
     {
         return $this->option()->getOrThrow($ex);
     }
@@ -165,5 +153,21 @@ final class LazyOption extends Option
     public function foldRight($initialValue, $callable)
     {
         return $this->option()->foldRight($initialValue, $callable);
+    }
+
+    /**
+     * @return Option
+     */
+    private function option()
+    {
+        if (null === $this->option) {
+            $this->option = call_user_func_array($this->callback, $this->arguments);
+            if (!$this->option instanceof Option) {
+                $this->option = null;
+                throw new RuntimeException('Expected instance of \PhpOption\Option');
+            }
+        }
+
+        return $this->option;
     }
 }

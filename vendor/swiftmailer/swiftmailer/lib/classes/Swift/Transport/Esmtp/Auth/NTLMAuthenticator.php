@@ -23,7 +23,7 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
     /**
      * {@inheritdoc}
      *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function authenticate(Swift_Transport_SmtpAgent $agent, $username, $password)
     {
@@ -53,6 +53,16 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
 
             throw $e;
         }
+    }
+
+    /**
+     * Get the name of the AUTH mechanism this Authenticator handles.
+     *
+     * @return string
+     */
+    public function getAuthKeyword()
+    {
+        return 'NTLM';
     }
 
     /**
@@ -97,16 +107,6 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
         }
 
         return $byte;
-    }
-
-    /**
-     * Get the name of the AUTH mechanism this Authenticator handles.
-     *
-     * @return string
-     */
-    public function getAuthKeyword()
-    {
-        return 'NTLM';
     }
 
     /**
@@ -380,7 +380,7 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticator implements Swift_Transport_Es
      */
     protected function desEncrypt($value, $key)
     {
-        return substr(openssl_encrypt($value, 'DES-ECB', $key, \OPENSSL_RAW_DATA), 0, 8);
+        return substr(openssl_encrypt($value, 'DES-ECB', $key, OPENSSL_RAW_DATA), 0, 8);
     }
 
     /**

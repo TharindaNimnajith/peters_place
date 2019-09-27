@@ -1,6 +1,7 @@
 <!doctype html>
 
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
 
@@ -186,7 +187,8 @@
             margin-top: 2px;
         }
 
-        table.table tr th, table.table tr td {
+        table.table tr th,
+        table.table tr td {
             border-color: #e9e9e9;
             padding: 12px 15px;
             vertical-align: middle;
@@ -272,7 +274,8 @@
             color: #666;
         }
 
-        .pagination li.active a, .pagination li.active a.page-link {
+        .pagination li.active a,
+        .pagination li.active a.page-link {
             background: #03A9F4;
         }
 
@@ -359,7 +362,9 @@
             max-width: 400px;
         }
 
-        .modal .modal-header, .modal .modal-body, .modal .modal-footer {
+        .modal .modal-header,
+        .modal .modal-body,
+        .modal .modal-footer {
             padding: 20px 30px;
         }
 
@@ -394,6 +399,7 @@
         .modal form label {
             font-weight: normal;
         }
+
     </style>
 
     <script type="text/javascript">
@@ -420,6 +426,7 @@
                 }
             });
         });
+
     </script>
 </head>
 
@@ -434,7 +441,8 @@
                         <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                             <thead class="thead-dark">
                             <tr class="btn" style="">
-                                <th class="text-center" scope="row" style="width:300px ; height:10px">KITCHEN ITEMS
+                                <th class="text-center" scope="row" style="width:300px ; height:10px">KITCHEN
+                                    ITEMS
                                 </th>
                             </tr>
 
@@ -446,7 +454,8 @@
                         <table class="table" style="width:300px ; margin-left: 0px ">
                             <thead class="thead-dark">
                             <tr class="btn">
-                                <th class="text-center" scope="row" style="width:300px;height:10px">ROOM ITEMS</th>
+                                <th class="text-center" scope="row" style="width:300px;height:10px">ROOM ITEMS
+                                </th>
                             </tr>
                             </thead>
                         </table>
@@ -455,7 +464,8 @@
                         <table class="table" style="width:300px;margin-left: 0px">
                             <thead class="thead-dark">
                             <tr class="btn">
-                                <th class="text-center" scope="row" style="width:300px;height:10px">HALL ITEMS</th>
+                                <th class="text-center" scope="row" style="width:300px;height:10px">HALL ITEMS
+                                </th>
                             </tr>
                             </thead>
                         </table>
@@ -473,7 +483,8 @@
                     </div>
                     <div class="col-md-4">
                         <form class="form-inline mr-auto">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                            <input class="form-control mr-sm-2" type="text" placeholder="Search"
+                                   aria-label="Search">
                             <button class="btn btn-success" type="submit">Search</button>
                         </form>
 
@@ -518,10 +529,10 @@
                                 <thead>
                                 <tr>
                                     <th>
-							<span class="custom-checkbox">
-								<input type="checkbox" id="selectAll">
-								<label for="selectAll"></label>
-							</span>
+                                                <span class="custom-checkbox">
+                                                    <input type="checkbox" id="selectAll">
+                                                    <label for="selectAll"></label>
+                                                </span>
                                     </th>
                                     <th>ID</th>
                                     <th>Item Name</th>
@@ -538,10 +549,10 @@
                                 @foreach($inventoryD as $row)
                                     <tr>
                                         <td>
-							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox1" name="options[]" value="1">
-								<label for="checkbox1"></label>
-							</span>
+                                                <span class="custom-checkbox">
+                                                    <input type="checkbox" id="checkbox1" name="options[]" value="1">
+                                                    <label for="checkbox1"></label>
+                                                </span>
                                         </td>
                                         <td>{{$n}}</td>
                                         <td>{{$row->ItemName}}</td>
@@ -579,7 +590,8 @@
                                         {{csrf_field()}}
                                         <div class="modal-header">
                                             <h4 class="modal-title">Add New Item</h4>
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-hidden="true">
                                                 &times;
                                             </button>
                                         </div>
@@ -636,7 +648,8 @@
                                     <form>
                                         <div class="modal-header">
                                             <h4 class="modal-title">Edit Item Details</h4>
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-hidden="true">
                                                 &times;
                                             </button>
                                         </div>
@@ -684,4 +697,5 @@
 
 
 </body>
+
 </html>

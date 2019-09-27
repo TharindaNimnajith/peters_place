@@ -130,164 +130,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Compare a given date against another using an operator.
-     *
-     * @param string $attribute
-     * @param mixed $value
-     * @param array $parameters
-     * @param string $operator
-     * @return bool
-     */
-    protected function compareDates($attribute, $value, $parameters, $operator)
-    {
-        if (!is_string($value) && !is_numeric($value) && !$value instanceof DateTimeInterface) {
-            return false;
-        }
-
-        if ($format = $this->getDateFormat($attribute)) {
-            return $this->checkDateTimeOrder($format, $value, $parameters[0], $operator);
-        }
-
-        if (!$date = $this->getDateTimestamp($parameters[0])) {
-            $date = $this->getDateTimestamp($this->getValue($parameters[0]));
-        }
-
-        return $this->compare($this->getDateTimestamp($value), $date, $operator);
-    }
-
-    /**
-     * Get the date format for an attribute if it has one.
-     *
-     * @param string $attribute
-     * @return string|null
-     */
-    protected function getDateFormat($attribute)
-    {
-        if ($result = $this->getRule($attribute, 'DateFormat')) {
-            return $result[1][0];
-        }
-    }
-
-    /**
-     * Given two date/time strings, check that one is after the other.
-     *
-     * @param string $format
-     * @param string $first
-     * @param string $second
-     * @param string $operator
-     * @return bool
-     */
-    protected function checkDateTimeOrder($format, $first, $second, $operator)
-    {
-        $firstDate = $this->getDateTimeWithOptionalFormat($format, $first);
-
-        if (!$secondDate = $this->getDateTimeWithOptionalFormat($format, $second)) {
-            $secondDate = $this->getDateTimeWithOptionalFormat($format, $this->getValue($second));
-        }
-
-        return ($firstDate && $secondDate) && ($this->compare($firstDate, $secondDate, $operator));
-    }
-
-    /**
-     * Get a DateTime instance from a string.
-     *
-     * @param string $format
-     * @param string $value
-     * @return DateTime|null
-     */
-    protected function getDateTimeWithOptionalFormat($format, $value)
-    {
-        if ($date = DateTime::createFromFormat('!' . $format, $value)) {
-            return $date;
-        }
-
-        return $this->getDateTime($value);
-    }
-
-    /**
-     * Get a DateTime instance from a string with no format.
-     *
-     * @param string $value
-     * @return DateTime|null
-     */
-    protected function getDateTime($value)
-    {
-        try {
-            if ($this->isTestingRelativeDateTime($value)) {
-                return Date::parse($value);
-            }
-
-            return date_create($value) ?: null;
-        } catch (Exception $e) {
-            //
-        }
-    }
-
-    /**
-     * Check if the given value should be adjusted to Carbon::getTestNow().
-     *
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isTestingRelativeDateTime($value)
-    {
-        return Carbon::hasTestNow() && is_string($value) && (
-                $value === 'now' || Carbon::hasRelativeKeywords($value)
-            );
-    }
-
-    /**
-     * Determine if a comparison passes between the given values.
-     *
-     * @param mixed $first
-     * @param mixed $second
-     * @param string $operator
-     * @return bool
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function compare($first, $second, $operator)
-    {
-        switch ($operator) {
-            case '<':
-                return $first < $second;
-            case '>':
-                return $first > $second;
-            case '<=':
-                return $first <= $second;
-            case '>=':
-                return $first >= $second;
-            case '=':
-                return $first == $second;
-            default:
-                throw new InvalidArgumentException;
-        }
-    }
-
-    /**
-     * Get the date timestamp.
-     *
-     * @param mixed $value
-     * @return int
-     */
-    protected function getDateTimestamp($value)
-    {
-        if ($value instanceof DateTimeInterface) {
-            return $value->getTimestamp();
-        }
-
-        if ($this->isTestingRelativeDateTime($value)) {
-            $date = $this->getDateTime($value);
-
-            if (!is_null($date)) {
-                return $date->getTimestamp();
-            }
-        }
-
-        return strtotime($value);
-    }
-
-    /**
      * Validate the date is before or equal a given date.
      *
      * @param string $attribute
@@ -403,32 +245,6 @@ trait ValidatesAttributes
         $size = $this->getSize($attribute, $value);
 
         return $size >= $parameters[0] && $size <= $parameters[1];
-    }
-
-    /**
-     * Get the size of an attribute.
-     *
-     * @param string $attribute
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function getSize($attribute, $value)
-    {
-        $hasNumeric = $this->hasRule($attribute, $this->numericRules);
-
-        // This method will determine if the attribute is a number, string, or file and
-        // return the proper size accordingly. If it is a number, then number itself
-        // is the size. If it is a file, we take kilobytes, and for a string the
-        // entire length of the string will be considered the attribute size.
-        if (is_numeric($value) && $hasNumeric) {
-            return $value;
-        } elseif (is_array($value)) {
-            return count($value);
-        } elseif ($value instanceof File) {
-            return $value->getSize() / 1024;
-        }
-
-        return mb_strlen($value);
     }
 
     /**
@@ -643,64 +459,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Parse named parameters to $key => $value items.
-     *
-     * @param array $parameters
-     * @return array
-     */
-    protected function parseNamedParameters($parameters)
-    {
-        return array_reduce($parameters, function ($result, $item) {
-            [$key, $value] = array_pad(explode('=', $item, 2), 2, null);
-
-            $result[$key] = $value;
-
-            return $result;
-        });
-    }
-
-    /**
-     * Test if the given width and height fail any conditions.
-     *
-     * @param array $parameters
-     * @param int $width
-     * @param int $height
-     * @return bool
-     */
-    protected function failsBasicDimensionChecks($parameters, $width, $height)
-    {
-        return (isset($parameters['width']) && $parameters['width'] != $width) ||
-            (isset($parameters['min_width']) && $parameters['min_width'] > $width) ||
-            (isset($parameters['max_width']) && $parameters['max_width'] < $width) ||
-            (isset($parameters['height']) && $parameters['height'] != $height) ||
-            (isset($parameters['min_height']) && $parameters['min_height'] > $height) ||
-            (isset($parameters['max_height']) && $parameters['max_height'] < $height);
-    }
-
-    /**
-     * Determine if the given parameters fail a dimension ratio check.
-     *
-     * @param array $parameters
-     * @param int $width
-     * @param int $height
-     * @return bool
-     */
-    protected function failsRatioCheck($parameters, $width, $height)
-    {
-        if (!isset($parameters['ratio'])) {
-            return false;
-        }
-
-        [$numerator, $denominator] = array_replace(
-            [1, 1], array_filter(sscanf($parameters['ratio'], '%f/%d'))
-        );
-
-        $precision = 1 / max($width, $height);
-
-        return abs($numerator / $denominator - $width / $height) > $precision;
-    }
-
-    /**
      * Validate an attribute is unique among other values.
      *
      * @param string $attribute
@@ -717,46 +475,6 @@ trait ValidatesAttributes
         }
 
         return !in_array($value, array_values($data));
-    }
-
-    /**
-     * Get the values to distinct between.
-     *
-     * @param string $attribute
-     * @return array
-     */
-    protected function getDistinctValues($attribute)
-    {
-        $attributeName = $this->getPrimaryAttribute($attribute);
-
-        if (!property_exists($this, 'distinctValues')) {
-            return $this->extractDistinctValues($attributeName);
-        }
-
-        if (!array_key_exists($attributeName, $this->distinctValues)) {
-            $this->distinctValues[$attributeName] = $this->extractDistinctValues($attributeName);
-        }
-
-        return $this->distinctValues[$attributeName];
-    }
-
-    /**
-     * Extract the distinct values from the data.
-     *
-     * @param string $attribute
-     * @return array
-     */
-    protected function extractDistinctValues($attribute)
-    {
-        $attributeData = ValidationData::extractDataFromPath(
-            ValidationData::getLeadingExplicitAttributePath($attribute), $this->data
-        );
-
-        $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
-
-        return Arr::where(Arr::dot($attributeData), function ($value, $key) use ($pattern) {
-            return (bool)preg_match('#^' . $pattern . '\z#u', $key);
-        });
     }
 
     /**
@@ -842,52 +560,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Get the number of records that exist in storage.
-     *
-     * @param mixed $connection
-     * @param string $table
-     * @param string $column
-     * @param mixed $value
-     * @param array $parameters
-     * @return int
-     */
-    protected function getExistCount($connection, $table, $column, $value, $parameters)
-    {
-        $verifier = $this->getPresenceVerifierFor($connection);
-
-        $extra = $this->getExtraConditions(
-            array_values(array_slice($parameters, 2))
-        );
-
-        if ($this->currentRule instanceof Exists) {
-            $extra = array_merge($extra, $this->currentRule->queryCallbacks());
-        }
-
-        return is_array($value)
-            ? $verifier->getMultiCount($table, $column, $value, $extra)
-            : $verifier->getCount($table, $column, $value, null, null, $extra);
-    }
-
-    /**
-     * Get the extra conditions for a unique / exists rule.
-     *
-     * @param array $segments
-     * @return array
-     */
-    protected function getExtraConditions(array $segments)
-    {
-        $extra = [];
-
-        $count = count($segments);
-
-        for ($i = 0; $i < $count; $i += 2) {
-            $extra[$segments[$i]] = $segments[$i + 1];
-        }
-
-        return $extra;
-    }
-
-    /**
      * Validate the uniqueness of an attribute value on a given database table.
      *
      * If a database column is not specified, the attribute will be used.
@@ -932,57 +604,6 @@ trait ValidatesAttributes
         return $verifier->getCount(
                 $table, $column, $value, $id, $idColumn, $extra
             ) == 0;
-    }
-
-    /**
-     * Get the excluded ID column and value for the unique rule.
-     *
-     * @param array $parameters
-     * @return array
-     */
-    protected function getUniqueIds($parameters)
-    {
-        $idColumn = $parameters[3] ?? 'id';
-
-        return [$idColumn, $this->prepareUniqueId($parameters[2])];
-    }
-
-    /**
-     * Prepare the given ID for querying.
-     *
-     * @param mixed $id
-     * @return int
-     */
-    protected function prepareUniqueId($id)
-    {
-        if (preg_match('/\[(.*)\]/', $id, $matches)) {
-            $id = $this->getValue($matches[1]);
-        }
-
-        if (strtolower($id) === 'null') {
-            $id = null;
-        }
-
-        if (filter_var($id, FILTER_VALIDATE_INT) !== false) {
-            $id = (int)$id;
-        }
-
-        return $id;
-    }
-
-    /**
-     * Get the extra conditions for a unique rule.
-     *
-     * @param array $parameters
-     * @return array
-     */
-    protected function getUniqueExtra($parameters)
-    {
-        if (isset($parameters[4])) {
-            return $this->getExtraConditions(array_slice($parameters, 4));
-        }
-
-        return [];
     }
 
     /**
@@ -1038,33 +659,6 @@ trait ValidatesAttributes
         }
 
         return $this->getSize($attribute, $value) > $this->getSize($attribute, $comparedToValue);
-    }
-
-    /**
-     * Adds the existing rule to the numericRules array if the attribute's value is numeric.
-     *
-     * @param string $attribute
-     * @param string $rule
-     *
-     * @return void
-     */
-    protected function shouldBeNumeric($attribute, $rule)
-    {
-        if (is_numeric($this->getValue($attribute))) {
-            $this->numericRules[] = $rule;
-        }
-    }
-
-    /**
-     * Check if the parameters are of the same type.
-     *
-     * @param mixed $first
-     * @param mixed $second
-     * @return bool
-     */
-    protected function isSameType($first, $second)
-    {
-        return gettype($first) == gettype($second);
     }
 
     /**
@@ -1179,28 +773,6 @@ trait ValidatesAttributes
         }
 
         return $value->getPath() !== '' && in_array($value->guessExtension(), $parameters);
-    }
-
-    /**
-     * Check if PHP uploads are explicitly allowed.
-     *
-     * @param mixed $value
-     * @param array $parameters
-     * @return bool
-     */
-    protected function shouldBlockPhpUpload($value, $parameters)
-    {
-        if (in_array('php', $parameters)) {
-            return false;
-        }
-
-        $phpExtensions = [
-            'php', 'php3', 'php4', 'php5', 'phtml',
-        ];
-
-        return ($value instanceof UploadedFile)
-            ? in_array(trim(strtolower($value->getClientOriginalExtension())), $phpExtensions)
-            : in_array(trim(strtolower($value->getExtension())), $phpExtensions);
     }
 
     /**
@@ -1487,25 +1059,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Convert the given values to boolean if they are string "true" / "false".
-     *
-     * @param array $values
-     * @return array
-     */
-    protected function convertValuesToBoolean($values)
-    {
-        return array_map(function ($value) {
-            if ($value === 'true') {
-                return true;
-            } elseif ($value === 'false') {
-                return false;
-            }
-
-            return $value;
-        }, $values);
-    }
-
-    /**
      * Validate that an attribute exists when another attribute does not have a given value.
      *
      * @param string $attribute
@@ -1546,23 +1099,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Determine if all of the given attributes fail the required test.
-     *
-     * @param array $attributes
-     * @return bool
-     */
-    protected function allFailingRequired(array $attributes)
-    {
-        foreach ($attributes as $key) {
-            if ($this->validateRequired($key, $this->getValue($key))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Validate that an attribute exists when all other attributes exists.
      *
      * @param string $attribute
@@ -1577,23 +1113,6 @@ trait ValidatesAttributes
         }
 
         return true;
-    }
-
-    /**
-     * Determine if any of the given attributes fail the required test.
-     *
-     * @param array $attributes
-     * @return bool
-     */
-    protected function anyFailingRequired(array $attributes)
-    {
-        foreach ($attributes as $key) {
-            if (!$this->validateRequired($key, $this->getValue($key))) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -1766,5 +1285,486 @@ trait ValidatesAttributes
         }
 
         return preg_match('/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iD', $value) > 0;
+    }
+
+    /**
+     * Compare a given date against another using an operator.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * @param string $operator
+     * @return bool
+     */
+    protected function compareDates($attribute, $value, $parameters, $operator)
+    {
+        if (!is_string($value) && !is_numeric($value) && !$value instanceof DateTimeInterface) {
+            return false;
+        }
+
+        if ($format = $this->getDateFormat($attribute)) {
+            return $this->checkDateTimeOrder($format, $value, $parameters[0], $operator);
+        }
+
+        if (!$date = $this->getDateTimestamp($parameters[0])) {
+            $date = $this->getDateTimestamp($this->getValue($parameters[0]));
+        }
+
+        return $this->compare($this->getDateTimestamp($value), $date, $operator);
+    }
+
+    /**
+     * Get the date format for an attribute if it has one.
+     *
+     * @param string $attribute
+     * @return string|null
+     */
+    protected function getDateFormat($attribute)
+    {
+        if ($result = $this->getRule($attribute, 'DateFormat')) {
+            return $result[1][0];
+        }
+    }
+
+    /**
+     * Given two date/time strings, check that one is after the other.
+     *
+     * @param string $format
+     * @param string $first
+     * @param string $second
+     * @param string $operator
+     * @return bool
+     */
+    protected function checkDateTimeOrder($format, $first, $second, $operator)
+    {
+        $firstDate = $this->getDateTimeWithOptionalFormat($format, $first);
+
+        if (!$secondDate = $this->getDateTimeWithOptionalFormat($format, $second)) {
+            $secondDate = $this->getDateTimeWithOptionalFormat($format, $this->getValue($second));
+        }
+
+        return ($firstDate && $secondDate) && ($this->compare($firstDate, $secondDate, $operator));
+    }
+
+    /**
+     * Get a DateTime instance from a string.
+     *
+     * @param string $format
+     * @param string $value
+     * @return DateTime|null
+     */
+    protected function getDateTimeWithOptionalFormat($format, $value)
+    {
+        if ($date = DateTime::createFromFormat('!' . $format, $value)) {
+            return $date;
+        }
+
+        return $this->getDateTime($value);
+    }
+
+    /**
+     * Get a DateTime instance from a string with no format.
+     *
+     * @param string $value
+     * @return DateTime|null
+     */
+    protected function getDateTime($value)
+    {
+        try {
+            if ($this->isTestingRelativeDateTime($value)) {
+                return Date::parse($value);
+            }
+
+            return date_create($value) ?: null;
+        } catch (Exception $e) {
+            //
+        }
+    }
+
+    /**
+     * Check if the given value should be adjusted to Carbon::getTestNow().
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isTestingRelativeDateTime($value)
+    {
+        return Carbon::hasTestNow() && is_string($value) && (
+                $value === 'now' || Carbon::hasRelativeKeywords($value)
+            );
+    }
+
+    /**
+     * Determine if a comparison passes between the given values.
+     *
+     * @param mixed $first
+     * @param mixed $second
+     * @param string $operator
+     * @return bool
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function compare($first, $second, $operator)
+    {
+        switch ($operator) {
+            case '<':
+                return $first < $second;
+            case '>':
+                return $first > $second;
+            case '<=':
+                return $first <= $second;
+            case '>=':
+                return $first >= $second;
+            case '=':
+                return $first == $second;
+            default:
+                throw new InvalidArgumentException;
+        }
+    }
+
+    /**
+     * Get the date timestamp.
+     *
+     * @param mixed $value
+     * @return int
+     */
+    protected function getDateTimestamp($value)
+    {
+        if ($value instanceof DateTimeInterface) {
+            return $value->getTimestamp();
+        }
+
+        if ($this->isTestingRelativeDateTime($value)) {
+            $date = $this->getDateTime($value);
+
+            if (!is_null($date)) {
+                return $date->getTimestamp();
+            }
+        }
+
+        return strtotime($value);
+    }
+
+    /**
+     * Get the size of an attribute.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function getSize($attribute, $value)
+    {
+        $hasNumeric = $this->hasRule($attribute, $this->numericRules);
+
+        // This method will determine if the attribute is a number, string, or file and
+        // return the proper size accordingly. If it is a number, then number itself
+        // is the size. If it is a file, we take kilobytes, and for a string the
+        // entire length of the string will be considered the attribute size.
+        if (is_numeric($value) && $hasNumeric) {
+            return $value;
+        } elseif (is_array($value)) {
+            return count($value);
+        } elseif ($value instanceof File) {
+            return $value->getSize() / 1024;
+        }
+
+        return mb_strlen($value);
+    }
+
+    /**
+     * Parse named parameters to $key => $value items.
+     *
+     * @param array $parameters
+     * @return array
+     */
+    protected function parseNamedParameters($parameters)
+    {
+        return array_reduce($parameters, function ($result, $item) {
+            [$key, $value] = array_pad(explode('=', $item, 2), 2, null);
+
+            $result[$key] = $value;
+
+            return $result;
+        });
+    }
+
+    /**
+     * Test if the given width and height fail any conditions.
+     *
+     * @param array $parameters
+     * @param int $width
+     * @param int $height
+     * @return bool
+     */
+    protected function failsBasicDimensionChecks($parameters, $width, $height)
+    {
+        return (isset($parameters['width']) && $parameters['width'] != $width) ||
+            (isset($parameters['min_width']) && $parameters['min_width'] > $width) ||
+            (isset($parameters['max_width']) && $parameters['max_width'] < $width) ||
+            (isset($parameters['height']) && $parameters['height'] != $height) ||
+            (isset($parameters['min_height']) && $parameters['min_height'] > $height) ||
+            (isset($parameters['max_height']) && $parameters['max_height'] < $height);
+    }
+
+    /**
+     * Determine if the given parameters fail a dimension ratio check.
+     *
+     * @param array $parameters
+     * @param int $width
+     * @param int $height
+     * @return bool
+     */
+    protected function failsRatioCheck($parameters, $width, $height)
+    {
+        if (!isset($parameters['ratio'])) {
+            return false;
+        }
+
+        [$numerator, $denominator] = array_replace(
+            [1, 1], array_filter(sscanf($parameters['ratio'], '%f/%d'))
+        );
+
+        $precision = 1 / max($width, $height);
+
+        return abs($numerator / $denominator - $width / $height) > $precision;
+    }
+
+    /**
+     * Get the values to distinct between.
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function getDistinctValues($attribute)
+    {
+        $attributeName = $this->getPrimaryAttribute($attribute);
+
+        if (!property_exists($this, 'distinctValues')) {
+            return $this->extractDistinctValues($attributeName);
+        }
+
+        if (!array_key_exists($attributeName, $this->distinctValues)) {
+            $this->distinctValues[$attributeName] = $this->extractDistinctValues($attributeName);
+        }
+
+        return $this->distinctValues[$attributeName];
+    }
+
+    /**
+     * Extract the distinct values from the data.
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function extractDistinctValues($attribute)
+    {
+        $attributeData = ValidationData::extractDataFromPath(
+            ValidationData::getLeadingExplicitAttributePath($attribute), $this->data
+        );
+
+        $pattern = str_replace('\*', '[^.]+', preg_quote($attribute, '#'));
+
+        return Arr::where(Arr::dot($attributeData), function ($value, $key) use ($pattern) {
+            return (bool)preg_match('#^' . $pattern . '\z#u', $key);
+        });
+    }
+
+    /**
+     * Get the number of records that exist in storage.
+     *
+     * @param mixed $connection
+     * @param string $table
+     * @param string $column
+     * @param mixed $value
+     * @param array $parameters
+     * @return int
+     */
+    protected function getExistCount($connection, $table, $column, $value, $parameters)
+    {
+        $verifier = $this->getPresenceVerifierFor($connection);
+
+        $extra = $this->getExtraConditions(
+            array_values(array_slice($parameters, 2))
+        );
+
+        if ($this->currentRule instanceof Exists) {
+            $extra = array_merge($extra, $this->currentRule->queryCallbacks());
+        }
+
+        return is_array($value)
+            ? $verifier->getMultiCount($table, $column, $value, $extra)
+            : $verifier->getCount($table, $column, $value, null, null, $extra);
+    }
+
+    /**
+     * Get the extra conditions for a unique / exists rule.
+     *
+     * @param array $segments
+     * @return array
+     */
+    protected function getExtraConditions(array $segments)
+    {
+        $extra = [];
+
+        $count = count($segments);
+
+        for ($i = 0; $i < $count; $i += 2) {
+            $extra[$segments[$i]] = $segments[$i + 1];
+        }
+
+        return $extra;
+    }
+
+    /**
+     * Get the excluded ID column and value for the unique rule.
+     *
+     * @param array $parameters
+     * @return array
+     */
+    protected function getUniqueIds($parameters)
+    {
+        $idColumn = $parameters[3] ?? 'id';
+
+        return [$idColumn, $this->prepareUniqueId($parameters[2])];
+    }
+
+    /**
+     * Prepare the given ID for querying.
+     *
+     * @param mixed $id
+     * @return int
+     */
+    protected function prepareUniqueId($id)
+    {
+        if (preg_match('/\[(.*)\]/', $id, $matches)) {
+            $id = $this->getValue($matches[1]);
+        }
+
+        if (strtolower($id) === 'null') {
+            $id = null;
+        }
+
+        if (filter_var($id, FILTER_VALIDATE_INT) !== false) {
+            $id = (int)$id;
+        }
+
+        return $id;
+    }
+
+    /**
+     * Get the extra conditions for a unique rule.
+     *
+     * @param array $parameters
+     * @return array
+     */
+    protected function getUniqueExtra($parameters)
+    {
+        if (isset($parameters[4])) {
+            return $this->getExtraConditions(array_slice($parameters, 4));
+        }
+
+        return [];
+    }
+
+    /**
+     * Adds the existing rule to the numericRules array if the attribute's value is numeric.
+     *
+     * @param string $attribute
+     * @param string $rule
+     *
+     * @return void
+     */
+    protected function shouldBeNumeric($attribute, $rule)
+    {
+        if (is_numeric($this->getValue($attribute))) {
+            $this->numericRules[] = $rule;
+        }
+    }
+
+    /**
+     * Check if the parameters are of the same type.
+     *
+     * @param mixed $first
+     * @param mixed $second
+     * @return bool
+     */
+    protected function isSameType($first, $second)
+    {
+        return gettype($first) == gettype($second);
+    }
+
+    /**
+     * Check if PHP uploads are explicitly allowed.
+     *
+     * @param mixed $value
+     * @param array $parameters
+     * @return bool
+     */
+    protected function shouldBlockPhpUpload($value, $parameters)
+    {
+        if (in_array('php', $parameters)) {
+            return false;
+        }
+
+        $phpExtensions = [
+            'php', 'php3', 'php4', 'php5', 'phtml',
+        ];
+
+        return ($value instanceof UploadedFile)
+            ? in_array(trim(strtolower($value->getClientOriginalExtension())), $phpExtensions)
+            : in_array(trim(strtolower($value->getExtension())), $phpExtensions);
+    }
+
+    /**
+     * Convert the given values to boolean if they are string "true" / "false".
+     *
+     * @param array $values
+     * @return array
+     */
+    protected function convertValuesToBoolean($values)
+    {
+        return array_map(function ($value) {
+            if ($value === 'true') {
+                return true;
+            } elseif ($value === 'false') {
+                return false;
+            }
+
+            return $value;
+        }, $values);
+    }
+
+    /**
+     * Determine if all of the given attributes fail the required test.
+     *
+     * @param array $attributes
+     * @return bool
+     */
+    protected function allFailingRequired(array $attributes)
+    {
+        foreach ($attributes as $key) {
+            if ($this->validateRequired($key, $this->getValue($key))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine if any of the given attributes fail the required test.
+     *
+     * @param array $attributes
+     * @return bool
+     */
+    protected function anyFailingRequired(array $attributes)
+    {
+        foreach ($attributes as $key) {
+            if (!$this->validateRequired($key, $this->getValue($key))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

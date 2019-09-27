@@ -139,31 +139,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Attempt to resolve the intermediate table name from the given string.
-     *
-     * @param string $table
-     * @return string
-     */
-    protected function resolveTableName($table)
-    {
-        if (!Str::contains($table, '\\') || !class_exists($table)) {
-            return $table;
-        }
-
-        $model = new $table;
-
-        if (!$model instanceof Model) {
-            return $table;
-        }
-
-        if ($model instanceof Pivot) {
-            $this->using($table);
-        }
-
-        return $model->getTable();
-    }
-
-    /**
      * Specify the custom pivot model to use for the relationship.
      *
      * @param string $class
@@ -191,28 +166,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Set the join clause for the relation query.
-     *
-     * @param Builder|null $query
-     * @return $this
-     */
-    protected function performJoin($query = null)
-    {
-        $query = $query ?: $this->query;
-
-        // We need to join to the intermediate table on the related model's primary
-        // key column with the intermediate table's foreign key for the related
-        // model instance. Then we can set the "where" for the parent models.
-        $baseTable = $this->related->getTable();
-
-        $key = $baseTable . '.' . $this->relatedKey;
-
-        $query->join($this->table, $key, '=', $this->getQualifiedRelatedPivotKeyName());
-
-        return $this;
-    }
-
-    /**
      * Get the fully qualified "related key" for the relation.
      *
      * @return string
@@ -220,20 +173,6 @@ class BelongsToMany extends Relation
     public function getQualifiedRelatedPivotKeyName()
     {
         return $this->table . '.' . $this->relatedPivotKey;
-    }
-
-    /**
-     * Set the where clause for the relation query.
-     *
-     * @return $this
-     */
-    protected function addWhereConstraints()
-    {
-        $this->query->where(
-            $this->getQualifiedForeignPivotKeyName(), '=', $this->parent->{$this->parentKey}
-        );
-
-        return $this;
     }
 
     /**
@@ -302,26 +241,6 @@ class BelongsToMany extends Relation
         }
 
         return $models;
-    }
-
-    /**
-     * Build model dictionary keyed by the relation's foreign key.
-     *
-     * @param Collection $results
-     * @return array
-     */
-    protected function buildDictionary(Collection $results)
-    {
-        // First we will build a dictionary of child models keyed by the foreign key
-        // of the relation so that we will easily and quickly match them to their
-        // parents without having a possibly slow inner loops for every models.
-        $dictionary = [];
-
-        foreach ($results as $result) {
-            $dictionary[$result->{$this->accessor}->{$this->foreignPivotKey}][] = $result;
-        }
-
-        return $dictionary;
     }
 
     /**
@@ -505,79 +424,6 @@ class BelongsToMany extends Relation
         }
 
         return $this->related->newCollection($models);
-    }
-
-    /**
-     * Get the select columns for the relation query.
-     *
-     * @param array $columns
-     * @return array
-     */
-    protected function shouldSelect(array $columns = ['*'])
-    {
-        if ($columns == ['*']) {
-            $columns = [$this->related->getTable() . '.*'];
-        }
-
-        return array_merge($columns, $this->aliasedPivotColumns());
-    }
-
-    /**
-     * Get the pivot columns for the relation.
-     *
-     * "pivot_" is prefixed ot each column for easy removal later.
-     *
-     * @return array
-     */
-    protected function aliasedPivotColumns()
-    {
-        $defaults = [$this->foreignPivotKey, $this->relatedPivotKey];
-
-        return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
-            return $this->table . '.' . $column . ' as pivot_' . $column;
-        })->unique()->all();
-    }
-
-    /**
-     * Hydrate the pivot table relationship on the models.
-     *
-     * @param array $models
-     * @return void
-     */
-    protected function hydratePivotRelation(array $models)
-    {
-        // To hydrate the pivot relationship, we will just gather the pivot attributes
-        // and create a new Pivot model, which is basically a dynamic model that we
-        // will set the attributes, table, and connections on it so it will work.
-        foreach ($models as $model) {
-            $model->setRelation($this->accessor, $this->newExistingPivot(
-                $this->migratePivotAttributes($model)
-            ));
-        }
-    }
-
-    /**
-     * Get the pivot attributes from a model.
-     *
-     * @param Model $model
-     * @return array
-     */
-    protected function migratePivotAttributes(Model $model)
-    {
-        $values = [];
-
-        foreach ($model->getAttributes() as $key => $value) {
-            // To get the pivots attributes we will just take any of the attributes which
-            // begin with "pivot_" and add those to this arrays, as well as unsetting
-            // them from the parent's models since they exist in a different table.
-            if (strpos($key, 'pivot_') === 0) {
-                $values[substr($key, 6)] = $value;
-
-                unset($model->$key);
-            }
-        }
-
-        return $values;
     }
 
     /**
@@ -882,26 +728,6 @@ class BelongsToMany extends Relation
     }
 
     /**
-     * Determine if we should touch the parent on sync.
-     *
-     * @return bool
-     */
-    protected function touchingParent()
-    {
-        return $this->getRelated()->touches($this->guessInverseRelation());
-    }
-
-    /**
-     * Attempt to guess the name of the inverse of the relation.
-     *
-     * @return string
-     */
-    protected function guessInverseRelation()
-    {
-        return Str::camel(Str::pluralStudly(class_basename($this->getParent())));
-    }
-
-    /**
      * Touch all of the related models for the relationship.
      *
      * E.g.: Touch all roles associated with this user.
@@ -1119,5 +945,179 @@ class BelongsToMany extends Relation
     public function getPivotAccessor()
     {
         return $this->accessor;
+    }
+
+    /**
+     * Attempt to resolve the intermediate table name from the given string.
+     *
+     * @param string $table
+     * @return string
+     */
+    protected function resolveTableName($table)
+    {
+        if (!Str::contains($table, '\\') || !class_exists($table)) {
+            return $table;
+        }
+
+        $model = new $table;
+
+        if (!$model instanceof Model) {
+            return $table;
+        }
+
+        if ($model instanceof Pivot) {
+            $this->using($table);
+        }
+
+        return $model->getTable();
+    }
+
+    /**
+     * Set the join clause for the relation query.
+     *
+     * @param Builder|null $query
+     * @return $this
+     */
+    protected function performJoin($query = null)
+    {
+        $query = $query ?: $this->query;
+
+        // We need to join to the intermediate table on the related model's primary
+        // key column with the intermediate table's foreign key for the related
+        // model instance. Then we can set the "where" for the parent models.
+        $baseTable = $this->related->getTable();
+
+        $key = $baseTable . '.' . $this->relatedKey;
+
+        $query->join($this->table, $key, '=', $this->getQualifiedRelatedPivotKeyName());
+
+        return $this;
+    }
+
+    /**
+     * Set the where clause for the relation query.
+     *
+     * @return $this
+     */
+    protected function addWhereConstraints()
+    {
+        $this->query->where(
+            $this->getQualifiedForeignPivotKeyName(), '=', $this->parent->{$this->parentKey}
+        );
+
+        return $this;
+    }
+
+    /**
+     * Build model dictionary keyed by the relation's foreign key.
+     *
+     * @param Collection $results
+     * @return array
+     */
+    protected function buildDictionary(Collection $results)
+    {
+        // First we will build a dictionary of child models keyed by the foreign key
+        // of the relation so that we will easily and quickly match them to their
+        // parents without having a possibly slow inner loops for every models.
+        $dictionary = [];
+
+        foreach ($results as $result) {
+            $dictionary[$result->{$this->accessor}->{$this->foreignPivotKey}][] = $result;
+        }
+
+        return $dictionary;
+    }
+
+    /**
+     * Get the select columns for the relation query.
+     *
+     * @param array $columns
+     * @return array
+     */
+    protected function shouldSelect(array $columns = ['*'])
+    {
+        if ($columns == ['*']) {
+            $columns = [$this->related->getTable() . '.*'];
+        }
+
+        return array_merge($columns, $this->aliasedPivotColumns());
+    }
+
+    /**
+     * Get the pivot columns for the relation.
+     *
+     * "pivot_" is prefixed ot each column for easy removal later.
+     *
+     * @return array
+     */
+    protected function aliasedPivotColumns()
+    {
+        $defaults = [$this->foreignPivotKey, $this->relatedPivotKey];
+
+        return collect(array_merge($defaults, $this->pivotColumns))->map(function ($column) {
+            return $this->table . '.' . $column . ' as pivot_' . $column;
+        })->unique()->all();
+    }
+
+    /**
+     * Hydrate the pivot table relationship on the models.
+     *
+     * @param array $models
+     * @return void
+     */
+    protected function hydratePivotRelation(array $models)
+    {
+        // To hydrate the pivot relationship, we will just gather the pivot attributes
+        // and create a new Pivot model, which is basically a dynamic model that we
+        // will set the attributes, table, and connections on it so it will work.
+        foreach ($models as $model) {
+            $model->setRelation($this->accessor, $this->newExistingPivot(
+                $this->migratePivotAttributes($model)
+            ));
+        }
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param Model $model
+     * @return array
+     */
+    protected function migratePivotAttributes(Model $model)
+    {
+        $values = [];
+
+        foreach ($model->getAttributes() as $key => $value) {
+            // To get the pivots attributes we will just take any of the attributes which
+            // begin with "pivot_" and add those to this arrays, as well as unsetting
+            // them from the parent's models since they exist in a different table.
+            if (strpos($key, 'pivot_') === 0) {
+                $values[substr($key, 6)] = $value;
+
+                unset($model->$key);
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * Determine if we should touch the parent on sync.
+     *
+     * @return bool
+     */
+    protected function touchingParent()
+    {
+        return $this->getRelated()->touches($this->guessInverseRelation());
+    }
+
+    /**
+     * Attempt to guess the name of the inverse of the relation.
+     *
+     * @return string
+     */
+    protected function guessInverseRelation()
+    {
+        return Str::camel(Str::pluralStudly(class_basename($this->getParent())));
     }
 }

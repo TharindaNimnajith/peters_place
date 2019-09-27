@@ -11,7 +11,9 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Fragment;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Fragment\FragmentHandler;
@@ -24,7 +26,7 @@ class FragmentHandlerTest extends TestCase
     private $requestStack;
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testRenderWhenRendererDoesNotExist()
     {
@@ -33,13 +35,31 @@ class FragmentHandlerTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testRenderWithUnknownRenderer()
     {
         $handler = $this->getHandler($this->returnValue(new Response('foo')));
 
         $handler->render('/', 'bar');
+    }
+
+    /**
+     * @expectedException RuntimeException
+     * @expectedExceptionMessage Error when rendering "http://localhost/" (Status code is 404).
+     */
+    public function testDeliverWithUnsuccessfulResponse()
+    {
+        $handler = $this->getHandler($this->returnValue(new Response('foo', 404)));
+
+        $handler->render('/', 'foo');
+    }
+
+    public function testRender()
+    {
+        $handler = $this->getHandler($this->returnValue(new Response('foo')), ['/', Request::create('/'), ['foo' => 'foo', 'ignore_errors' => true]]);
+
+        $this->assertEquals('foo', $handler->render('/', 'foo', ['foo' => 'foo']));
     }
 
     protected function getHandler($returnValue, $arguments = [])
@@ -62,24 +82,6 @@ class FragmentHandlerTest extends TestCase
         $handler->addRenderer($renderer);
 
         return $handler;
-    }
-
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Error when rendering "http://localhost/" (Status code is 404).
-     */
-    public function testDeliverWithUnsuccessfulResponse()
-    {
-        $handler = $this->getHandler($this->returnValue(new Response('foo', 404)));
-
-        $handler->render('/', 'foo');
-    }
-
-    public function testRender()
-    {
-        $handler = $this->getHandler($this->returnValue(new Response('foo')), ['/', Request::create('/'), ['foo' => 'foo', 'ignore_errors' => true]]);
-
-        $this->assertEquals('foo', $handler->render('/', 'foo', ['foo' => 'foo']));
     }
 
     protected function setUp()

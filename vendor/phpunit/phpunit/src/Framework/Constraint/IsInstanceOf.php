@@ -47,20 +47,6 @@ class IsInstanceOf extends Constraint
         );
     }
 
-    private function getType(): string
-    {
-        try {
-            $reflection = new ReflectionClass($this->className);
-
-            if ($reflection->isInterface()) {
-                return 'interface';
-            }
-        } catch (ReflectionException $e) {
-        }
-
-        return 'class';
-    }
-
     /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
@@ -90,5 +76,19 @@ class IsInstanceOf extends Constraint
             $this->getType(),
             $this->className
         );
+    }
+
+    private function getType(): string
+    {
+        try {
+            $reflection = new ReflectionClass($this->className);
+
+            if ($reflection->isInterface()) {
+                return 'interface';
+            }
+        } catch (ReflectionException $e) {
+        }
+
+        return 'class';
     }
 }

@@ -170,42 +170,6 @@ class Gate implements GateContract
     }
 
     /**
-     * Create the ability callback for a callback string.
-     *
-     * @param string $ability
-     * @param string $callback
-     * @return Closure
-     */
-    protected function buildAbilityCallback($ability, $callback)
-    {
-        return function () use ($ability, $callback) {
-            if (Str::contains($callback, '@')) {
-                [$class, $method] = Str::parseCallback($callback);
-            } else {
-                $class = $callback;
-            }
-
-            $policy = $this->resolvePolicy($class);
-
-            $arguments = func_get_args();
-
-            $user = array_shift($arguments);
-
-            $result = $this->callPolicyBefore(
-                $policy, $user, $ability, $arguments
-            );
-
-            if (!is_null($result)) {
-                return $result;
-            }
-
-            return isset($method)
-                ? $policy->{$method}(...func_get_args())
-                : $policy(...func_get_args());
-        };
-    }
-
-    /**
      * Build a policy class instance of the given type.
      *
      * @param object|string $class
@@ -216,106 +180,6 @@ class Gate implements GateContract
     public function resolvePolicy($class)
     {
         return $this->container->make($class);
-    }
-
-    /**
-     * Call the "before" method on the given policy, if applicable.
-     *
-     * @param mixed $policy
-     * @param Authenticatable $user
-     * @param string $ability
-     * @param array $arguments
-     * @return mixed
-     */
-    protected function callPolicyBefore($policy, $user, $ability, $arguments)
-    {
-        if (!method_exists($policy, 'before')) {
-            return;
-        }
-
-        if ($this->canBeCalledWithUser($user, $policy, 'before')) {
-            return $policy->before($user, $ability, ...$arguments);
-        }
-    }
-
-    /**
-     * Determine whether the callback/method can be called with the given user.
-     *
-     * @param Authenticatable|null $user
-     * @param Closure|string|array $class
-     * @param string|null $method
-     * @return bool
-     */
-    protected function canBeCalledWithUser($user, $class, $method = null)
-    {
-        if (!is_null($user)) {
-            return true;
-        }
-
-        if (!is_null($method)) {
-            return $this->methodAllowsGuests($class, $method);
-        }
-
-        if (is_array($class)) {
-            $className = is_string($class[0]) ? $class[0] : get_class($class[0]);
-
-            return $this->methodAllowsGuests($className, $class[1]);
-        }
-
-        return $this->callbackAllowsGuests($class);
-    }
-
-    /**
-     * Determine if the given class method allows guests.
-     *
-     * @param string $class
-     * @param string $method
-     * @return bool
-     */
-    protected function methodAllowsGuests($class, $method)
-    {
-        try {
-            $reflection = new ReflectionClass($class);
-
-            $method = $reflection->getMethod($method);
-        } catch (Exception $e) {
-            return false;
-        }
-
-        if ($method) {
-            $parameters = $method->getParameters();
-
-            return isset($parameters[0]) && $this->parameterAllowsGuests($parameters[0]);
-        }
-
-        return false;
-    }
-
-    /**
-     * Determine if the given parameter allows guests.
-     *
-     * @param ReflectionParameter $parameter
-     * @return bool
-     */
-    protected function parameterAllowsGuests($parameter)
-    {
-        return ($parameter->getClass() && $parameter->allowsNull()) ||
-            ($parameter->isDefaultValueAvailable() && is_null($parameter->getDefaultValue()));
-    }
-
-    /**
-     * Determine if the callback allows guests.
-     *
-     * @param callable $callback
-     * @return bool
-     *
-     * @throws ReflectionException
-     */
-    protected function callbackAllowsGuests($callback)
-    {
-        $parameters = (new ReflectionFunction($callback))->getParameters();
-
-        return isset($parameters[0]) && $this->parameterAllowsGuests($parameters[0]);
     }
 
     /**
@@ -433,6 +297,273 @@ class Gate implements GateContract
     }
 
     /**
+     * Get a policy instance for a given class.
+     *
+     * @param object|string $class
+     * @return mixed
+     */
+    public function getPolicyFor($class)
+    {
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
+
+        if (!is_string($class)) {
+            return;
+        }
+
+        if (isset($this->policies[$class])) {
+            return $this->resolvePolicy($this->policies[$class]);
+        }
+
+        foreach ($this->guessPolicyName($class) as $guessedPolicy) {
+            if (class_exists($guessedPolicy)) {
+                return $this->resolvePolicy($guessedPolicy);
+            }
+        }
+
+        foreach ($this->policies as $expected => $policy) {
+            if (is_subclass_of($class, $expected)) {
+                return $this->resolvePolicy($policy);
+            }
+        }
+    }
+
+    /**
+     * Determine if all of the given abilities should be denied for the current user.
+     *
+     * @param iterable|string $abilities
+     * @param array|mixed $arguments
+     * @return bool
+     */
+    public function none($abilities, $arguments = [])
+    {
+        return !$this->any($abilities, $arguments);
+    }
+
+    /**
+     * Determine if any one of the given abilities should be granted for the current user.
+     *
+     * @param iterable|string $abilities
+     * @param array|mixed $arguments
+     * @return bool
+     */
+    public function any($abilities, $arguments = [])
+    {
+        return collect($abilities)->contains(function ($ability) use ($arguments) {
+            return $this->check($ability, $arguments);
+        });
+    }
+
+    /**
+     * Determine if the given ability should be granted for the current user.
+     *
+     * @param string $ability
+     * @param array|mixed $arguments
+     * @return Response
+     *
+     * @throws AuthorizationException
+     */
+    public function authorize($ability, $arguments = [])
+    {
+        $result = $this->raw($ability, $arguments);
+
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        return $result ? $this->allow() : $this->deny();
+    }
+
+    /**
+     * Specify a callback to be used to guess policy names.
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function guessPolicyNamesUsing(callable $callback)
+    {
+        $this->guessPolicyNamesUsingCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Get a gate instance for the given user.
+     *
+     * @param Authenticatable|mixed $user
+     * @return static
+     */
+    public function forUser($user)
+    {
+        $callback = function () use ($user) {
+            return $user;
+        };
+
+        return new static(
+            $this->container, $callback, $this->abilities,
+            $this->policies, $this->beforeCallbacks, $this->afterCallbacks,
+            $this->guessPolicyNamesUsingCallback
+        );
+    }
+
+    /**
+     * Get all of the defined abilities.
+     *
+     * @return array
+     */
+    public function abilities()
+    {
+        return $this->abilities;
+    }
+
+    /**
+     * Get all of the defined policies.
+     *
+     * @return array
+     */
+    public function policies()
+    {
+        return $this->policies;
+    }
+
+    /**
+     * Create the ability callback for a callback string.
+     *
+     * @param string $ability
+     * @param string $callback
+     * @return Closure
+     */
+    protected function buildAbilityCallback($ability, $callback)
+    {
+        return function () use ($ability, $callback) {
+            if (Str::contains($callback, '@')) {
+                [$class, $method] = Str::parseCallback($callback);
+            } else {
+                $class = $callback;
+            }
+
+            $policy = $this->resolvePolicy($class);
+
+            $arguments = func_get_args();
+
+            $user = array_shift($arguments);
+
+            $result = $this->callPolicyBefore(
+                $policy, $user, $ability, $arguments
+            );
+
+            if (!is_null($result)) {
+                return $result;
+            }
+
+            return isset($method)
+                ? $policy->{$method}(...func_get_args())
+                : $policy(...func_get_args());
+        };
+    }
+
+    /**
+     * Call the "before" method on the given policy, if applicable.
+     *
+     * @param mixed $policy
+     * @param Authenticatable $user
+     * @param string $ability
+     * @param array $arguments
+     * @return mixed
+     */
+    protected function callPolicyBefore($policy, $user, $ability, $arguments)
+    {
+        if (!method_exists($policy, 'before')) {
+            return;
+        }
+
+        if ($this->canBeCalledWithUser($user, $policy, 'before')) {
+            return $policy->before($user, $ability, ...$arguments);
+        }
+    }
+
+    /**
+     * Determine whether the callback/method can be called with the given user.
+     *
+     * @param Authenticatable|null $user
+     * @param Closure|string|array $class
+     * @param string|null $method
+     * @return bool
+     */
+    protected function canBeCalledWithUser($user, $class, $method = null)
+    {
+        if (!is_null($user)) {
+            return true;
+        }
+
+        if (!is_null($method)) {
+            return $this->methodAllowsGuests($class, $method);
+        }
+
+        if (is_array($class)) {
+            $className = is_string($class[0]) ? $class[0] : get_class($class[0]);
+
+            return $this->methodAllowsGuests($className, $class[1]);
+        }
+
+        return $this->callbackAllowsGuests($class);
+    }
+
+    /**
+     * Determine if the given class method allows guests.
+     *
+     * @param string $class
+     * @param string $method
+     * @return bool
+     */
+    protected function methodAllowsGuests($class, $method)
+    {
+        try {
+            $reflection = new ReflectionClass($class);
+
+            $method = $reflection->getMethod($method);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        if ($method) {
+            $parameters = $method->getParameters();
+
+            return isset($parameters[0]) && $this->parameterAllowsGuests($parameters[0]);
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine if the given parameter allows guests.
+     *
+     * @param ReflectionParameter $parameter
+     * @return bool
+     */
+    protected function parameterAllowsGuests($parameter)
+    {
+        return ($parameter->getClass() && $parameter->allowsNull()) ||
+            ($parameter->isDefaultValueAvailable() && is_null($parameter->getDefaultValue()));
+    }
+
+    /**
+     * Determine if the callback allows guests.
+     *
+     * @param callable $callback
+     * @return bool
+     *
+     * @throws ReflectionException
+     */
+    protected function callbackAllowsGuests($callback)
+    {
+        $parameters = (new ReflectionFunction($callback))->getParameters();
+
+        return isset($parameters[0]) && $this->parameterAllowsGuests($parameters[0]);
+    }
+
+    /**
      * Resolve the user from the user resolver.
      *
      * @return mixed
@@ -509,39 +640,6 @@ class Gate implements GateContract
 
         return function () {
         };
-    }
-
-    /**
-     * Get a policy instance for a given class.
-     *
-     * @param object|string $class
-     * @return mixed
-     */
-    public function getPolicyFor($class)
-    {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-
-        if (!is_string($class)) {
-            return;
-        }
-
-        if (isset($this->policies[$class])) {
-            return $this->resolvePolicy($this->policies[$class]);
-        }
-
-        foreach ($this->guessPolicyName($class) as $guessedPolicy) {
-            if (class_exists($guessedPolicy)) {
-                return $this->resolvePolicy($guessedPolicy);
-            }
-        }
-
-        foreach ($this->policies as $expected => $policy) {
-            if (is_subclass_of($class, $expected)) {
-                return $this->resolvePolicy($policy);
-            }
-        }
     }
 
     /**
@@ -657,103 +755,5 @@ class Gate implements GateContract
         }
 
         return $result;
-    }
-
-    /**
-     * Determine if all of the given abilities should be denied for the current user.
-     *
-     * @param iterable|string $abilities
-     * @param array|mixed $arguments
-     * @return bool
-     */
-    public function none($abilities, $arguments = [])
-    {
-        return !$this->any($abilities, $arguments);
-    }
-
-    /**
-     * Determine if any one of the given abilities should be granted for the current user.
-     *
-     * @param iterable|string $abilities
-     * @param array|mixed $arguments
-     * @return bool
-     */
-    public function any($abilities, $arguments = [])
-    {
-        return collect($abilities)->contains(function ($ability) use ($arguments) {
-            return $this->check($ability, $arguments);
-        });
-    }
-
-    /**
-     * Determine if the given ability should be granted for the current user.
-     *
-     * @param string $ability
-     * @param array|mixed $arguments
-     * @return Response
-     *
-     * @throws AuthorizationException
-     */
-    public function authorize($ability, $arguments = [])
-    {
-        $result = $this->raw($ability, $arguments);
-
-        if ($result instanceof Response) {
-            return $result;
-        }
-
-        return $result ? $this->allow() : $this->deny();
-    }
-
-    /**
-     * Specify a callback to be used to guess policy names.
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function guessPolicyNamesUsing(callable $callback)
-    {
-        $this->guessPolicyNamesUsingCallback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Get a gate instance for the given user.
-     *
-     * @param Authenticatable|mixed $user
-     * @return static
-     */
-    public function forUser($user)
-    {
-        $callback = function () use ($user) {
-            return $user;
-        };
-
-        return new static(
-            $this->container, $callback, $this->abilities,
-            $this->policies, $this->beforeCallbacks, $this->afterCallbacks,
-            $this->guessPolicyNamesUsingCallback
-        );
-    }
-
-    /**
-     * Get all of the defined abilities.
-     *
-     * @return array
-     */
-    public function abilities()
-    {
-        return $this->abilities;
-    }
-
-    /**
-     * Get all of the defined policies.
-     *
-     * @return array
-     */
-    public function policies()
-    {
-        return $this->policies;
     }
 }

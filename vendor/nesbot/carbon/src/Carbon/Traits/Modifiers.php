@@ -136,27 +136,6 @@ trait Modifiers
     }
 
     /**
-     * Go forward or backward to the next week- or weekend-day.
-     *
-     * @param bool $weekday
-     * @param bool $forward
-     *
-     * @return static
-     */
-    private function nextOrPreviousDay($weekday = true, $forward = true)
-    {
-        /** @var CarbonInterface $step */
-        $date = $this;
-        $step = $forward ? 1 : -1;
-
-        do {
-            $date = $date->addDays($step);
-        } while ($weekday ? $date->isWeekend() : $date->isWeekday());
-
-        return $date;
-    }
-
-    /**
      * Go backward to the previous weekday.
      *
      * @return static
@@ -461,5 +440,26 @@ trait Modifiers
         $date = $this->resolveCarbon($date);
 
         return $this->gt($date) ? $this : $date;
+    }
+
+    /**
+     * Go forward or backward to the next week- or weekend-day.
+     *
+     * @param bool $weekday
+     * @param bool $forward
+     *
+     * @return static
+     */
+    private function nextOrPreviousDay($weekday = true, $forward = true)
+    {
+        /** @var CarbonInterface $step */
+        $date = $this;
+        $step = $forward ? 1 : -1;
+
+        do {
+            $date = $date->addDays($step);
+        } while ($weekday ? $date->isWeekend() : $date->isWeekday());
+
+        return $date;
     }
 }

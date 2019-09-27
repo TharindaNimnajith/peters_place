@@ -138,16 +138,6 @@ EOF;
         $this->fail();
     }
 
-    private function stringify(array $constraints): string
-    {
-        return implode(
-            ' or ',
-            array_map(function (Constraint $constraint) {
-                return $constraint->toString();
-            }, $constraints)
-        );
-    }
-
     /**
      * @dataProvider providerFailingConstraints
      *
@@ -238,5 +228,15 @@ EOF;
                 $constraints,
             ];
         }
+    }
+
+    private function stringify(array $constraints): string
+    {
+        return implode(
+            ' or ',
+            array_map(function (Constraint $constraint) {
+                return $constraint->toString();
+            }, $constraints)
+        );
     }
 }

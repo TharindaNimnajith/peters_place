@@ -44,6 +44,18 @@ class NamespacedItemResolver
     }
 
     /**
+     * Set the parsed value of a key.
+     *
+     * @param string $key
+     * @param array $parsed
+     * @return void
+     */
+    public function setParsedKey($key, $parsed)
+    {
+        $this->parsed[$key] = $parsed;
+    }
+
+    /**
      * Parse an array of basic segments.
      *
      * @param array $segments
@@ -86,17 +98,5 @@ class NamespacedItemResolver
         );
 
         return array_merge([$namespace], $groupAndItem);
-    }
-
-    /**
-     * Set the parsed value of a key.
-     *
-     * @param string $key
-     * @param array $parsed
-     * @return void
-     */
-    public function setParsedKey($key, $parsed)
-    {
-        $this->parsed[$key] = $parsed;
     }
 }

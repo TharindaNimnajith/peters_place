@@ -30,11 +30,6 @@ class LexerTest extends TestCase
         }
     }
 
-    protected function getLexer(array $options = [])
-    {
-        return new Lexer($options);
-    }
-
     public function provideTestError()
     {
         return [
@@ -269,5 +264,10 @@ class LexerTest extends TestCase
         $lexer = $this->getLexer();
         $lexer->startLexing($code);
         $this->assertSame($expectedTokens, $lexer->getTokens());
+    }
+
+    protected function getLexer(array $options = [])
+    {
+        return new Lexer($options);
     }
 }

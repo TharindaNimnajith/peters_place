@@ -57,27 +57,6 @@ class TimestampFirstCombCodec extends StringCodec
     }
 
     /**
-     * Swaps the first 48 bits with the last 48 bits
-     *
-     * @param array $components An array of UUID components (the UUID exploded on its dashes)
-     *
-     * @return void
-     */
-    protected function swapTimestampAndRandomBits(array &$components)
-    {
-        $last48Bits = $components[4];
-        if (count($components) == 6) {
-            $last48Bits = $components[5];
-            $components[5] = $components[0] . $components[1];
-        } else {
-            $components[4] = $components[0] . $components[1];
-        }
-
-        $components[0] = substr($last48Bits, 0, 8);
-        $components[1] = substr($last48Bits, 8, 4);
-    }
-
-    /**
      * Decodes a binary representation of timestamp first COMB UUID into a UuidInterface object instance
      *
      * @param string $bytes
@@ -105,5 +84,26 @@ class TimestampFirstCombCodec extends StringCodec
         $this->swapTimestampAndRandomBits($fivePieceComponents);
 
         return $this->getBuilder()->build($this, $this->getFields($fivePieceComponents));
+    }
+
+    /**
+     * Swaps the first 48 bits with the last 48 bits
+     *
+     * @param array $components An array of UUID components (the UUID exploded on its dashes)
+     *
+     * @return void
+     */
+    protected function swapTimestampAndRandomBits(array &$components)
+    {
+        $last48Bits = $components[4];
+        if (count($components) == 6) {
+            $last48Bits = $components[5];
+            $components[5] = $components[0] . $components[1];
+        } else {
+            $components[4] = $components[0] . $components[1];
+        }
+
+        $components[0] = substr($last48Bits, 0, 8);
+        $components[1] = substr($last48Bits, 8, 4);
     }
 }

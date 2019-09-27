@@ -7,6 +7,8 @@ namespace Hamcrest;
  */
 
 use Hamcrest\Internal\SelfDescribingValue;
+use Iterator;
+use IteratorAggregate;
 
 /**
  * A {@link Hamcrest\Description} that is stored as a string.
@@ -20,11 +22,6 @@ abstract class BaseDescription implements Description
 
         return $this;
     }
-
-    /**
-     * Append the String <var>$str</var> to the description.
-     */
-    abstract protected function append($str);
 
     public function appendValue($value)
     {
@@ -40,7 +37,7 @@ abstract class BaseDescription implements Description
             $this->append('<');
             $this->append($value ? 'true' : 'false');
             $this->append('>');
-        } elseif (is_array($value) || $value instanceof \Iterator || $value instanceof \IteratorAggregate) {
+        } elseif (is_array($value) || $value instanceof Iterator || $value instanceof IteratorAggregate) {
             $this->appendValueList('[', ', ', ']', $value);
         } elseif (is_object($value) && !method_exists($value, '__toString')) {
             $this->append('<');
@@ -54,6 +51,59 @@ abstract class BaseDescription implements Description
 
         return $this;
     }
+
+    public function appendValueList($start, $separator, $end, $values)
+    {
+        $list = array();
+        foreach ($values as $v) {
+            $list[] = new SelfDescribingValue($v);
+        }
+
+        $this->appendList($start, $separator, $end, $list);
+
+        return $this;
+    }
+
+    public function appendList($start, $separator, $end, $values)
+    {
+        $this->append($start);
+
+        $separate = false;
+
+        foreach ($values as $value) {
+            /*if (!($value instanceof Hamcrest\SelfDescribing)) {
+                $value = new Hamcrest\Internal\SelfDescribingValue($value);
+            }*/
+
+            if ($separate) {
+                $this->append($separator);
+            }
+
+            $this->appendDescriptionOf($value);
+
+            $separate = true;
+        }
+
+        $this->append($end);
+
+        return $this;
+    }
+
+    public function appendDescriptionOf(SelfDescribing $value)
+    {
+        $value->describeTo($this);
+
+        return $this;
+    }
+
+    // -- Protected Methods
+
+    /**
+     * Append the String <var>$str</var> to the description.
+     */
+    abstract protected function append($str);
+
+    // -- Private Methods
 
     private function _toPhpSyntax($value)
     {
@@ -82,53 +132,5 @@ abstract class BaseDescription implements Description
         }
         $str .= '"';
         $this->append($str);
-    }
-
-    public function appendValueList($start, $separator, $end, $values)
-    {
-        $list = array();
-        foreach ($values as $v) {
-            $list[] = new SelfDescribingValue($v);
-        }
-
-        $this->appendList($start, $separator, $end, $list);
-
-        return $this;
-    }
-
-    // -- Protected Methods
-
-    public function appendList($start, $separator, $end, $values)
-    {
-        $this->append($start);
-
-        $separate = false;
-
-        foreach ($values as $value) {
-            /*if (!($value instanceof Hamcrest\SelfDescribing)) {
-                $value = new Hamcrest\Internal\SelfDescribingValue($value);
-            }*/
-
-            if ($separate) {
-                $this->append($separator);
-            }
-
-            $this->appendDescriptionOf($value);
-
-            $separate = true;
-        }
-
-        $this->append($end);
-
-        return $this;
-    }
-
-    // -- Private Methods
-
-    public function appendDescriptionOf(SelfDescribing $value)
-    {
-        $value->describeTo($this);
-
-        return $this;
     }
 }

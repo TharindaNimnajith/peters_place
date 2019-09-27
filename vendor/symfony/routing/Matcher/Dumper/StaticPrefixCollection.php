@@ -12,6 +12,9 @@
 namespace Symfony\Component\Routing\Matcher\Dumper;
 
 use Symfony\Component\Routing\RouteCollection;
+use function count;
+use function ord;
+use function strlen;
 
 /**
  * Prefix tree of routes preserving routes order.
@@ -72,7 +75,7 @@ class StaticPrefixCollection
     {
         list($prefix, $staticPrefix) = $this->getCommonPrefix($prefix, $prefix);
 
-        for ($i = \count($this->items) - 1; 0 <= $i; --$i) {
+        for ($i = count($this->items) - 1; 0 <= $i; --$i) {
             $item = $this->items[$i];
 
             list($commonPrefix, $commonStaticPrefix) = $this->getCommonPrefix($prefix, $this->prefixes[$i]);
@@ -129,14 +132,30 @@ class StaticPrefixCollection
     }
 
     /**
+     * Linearizes back a set of nested routes into a collection.
+     */
+    public function populateCollection(RouteCollection $routes): RouteCollection
+    {
+        foreach ($this->items as $route) {
+            if ($route instanceof self) {
+                $route->populateCollection($routes);
+            } else {
+                $routes->add(...$route);
+            }
+        }
+
+        return $routes;
+    }
+
+    /**
      * Gets the full and static common prefixes between two route patterns.
      *
      * The static prefix stops at last at the first opening bracket.
      */
     private function getCommonPrefix(string $prefix, string $anotherPrefix): array
     {
-        $baseLength = \strlen($this->prefix);
-        $end = min(\strlen($prefix), \strlen($anotherPrefix));
+        $baseLength = strlen($this->prefix);
+        $end = min(strlen($prefix), strlen($anotherPrefix));
         $staticLength = null;
         set_error_handler([__CLASS__, 'handleError']);
 
@@ -174,29 +193,13 @@ class StaticPrefixCollection
             }
         }
         restore_error_handler();
-        if ($i < $end && 0b10 === (\ord($prefix[$i]) >> 6) && preg_match('//u', $prefix . ' ' . $anotherPrefix)) {
+        if ($i < $end && 0b10 === (ord($prefix[$i]) >> 6) && preg_match('//u', $prefix . ' ' . $anotherPrefix)) {
             do {
                 // Prevent cutting in the middle of an UTF-8 characters
                 --$i;
-            } while (0b10 === (\ord($prefix[$i]) >> 6));
+            } while (0b10 === (ord($prefix[$i]) >> 6));
         }
 
         return [substr($prefix, 0, $i), substr($prefix, 0, $staticLength ?? $i)];
-    }
-
-    /**
-     * Linearizes back a set of nested routes into a collection.
-     */
-    public function populateCollection(RouteCollection $routes): RouteCollection
-    {
-        foreach ($this->items as $route) {
-            if ($route instanceof self) {
-                $route->populateCollection($routes);
-            } else {
-                $routes->add(...$route);
-            }
-        }
-
-        return $routes;
     }
 }

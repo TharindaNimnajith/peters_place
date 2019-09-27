@@ -2,6 +2,8 @@
 
 namespace Symfony\Component\Console\Tests\Helper;
 
+use InvalidArgumentException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\SymfonyQuestionHelper;
@@ -47,7 +49,7 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTest
             $question->setMaxAttempts(1);
             $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream), $output = $this->createOutputInterface(), $question);
             $this->fail();
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->assertEquals('Value "Fabien" is invalid', $e->getMessage());
         }
 
@@ -72,30 +74,6 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTest
 
         $this->assertEquals(['Superman', 'Batman'], $questionHelper->ask($this->createStreamableInputInterfaceMock($inputStream), $output = $this->createOutputInterface(), $question));
         $this->assertOutputContains('What is your favorite superhero? [Superman, Batman]', $output);
-    }
-
-    protected function getInputStream($input)
-    {
-        $stream = fopen('php://memory', 'r+', false);
-        fwrite($stream, $input);
-        rewind($stream);
-
-        return $stream;
-    }
-
-    protected function createOutputInterface()
-    {
-        $output = new StreamOutput(fopen('php://memory', 'r+', false));
-        $output->setDecorated(false);
-
-        return $output;
-    }
-
-    private function assertOutputContains($expected, StreamOutput $output)
-    {
-        rewind($output->getStream());
-        $stream = stream_get_contents($output->getStream());
-        $this->assertContains($expected, $stream);
     }
 
     public function testAskChoiceWithChoiceValueAsDefault()
@@ -149,13 +127,30 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTest
     }
 
     /**
-     * @expectedException        \Symfony\Component\Console\Exception\RuntimeException
+     * @expectedException        RuntimeException
      * @expectedExceptionMessage Aborted.
      */
     public function testAskThrowsExceptionOnMissingInput()
     {
         $dialog = new SymfonyQuestionHelper();
         $dialog->ask($this->createStreamableInputInterfaceMock($this->getInputStream('')), $this->createOutputInterface(), new Question('What\'s your name?'));
+    }
+
+    protected function getInputStream($input)
+    {
+        $stream = fopen('php://memory', 'r+', false);
+        fwrite($stream, $input);
+        rewind($stream);
+
+        return $stream;
+    }
+
+    protected function createOutputInterface()
+    {
+        $output = new StreamOutput(fopen('php://memory', 'r+', false));
+        $output->setDecorated(false);
+
+        return $output;
     }
 
     protected function createInputInterfaceMock($interactive = true)
@@ -166,5 +161,12 @@ class SymfonyQuestionHelperTest extends AbstractQuestionHelperTest
             ->willReturn($interactive);
 
         return $mock;
+    }
+
+    private function assertOutputContains($expected, StreamOutput $output)
+    {
+        rewind($output->getStream());
+        $stream = stream_get_contents($output->getStream());
+        $this->assertContains($expected, $stream);
     }
 }

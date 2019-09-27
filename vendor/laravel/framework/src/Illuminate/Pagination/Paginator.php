@@ -46,34 +46,6 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     }
 
     /**
-     * Get the current page for the request.
-     *
-     * @param int $currentPage
-     * @return int
-     */
-    protected function setCurrentPage($currentPage)
-    {
-        $currentPage = $currentPage ?: static::resolveCurrentPage();
-
-        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
-    }
-
-    /**
-     * Set the items for the paginator.
-     *
-     * @param mixed $items
-     * @return void
-     */
-    protected function setItems($items)
-    {
-        $this->items = $items instanceof Collection ? $items : Collection::make($items);
-
-        $this->hasMore = $this->items->count() > $this->perPage;
-
-        $this->items = $this->items->slice(0, $this->perPage);
-    }
-
-    /**
      * Render the paginator using the given view.
      *
      * @param string|null $view
@@ -175,5 +147,33 @@ class Paginator extends AbstractPaginator implements Arrayable, ArrayAccess, Cou
     public function hasMorePages()
     {
         return $this->hasMore;
+    }
+
+    /**
+     * Get the current page for the request.
+     *
+     * @param int $currentPage
+     * @return int
+     */
+    protected function setCurrentPage($currentPage)
+    {
+        $currentPage = $currentPage ?: static::resolveCurrentPage();
+
+        return $this->isValidPageNumber($currentPage) ? (int)$currentPage : 1;
+    }
+
+    /**
+     * Set the items for the paginator.
+     *
+     * @param mixed $items
+     * @return void
+     */
+    protected function setItems($items)
+    {
+        $this->items = $items instanceof Collection ? $items : Collection::make($items);
+
+        $this->hasMore = $this->items->count() > $this->perPage;
+
+        $this->items = $this->items->slice(0, $this->perPage);
     }
 }

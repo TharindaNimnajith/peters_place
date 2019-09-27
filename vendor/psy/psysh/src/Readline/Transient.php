@@ -118,6 +118,22 @@ class Transient implements Readline
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function redisplay()
+    {
+        // noop
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function writeHistory()
+    {
+        return true;
+    }
+
+    /**
      * Get a STDIN file handle.
      *
      * @return resource
@@ -135,21 +151,5 @@ class Transient implements Readline
         }
 
         return $this->stdin;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function redisplay()
-    {
-        // noop
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function writeHistory()
-    {
-        return true;
     }
 }

@@ -11,6 +11,10 @@
 
 namespace Symfony\Component\Console\Command;
 
+use Closure;
+use Exception;
+use ReflectionFunction;
+use ReflectionProperty;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\ExceptionInterface;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
@@ -21,6 +25,10 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Traversable;
+use function function_exists;
+use function get_called_class;
+use function is_array;
 
 /**
  * Base class for all commands.
@@ -71,17 +79,10 @@ class Command
      */
     public static function getDefaultName()
     {
-        $class = \get_called_class();
-        $r = new \ReflectionProperty($class, 'defaultName');
+        $class = get_called_class();
+        $r = new ReflectionProperty($class, 'defaultName');
 
         return $class === $r->class ? static::$defaultName : null;
-    }
-
-    /**
-     * Configures the current command.
-     */
-    protected function configure()
-    {
     }
 
     /**
@@ -151,7 +152,7 @@ class Command
      *
      * @return int The command exit code
      *
-     * @throws \Exception When binding input fails. Bypass this by calling {@link ignoreValidationErrors()}.
+     * @throws Exception When binding input fails. Bypass this by calling {@link ignoreValidationErrors()}.
      *
      * @see setCode()
      * @see execute()
@@ -177,7 +178,7 @@ class Command
         $this->initialize($input, $output);
 
         if (null !== $this->processTitle) {
-            if (\function_exists('cli_set_process_title')) {
+            if (function_exists('cli_set_process_title')) {
                 if (!@cli_set_process_title($this->processTitle)) {
                     if ('Darwin' === PHP_OS) {
                         $output->writeln('<comment>Running "cli_set_process_title" as an unprivileged user is not supported on MacOS.</comment>', OutputInterface::VERBOSITY_VERY_VERBOSE);
@@ -185,7 +186,7 @@ class Command
                         cli_set_process_title($this->processTitle);
                     }
                 }
-            } elseif (\function_exists('setproctitle')) {
+            } elseif (function_exists('setproctitle')) {
                 setproctitle($this->processTitle);
             } elseif (OutputInterface::VERBOSITY_VERY_VERBOSE === $output->getVerbosity()) {
                 $output->writeln('<comment>Install the proctitle PECL to be able to change the process title.</comment>');
@@ -259,31 +260,6 @@ class Command
     }
 
     /**
-     * Initializes the command after the input has been bound and before the input
-     * is validated.
-     *
-     * This is mainly useful when a lot of commands extends one main command
-     * where some things need to be initialized based on the input arguments and options.
-     *
-     * @see InputInterface::bind()
-     * @see InputInterface::validate()
-     */
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-    }
-
-    /**
-     * Interacts with the user.
-     *
-     * This method is executed before the InputDefinition is validated.
-     * This means that this is the only place where the command can
-     * interactively ask for values of missing required arguments.
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-    }
-
-    /**
      * Returns the command name.
      *
      * @return string The command name
@@ -317,25 +293,6 @@ class Command
     }
 
     /**
-     * Executes the current command.
-     *
-     * This method is not abstract because you can use this class
-     * as a concrete class. In this case, instead of defining the
-     * execute() method, you set the code to execute by passing
-     * a Closure to the setCode() method.
-     *
-     * @return int|null null or 0 if everything went fine, or an error code
-     *
-     * @throws LogicException When this abstract method is not implemented
-     *
-     * @see setCode()
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        throw new LogicException('You must override the execute() method in the concrete command class.');
-    }
-
-    /**
      * Sets the code to execute when running this command.
      *
      * If this method is used, it overrides the code defined
@@ -351,10 +308,10 @@ class Command
      */
     public function setCode(callable $code)
     {
-        if ($code instanceof \Closure) {
-            $r = new \ReflectionFunction($code);
+        if ($code instanceof Closure) {
+            $r = new ReflectionFunction($code);
             if (null === $r->getClosureThis()) {
-                $code = \Closure::bind($code, $this);
+                $code = Closure::bind($code, $this);
             }
         }
 
@@ -578,7 +535,7 @@ class Command
      */
     public function setAliases($aliases)
     {
-        if (!\is_array($aliases) && !$aliases instanceof \Traversable) {
+        if (!is_array($aliases) && !$aliases instanceof Traversable) {
             throw new InvalidArgumentException('$aliases must be an array or an instance of \Traversable');
         }
 
@@ -589,20 +546,6 @@ class Command
         $this->aliases = $aliases;
 
         return $this;
-    }
-
-    /**
-     * Validates a command name.
-     *
-     * It must be non-empty and parts can optionally be separated by ":".
-     *
-     * @throws InvalidArgumentException When the name is invalid
-     */
-    private function validateName(string $name)
-    {
-        if (!preg_match('/^[^\:]++(\:[^\:]++)*$/', $name)) {
-            throw new InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));
-        }
     }
 
     /**
@@ -650,5 +593,70 @@ class Command
         }
 
         return $this->helperSet->get($name);
+    }
+
+    /**
+     * Configures the current command.
+     */
+    protected function configure()
+    {
+    }
+
+    /**
+     * Initializes the command after the input has been bound and before the input
+     * is validated.
+     *
+     * This is mainly useful when a lot of commands extends one main command
+     * where some things need to be initialized based on the input arguments and options.
+     *
+     * @see InputInterface::bind()
+     * @see InputInterface::validate()
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+    }
+
+    /**
+     * Interacts with the user.
+     *
+     * This method is executed before the InputDefinition is validated.
+     * This means that this is the only place where the command can
+     * interactively ask for values of missing required arguments.
+     */
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+    }
+
+    /**
+     * Executes the current command.
+     *
+     * This method is not abstract because you can use this class
+     * as a concrete class. In this case, instead of defining the
+     * execute() method, you set the code to execute by passing
+     * a Closure to the setCode() method.
+     *
+     * @return int|null null or 0 if everything went fine, or an error code
+     *
+     * @throws LogicException When this abstract method is not implemented
+     *
+     * @see setCode()
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        throw new LogicException('You must override the execute() method in the concrete command class.');
+    }
+
+    /**
+     * Validates a command name.
+     *
+     * It must be non-empty and parts can optionally be separated by ":".
+     *
+     * @throws InvalidArgumentException When the name is invalid
+     */
+    private function validateName(string $name)
+    {
+        if (!preg_match('/^[^\:]++(\:[^\:]++)*$/', $name)) {
+            throw new InvalidArgumentException(sprintf('Command name "%s" is invalid.', $name));
+        }
     }
 }

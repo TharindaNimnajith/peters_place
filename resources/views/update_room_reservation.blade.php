@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
     <style>
         #model1 {
             margin-top: 10%;
-        }         
+        }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -32,6 +34,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -62,6 +65,7 @@
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
                             onclick="window.location='/room_reservation_management';">&times;
                     </button>
+
                     <h4 class="model-title" id="title2">Update Room Reservation</h4>
                 </div>
 
@@ -112,8 +116,12 @@
                             @endif
                         </div>
                     </div>
+
                     <div class="col-md-6" id="col2">
-                        <br/><br/><br/>
+                        <br/>
+                        <br/>
+                        <br/>
+
                         <div class="form-group">
                             <label>Room No</label>
                             <input type="text" name="r_no" class="form-control" value="{{ $details->room_no }}">
@@ -121,12 +129,14 @@
 
                         <div class="form-group">
                             <br/>
+
                             <label>Check In</label>
                             <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}">
                         </div>
 
                         <div class="form-group">
                             <br/>
+
                             <label>Check Out</label>
                             <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}">
                         </div>
@@ -137,6 +147,7 @@
 
                     <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
                            onclick="window.location='/room_reservation_management';">
+
                     <input type="submit" class="btn btn-info" value="Save">
                 </div>
             </form>
@@ -144,4 +155,5 @@
     </div>
 </div>
 </body>
+
 </html>

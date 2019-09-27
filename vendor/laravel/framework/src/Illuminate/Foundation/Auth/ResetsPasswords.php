@@ -64,6 +64,16 @@ trait ResetsPasswords
     }
 
     /**
+     * Get the broker to be used during password reset.
+     *
+     * @return PasswordBroker
+     */
+    public function broker()
+    {
+        return Password::broker();
+    }
+
+    /**
      * Get the password reset validation rules.
      *
      * @return array
@@ -85,16 +95,6 @@ trait ResetsPasswords
     protected function validationErrorMessages()
     {
         return [];
-    }
-
-    /**
-     * Get the broker to be used during password reset.
-     *
-     * @return PasswordBroker
-     */
-    public function broker()
-    {
-        return Password::broker();
     }
 
     /**

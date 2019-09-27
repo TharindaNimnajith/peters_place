@@ -11,10 +11,14 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Log;
 
+use DateTime;
+use LogicException;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpKernel\Log\Logger;
+use const PHP_EOL;
 
 /**
  * @author Kévin Dunglas <dunglas@gmail.com>
@@ -31,6 +35,13 @@ class LoggerTest extends TestCase
      * @var string
      */
     private $tmpFile;
+
+    public static function assertLogsMatch(array $expected, array $given)
+    {
+        foreach ($given as $k => $line) {
+            self::assertThat(1 === preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[\+-][0-9]{2}:[0-9]{2} ' . preg_quote($expected[$k]) . '/', $line), self::isTrue(), "\"$line\" do not match expected pattern \"$expected[$k]\"");
+        }
+    }
 
     public function testImplements()
     {
@@ -50,13 +61,6 @@ class LoggerTest extends TestCase
             "[$level] message of level $level with context: Bob",
         ];
         $this->assertLogsMatch($expected, $this->getLogs());
-    }
-
-    public static function assertLogsMatch(array $expected, array $given)
-    {
-        foreach ($given as $k => $line) {
-            self::assertThat(1 === preg_match('/[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}[\+-][0-9]{2}:[0-9]{2} ' . preg_quote($expected[$k]) . '/', $line), self::isTrue(), "\"$line\" do not match expected pattern \"$expected[$k]\"");
-        }
     }
 
     /**
@@ -95,7 +99,7 @@ class LoggerTest extends TestCase
     }
 
     /**
-     * @expectedException \Psr\Log\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testThrowsOnInvalidLevel()
     {
@@ -103,7 +107,7 @@ class LoggerTest extends TestCase
     }
 
     /**
-     * @expectedException \Psr\Log\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testThrowsOnInvalidMinLevel()
     {
@@ -111,7 +115,7 @@ class LoggerTest extends TestCase
     }
 
     /**
-     * @expectedException \Psr\Log\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testInvalidOutput()
     {
@@ -153,7 +157,7 @@ class LoggerTest extends TestCase
             'int' => 0,
             'float' => 0.5,
             'nested' => ['with object' => new DummyTest()],
-            'object' => new \DateTime(),
+            'object' => new DateTime(),
             'resource' => fopen('php://memory', 'r'),
         ];
 
@@ -167,7 +171,7 @@ class LoggerTest extends TestCase
     {
         $logger = $this->logger;
         $logger->warning('Random message', ['exception' => 'oops']);
-        $logger->critical('Uncaught Exception!', ['exception' => new \LogicException('Fail')]);
+        $logger->critical('Uncaught Exception!', ['exception' => new LogicException('Fail')]);
 
         $expected = [
             '[warning] Random message',
@@ -179,7 +183,7 @@ class LoggerTest extends TestCase
     public function testFormatter()
     {
         $this->logger = new Logger(LogLevel::DEBUG, $this->tmpFile, function ($level, $message, $context) {
-            return json_encode(['level' => $level, 'message' => $message, 'context' => $context]) . \PHP_EOL;
+            return json_encode(['level' => $level, 'message' => $message, 'context' => $context]) . PHP_EOL;
         });
 
         $this->logger->error('An error', ['foo' => 'bar']);

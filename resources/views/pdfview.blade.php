@@ -1,5 +1,7 @@
 <style type="text/css">
-    table, td, th {
+    table,
+    td,
+    th {
         border: 1px solid #ddd;
         text-align: left;
     }
@@ -9,7 +11,8 @@
         width: 100%;
     }
 
-    th, td {
+    th,
+    td {
         padding: 15px;
     }
 
@@ -19,6 +22,7 @@
         height: 50px;
         border-radius: 50%;
     }
+
 </style>
 
 

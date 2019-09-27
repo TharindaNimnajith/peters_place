@@ -24,11 +24,6 @@ class TraitUseTest extends TestCase
         );
     }
 
-    protected function createTraitUseBuilder(...$traits)
-    {
-        return new TraitUse(...$traits);
-    }
-
     public function testWith()
     {
         $node = $this->createTraitUseBuilder('SomeTrait')
@@ -51,5 +46,10 @@ class TraitUseTest extends TestCase
         $this->expectExceptionMessage('Adaptation must have type TraitUseAdaptation');
         $this->createTraitUseBuilder('Test')
             ->with(new Stmt\Echo_([]));
+    }
+
+    protected function createTraitUseBuilder(...$traits)
+    {
+        return new TraitUse(...$traits);
     }
 }

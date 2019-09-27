@@ -518,6 +518,76 @@ class Address extends \Faker\Provider\Address
     }
 
     /**
+     * Return a postcode based on state
+     *
+     * @param null|string $state 'state' or null
+     *
+     * @return @string
+     * @example '55100'
+     * @link https://en.wikipedia.org/wiki/Postal_codes_in_Malaysia#States
+     *
+     */
+    public static function postcode($state = null)
+    {
+        $format = array(
+            'perlis' => array( // (01000 - 02800)
+                '0' . mt_rand(1000, 2800)
+            ),
+            'kedah' => array( // (05000 - 09810)
+                '0' . mt_rand(5000, 9810)
+            ),
+            'penang' => array( // (10000 - 14400)
+                mt_rand(10000, 14400)
+            ),
+            'kelantan' => array( // (15000 - 18500)
+                mt_rand(15000, 18500)
+            ),
+            'terengganu' => array( // (20000 - 24300)
+                mt_rand(20000, 24300)
+            ),
+            'pahang' => array( // (25000 - 28800 | 39000 - 39200 | 49000, 69000)
+                mt_rand(25000, 28800),
+                mt_rand(39000, 39200),
+                mt_rand(49000, 69000)
+            ),
+            'perak' => array( // (30000 - 36810)
+                mt_rand(30000, 36810)
+            ),
+            'selangor' => array( // (40000 - 48300 | 63000 - 68100)
+                mt_rand(40000, 48300),
+                mt_rand(63000, 68100)
+            ),
+            'kl' => array( // (50000 - 60000)
+                mt_rand(50000, 60000),
+            ),
+            'putrajaya' => array( // (62000 - 62988)
+                mt_rand(62000, 62988)
+            ),
+            'nsembilan' => array( // (70000 - 73509)
+                mt_rand(70000, 73509)
+            ),
+            'melaka' => array( // (75000 - 78309)
+                mt_rand(75000, 78309)
+            ),
+            'johor' => array( // (79000 - 86900)
+                mt_rand(79000, 86900)
+            ),
+            'labuan' => array( // (87000 - 87033)
+                mt_rand(87000, 87033)
+            ),
+            'sabah' => array( // (88000 - 91309)
+                mt_rand(88000, 91309)
+            ),
+            'sarawak' => array( // (93000 - 98859)
+                mt_rand(93000, 98859)
+            )
+        );
+
+        $postcode = is_null($state) ? static::randomElement($format) : $format[$state];
+        return (string)static::randomElement($postcode);
+    }
+
+    /**
      * Return a street prefix
      *
      * @example 'Jalan'
@@ -606,76 +676,6 @@ class Address extends \Faker\Provider\Address
         $state = static::randomElement(static::$states[$state]);
 
         return $postcode . ' ' . $town . ', ' . $state;
-    }
-
-    /**
-     * Return a postcode based on state
-     *
-     * @param null|string $state 'state' or null
-     *
-     * @return @string
-     * @example '55100'
-     * @link https://en.wikipedia.org/wiki/Postal_codes_in_Malaysia#States
-     *
-     */
-    public static function postcode($state = null)
-    {
-        $format = array(
-            'perlis' => array( // (01000 - 02800)
-                '0' . mt_rand(1000, 2800)
-            ),
-            'kedah' => array( // (05000 - 09810)
-                '0' . mt_rand(5000, 9810)
-            ),
-            'penang' => array( // (10000 - 14400)
-                mt_rand(10000, 14400)
-            ),
-            'kelantan' => array( // (15000 - 18500)
-                mt_rand(15000, 18500)
-            ),
-            'terengganu' => array( // (20000 - 24300)
-                mt_rand(20000, 24300)
-            ),
-            'pahang' => array( // (25000 - 28800 | 39000 - 39200 | 49000, 69000)
-                mt_rand(25000, 28800),
-                mt_rand(39000, 39200),
-                mt_rand(49000, 69000)
-            ),
-            'perak' => array( // (30000 - 36810)
-                mt_rand(30000, 36810)
-            ),
-            'selangor' => array( // (40000 - 48300 | 63000 - 68100)
-                mt_rand(40000, 48300),
-                mt_rand(63000, 68100)
-            ),
-            'kl' => array( // (50000 - 60000)
-                mt_rand(50000, 60000),
-            ),
-            'putrajaya' => array( // (62000 - 62988)
-                mt_rand(62000, 62988)
-            ),
-            'nsembilan' => array( // (70000 - 73509)
-                mt_rand(70000, 73509)
-            ),
-            'melaka' => array( // (75000 - 78309)
-                mt_rand(75000, 78309)
-            ),
-            'johor' => array( // (79000 - 86900)
-                mt_rand(79000, 86900)
-            ),
-            'labuan' => array( // (87000 - 87033)
-                mt_rand(87000, 87033)
-            ),
-            'sabah' => array( // (88000 - 91309)
-                mt_rand(88000, 91309)
-            ),
-            'sarawak' => array( // (93000 - 98859)
-                mt_rand(93000, 98859)
-            )
-        );
-
-        $postcode = is_null($state) ? static::randomElement($format) : $format[$state];
-        return (string)static::randomElement($postcode);
     }
 
     /**

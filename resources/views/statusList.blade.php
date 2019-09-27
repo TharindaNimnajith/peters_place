@@ -1,4 +1,5 @@
 <html>
+
 <head>
 
     <title>Room Status List</title>
@@ -8,6 +9,7 @@
 
 
 </head>
+
 <body>
 
 
@@ -82,7 +84,5 @@
 
 
 </body>
+
 </html>
-
-
-

@@ -40,17 +40,6 @@ class SocketHandlerTest extends TestCase
         $this->writeRecord('data');
     }
 
-    private function createHandler($connectionString)
-    {
-        $this->handler = new SocketHandler($connectionString);
-        $this->handler->setFormatter($this->getIdentityFormatter());
-    }
-
-    private function writeRecord($string)
-    {
-        $this->handler->handle($this->getRecord(Logger::WARNING, $string));
-    }
-
     /**
      * @expectedException InvalidArgumentException
      */
@@ -113,46 +102,6 @@ class SocketHandlerTest extends TestCase
             ->method('fsockopen')
             ->will($this->returnValue(false));
         $this->writeRecord('Hello world');
-    }
-
-    private function setMockHandler(array $methods = array())
-    {
-        $this->res = fopen('php://memory', 'a');
-
-        $defaultMethods = array('fsockopen', 'pfsockopen', 'streamSetTimeout');
-        $newMethods = array_diff($methods, $defaultMethods);
-
-        $finalMethods = array_merge($defaultMethods, $newMethods);
-
-        $this->handler = $this->getMock(
-            '\Monolog\Handler\SocketHandler', $finalMethods, array('localhost:1234')
-        );
-
-        if (!in_array('fsockopen', $methods)) {
-            $this->handler->expects($this->any())
-                ->method('fsockopen')
-                ->will($this->returnValue($this->res));
-        }
-
-        if (!in_array('pfsockopen', $methods)) {
-            $this->handler->expects($this->any())
-                ->method('pfsockopen')
-                ->will($this->returnValue($this->res));
-        }
-
-        if (!in_array('streamSetTimeout', $methods)) {
-            $this->handler->expects($this->any())
-                ->method('streamSetTimeout')
-                ->will($this->returnValue(true));
-        }
-
-        if (!in_array('streamSetChunkSize', $methods)) {
-            $this->handler->expects($this->any())
-                ->method('streamSetChunkSize')
-                ->will($this->returnValue(8192));
-        }
-
-        $this->handler->setFormatter($this->getIdentityFormatter());
     }
 
     /**
@@ -333,5 +282,56 @@ class SocketHandlerTest extends TestCase
         $this->handler->setWritingTimeout(1);
 
         $this->writeRecord('Hello world');
+    }
+
+    private function createHandler($connectionString)
+    {
+        $this->handler = new SocketHandler($connectionString);
+        $this->handler->setFormatter($this->getIdentityFormatter());
+    }
+
+    private function writeRecord($string)
+    {
+        $this->handler->handle($this->getRecord(Logger::WARNING, $string));
+    }
+
+    private function setMockHandler(array $methods = array())
+    {
+        $this->res = fopen('php://memory', 'a');
+
+        $defaultMethods = array('fsockopen', 'pfsockopen', 'streamSetTimeout');
+        $newMethods = array_diff($methods, $defaultMethods);
+
+        $finalMethods = array_merge($defaultMethods, $newMethods);
+
+        $this->handler = $this->getMock(
+            '\Monolog\Handler\SocketHandler', $finalMethods, array('localhost:1234')
+        );
+
+        if (!in_array('fsockopen', $methods)) {
+            $this->handler->expects($this->any())
+                ->method('fsockopen')
+                ->will($this->returnValue($this->res));
+        }
+
+        if (!in_array('pfsockopen', $methods)) {
+            $this->handler->expects($this->any())
+                ->method('pfsockopen')
+                ->will($this->returnValue($this->res));
+        }
+
+        if (!in_array('streamSetTimeout', $methods)) {
+            $this->handler->expects($this->any())
+                ->method('streamSetTimeout')
+                ->will($this->returnValue(true));
+        }
+
+        if (!in_array('streamSetChunkSize', $methods)) {
+            $this->handler->expects($this->any())
+                ->method('streamSetChunkSize')
+                ->will($this->returnValue(8192));
+        }
+
+        $this->handler->setFormatter($this->getIdentityFormatter());
     }
 }

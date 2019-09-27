@@ -119,6 +119,34 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
     }
 
     /**
+     * Invoked immediately after the Message is sent.
+     */
+    public function sendPerformed(Swift_Events_SendEvent $evt)
+    {
+        $this->restoreMessage($evt->getMessage());
+    }
+
+    /**
+     * Matches address against whitelist of regular expressions.
+     *
+     * @return bool
+     */
+    protected function isWhitelisted($recipient)
+    {
+        if (in_array($recipient, (array)$this->recipient)) {
+            return true;
+        }
+
+        foreach ($this->whitelist as $pattern) {
+            if (preg_match($pattern, $recipient)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Filter header set against a whitelist of regular expressions.
      *
      * @param string $type
@@ -146,34 +174,6 @@ class Swift_Plugins_RedirectingPlugin implements Swift_Events_SendListener
         }
 
         return $filtered;
-    }
-
-    /**
-     * Matches address against whitelist of regular expressions.
-     *
-     * @return bool
-     */
-    protected function isWhitelisted($recipient)
-    {
-        if (in_array($recipient, (array)$this->recipient)) {
-            return true;
-        }
-
-        foreach ($this->whitelist as $pattern) {
-            if (preg_match($pattern, $recipient)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Invoked immediately after the Message is sent.
-     */
-    public function sendPerformed(Swift_Events_SendEvent $evt)
-    {
-        $this->restoreMessage($evt->getMessage());
     }
 
     private function restoreMessage(Swift_Mime_SimpleMessage $message)

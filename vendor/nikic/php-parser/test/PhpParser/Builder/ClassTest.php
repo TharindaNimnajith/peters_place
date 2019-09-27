@@ -33,11 +33,6 @@ class ClassTest extends TestCase
         );
     }
 
-    protected function createClassBuilder($class)
-    {
-        return new Class_($class);
-    }
-
     public function testAbstract()
     {
         $node = $this->createClassBuilder('Test')
@@ -156,5 +151,10 @@ DOC;
         $this->expectExceptionMessage('Name must be a string or an instance of Node\Name');
         $this->createClassBuilder('Test')
             ->extend(['Foo']);
+    }
+
+    protected function createClassBuilder($class)
+    {
+        return new Class_($class);
     }
 }

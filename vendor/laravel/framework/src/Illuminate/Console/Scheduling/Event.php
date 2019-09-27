@@ -191,19 +191,6 @@ class Event
     }
 
     /**
-     * Run the command in the background.
-     *
-     * @param Container $container
-     * @return void
-     */
-    protected function runCommandInBackground(Container $container)
-    {
-        $this->callBeforeCallbacks($container);
-
-        Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
-    }
-
-    /**
      * Call all of the "before" callbacks for the event.
      *
      * @param Container $container
@@ -224,21 +211,6 @@ class Event
     public function buildCommand()
     {
         return (new CommandBuilder)->buildCommand($this);
-    }
-
-    /**
-     * Run the command in the foreground.
-     *
-     * @param Container $container
-     * @return void
-     */
-    protected function runCommandInForeground(Container $container)
-    {
-        $this->callBeforeCallbacks($container);
-
-        $this->exitCode = Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
-
-        $this->callAfterCallbacks($container);
     }
 
     /**
@@ -278,22 +250,6 @@ class Event
     public function runsInMaintenanceMode()
     {
         return $this->evenInMaintenanceMode;
-    }
-
-    /**
-     * Determine if the Cron expression passes.
-     *
-     * @return bool
-     */
-    protected function expressionPasses()
-    {
-        $date = Carbon::now();
-
-        if ($this->timezone) {
-            $date->setTimezone($this->timezone);
-        }
-
-        return CronExpression::factory($this->expression)->isDue($date->toDateTimeString());
     }
 
     /**
@@ -340,18 +296,6 @@ class Event
         $this->ensureOutputIsBeingCaptured();
 
         return $this;
-    }
-
-    /**
-     * Ensure that the command output is being captured.
-     *
-     * @return void
-     */
-    protected function ensureOutputIsBeingCaptured()
-    {
-        if (is_null($this->output) || $this->output == $this->getDefaultOutput()) {
-            $this->sendOutputTo(storage_path('logs/schedule-' . sha1($this->mutexName()) . '.log'));
-        }
     }
 
     /**
@@ -435,41 +379,6 @@ class Event
         $this->afterCallbacks[] = $callback;
 
         return $this;
-    }
-
-    /**
-     * E-mail the output of the event to the recipients.
-     *
-     * @param Mailer $mailer
-     * @param array $addresses
-     * @param bool $onlyIfOutputExists
-     * @return void
-     */
-    protected function emailOutput(Mailer $mailer, $addresses, $onlyIfOutputExists = false)
-    {
-        $text = file_exists($this->output) ? file_get_contents($this->output) : '';
-
-        if ($onlyIfOutputExists && empty($text)) {
-            return;
-        }
-
-        $mailer->raw($text, function ($m) use ($addresses) {
-            $m->to($addresses)->subject($this->getEmailSubject());
-        });
-    }
-
-    /**
-     * Get the e-mail subject line for output results.
-     *
-     * @return string
-     */
-    protected function getEmailSubject()
-    {
-        if ($this->description) {
-            return $this->description;
-        }
-
-        return "Scheduled Job Output For [{$this->command}]";
     }
 
     /**
@@ -804,5 +713,96 @@ class Event
         $this->mutex = $mutex;
 
         return $this;
+    }
+
+    /**
+     * Run the command in the background.
+     *
+     * @param Container $container
+     * @return void
+     */
+    protected function runCommandInBackground(Container $container)
+    {
+        $this->callBeforeCallbacks($container);
+
+        Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
+    }
+
+    /**
+     * Run the command in the foreground.
+     *
+     * @param Container $container
+     * @return void
+     */
+    protected function runCommandInForeground(Container $container)
+    {
+        $this->callBeforeCallbacks($container);
+
+        $this->exitCode = Process::fromShellCommandline($this->buildCommand(), base_path(), null, null, null)->run();
+
+        $this->callAfterCallbacks($container);
+    }
+
+    /**
+     * Determine if the Cron expression passes.
+     *
+     * @return bool
+     */
+    protected function expressionPasses()
+    {
+        $date = Carbon::now();
+
+        if ($this->timezone) {
+            $date->setTimezone($this->timezone);
+        }
+
+        return CronExpression::factory($this->expression)->isDue($date->toDateTimeString());
+    }
+
+    /**
+     * Ensure that the command output is being captured.
+     *
+     * @return void
+     */
+    protected function ensureOutputIsBeingCaptured()
+    {
+        if (is_null($this->output) || $this->output == $this->getDefaultOutput()) {
+            $this->sendOutputTo(storage_path('logs/schedule-' . sha1($this->mutexName()) . '.log'));
+        }
+    }
+
+    /**
+     * E-mail the output of the event to the recipients.
+     *
+     * @param Mailer $mailer
+     * @param array $addresses
+     * @param bool $onlyIfOutputExists
+     * @return void
+     */
+    protected function emailOutput(Mailer $mailer, $addresses, $onlyIfOutputExists = false)
+    {
+        $text = file_exists($this->output) ? file_get_contents($this->output) : '';
+
+        if ($onlyIfOutputExists && empty($text)) {
+            return;
+        }
+
+        $mailer->raw($text, function ($m) use ($addresses) {
+            $m->to($addresses)->subject($this->getEmailSubject());
+        });
+    }
+
+    /**
+     * Get the e-mail subject line for output results.
+     *
+     * @return string
+     */
+    protected function getEmailSubject()
+    {
+        if ($this->description) {
+            return $this->description;
+        }
+
+        return "Scheduled Job Output For [{$this->command}]";
     }
 }

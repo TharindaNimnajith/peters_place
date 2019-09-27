@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Console\Tests\Input;
 
+use InvalidArgumentException;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -41,14 +43,6 @@ class InputDefinitionTest extends TestCase
         $this->assertEquals(['foo' => $this->foo, 'bar' => $this->bar], $definition->getArguments(), '__construct() takes an array of InputArgument objects as its first argument');
     }
 
-    protected function initializeArguments()
-    {
-        $this->foo = new InputArgument('foo');
-        $this->bar = new InputArgument('bar');
-        $this->foo1 = new InputArgument('foo');
-        $this->foo2 = new InputArgument('foo2', InputArgument::REQUIRED);
-    }
-
     public function testConstructorOptions()
     {
         $this->initializeOptions();
@@ -58,15 +52,6 @@ class InputDefinitionTest extends TestCase
 
         $definition = new InputDefinition([$this->foo, $this->bar]);
         $this->assertEquals(['foo' => $this->foo, 'bar' => $this->bar], $definition->getOptions(), '__construct() takes an array of InputOption objects as its first argument');
-    }
-
-    protected function initializeOptions()
-    {
-        $this->foo = new InputOption('foo', 'f');
-        $this->bar = new InputOption('bar', 'b');
-        $this->foo1 = new InputOption('fooBis', 'f');
-        $this->foo2 = new InputOption('foo', 'p');
-        $this->multi = new InputOption('multi', 'm|mm|mmm');
     }
 
     public function testSetArguments()
@@ -104,7 +89,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \LogicException
+     * @expectedException        LogicException
      * @expectedExceptionMessage An argument with name "foo" already exists.
      */
     public function testArgumentsMustHaveDifferentNames()
@@ -117,7 +102,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \LogicException
+     * @expectedException        LogicException
      * @expectedExceptionMessage Cannot add an argument after an array argument.
      */
     public function testArrayArgumentHasToBeLast()
@@ -130,7 +115,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \LogicException
+     * @expectedException        LogicException
      * @expectedExceptionMessage Cannot add a required argument after an optional one.
      */
     public function testRequiredArgumentCannotFollowAnOptionalOne()
@@ -152,7 +137,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage The "bar" argument does not exist.
      */
     public function testGetInvalidArgument()
@@ -224,7 +209,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage The "-f" option does not exist.
      */
     public function testSetOptionsClearsOptions()
@@ -258,7 +243,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \LogicException
+     * @expectedException        LogicException
      * @expectedExceptionMessage An option named "foo" already exists.
      */
     public function testAddDuplicateOption()
@@ -271,7 +256,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \LogicException
+     * @expectedException        LogicException
      * @expectedExceptionMessage An option with shortcut "f" already exists.
      */
     public function testAddDuplicateShortcutOption()
@@ -292,7 +277,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage The "--bar" option does not exist.
      */
     public function testGetInvalidOption()
@@ -339,7 +324,7 @@ class InputDefinitionTest extends TestCase
     }
 
     /**
-     * @expectedException        \InvalidArgumentException
+     * @expectedException        InvalidArgumentException
      * @expectedExceptionMessage The "-l" option does not exist.
      */
     public function testGetOptionForInvalidShortcut()
@@ -403,5 +388,22 @@ class InputDefinitionTest extends TestCase
     {
         $definition = new InputDefinition([new InputOption('foo'), new InputOption('bar'), new InputArgument('cat')]);
         $this->assertEquals('[options] [--] [<cat>]', $definition->getSynopsis(true), '->getSynopsis(true) groups options in [options]');
+    }
+
+    protected function initializeArguments()
+    {
+        $this->foo = new InputArgument('foo');
+        $this->bar = new InputArgument('bar');
+        $this->foo1 = new InputArgument('foo');
+        $this->foo2 = new InputArgument('foo2', InputArgument::REQUIRED);
+    }
+
+    protected function initializeOptions()
+    {
+        $this->foo = new InputOption('foo', 'f');
+        $this->bar = new InputOption('bar', 'b');
+        $this->foo1 = new InputOption('fooBis', 'f');
+        $this->foo2 = new InputOption('foo', 'p');
+        $this->multi = new InputOption('multi', 'm|mm|mmm');
     }
 }

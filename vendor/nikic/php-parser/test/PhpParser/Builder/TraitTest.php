@@ -35,16 +35,16 @@ class TraitTest extends TestCase
         ]), $trait);
     }
 
-    protected function createTraitBuilder($class)
-    {
-        return new Trait_($class);
-    }
-
     public function testInvalidStmtError()
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Unexpected node of type "Stmt_Echo"');
         $this->createTraitBuilder('Test')
             ->addStmt(new Stmt\Echo_([]));
+    }
+
+    protected function createTraitBuilder($class)
+    {
+        return new Trait_($class);
     }
 }

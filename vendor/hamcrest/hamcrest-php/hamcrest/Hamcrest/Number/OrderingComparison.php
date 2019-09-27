@@ -86,6 +86,23 @@ class OrderingComparison extends TypeSafeMatcher
         $description->appendText(' ')->appendValue($this->_value);
     }
 
+    protected function matchesSafely($other)
+    {
+        $compare = $this->_compare($this->_value, $other);
+
+        return ($this->_minCompare <= $compare) && ($compare <= $this->_maxCompare);
+    }
+
+    protected function describeMismatchSafely($item, Description $mismatchDescription)
+    {
+        $mismatchDescription
+            ->appendValue($item)->appendText(' was ')
+            ->appendText($this->_comparison($this->_compare($this->_value, $item)))
+            ->appendText(' ')->appendValue($this->_value);
+    }
+
+    // -- Private Methods
+
     private function _comparison($compare)
     {
         if ($compare > 0) {
@@ -96,15 +113,6 @@ class OrderingComparison extends TypeSafeMatcher
             return 'greater than';
         }
     }
-
-    protected function matchesSafely($other)
-    {
-        $compare = $this->_compare($this->_value, $other);
-
-        return ($this->_minCompare <= $compare) && ($compare <= $this->_maxCompare);
-    }
-
-    // -- Private Methods
 
     private function _compare($left, $right)
     {
@@ -118,13 +126,5 @@ class OrderingComparison extends TypeSafeMatcher
         } else {
             return 1;
         }
-    }
-
-    protected function describeMismatchSafely($item, Description $mismatchDescription)
-    {
-        $mismatchDescription
-            ->appendValue($item)->appendText(' was ')
-            ->appendText($this->_comparison($this->_compare($this->_value, $item)))
-            ->appendText(' ')->appendValue($this->_value);
     }
 }

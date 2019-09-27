@@ -131,27 +131,6 @@ class ExpectationDirector
     }
 
     /**
-     * Search current array of expectations for a match
-     *
-     * @param array $expectations
-     * @param array $args
-     * @return mixed
-     */
-    protected function _findExpectationIn(array $expectations, array $args)
-    {
-        foreach ($expectations as $exp) {
-            if ($exp->isEligible() && $exp->matchArgs($args)) {
-                return $exp;
-            }
-        }
-        foreach ($expectations as $exp) {
-            if ($exp->matchArgs($args)) {
-                return $exp;
-            }
-        }
-    }
-
-    /**
      * Verify all expectations of the director
      *
      * @return void
@@ -217,5 +196,26 @@ class ExpectationDirector
     public function getDefaultExpectations()
     {
         return $this->_defaults;
+    }
+
+    /**
+     * Search current array of expectations for a match
+     *
+     * @param array $expectations
+     * @param array $args
+     * @return mixed
+     */
+    protected function _findExpectationIn(array $expectations, array $args)
+    {
+        foreach ($expectations as $exp) {
+            if ($exp->isEligible() && $exp->matchArgs($args)) {
+                return $exp;
+            }
+        }
+        foreach ($expectations as $exp) {
+            if ($exp->matchArgs($args)) {
+                return $exp;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -26,6 +27,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -201,9 +203,9 @@
                         <label>Room Type</label>
 
                         <select name="rtype" class="form-control">
-                            <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
-                            <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
-                            <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
+                            <option value="1" @if (old('rtype')=='1' ) selected @endif>Single Bedroom</option>
+                            <option value="2" @if (old('rtype')=='2' ) selected @endif>Double Bedroom</option>
+                            <option value="3" @if (old('rtype')=='3' ) selected @endif>Family Bedroom</option>
                         </select>
                     </div>
 
@@ -258,16 +260,16 @@
                     </div>
 
                     <!--
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="fname" class="form-control">
-                    </div>
+                <div class="form-group">
+                    <label>First Name</label>
+                    <input type="text" name="fname" class="form-control">
+                </div>
 
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control">
-                    </div>
-                    -->
+                <div class="form-group">
+                    <label>Last Name</label>
+                    <input type="text" name="lname" class="form-control">
+                </div>
+                -->
 
                     <div class="form-group">
                         <label>Room Type</label>
@@ -285,18 +287,18 @@
                     </div>
 
                     <!--
-                    <div class="form-group">
-                        <br/>
-                        <label>Check In</label>
-                        <input name="cin" type="date" class="form-control">
-                    </div>
+                <div class="form-group">
+                    <br/>
+                    <label>Check In</label>
+                    <input name="cin" type="date" class="form-control">
+                </div>
 
-                    <div class="form-group">
-                        <br/>
-                        <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control">
-                    </div>
-                    -->
+                <div class="form-group">
+                    <br/>
+                    <label>Check Out</label>
+                    <input name="cout" type="date" class="form-control">
+                </div>
+                -->
                 </div>
 
                 <div class="modal-footer">
@@ -349,6 +351,8 @@
             $("#deleteForm").attr("action", url);
         });
     });
+
 </script>
 </body>
+
 </html>

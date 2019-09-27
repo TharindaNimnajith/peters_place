@@ -101,77 +101,6 @@ abstract class AbstractLexer
     }
 
     /**
-     * Scans the input string for tokens.
-     *
-     * @param string $input A query string.
-     *
-     * @return void
-     */
-    protected function scan($input)
-    {
-        if (!isset($this->regex)) {
-            $this->regex = sprintf(
-                '/(%s)|%s/%s',
-                implode(')|(', $this->getCatchablePatterns()),
-                implode('|', $this->getNonCatchablePatterns()),
-                $this->getModifiers()
-            );
-        }
-
-        $flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
-        $matches = preg_split($this->regex, $input, -1, $flags);
-
-        if ($matches === false) {
-            // Work around https://bugs.php.net/78122
-            $matches = [[$input, 0]];
-        }
-
-        foreach ($matches as $match) {
-            // Must remain before 'value' assignment since it can change content
-            $type = $this->getType($match[0]);
-
-            $this->tokens[] = [
-                'value' => $match[0],
-                'type' => $type,
-                'position' => $match[1],
-            ];
-        }
-    }
-
-    /**
-     * Lexical catchable patterns.
-     *
-     * @return array
-     */
-    abstract protected function getCatchablePatterns();
-
-    /**
-     * Lexical non-catchable patterns.
-     *
-     * @return array
-     */
-    abstract protected function getNonCatchablePatterns();
-
-    /**
-     * Regex modifiers
-     *
-     * @return string
-     */
-    protected function getModifiers()
-    {
-        return 'i';
-    }
-
-    /**
-     * Retrieve token type. Also processes the token value if necessary.
-     *
-     * @param string $value
-     *
-     * @return int|string|null
-     */
-    abstract protected function getType(&$value);
-
-    /**
      * Resets the peek pointer to 0.
      *
      * @return void
@@ -319,4 +248,75 @@ abstract class AbstractLexer
 
         return $token;
     }
+
+    /**
+     * Scans the input string for tokens.
+     *
+     * @param string $input A query string.
+     *
+     * @return void
+     */
+    protected function scan($input)
+    {
+        if (!isset($this->regex)) {
+            $this->regex = sprintf(
+                '/(%s)|%s/%s',
+                implode(')|(', $this->getCatchablePatterns()),
+                implode('|', $this->getNonCatchablePatterns()),
+                $this->getModifiers()
+            );
+        }
+
+        $flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE;
+        $matches = preg_split($this->regex, $input, -1, $flags);
+
+        if ($matches === false) {
+            // Work around https://bugs.php.net/78122
+            $matches = [[$input, 0]];
+        }
+
+        foreach ($matches as $match) {
+            // Must remain before 'value' assignment since it can change content
+            $type = $this->getType($match[0]);
+
+            $this->tokens[] = [
+                'value' => $match[0],
+                'type' => $type,
+                'position' => $match[1],
+            ];
+        }
+    }
+
+    /**
+     * Lexical catchable patterns.
+     *
+     * @return array
+     */
+    abstract protected function getCatchablePatterns();
+
+    /**
+     * Lexical non-catchable patterns.
+     *
+     * @return array
+     */
+    abstract protected function getNonCatchablePatterns();
+
+    /**
+     * Regex modifiers
+     *
+     * @return string
+     */
+    protected function getModifiers()
+    {
+        return 'i';
+    }
+
+    /**
+     * Retrieve token type. Also processes the token value if necessary.
+     *
+     * @param string $value
+     *
+     * @return int|string|null
+     */
+    abstract protected function getType(&$value);
 }

@@ -84,24 +84,6 @@ class MethodEnumerator extends Enumerator
     }
 
     /**
-     * Get output style for the given method's visibility.
-     *
-     * @param ReflectionMethod $method
-     *
-     * @return string
-     */
-    private function getVisibilityStyle(ReflectionMethod $method)
-    {
-        if ($method->isPublic()) {
-            return self::IS_PUBLIC;
-        } elseif ($method->isProtected()) {
-            return self::IS_PROTECTED;
-        } else {
-            return self::IS_PRIVATE;
-        }
-    }
-
-    /**
      * Get defined methods for the given class or object Reflector.
      *
      * @param bool $showAll Include private and protected methods
@@ -145,6 +127,24 @@ class MethodEnumerator extends Enumerator
             return 'Trait Methods';
         } else {
             return 'Class Methods';
+        }
+    }
+
+    /**
+     * Get output style for the given method's visibility.
+     *
+     * @param ReflectionMethod $method
+     *
+     * @return string
+     */
+    private function getVisibilityStyle(ReflectionMethod $method)
+    {
+        if ($method->isPublic()) {
+            return self::IS_PUBLIC;
+        } elseif ($method->isProtected()) {
+            return self::IS_PROTECTED;
+        } else {
+            return self::IS_PRIVATE;
         }
     }
 }

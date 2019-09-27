@@ -299,11 +299,6 @@ abstract class Assert
         );
     }
 
-    private static function isValidClassAttributeName(string $attributeName): bool
-    {
-        return preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $attributeName);
-    }
-
     /**
      * Returns the value of a static attribute.
      * This also works for attributes that are declared protected or private.
@@ -1604,11 +1599,6 @@ abstract class Assert
         );
     }
 
-    private static function isValidObjectAttributeName(string $attributeName): bool
-    {
-        return preg_match('/[^\x00-\x1f\x7f-\x9f]+/', $attributeName);
-    }
-
     /**
      * Asserts that an object does not have a specified attribute.
      *
@@ -2898,6 +2888,16 @@ abstract class Assert
     public static function resetCount(): void
     {
         self::$count = 0;
+    }
+
+    private static function isValidClassAttributeName(string $attributeName): bool
+    {
+        return preg_match('/[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/', $attributeName);
+    }
+
+    private static function isValidObjectAttributeName(string $attributeName): bool
+    {
+        return preg_match('/[^\x00-\x1f\x7f-\x9f]+/', $attributeName);
     }
 
     private static function createWarning(string $warning): void

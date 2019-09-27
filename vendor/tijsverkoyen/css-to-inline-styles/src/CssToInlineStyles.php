@@ -2,6 +2,10 @@
 
 namespace TijsVerkoyen\CssToInlineStyles;
 
+use DOMDocument;
+use DOMElement;
+use DOMXPath;
+use SplObjectStorage;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
@@ -50,12 +54,64 @@ class CssToInlineStyles
     }
 
     /**
+     * Inline the given properties on an given DOMElement
+     *
+     * @param DOMElement $element
+     * @param Css\Property\Property[] $properties
+     * @return DOMElement
+     */
+    public function inlineCssOnElement(DOMElement $element, array $properties)
+    {
+        if (empty($properties)) {
+            return $element;
+        }
+
+        $cssProperties = array();
+        $inlineProperties = array();
+
+        foreach ($this->getInlineStyles($element) as $property) {
+            $inlineProperties[$property->getName()] = $property;
+        }
+
+        foreach ($properties as $property) {
+            if (!isset($inlineProperties[$property->getName()])) {
+                $cssProperties[$property->getName()] = $property;
+            }
+        }
+
+        $rules = array();
+        foreach (array_merge($cssProperties, $inlineProperties) as $property) {
+            $rules[] = $property->toString();
+        }
+        $element->setAttribute('style', implode(' ', $rules));
+
+        return $element;
+    }
+
+    /**
+     * Get the current inline styles for a given DOMElement
+     *
+     * @param DOMElement $element
+     * @return Css\Property\Property[]
+     */
+    public function getInlineStyles(DOMElement $element)
+    {
+        $processor = new PropertyProcessor();
+
+        return $processor->convertArrayToObjects(
+            $processor->splitIntoSeparateProperties(
+                $element->getAttribute('style')
+            )
+        );
+    }
+
+    /**
      * @param string $html
-     * @return \DOMDocument
+     * @return DOMDocument
      */
     protected function createDomDocumentFromHtml($html)
     {
-        $document = new \DOMDocument('1.0', 'UTF-8');
+        $document = new DOMDocument('1.0', 'UTF-8');
         $internalErrors = libxml_use_internal_errors(true);
         $document->loadHTML(mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'));
         libxml_use_internal_errors($internalErrors);
@@ -65,19 +121,19 @@ class CssToInlineStyles
     }
 
     /**
-     * @param \DOMDocument $document
+     * @param DOMDocument $document
      * @param Css\Rule\Rule[] $rules
-     * @return \DOMDocument
+     * @return DOMDocument
      */
-    protected function inline(\DOMDocument $document, array $rules)
+    protected function inline(DOMDocument $document, array $rules)
     {
         if (empty($rules)) {
             return $document;
         }
 
-        $propertyStorage = new \SplObjectStorage();
+        $propertyStorage = new SplObjectStorage();
 
-        $xPath = new \DOMXPath($document);
+        $xPath = new DOMXPath($document);
 
         usort($rules, array(RuleProcessor::class, 'sortOnSpecificity'));
 
@@ -112,6 +168,31 @@ class CssToInlineStyles
         }
 
         return $document;
+    }
+
+    /**
+     * @param DOMDocument $document
+     * @return string
+     */
+    protected function getHtmlFromDocument(DOMDocument $document)
+    {
+        // retrieve the document element
+        // we do it this way to preserve the utf-8 encoding
+        $htmlElement = $document->documentElement;
+        $html = $document->saveHTML($htmlElement);
+        $html = trim($html);
+
+        // retrieve the doctype
+        $document->removeChild($htmlElement);
+        $doctype = $document->saveHTML();
+        $doctype = trim($doctype);
+
+        // if it is the html5 doctype convert it to lowercase
+        if ($doctype === '<!DOCTYPE html>') {
+            $doctype = strtolower($doctype);
+        }
+
+        return $doctype . "\n" . $html;
     }
 
     /**
@@ -153,82 +234,5 @@ class CssToInlineStyles
         }
 
         return $cssProperties;
-    }
-
-    /**
-     * Inline the given properties on an given DOMElement
-     *
-     * @param \DOMElement $element
-     * @param Css\Property\Property[] $properties
-     * @return \DOMElement
-     */
-    public function inlineCssOnElement(\DOMElement $element, array $properties)
-    {
-        if (empty($properties)) {
-            return $element;
-        }
-
-        $cssProperties = array();
-        $inlineProperties = array();
-
-        foreach ($this->getInlineStyles($element) as $property) {
-            $inlineProperties[$property->getName()] = $property;
-        }
-
-        foreach ($properties as $property) {
-            if (!isset($inlineProperties[$property->getName()])) {
-                $cssProperties[$property->getName()] = $property;
-            }
-        }
-
-        $rules = array();
-        foreach (array_merge($cssProperties, $inlineProperties) as $property) {
-            $rules[] = $property->toString();
-        }
-        $element->setAttribute('style', implode(' ', $rules));
-
-        return $element;
-    }
-
-    /**
-     * Get the current inline styles for a given DOMElement
-     *
-     * @param \DOMElement $element
-     * @return Css\Property\Property[]
-     */
-    public function getInlineStyles(\DOMElement $element)
-    {
-        $processor = new PropertyProcessor();
-
-        return $processor->convertArrayToObjects(
-            $processor->splitIntoSeparateProperties(
-                $element->getAttribute('style')
-            )
-        );
-    }
-
-    /**
-     * @param \DOMDocument $document
-     * @return string
-     */
-    protected function getHtmlFromDocument(\DOMDocument $document)
-    {
-        // retrieve the document element
-        // we do it this way to preserve the utf-8 encoding
-        $htmlElement = $document->documentElement;
-        $html = $document->saveHTML($htmlElement);
-        $html = trim($html);
-
-        // retrieve the doctype
-        $document->removeChild($htmlElement);
-        $doctype = $document->saveHTML();
-        $doctype = trim($doctype);
-
-        // if it is the html5 doctype convert it to lowercase
-        if ($doctype === '<!DOCTYPE html>') {
-            $doctype = strtolower($doctype);
-        }
-
-        return $doctype . "\n" . $html;
     }
 }

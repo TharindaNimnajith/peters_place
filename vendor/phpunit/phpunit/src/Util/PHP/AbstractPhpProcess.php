@@ -191,6 +191,51 @@ abstract class AbstractPhpProcess
     abstract public function runJob(string $job, array $settings = []): array;
 
     /**
+     * Returns the command based into the configurations.
+     */
+    public function getCommand(array $settings, string $file = null): string
+    {
+        $command = $this->runtime->getBinary();
+        $command .= $this->settingsToParameters($settings);
+
+        if (PHP_SAPI === 'phpdbg') {
+            $command .= ' -qrr';
+
+            if (!$file) {
+                $command .= 's=';
+            }
+        }
+
+        if ($file) {
+            $command .= ' ' . escapeshellarg($file);
+        }
+
+        if ($this->args) {
+            if (!$file) {
+                $command .= ' --';
+            }
+            $command .= ' ' . $this->args;
+        }
+
+        if ($this->stderrRedirection === true) {
+            $command .= ' 2>&1';
+        }
+
+        return $command;
+    }
+
+    protected function settingsToParameters(array $settings): string
+    {
+        $buffer = '';
+
+        foreach ($settings as $setting) {
+            $buffer .= ' -d ' . escapeshellarg($setting);
+        }
+
+        return $buffer;
+    }
+
+    /**
      * Processes the TestResult object from an isolated process.
      *
      * @throws InvalidArgumentException
@@ -333,50 +378,5 @@ abstract class AbstractPhpProcess
         }
 
         return $exception;
-    }
-
-    /**
-     * Returns the command based into the configurations.
-     */
-    public function getCommand(array $settings, string $file = null): string
-    {
-        $command = $this->runtime->getBinary();
-        $command .= $this->settingsToParameters($settings);
-
-        if (PHP_SAPI === 'phpdbg') {
-            $command .= ' -qrr';
-
-            if (!$file) {
-                $command .= 's=';
-            }
-        }
-
-        if ($file) {
-            $command .= ' ' . escapeshellarg($file);
-        }
-
-        if ($this->args) {
-            if (!$file) {
-                $command .= ' --';
-            }
-            $command .= ' ' . $this->args;
-        }
-
-        if ($this->stderrRedirection === true) {
-            $command .= ' 2>&1';
-        }
-
-        return $command;
-    }
-
-    protected function settingsToParameters(array $settings): string
-    {
-        $buffer = '';
-
-        foreach ($settings as $setting) {
-            $buffer .= ' -d ' . escapeshellarg($setting);
-        }
-
-        return $buffer;
     }
 }

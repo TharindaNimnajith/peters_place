@@ -46,38 +46,6 @@ class Manager
     }
 
     /**
-     * Setup the default queue configuration options.
-     *
-     * @return void
-     */
-    protected function setupDefaultConfiguration()
-    {
-        $this->container['config']['queue.default'] = 'default';
-    }
-
-    /**
-     * Build the queue manager instance.
-     *
-     * @return void
-     */
-    protected function setupManager()
-    {
-        $this->manager = new QueueManager($this->container);
-    }
-
-    /**
-     * Register the default connectors that the component ships with.
-     *
-     * @return void
-     */
-    protected function registerConnectors()
-    {
-        $provider = new QueueServiceProvider($this->container);
-
-        $provider->registerConnectors($this->manager);
-    }
-
-    /**
      * Push a new job onto the queue.
      *
      * @param string $job
@@ -186,5 +154,37 @@ class Manager
     public function __call($method, $parameters)
     {
         return $this->manager->$method(...$parameters);
+    }
+
+    /**
+     * Setup the default queue configuration options.
+     *
+     * @return void
+     */
+    protected function setupDefaultConfiguration()
+    {
+        $this->container['config']['queue.default'] = 'default';
+    }
+
+    /**
+     * Build the queue manager instance.
+     *
+     * @return void
+     */
+    protected function setupManager()
+    {
+        $this->manager = new QueueManager($this->container);
+    }
+
+    /**
+     * Register the default connectors that the component ships with.
+     *
+     * @return void
+     */
+    protected function registerConnectors()
+    {
+        $provider = new QueueServiceProvider($this->container);
+
+        $provider->registerConnectors($this->manager);
     }
 }

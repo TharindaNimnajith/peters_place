@@ -38,11 +38,6 @@ class MimeTypesTest extends AbstractMimeTypeGuesserTest
         $this->assertEquals('image/gif', $guesser->guessMimeType(__DIR__ . '/Fixtures/mimetypes/test'));
     }
 
-    protected function getGuesser(): MimeTypeGuesserInterface
-    {
-        return new MimeTypes();
-    }
-
     public function testGetExtensions()
     {
         $mt = new MimeTypes();
@@ -58,5 +53,10 @@ class MimeTypesTest extends AbstractMimeTypeGuesserTest
         $this->assertContains('application/postscript', $mt->getMimeTypes('ai'));
         $this->assertContains('application/postscript', $mt->getMimeTypes('ps'));
         $this->assertSame([], $mt->getMimeTypes('symfony'));
+    }
+
+    protected function getGuesser(): MimeTypeGuesserInterface
+    {
+        return new MimeTypes();
     }
 }

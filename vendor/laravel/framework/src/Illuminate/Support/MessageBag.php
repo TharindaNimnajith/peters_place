@@ -67,20 +67,6 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Determine if a key and message combination already exists.
-     *
-     * @param string $key
-     * @param string $message
-     * @return bool
-     */
-    protected function isUnique($key, $message)
-    {
-        $messages = (array)$this->messages;
-
-        return !isset($messages[$key]) || !in_array($message, $messages[$key]);
-    }
-
-    /**
      * Merge a new array of messages into the message bag.
      *
      * @param MessageProvider|array $messages
@@ -213,36 +199,6 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     }
 
     /**
-     * Get the appropriate format based on the given format.
-     *
-     * @param string $format
-     * @return string
-     */
-    protected function checkFormat($format)
-    {
-        return $format ?: $this->format;
-    }
-
-    /**
-     * Format an array of messages.
-     *
-     * @param array $messages
-     * @param string $format
-     * @param string $messageKey
-     * @return array
-     */
-    protected function transform($messages, $format, $messageKey)
-    {
-        return collect((array)$messages)
-            ->map(function ($message) use ($format, $messageKey) {
-                // We will simply spin through the given messages and transform each one
-                // replacing the :message place holder with the real message allowing
-                // the messages to be easily formatted to each developer's desires.
-                return str_replace([':message', ':key'], [$message, $messageKey], $format);
-            })->all();
-    }
-
-    /**
      * Get all of the messages from the message bag for a given key.
      *
      * @param string $key
@@ -265,26 +221,6 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
         }
 
         return [];
-    }
-
-    /**
-     * Get the messages for a wildcard key.
-     *
-     * @param string $key
-     * @param string|null $format
-     * @return array
-     */
-    protected function getMessagesForWildcardKey($key, $format)
-    {
-        return collect($this->messages)
-            ->filter(function ($messages, $messageKey) use ($key) {
-                return Str::is($key, $messageKey);
-            })
-            ->map(function ($messages, $messageKey) use ($format) {
-                return $this->transform(
-                    $messages, $this->checkFormat($format), $messageKey
-                );
-            })->all();
     }
 
     /**
@@ -400,5 +336,69 @@ class MessageBag implements Arrayable, Countable, Jsonable, JsonSerializable, Me
     public function messages()
     {
         return $this->messages;
+    }
+
+    /**
+     * Determine if a key and message combination already exists.
+     *
+     * @param string $key
+     * @param string $message
+     * @return bool
+     */
+    protected function isUnique($key, $message)
+    {
+        $messages = (array)$this->messages;
+
+        return !isset($messages[$key]) || !in_array($message, $messages[$key]);
+    }
+
+    /**
+     * Get the appropriate format based on the given format.
+     *
+     * @param string $format
+     * @return string
+     */
+    protected function checkFormat($format)
+    {
+        return $format ?: $this->format;
+    }
+
+    /**
+     * Format an array of messages.
+     *
+     * @param array $messages
+     * @param string $format
+     * @param string $messageKey
+     * @return array
+     */
+    protected function transform($messages, $format, $messageKey)
+    {
+        return collect((array)$messages)
+            ->map(function ($message) use ($format, $messageKey) {
+                // We will simply spin through the given messages and transform each one
+                // replacing the :message place holder with the real message allowing
+                // the messages to be easily formatted to each developer's desires.
+                return str_replace([':message', ':key'], [$message, $messageKey], $format);
+            })->all();
+    }
+
+    /**
+     * Get the messages for a wildcard key.
+     *
+     * @param string $key
+     * @param string|null $format
+     * @return array
+     */
+    protected function getMessagesForWildcardKey($key, $format)
+    {
+        return collect($this->messages)
+            ->filter(function ($messages, $messageKey) use ($key) {
+                return Str::is($key, $messageKey);
+            })
+            ->map(function ($messages, $messageKey) use ($format) {
+                return $this->transform(
+                    $messages, $this->checkFormat($format), $messageKey
+                );
+            })->all();
     }
 }

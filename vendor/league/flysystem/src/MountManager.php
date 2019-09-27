@@ -104,22 +104,6 @@ class MountManager implements FilesystemInterface
     }
 
     /**
-     * @param string $path
-     *
-     * @return string[] [:prefix, :path]
-     * @throws InvalidArgumentException
-     *
-     */
-    protected function getPrefixAndPath($path)
-    {
-        if (strpos($path, '://') < 1) {
-            throw new InvalidArgumentException('No prefix detected in path: ' . $path);
-        }
-
-        return explode('://', $path, 2);
-    }
-
-    /**
      * Get the filesystem with the corresponding prefix.
      *
      * @param string $prefix
@@ -644,5 +628,21 @@ class MountManager implements FilesystemInterface
         list($prefix, $path) = $this->getPrefixAndPath($path);
 
         return $this->getFilesystem($prefix)->get($path);
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return string[] [:prefix, :path]
+     * @throws InvalidArgumentException
+     *
+     */
+    protected function getPrefixAndPath($path)
+    {
+        if (strpos($path, '://') < 1) {
+            throw new InvalidArgumentException('No prefix detected in path: ' . $path);
+        }
+
+        return explode('://', $path, 2);
     }
 }

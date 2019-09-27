@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Mime;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use Symfony\Component\Mime\Exception\LogicException;
 use Symfony\Component\Mime\Part\AbstractPart;
 use Symfony\Component\Mime\Part\DataPart;
@@ -18,6 +20,7 @@ use Symfony\Component\Mime\Part\Multipart\AlternativePart;
 use Symfony\Component\Mime\Part\Multipart\MixedPart;
 use Symfony\Component\Mime\Part\Multipart\RelatedPart;
 use Symfony\Component\Mime\Part\TextPart;
+use function is_resource;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -54,16 +57,6 @@ class Email extends Message
         return $this->setHeaderBody('Text', 'Subject', $subject);
     }
 
-    /**
-     * @return $this
-     */
-    private function setHeaderBody(string $type, string $name, $body)
-    {
-        $this->getHeaders()->setHeaderBody($type, $name, $body);
-
-        return $this;
-    }
-
     public function getSubject(): ?string
     {
         return $this->getHeaders()->getHeaderBody('Subject');
@@ -72,12 +65,12 @@ class Email extends Message
     /**
      * @return $this
      */
-    public function date(\DateTimeInterface $dateTime)
+    public function date(DateTimeInterface $dateTime)
     {
         return $this->setHeaderBody('Date', 'Date', $dateTime);
     }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->getHeaders()->getHeaderBody('Date');
     }
@@ -120,29 +113,6 @@ class Email extends Message
     public function addFrom(...$addresses)
     {
         return $this->addListAddressHeaderBody('From', $addresses);
-    }
-
-    private function addListAddressHeaderBody($name, array $addresses)
-    {
-        if (!$to = $this->getHeaders()->get($name)) {
-            return $this->setListAddressHeaderBody($name, $addresses);
-        }
-        $to->addAddresses(Address::createArray($addresses));
-
-        return $this;
-    }
-
-    private function setListAddressHeaderBody($name, array $addresses)
-    {
-        $addresses = Address::createArray($addresses);
-        $headers = $this->getHeaders();
-        if ($to = $headers->get($name)) {
-            $to->setAddresses($addresses);
-        } else {
-            $headers->addMailboxListHeader($name, $addresses);
-        }
-
-        return $this;
     }
 
     /**
@@ -425,6 +395,92 @@ class Email extends Message
         return $parts;
     }
 
+    public function getBody(): AbstractPart
+    {
+        if (null !== $body = parent::getBody()) {
+            return $body;
+        }
+
+        return $this->generateBody();
+    }
+
+    /**
+     * @internal
+     */
+    public function __serialize(): array
+    {
+        if (is_resource($this->text)) {
+            if (stream_get_meta_data($this->text)['seekable'] ?? false) {
+                rewind($this->text);
+            }
+
+            $this->text = stream_get_contents($this->text);
+        }
+
+        if (is_resource($this->html)) {
+            if (stream_get_meta_data($this->html)['seekable'] ?? false) {
+                rewind($this->html);
+            }
+
+            $this->html = stream_get_contents($this->html);
+        }
+
+        foreach ($this->attachments as $i => $attachment) {
+            if (isset($attachment['body']) && is_resource($attachment['body'])) {
+                if (stream_get_meta_data($attachment['body'])['seekable'] ?? false) {
+                    rewind($attachment['body']);
+                }
+
+                $this->attachments[$i]['body'] = stream_get_contents($attachment['body']);
+            }
+        }
+
+        return [$this->text, $this->textCharset, $this->html, $this->htmlCharset, $this->attachments, parent::__serialize()];
+    }
+
+    /**
+     * @internal
+     */
+    public function __unserialize(array $data): void
+    {
+        [$this->text, $this->textCharset, $this->html, $this->htmlCharset, $this->attachments, $parentData] = $data;
+
+        parent::__unserialize($parentData);
+    }
+
+    /**
+     * @return $this
+     */
+    private function setHeaderBody(string $type, string $name, $body)
+    {
+        $this->getHeaders()->setHeaderBody($type, $name, $body);
+
+        return $this;
+    }
+
+    private function addListAddressHeaderBody($name, array $addresses)
+    {
+        if (!$to = $this->getHeaders()->get($name)) {
+            return $this->setListAddressHeaderBody($name, $addresses);
+        }
+        $to->addAddresses(Address::createArray($addresses));
+
+        return $this;
+    }
+
+    private function setListAddressHeaderBody($name, array $addresses)
+    {
+        $addresses = Address::createArray($addresses);
+        $headers = $this->getHeaders();
+        if ($to = $headers->get($name)) {
+            $to->setAddresses($addresses);
+        } else {
+            $headers->addMailboxListHeader($name, $addresses);
+        }
+
+        return $this;
+    }
+
     private function createDataPart(array $attachment): DataPart
     {
         if (isset($attachment['part'])) {
@@ -441,15 +497,6 @@ class Email extends Message
         }
 
         return $part;
-    }
-
-    public function getBody(): AbstractPart
-    {
-        if (null !== $body = parent::getBody()) {
-            return $body;
-        }
-
-        return $this->generateBody();
     }
 
     /**
@@ -505,7 +552,7 @@ class Email extends Message
         $htmlPart = null;
         $html = $this->html;
         if (null !== $this->html) {
-            if (\is_resource($html)) {
+            if (is_resource($html)) {
                 if (stream_get_meta_data($html)['seekable'] ?? false) {
                     rewind($html);
                 }
@@ -541,49 +588,5 @@ class Email extends Message
         }
 
         return [$htmlPart, $attachmentParts, array_values($inlineParts)];
-    }
-
-    /**
-     * @internal
-     */
-    public function __serialize(): array
-    {
-        if (\is_resource($this->text)) {
-            if (stream_get_meta_data($this->text)['seekable'] ?? false) {
-                rewind($this->text);
-            }
-
-            $this->text = stream_get_contents($this->text);
-        }
-
-        if (\is_resource($this->html)) {
-            if (stream_get_meta_data($this->html)['seekable'] ?? false) {
-                rewind($this->html);
-            }
-
-            $this->html = stream_get_contents($this->html);
-        }
-
-        foreach ($this->attachments as $i => $attachment) {
-            if (isset($attachment['body']) && \is_resource($attachment['body'])) {
-                if (stream_get_meta_data($attachment['body'])['seekable'] ?? false) {
-                    rewind($attachment['body']);
-                }
-
-                $this->attachments[$i]['body'] = stream_get_contents($attachment['body']);
-            }
-        }
-
-        return [$this->text, $this->textCharset, $this->html, $this->htmlCharset, $this->attachments, parent::__serialize()];
-    }
-
-    /**
-     * @internal
-     */
-    public function __unserialize(array $data): void
-    {
-        [$this->text, $this->textCharset, $this->html, $this->htmlCharset, $this->attachments, $parentData] = $data;
-
-        parent::__unserialize($parentData);
     }
 }

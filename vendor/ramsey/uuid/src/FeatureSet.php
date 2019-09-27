@@ -131,6 +131,76 @@ class FeatureSet
     }
 
     /**
+     * Sets the time provider for use in this environment
+     *
+     * @param TimeProviderInterface $timeProvider
+     */
+    public function setTimeProvider(TimeProviderInterface $timeProvider)
+    {
+        $this->timeGenerator = $this->buildTimeGenerator($timeProvider);
+    }
+
+    /**
+     * Returns the builder configured for this environment
+     *
+     * @return UuidBuilderInterface
+     */
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
+
+    /**
+     * Returns the UUID UUID coder-decoder configured for this environment
+     *
+     * @return CodecInterface
+     */
+    public function getCodec()
+    {
+        return $this->codec;
+    }
+
+    /**
+     * Returns the system node ID provider configured for this environment
+     *
+     * @return NodeProviderInterface
+     */
+    public function getNodeProvider()
+    {
+        return $this->nodeProvider;
+    }
+
+    /**
+     * Returns the number converter configured for this environment
+     *
+     * @return NumberConverterInterface
+     */
+    public function getNumberConverter()
+    {
+        return $this->numberConverter;
+    }
+
+    /**
+     * Returns the random UUID generator configured for this environment
+     *
+     * @return RandomGeneratorInterface
+     */
+    public function getRandomGenerator()
+    {
+        return $this->randomGenerator;
+    }
+
+    /**
+     * Returns the time-based UUID generator configured for this environment
+     *
+     * @return TimeGeneratorInterface
+     */
+    public function getTimeGenerator()
+    {
+        return $this->timeGenerator;
+    }
+
+    /**
      * Determines which number converter to use and returns the configured
      * number converter for this environment
      *
@@ -226,16 +296,6 @@ class FeatureSet
     }
 
     /**
-     * Sets the time provider for use in this environment
-     *
-     * @param TimeProviderInterface $timeProvider
-     */
-    public function setTimeProvider(TimeProviderInterface $timeProvider)
-    {
-        $this->timeGenerator = $this->buildTimeGenerator($timeProvider);
-    }
-
-    /**
      * Determines which time-based UUID generator to use and returns the configured
      * time-based UUID generator for this environment
      *
@@ -270,65 +330,5 @@ class FeatureSet
         }
 
         return new DegradedTimeConverter();
-    }
-
-    /**
-     * Returns the builder configured for this environment
-     *
-     * @return UuidBuilderInterface
-     */
-    public function getBuilder()
-    {
-        return $this->builder;
-    }
-
-    /**
-     * Returns the UUID UUID coder-decoder configured for this environment
-     *
-     * @return CodecInterface
-     */
-    public function getCodec()
-    {
-        return $this->codec;
-    }
-
-    /**
-     * Returns the system node ID provider configured for this environment
-     *
-     * @return NodeProviderInterface
-     */
-    public function getNodeProvider()
-    {
-        return $this->nodeProvider;
-    }
-
-    /**
-     * Returns the number converter configured for this environment
-     *
-     * @return NumberConverterInterface
-     */
-    public function getNumberConverter()
-    {
-        return $this->numberConverter;
-    }
-
-    /**
-     * Returns the random UUID generator configured for this environment
-     *
-     * @return RandomGeneratorInterface
-     */
-    public function getRandomGenerator()
-    {
-        return $this->randomGenerator;
-    }
-
-    /**
-     * Returns the time-based UUID generator configured for this environment
-     *
-     * @return TimeGeneratorInterface
-     */
-    public function getTimeGenerator()
-    {
-        return $this->timeGenerator;
     }
 }

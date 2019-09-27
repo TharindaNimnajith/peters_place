@@ -139,6 +139,23 @@ class Comment implements JsonSerializable
     }
 
     /**
+     * @return       array
+     * @psalm-return array{nodeType:string, text:mixed, line:mixed, filePos:mixed}
+     */
+    public function jsonSerialize(): array
+    {
+        // Technically not a node, but we make it look like one anyway
+        $type = $this instanceof Comment\Doc ? 'Comment_Doc' : 'Comment';
+        return [
+            'nodeType' => $type,
+            'text' => $this->text,
+            'line' => $this->line,
+            'filePos' => $this->filePos,
+            'tokenPos' => $this->tokenPos,
+        ];
+    }
+
+    /**
      * Get length of shortest whitespace prefix (at the start of a line).
      *
      * If there is a line with no prefix whitespace, 0 is a valid return value.
@@ -158,22 +175,5 @@ class Comment implements JsonSerializable
             }
         }
         return $shortestPrefixLen;
-    }
-
-    /**
-     * @return       array
-     * @psalm-return array{nodeType:string, text:mixed, line:mixed, filePos:mixed}
-     */
-    public function jsonSerialize(): array
-    {
-        // Technically not a node, but we make it look like one anyway
-        $type = $this instanceof Comment\Doc ? 'Comment_Doc' : 'Comment';
-        return [
-            'nodeType' => $type,
-            'text' => $this->text,
-            'line' => $this->line,
-            'filePos' => $this->filePos,
-            'tokenPos' => $this->tokenPos,
-        ];
     }
 }

@@ -12,6 +12,7 @@
 namespace Symfony\Component\CssSelector\Tests\Parser;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionProperty;
 use Symfony\Component\CssSelector\Parser\Reader;
 
 class ReaderTest extends TestCase
@@ -29,13 +30,6 @@ class ReaderTest extends TestCase
 
         $this->assignPosition($reader, 5);
         $this->assertTrue($reader->isEOF());
-    }
-
-    private function assignPosition(Reader $reader, $value)
-    {
-        $position = new \ReflectionProperty($reader, 'position');
-        $position->setAccessible(true);
-        $position->setValue($reader, $value);
     }
 
     public function testGetRemainingLength()
@@ -98,5 +92,12 @@ class ReaderTest extends TestCase
         $reader = new Reader('hello');
         $reader->moveToEnd();
         $this->assertTrue($reader->isEOF());
+    }
+
+    private function assignPosition(Reader $reader, $value)
+    {
+        $position = new ReflectionProperty($reader, 'position');
+        $position->setAccessible(true);
+        $position->setValue($reader, $value);
     }
 }

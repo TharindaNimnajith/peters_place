@@ -12,6 +12,8 @@
 namespace Symfony\Component\Console\Tests\Helper;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
@@ -37,18 +39,6 @@ class TableTest extends TestCase
         $table->render();
 
         $this->assertEquals($expected, $this->getOutputContent($output));
-    }
-
-    protected function getOutputStream($decorated = false)
-    {
-        return new StreamOutput($this->stream, StreamOutput::VERBOSITY_NORMAL, $decorated);
-    }
-
-    protected function getOutputContent(StreamOutput $output)
-    {
-        rewind($output->getStream());
-
-        return str_replace(PHP_EOL, "\n", stream_get_contents($output->getStream()));
     }
 
     /**
@@ -764,7 +754,7 @@ TABLE;
     }
 
     /**
-     * @expectedException \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage A cell must be a TableCell, a scalar or an object implementing __toString, array given.
      */
     public function testThrowsWhenTheCellInAnArray()
@@ -941,7 +931,7 @@ TABLE;
     }
 
     /**
-     * @expectedException \Symfony\Component\Console\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Output should be an instance of "Symfony\Component\Console\Output\ConsoleSectionOutput" when calling "Symfony\Component\Console\Helper\Table::appendRow".
      */
     public function testAppendRowWithoutSectionOutput()
@@ -952,7 +942,7 @@ TABLE;
     }
 
     /**
-     * @expectedException \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Style "absent" is not defined.
      */
     public function testIsNotDefinedStyleException()
@@ -962,7 +952,7 @@ TABLE;
     }
 
     /**
-     * @expectedException \Symfony\Component\Console\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Style "absent" is not defined.
      */
     public function testGetStyleDefinition()
@@ -1174,6 +1164,18 @@ TABLE;
 TABLE;
 
         $this->assertSame($expected, $this->getOutputContent($output));
+    }
+
+    protected function getOutputStream($decorated = false)
+    {
+        return new StreamOutput($this->stream, StreamOutput::VERBOSITY_NORMAL, $decorated);
+    }
+
+    protected function getOutputContent(StreamOutput $output)
+    {
+        rewind($output->getStream());
+
+        return str_replace(PHP_EOL, "\n", stream_get_contents($output->getStream()));
     }
 
     protected function setUp()

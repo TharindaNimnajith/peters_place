@@ -158,26 +158,6 @@ abstract class ReflectingCommand extends Command implements ContextAware
     }
 
     /**
-     * Resolve code to an object in the current scope.
-     *
-     * @param string $code
-     *
-     * @return object Variable instance
-     * @throws RuntimeException when the code resolves to a non-object value
-     *
-     */
-    private function resolveObject($code)
-    {
-        $value = $this->resolveCode($code);
-
-        if (!is_object($value)) {
-            throw new RuntimeException('Unable to inspect a non-object');
-        }
-
-        return $value;
-    }
-
-    /**
      * Resolve code to a value in the current scope.
      *
      * @param string $code
@@ -317,5 +297,25 @@ abstract class ReflectingCommand extends Command implements ContextAware
         }
 
         $this->context->setCommandScopeVariables($vars);
+    }
+
+    /**
+     * Resolve code to an object in the current scope.
+     *
+     * @param string $code
+     *
+     * @return object Variable instance
+     * @throws RuntimeException when the code resolves to a non-object value
+     *
+     */
+    private function resolveObject($code)
+    {
+        $value = $this->resolveCode($code);
+
+        if (!is_object($value)) {
+            throw new RuntimeException('Unable to inspect a non-object');
+        }
+
+        return $value;
     }
 }

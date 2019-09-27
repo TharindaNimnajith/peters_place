@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Fragment;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
@@ -24,17 +25,6 @@ class EsiFragmentRendererTest extends TestCase
     {
         $strategy = new EsiFragmentRenderer(new Esi(), $this->getInlineStrategy(true));
         $strategy->render('/', Request::create('/'));
-    }
-
-    private function getInlineStrategy($called = false)
-    {
-        $inline = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer')->disableOriginalConstructor()->getMock();
-
-        if ($called) {
-            $inline->expects($this->once())->method('render');
-        }
-
-        return $inline;
     }
 
     public function testRenderFallbackWithScalar()
@@ -77,7 +67,7 @@ class EsiFragmentRendererTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      */
     public function testRenderControllerReferenceWithoutSignerThrowsException()
     {
@@ -91,7 +81,7 @@ class EsiFragmentRendererTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      */
     public function testRenderAltControllerReferenceWithoutSignerThrowsException()
     {
@@ -102,5 +92,16 @@ class EsiFragmentRendererTest extends TestCase
         $request->headers->set('Surrogate-Capability', 'ESI/1.0');
 
         $strategy->render('/', $request, ['alt' => new ControllerReference('alt_controller')]);
+    }
+
+    private function getInlineStrategy($called = false)
+    {
+        $inline = $this->getMockBuilder('Symfony\Component\HttpKernel\Fragment\InlineFragmentRenderer')->disableOriginalConstructor()->getMock();
+
+        if ($called) {
+            $inline->expects($this->once())->method('render');
+        }
+
+        return $inline;
     }
 }

@@ -23,19 +23,19 @@ class TestRunnerTest extends TestCase
         $runner->doRun(new Success, ['filter' => 'foo'], false);
     }
 
+    public function testSuiteIsRunnable(): void
+    {
+        $runner = new TestRunner;
+        $runner->setPrinter($this->getResultPrinterMock());
+        $runner->doRun($this->getSuiteMock(), ['filter' => 'foo'], false);
+    }
+
     /**
      * @return ResultPrinter
      */
     private function getResultPrinterMock()
     {
         return $this->createMock(ResultPrinter::class);
-    }
-
-    public function testSuiteIsRunnable(): void
-    {
-        $runner = new TestRunner;
-        $runner->setPrinter($this->getResultPrinterMock());
-        $runner->doRun($this->getSuiteMock(), ['filter' => 'foo'], false);
     }
 
     /**

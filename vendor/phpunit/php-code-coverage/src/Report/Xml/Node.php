@@ -10,19 +10,22 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
+use DOMDocument;
+use DOMElement;
+
 abstract class Node
 {
     /**
-     * @var \DOMDocument
+     * @var DOMDocument
      */
     private $dom;
 
     /**
-     * @var \DOMElement
+     * @var DOMElement
      */
     private $contextNode;
 
-    public function __construct(\DOMElement $context)
+    public function __construct(DOMElement $context)
     {
         $this->setContextNode($context);
     }
@@ -43,17 +46,6 @@ abstract class Node
         return new Totals($totalsContainer);
     }
 
-    protected function getContextNode(): \DOMElement
-    {
-        return $this->contextNode;
-    }
-
-    protected function setContextNode(\DOMElement $context): void
-    {
-        $this->dom = $context->ownerDocument;
-        $this->contextNode = $context;
-    }
-
     public function addDirectory(string $name): Directory
     {
         $dirNode = $this->getDom()->createElementNS(
@@ -67,7 +59,7 @@ abstract class Node
         return new Directory($dirNode);
     }
 
-    public function getDom(): \DOMDocument
+    public function getDom(): DOMDocument
     {
         return $this->dom;
     }
@@ -84,5 +76,16 @@ abstract class Node
         $this->getContextNode()->appendChild($fileNode);
 
         return new File($fileNode);
+    }
+
+    protected function getContextNode(): DOMElement
+    {
+        return $this->contextNode;
+    }
+
+    protected function setContextNode(DOMElement $context): void
+    {
+        $this->dom = $context->ownerDocument;
+        $this->contextNode = $context;
     }
 }

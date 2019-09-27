@@ -36,6 +36,14 @@ class ValidFunctionNamePass extends NamespaceAwarePass
 {
     private $conditionalScopes = 0;
 
+    private static function isConditional(Node $node)
+    {
+        return $node instanceof If_ ||
+            $node instanceof While_ ||
+            $node instanceof Do_ ||
+            $node instanceof Switch_;
+    }
+
     /**
      * Store newly defined function names on the way in, to allow recursion.
      *
@@ -62,14 +70,6 @@ class ValidFunctionNamePass extends NamespaceAwarePass
 
             $this->currentScope[strtolower($name)] = true;
         }
-    }
-
-    private static function isConditional(Node $node)
-    {
-        return $node instanceof If_ ||
-            $node instanceof While_ ||
-            $node instanceof Do_ ||
-            $node instanceof Switch_;
     }
 
     /**

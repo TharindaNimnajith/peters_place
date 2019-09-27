@@ -11,7 +11,9 @@ use Psr\Log\LoggerInterface;
 use Yajra\DataTables\Contracts\DataTable;
 use Yajra\DataTables\Exceptions\Exception;
 use Yajra\DataTables\Processors\DataProcessor;
+use Yajra\DataTables\Utilities\Config;
 use Yajra\DataTables\Utilities\Helper;
+use Yajra\DataTables\Utilities\Request;
 
 /**
  * @method DataTableAbstract setTransformer($transformer)
@@ -27,12 +29,12 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
     /**
      * DataTables Request object.
      *
-     * @var \Yajra\DataTables\Utilities\Request
+     * @var Request
      */
     public $request;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
@@ -134,7 +136,7 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
     protected $appends = [];
 
     /**
-     * @var \Yajra\DataTables\Utilities\Config
+     * @var Config
      */
     protected $config;
 
@@ -219,19 +221,6 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
         $this->columnDef['excess'] = array_merge($this->getColumnsDefinition()['excess'], $names);
 
         return $this;
-    }
-
-    /**
-     * Get columns definition.
-     *
-     * @return array
-     */
-    protected function getColumnsDefinition()
-    {
-        $config = $this->config->get('datatables.columns');
-        $allowed = ['excess', 'escape', 'raw', 'blacklist', 'whitelist'];
-
-        return array_replace_recursive(array_only($config, $allowed), $this->columnDef);
     }
 
     /**
@@ -530,27 +519,6 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
     }
 
     /**
-     * Check if column is blacklisted.
-     *
-     * @param string $column
-     * @return bool
-     */
-    protected function isBlacklisted($column)
-    {
-        $colDef = $this->getColumnsDefinition();
-
-        if (in_array($column, $colDef['blacklist'])) {
-            return true;
-        }
-
-        if ($colDef['whitelist'] === '*' || in_array($column, $colDef['whitelist'])) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Perform sorting of columns.
      */
     public function ordering()
@@ -561,18 +529,6 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
 
         return $this->defaultOrdering();
     }
-
-    /**
-     * Resolve callback parameter instance.
-     *
-     * @return mixed
-     */
-    abstract protected function resolveCallbackParameter();
-
-    /**
-     * Perform default query orderBy clause.
-     */
-    abstract protected function defaultOrdering();
 
     /**
      * Set auto filter off and run your own filter.
@@ -605,7 +561,7 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
      * Convert the object to its JSON representation.
      *
      * @param int $options
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function toJson($options = 0)
     {
@@ -614,25 +570,6 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
         }
 
         return $this->make();
-    }
-
-    /**
-     * Perform necessary filters.
-     *
-     * @return void
-     */
-    protected function filterRecords()
-    {
-        if ($this->autoFilter && $this->request->isSearchable()) {
-            $this->filtering();
-        }
-
-        if (is_callable($this->filterCallback)) {
-            call_user_func($this->filterCallback, $this->resolveCallbackParameter());
-        }
-
-        $this->columnSearch();
-        $this->filteredRecords = $this->isFilterApplied ? $this->filteredCount() : $this->totalRecords;
     }
 
     /**
@@ -651,6 +588,96 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
         }
 
         $this->globalSearch($keyword);
+    }
+
+    /**
+     * Get monolog/logger instance.
+     *
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        $this->logger = $this->logger ?: app(LoggerInterface::class);
+
+        return $this->logger;
+    }
+
+    /**
+     * Set monolog/logger instance.
+     *
+     * @param LoggerInterface $logger
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+
+        return $this;
+    }
+
+    /**
+     * Get columns definition.
+     *
+     * @return array
+     */
+    protected function getColumnsDefinition()
+    {
+        $config = $this->config->get('datatables.columns');
+        $allowed = ['excess', 'escape', 'raw', 'blacklist', 'whitelist'];
+
+        return array_replace_recursive(array_only($config, $allowed), $this->columnDef);
+    }
+
+    /**
+     * Check if column is blacklisted.
+     *
+     * @param string $column
+     * @return bool
+     */
+    protected function isBlacklisted($column)
+    {
+        $colDef = $this->getColumnsDefinition();
+
+        if (in_array($column, $colDef['blacklist'])) {
+            return true;
+        }
+
+        if ($colDef['whitelist'] === '*' || in_array($column, $colDef['whitelist'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Resolve callback parameter instance.
+     *
+     * @return mixed
+     */
+    abstract protected function resolveCallbackParameter();
+
+    /**
+     * Perform default query orderBy clause.
+     */
+    abstract protected function defaultOrdering();
+
+    /**
+     * Perform necessary filters.
+     *
+     * @return void
+     */
+    protected function filterRecords()
+    {
+        if ($this->autoFilter && $this->request->isSearchable()) {
+            $this->filtering();
+        }
+
+        if (is_callable($this->filterCallback)) {
+            call_user_func($this->filterCallback, $this->resolveCallbackParameter());
+        }
+
+        $this->columnSearch();
+        $this->filteredRecords = $this->isFilterApplied ? $this->filteredCount() : $this->totalRecords;
     }
 
     /**
@@ -742,7 +769,7 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
      * Render json response.
      *
      * @param array $data
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function render(array $data)
     {
@@ -793,8 +820,8 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
      * Return an error json response.
      *
      * @param \Exception $exception
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Yajra\DataTables\Exceptions\Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     protected function errorResponse(\Exception $exception)
     {
@@ -814,31 +841,6 @@ abstract class DataTableAbstract implements DataTable, Arrayable, Jsonable
             'data' => [],
             'error' => $error ? __($error) : "Exception Message:\n\n" . $exception->getMessage(),
         ]);
-    }
-
-    /**
-     * Get monolog/logger instance.
-     *
-     * @return \Psr\Log\LoggerInterface
-     */
-    public function getLogger()
-    {
-        $this->logger = $this->logger ?: app(LoggerInterface::class);
-
-        return $this->logger;
-    }
-
-    /**
-     * Set monolog/logger instance.
-     *
-     * @param \Psr\Log\LoggerInterface $logger
-     * @return $this
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-
-        return $this;
     }
 
     /**

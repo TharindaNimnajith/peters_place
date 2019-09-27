@@ -78,13 +78,6 @@ class MetadataBag implements SessionBagInterface
         }
     }
 
-    private function stampCreated($lifetime = null)
-    {
-        $timeStamp = time();
-        $this->meta[self::CREATED] = $this->meta[self::UPDATED] = $this->lastUsed = $timeStamp;
-        $this->meta[self::LIFETIME] = (null === $lifetime) ? ini_get('session.cookie_lifetime') : $lifetime;
-    }
-
     /**
      * Gets the lifetime that the session cookie was set with.
      *
@@ -160,5 +153,12 @@ class MetadataBag implements SessionBagInterface
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    private function stampCreated($lifetime = null)
+    {
+        $timeStamp = time();
+        $this->meta[self::CREATED] = $this->meta[self::UPDATED] = $this->lastUsed = $timeStamp;
+        $this->meta[self::LIFETIME] = (null === $lifetime) ? ini_get('session.cookie_lifetime') : $lifetime;
     }
 }

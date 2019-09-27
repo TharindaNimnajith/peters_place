@@ -183,21 +183,6 @@ class Request
     }
 
     /**
-     * Prepare keyword string value.
-     *
-     * @param string|array $keyword
-     * @return string
-     */
-    protected function prepareKeyword($keyword)
-    {
-        if (is_array($keyword)) {
-            return implode(' ', $keyword);
-        }
-
-        return $keyword;
-    }
-
-    /**
      * Get global search keyword.
      *
      * @return string
@@ -232,5 +217,20 @@ class Request
         return !is_null($this->request->input('start')) &&
             !is_null($this->request->input('length')) &&
             $this->request->input('length') != -1;
+    }
+
+    /**
+     * Prepare keyword string value.
+     *
+     * @param string|array $keyword
+     * @return string
+     */
+    protected function prepareKeyword($keyword)
+    {
+        if (is_array($keyword)) {
+            return implode(' ', $keyword);
+        }
+
+        return $keyword;
     }
 }

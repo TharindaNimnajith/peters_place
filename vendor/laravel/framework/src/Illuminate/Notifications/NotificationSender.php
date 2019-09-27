@@ -79,6 +79,35 @@ class NotificationSender
     }
 
     /**
+     * Send the given notification immediately.
+     *
+     * @param Collection|array|mixed $notifiables
+     * @param mixed $notification
+     * @param array|null $channels
+     * @return void
+     */
+    public function sendNow($notifiables, $notification, array $channels = null)
+    {
+        $notifiables = $this->formatNotifiables($notifiables);
+
+        $original = clone $notification;
+
+        foreach ($notifiables as $notifiable) {
+            if (empty($viaChannels = $channels ?: $notification->via($notifiable))) {
+                continue;
+            }
+
+            $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
+                $notificationId = Str::uuid()->toString();
+
+                foreach ((array)$viaChannels as $channel) {
+                    $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
+                }
+            });
+        }
+    }
+
+    /**
      * Format the notifiables into a Collection / array if necessary.
      *
      * @param mixed $notifiables
@@ -126,35 +155,6 @@ class NotificationSender
                         ->delay($notification->delay)
                 );
             }
-        }
-    }
-
-    /**
-     * Send the given notification immediately.
-     *
-     * @param Collection|array|mixed $notifiables
-     * @param mixed $notification
-     * @param array|null $channels
-     * @return void
-     */
-    public function sendNow($notifiables, $notification, array $channels = null)
-    {
-        $notifiables = $this->formatNotifiables($notifiables);
-
-        $original = clone $notification;
-
-        foreach ($notifiables as $notifiable) {
-            if (empty($viaChannels = $channels ?: $notification->via($notifiable))) {
-                continue;
-            }
-
-            $this->withLocale($this->preferredLocale($notifiable, $notification), function () use ($viaChannels, $notifiable, $original) {
-                $notificationId = Str::uuid()->toString();
-
-                foreach ((array)$viaChannels as $channel) {
-                    $this->sendToNotifiable($notifiable, $notificationId, clone $original, $channel);
-                }
-            });
         }
     }
 

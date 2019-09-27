@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Transport_Esmtp_Auth_PlainAuthenticatorTest extends \SwiftMailerTestCase
+class Swift_Transport_Esmtp_Auth_PlainAuthenticatorTest extends SwiftMailerTestCase
 {
     private $agent;
 
@@ -12,11 +12,6 @@ class Swift_Transport_Esmtp_Auth_PlainAuthenticatorTest extends \SwiftMailerTest
 
         $login = $this->getAuthenticator();
         $this->assertEquals('PLAIN', $login->getAuthKeyword());
-    }
-
-    private function getAuthenticator()
-    {
-        return new Swift_Transport_Esmtp_Auth_PlainAuthenticator();
     }
 
     public function testSuccessfulAuthentication()
@@ -42,7 +37,7 @@ class Swift_Transport_Esmtp_Auth_PlainAuthenticatorTest extends \SwiftMailerTest
     }
 
     /**
-     * @expectedException \Swift_TransportException
+     * @expectedException Swift_TransportException
      */
     public function testAuthenticationFailureSendRset()
     {
@@ -64,5 +59,10 @@ class Swift_Transport_Esmtp_Auth_PlainAuthenticatorTest extends \SwiftMailerTest
     protected function setUp()
     {
         $this->agent = $this->getMockery('Swift_Transport_SmtpAgent')->shouldIgnoreMissing();
+    }
+
+    private function getAuthenticator()
+    {
+        return new Swift_Transport_Esmtp_Auth_PlainAuthenticator();
     }
 }

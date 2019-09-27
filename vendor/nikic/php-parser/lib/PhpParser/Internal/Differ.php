@@ -44,6 +44,20 @@ class Differ
     }
 
     /**
+     * Calculate diff (edit script) from $old to $new.
+     *
+     * @param array $old Original array
+     * @param array $new New array
+     *
+     * @return DiffElem[] Diff (edit script)
+     */
+    public function diff(array $old, array $new)
+    {
+        list($trace, $x, $y) = $this->calculateTrace($old, $new);
+        return $this->extractDiff($trace, $x, $y, $old, $new);
+    }
+
+    /**
      * Coalesce equal-length sequences of remove+add into a replace operation.
      *
      * @param DiffElem[] $diff
@@ -85,20 +99,6 @@ class Differ
             $i = $k - 1;
         }
         return $newDiff;
-    }
-
-    /**
-     * Calculate diff (edit script) from $old to $new.
-     *
-     * @param array $old Original array
-     * @param array $new New array
-     *
-     * @return DiffElem[] Diff (edit script)
-     */
-    public function diff(array $old, array $new)
-    {
-        list($trace, $x, $y) = $this->calculateTrace($old, $new);
-        return $this->extractDiff($trace, $x, $y, $old, $new);
     }
 
     private function calculateTrace(array $a, array $b)

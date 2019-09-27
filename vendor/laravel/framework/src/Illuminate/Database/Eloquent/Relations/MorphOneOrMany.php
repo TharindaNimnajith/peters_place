@@ -103,6 +103,16 @@ abstract class MorphOneOrMany extends HasOneOrMany
     }
 
     /**
+     * Get the plain morph type name without the table.
+     *
+     * @return string
+     */
+    public function getMorphType()
+    {
+        return last(explode('.', $this->morphType));
+    }
+
+    /**
      * Set the foreign ID and type for creating a related model.
      *
      * @param Model $model
@@ -113,15 +123,5 @@ abstract class MorphOneOrMany extends HasOneOrMany
         $model->{$this->getForeignKeyName()} = $this->getParentKey();
 
         $model->{$this->getMorphType()} = $this->morphClass;
-    }
-
-    /**
-     * Get the plain morph type name without the table.
-     *
-     * @return string
-     */
-    public function getMorphType()
-    {
-        return last(explode('.', $this->morphType));
     }
 }

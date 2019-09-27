@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\HttpKernel\EventListener;
 
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +32,8 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
+use UnexpectedValueException;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * Initializes the context from the request and sets request attributes based on a matching route.
@@ -57,16 +60,16 @@ class RouterListener implements EventSubscriberInterface
      * @param string $projectDir
      * @param bool $debug
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($matcher, RequestStack $requestStack, RequestContext $context = null, LoggerInterface $logger = null, string $projectDir = null, bool $debug = true)
     {
         if (!$matcher instanceof UrlMatcherInterface && !$matcher instanceof RequestMatcherInterface) {
-            throw new \InvalidArgumentException('Matcher must either implement UrlMatcherInterface or RequestMatcherInterface.');
+            throw new InvalidArgumentException('Matcher must either implement UrlMatcherInterface or RequestMatcherInterface.');
         }
 
         if (null === $context && !$matcher instanceof RequestContextAwareInterface) {
-            throw new \InvalidArgumentException('You must either pass a RequestContext or the matcher must implement RequestContextAwareInterface.');
+            throw new InvalidArgumentException('You must either pass a RequestContext or the matcher must implement RequestContextAwareInterface.');
         }
 
         $this->matcher = $matcher;
@@ -95,17 +98,6 @@ class RouterListener implements EventSubscriberInterface
     public function onKernelFinishRequest(FinishRequestEvent $event)
     {
         $this->setCurrentRequest($this->requestStack->getParentRequest());
-    }
-
-    private function setCurrentRequest(Request $request = null)
-    {
-        if (null !== $request) {
-            try {
-                $this->context->fromRequest($request);
-            } catch (\UnexpectedValueException $e) {
-                throw new BadRequestHttpException($e->getMessage(), $e, $e->getCode());
-            }
-        }
     }
 
     public function onKernelRequest(GetResponseEvent $event)
@@ -166,10 +158,21 @@ class RouterListener implements EventSubscriberInterface
         }
     }
 
+    private function setCurrentRequest(Request $request = null)
+    {
+        if (null !== $request) {
+            try {
+                $this->context->fromRequest($request);
+            } catch (UnexpectedValueException $e) {
+                throw new BadRequestHttpException($e->getMessage(), $e, $e->getCode());
+            }
+        }
+    }
+
     private function createWelcomeResponse()
     {
         $version = Kernel::VERSION;
-        $baseDir = realpath($this->projectDir) . \DIRECTORY_SEPARATOR;
+        $baseDir = realpath($this->projectDir) . DIRECTORY_SEPARATOR;
         $docVersion = substr(Kernel::VERSION, 0, 3);
 
         ob_start();

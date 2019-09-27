@@ -27,6 +27,63 @@ trait ManagesEvents
     }
 
     /**
+     * Register multiple view composers via an array.
+     *
+     * @param array $composers
+     * @return array
+     */
+    public function composers(array $composers)
+    {
+        $registered = [];
+
+        foreach ($composers as $callback => $views) {
+            $registered = array_merge($registered, $this->composer($views, $callback));
+        }
+
+        return $registered;
+    }
+
+    /**
+     * Register a view composer event.
+     *
+     * @param array|string $views
+     * @param Closure|string $callback
+     * @return array
+     */
+    public function composer($views, $callback)
+    {
+        $composers = [];
+
+        foreach ((array)$views as $view) {
+            $composers[] = $this->addViewEvent($view, $callback, 'composing: ');
+        }
+
+        return $composers;
+    }
+
+    /**
+     * Call the composer for a given view.
+     *
+     * @param ViewContract $view
+     * @return void
+     */
+    public function callComposer(ViewContract $view)
+    {
+        $this->events->dispatch('composing: ' . $view->name(), [$view]);
+    }
+
+    /**
+     * Call the creator for a given view.
+     *
+     * @param ViewContract $view
+     * @return void
+     */
+    public function callCreator(ViewContract $view)
+    {
+        $this->events->dispatch('creating: ' . $view->name(), [$view]);
+    }
+
+    /**
      * Add an event for a given view.
      *
      * @param string $view
@@ -131,62 +188,5 @@ trait ManagesEvents
     protected function classEventMethodForPrefix($prefix)
     {
         return Str::contains($prefix, 'composing') ? 'compose' : 'create';
-    }
-
-    /**
-     * Register multiple view composers via an array.
-     *
-     * @param array $composers
-     * @return array
-     */
-    public function composers(array $composers)
-    {
-        $registered = [];
-
-        foreach ($composers as $callback => $views) {
-            $registered = array_merge($registered, $this->composer($views, $callback));
-        }
-
-        return $registered;
-    }
-
-    /**
-     * Register a view composer event.
-     *
-     * @param array|string $views
-     * @param Closure|string $callback
-     * @return array
-     */
-    public function composer($views, $callback)
-    {
-        $composers = [];
-
-        foreach ((array)$views as $view) {
-            $composers[] = $this->addViewEvent($view, $callback, 'composing: ');
-        }
-
-        return $composers;
-    }
-
-    /**
-     * Call the composer for a given view.
-     *
-     * @param ViewContract $view
-     * @return void
-     */
-    public function callComposer(ViewContract $view)
-    {
-        $this->events->dispatch('composing: ' . $view->name(), [$view]);
-    }
-
-    /**
-     * Call the creator for a given view.
-     *
-     * @param ViewContract $view
-     * @return void
-     */
-    public function callCreator(ViewContract $view)
-    {
-        $this->events->dispatch('creating: ' . $view->name(), [$view]);
     }
 }

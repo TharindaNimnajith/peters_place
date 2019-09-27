@@ -210,6 +210,125 @@ class ResultPrinter extends Printer implements TestListener
         $this->printFooter($result);
     }
 
+    /**
+     * An error occurred.
+     */
+    public function addError(Test $test, Throwable $t, float $time): void
+    {
+        $this->writeProgressWithColor('fg-red, bold', 'E');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * A failure occurred.
+     */
+    public function addFailure(Test $test, AssertionFailedError $e, float $time): void
+    {
+        $this->writeProgressWithColor('bg-red, fg-white', 'F');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * A warning occurred.
+     */
+    public function addWarning(Test $test, Warning $e, float $time): void
+    {
+        $this->writeProgressWithColor('fg-yellow, bold', 'W');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * Incomplete test.
+     */
+    public function addIncompleteTest(Test $test, Throwable $t, float $time): void
+    {
+        $this->writeProgressWithColor('fg-yellow, bold', 'I');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * Risky test.
+     */
+    public function addRiskyTest(Test $test, Throwable $t, float $time): void
+    {
+        $this->writeProgressWithColor('fg-yellow, bold', 'R');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * Skipped test.
+     */
+    public function addSkippedTest(Test $test, Throwable $t, float $time): void
+    {
+        $this->writeProgressWithColor('fg-cyan, bold', 'S');
+        $this->lastTestFailed = true;
+    }
+
+    /**
+     * A testsuite started.
+     */
+    public function startTestSuite(TestSuite $suite): void
+    {
+        if ($this->numTests == -1) {
+            $this->numTests = count($suite);
+            $this->numTestsWidth = strlen((string)$this->numTests);
+            $this->maxColumn = $this->numberOfColumns - strlen('  /  (XXX%)') - (2 * $this->numTestsWidth);
+        }
+    }
+
+    /**
+     * A testsuite ended.
+     */
+    public function endTestSuite(TestSuite $suite): void
+    {
+    }
+
+    /**
+     * A test started.
+     */
+    public function startTest(Test $test): void
+    {
+        if ($this->debug) {
+            $this->write(
+                sprintf(
+                    "Test '%s' started\n",
+                    \PHPUnit\Util\Test::describeAsString($test)
+                )
+            );
+        }
+    }
+
+    /**
+     * A test ended.
+     */
+    public function endTest(Test $test, float $time): void
+    {
+        if ($this->debug) {
+            $this->write(
+                sprintf(
+                    "Test '%s' ended\n",
+                    \PHPUnit\Util\Test::describeAsString($test)
+                )
+            );
+        }
+
+        if (!$this->lastTestFailed) {
+            $this->writeProgress('.');
+        }
+
+        if ($test instanceof TestCase) {
+            $this->numAssertions += $test->getNumAssertions();
+        } elseif ($test instanceof PhptTestCase) {
+            $this->numAssertions++;
+        }
+
+        $this->lastTestFailed = false;
+
+        if ($test instanceof TestCase && !$test->hasExpectationOnOutput()) {
+            $this->write($test->getActualOutput());
+        }
+    }
+
     protected function printHeader(): void
     {
         $this->write("\n\n" . Timer::resourceUsage() . "\n\n");
@@ -425,35 +544,6 @@ class ResultPrinter extends Printer implements TestListener
         return implode("\n", $styledLines);
     }
 
-    private function writeCountString(int $count, string $name, string $color, bool $always = false): void
-    {
-        static $first = true;
-
-        if ($always || $count > 0) {
-            $this->writeWithColor(
-                $color,
-                sprintf(
-                    '%s%s: %d',
-                    !$first ? ', ' : '',
-                    $name,
-                    $count
-                ),
-                false
-            );
-
-            $first = false;
-        }
-    }
-
-    /**
-     * An error occurred.
-     */
-    public function addError(Test $test, Throwable $t, float $time): void
-    {
-        $this->writeProgressWithColor('fg-red, bold', 'E');
-        $this->lastTestFailed = true;
-    }
-
     /**
      * Writes progress with a color sequence if colors are enabled.
      */
@@ -500,113 +590,23 @@ class ResultPrinter extends Printer implements TestListener
         $this->write("\n");
     }
 
-    /**
-     * A failure occurred.
-     */
-    public function addFailure(Test $test, AssertionFailedError $e, float $time): void
+    private function writeCountString(int $count, string $name, string $color, bool $always = false): void
     {
-        $this->writeProgressWithColor('bg-red, fg-white', 'F');
-        $this->lastTestFailed = true;
-    }
+        static $first = true;
 
-    /**
-     * A warning occurred.
-     */
-    public function addWarning(Test $test, Warning $e, float $time): void
-    {
-        $this->writeProgressWithColor('fg-yellow, bold', 'W');
-        $this->lastTestFailed = true;
-    }
-
-    /**
-     * Incomplete test.
-     */
-    public function addIncompleteTest(Test $test, Throwable $t, float $time): void
-    {
-        $this->writeProgressWithColor('fg-yellow, bold', 'I');
-        $this->lastTestFailed = true;
-    }
-
-    /**
-     * Risky test.
-     */
-    public function addRiskyTest(Test $test, Throwable $t, float $time): void
-    {
-        $this->writeProgressWithColor('fg-yellow, bold', 'R');
-        $this->lastTestFailed = true;
-    }
-
-    /**
-     * Skipped test.
-     */
-    public function addSkippedTest(Test $test, Throwable $t, float $time): void
-    {
-        $this->writeProgressWithColor('fg-cyan, bold', 'S');
-        $this->lastTestFailed = true;
-    }
-
-    /**
-     * A testsuite started.
-     */
-    public function startTestSuite(TestSuite $suite): void
-    {
-        if ($this->numTests == -1) {
-            $this->numTests = count($suite);
-            $this->numTestsWidth = strlen((string)$this->numTests);
-            $this->maxColumn = $this->numberOfColumns - strlen('  /  (XXX%)') - (2 * $this->numTestsWidth);
-        }
-    }
-
-    /**
-     * A testsuite ended.
-     */
-    public function endTestSuite(TestSuite $suite): void
-    {
-    }
-
-    /**
-     * A test started.
-     */
-    public function startTest(Test $test): void
-    {
-        if ($this->debug) {
-            $this->write(
+        if ($always || $count > 0) {
+            $this->writeWithColor(
+                $color,
                 sprintf(
-                    "Test '%s' started\n",
-                    \PHPUnit\Util\Test::describeAsString($test)
-                )
+                    '%s%s: %d',
+                    !$first ? ', ' : '',
+                    $name,
+                    $count
+                ),
+                false
             );
-        }
-    }
 
-    /**
-     * A test ended.
-     */
-    public function endTest(Test $test, float $time): void
-    {
-        if ($this->debug) {
-            $this->write(
-                sprintf(
-                    "Test '%s' ended\n",
-                    \PHPUnit\Util\Test::describeAsString($test)
-                )
-            );
-        }
-
-        if (!$this->lastTestFailed) {
-            $this->writeProgress('.');
-        }
-
-        if ($test instanceof TestCase) {
-            $this->numAssertions += $test->getNumAssertions();
-        } elseif ($test instanceof PhptTestCase) {
-            $this->numAssertions++;
-        }
-
-        $this->lastTestFailed = false;
-
-        if ($test instanceof TestCase && !$test->hasExpectationOnOutput()) {
-            $this->write($test->getActualOutput());
+            $first = false;
         }
     }
 }

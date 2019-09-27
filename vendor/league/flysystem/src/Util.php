@@ -85,24 +85,6 @@ class Util
     }
 
     /**
-     * Removes unprintable characters and invalid unicode characters.
-     *
-     * @param string $path
-     *
-     * @return string $path
-     */
-    protected static function removeFunkyWhiteSpace($path)
-    {
-        // We do this check in a loop, since removing invalid unicode characters
-        // can lead to new characters being created.
-        while (preg_match('#\p{C}+|^\./#u', $path)) {
-            $path = preg_replace('#\p{C}+|^\./#u', '', $path);
-        }
-
-        return $path;
-    }
-
-    /**
      * Normalize prefix.
      *
      * @param string $prefix
@@ -172,41 +154,6 @@ class Util
     }
 
     /**
-     * Emulate the directories of a single object.
-     *
-     * @param array $object
-     * @param array $directories
-     * @param array $listedDirectories
-     *
-     * @return array
-     */
-    protected static function emulateObjectDirectories(array $object, array $directories, array $listedDirectories)
-    {
-        if ($object['type'] === 'dir') {
-            $listedDirectories[] = $object['path'];
-        }
-
-        if (empty($object['dirname'])) {
-            return [$directories, $listedDirectories];
-        }
-
-        $parent = $object['dirname'];
-
-        while (!empty($parent) && !in_array($parent, $directories)) {
-            $directories[] = $parent;
-            $parent = static::dirname($parent);
-        }
-
-        if (isset($object['type']) && $object['type'] === 'dir') {
-            $listedDirectories[] = $object['path'];
-
-            return [$directories, $listedDirectories];
-        }
-
-        return [$directories, $listedDirectories];
-    }
-
-    /**
      * Get a normalized dirname from a path.
      *
      * @param string $path
@@ -250,42 +197,6 @@ class Util
         $pathinfo += pathinfo($pathinfo['basename']);
 
         return $pathinfo + ['dirname' => ''];
-    }
-
-    /**
-     * Returns the trailing name component of the path.
-     *
-     * @param string $path
-     *
-     * @return string
-     */
-    private static function basename($path)
-    {
-        $separators = DIRECTORY_SEPARATOR === '/' ? '/' : '\/';
-
-        $path = rtrim($path, $separators);
-
-        $basename = preg_replace('#.*?([^' . preg_quote($separators, '#') . ']+$)#', '$1', $path);
-
-        if (DIRECTORY_SEPARATOR === '/') {
-            return $basename;
-        }
-        // @codeCoverageIgnoreStart
-        // Extra Windows path munging. This is tested via AppVeyor, but code
-        // coverage is not reported.
-
-        // Handle relative paths with drive letters. c:file.txt.
-        while (preg_match('#^[a-zA-Z]{1}:[^\\\/]#', $basename)) {
-            $basename = substr($basename, 2);
-        }
-
-        // Remove colon for standalone drive letter names.
-        if (preg_match('#^[a-zA-Z]{1}:$#', $basename)) {
-            $basename = rtrim($basename, ':');
-        }
-
-        return $basename;
-        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -345,5 +256,94 @@ class Util
         $stat = fstat($resource);
 
         return $stat['size'];
+    }
+
+    /**
+     * Removes unprintable characters and invalid unicode characters.
+     *
+     * @param string $path
+     *
+     * @return string $path
+     */
+    protected static function removeFunkyWhiteSpace($path)
+    {
+        // We do this check in a loop, since removing invalid unicode characters
+        // can lead to new characters being created.
+        while (preg_match('#\p{C}+|^\./#u', $path)) {
+            $path = preg_replace('#\p{C}+|^\./#u', '', $path);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Emulate the directories of a single object.
+     *
+     * @param array $object
+     * @param array $directories
+     * @param array $listedDirectories
+     *
+     * @return array
+     */
+    protected static function emulateObjectDirectories(array $object, array $directories, array $listedDirectories)
+    {
+        if ($object['type'] === 'dir') {
+            $listedDirectories[] = $object['path'];
+        }
+
+        if (empty($object['dirname'])) {
+            return [$directories, $listedDirectories];
+        }
+
+        $parent = $object['dirname'];
+
+        while (!empty($parent) && !in_array($parent, $directories)) {
+            $directories[] = $parent;
+            $parent = static::dirname($parent);
+        }
+
+        if (isset($object['type']) && $object['type'] === 'dir') {
+            $listedDirectories[] = $object['path'];
+
+            return [$directories, $listedDirectories];
+        }
+
+        return [$directories, $listedDirectories];
+    }
+
+    /**
+     * Returns the trailing name component of the path.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    private static function basename($path)
+    {
+        $separators = DIRECTORY_SEPARATOR === '/' ? '/' : '\/';
+
+        $path = rtrim($path, $separators);
+
+        $basename = preg_replace('#.*?([^' . preg_quote($separators, '#') . ']+$)#', '$1', $path);
+
+        if (DIRECTORY_SEPARATOR === '/') {
+            return $basename;
+        }
+        // @codeCoverageIgnoreStart
+        // Extra Windows path munging. This is tested via AppVeyor, but code
+        // coverage is not reported.
+
+        // Handle relative paths with drive letters. c:file.txt.
+        while (preg_match('#^[a-zA-Z]{1}:[^\\\/]#', $basename)) {
+            $basename = substr($basename, 2);
+        }
+
+        // Remove colon for standalone drive letter names.
+        if (preg_match('#^[a-zA-Z]{1}:$#', $basename)) {
+            $basename = rtrim($basename, ':');
+        }
+
+        return $basename;
+        // @codeCoverageIgnoreEnd
     }
 }

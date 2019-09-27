@@ -1,6 +1,6 @@
 <?php
 
-class Swift_MailerTest extends \SwiftMailerTestCase
+class Swift_MailerTest extends SwiftMailerTestCase
 {
     public function testTransportIsStartedWhenSending()
     {
@@ -23,21 +23,6 @@ class Swift_MailerTest extends \SwiftMailerTestCase
 
         $mailer = $this->createMailer($transport);
         $mailer->send($message);
-    }
-
-    private function createTransport()
-    {
-        return $this->getMockery('Swift_Transport')->shouldIgnoreMissing();
-    }
-
-    private function createMessage()
-    {
-        return $this->getMockery('Swift_Mime_SimpleMessage')->shouldIgnoreMissing();
-    }
-
-    private function createMailer(Swift_Transport $transport)
-    {
-        return new Swift_Mailer($transport);
     }
 
     public function testTransportIsOnlyStartedOnce()
@@ -71,7 +56,7 @@ class Swift_MailerTest extends \SwiftMailerTestCase
         $message = $this->createMessage();
         $transport->shouldReceive('send')
             ->once()
-            ->with($message, \Mockery::any());
+            ->with($message, Mockery::any());
 
         $mailer = $this->createMailer($transport);
         $mailer->send($message);
@@ -83,7 +68,7 @@ class Swift_MailerTest extends \SwiftMailerTestCase
         $message = $this->createMessage();
         $transport->shouldReceive('send')
             ->once()
-            ->with($message, \Mockery::any())
+            ->with($message, Mockery::any())
             ->andReturn(57);
 
         $mailer = $this->createMailer($transport);
@@ -136,6 +121,21 @@ class Swift_MailerTest extends \SwiftMailerTestCase
             ->with($plugin);
 
         $mailer->registerPlugin($plugin);
+    }
+
+    private function createTransport()
+    {
+        return $this->getMockery('Swift_Transport')->shouldIgnoreMissing();
+    }
+
+    private function createMessage()
+    {
+        return $this->getMockery('Swift_Mime_SimpleMessage')->shouldIgnoreMissing();
+    }
+
+    private function createMailer(Swift_Transport $transport)
+    {
+        return new Swift_Mailer($transport);
     }
 
     private function createPlugin()

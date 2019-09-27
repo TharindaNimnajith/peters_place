@@ -42,30 +42,6 @@ class Manager
     }
 
     /**
-     * Setup the default database configuration options.
-     *
-     * @return void
-     */
-    protected function setupDefaultConfiguration()
-    {
-        $this->container['config']['database.fetch'] = PDO::FETCH_OBJ;
-
-        $this->container['config']['database.default'] = 'default';
-    }
-
-    /**
-     * Build the database manager instance.
-     *
-     * @return void
-     */
-    protected function setupManager()
-    {
-        $factory = new ConnectionFactory($this->container);
-
-        $this->manager = new DatabaseManager($this->container, $factory);
-    }
-
-    /**
      * Get a fluent query builder instance.
      *
      * @param string $table
@@ -199,5 +175,29 @@ class Manager
     public function setEventDispatcher(Dispatcher $dispatcher)
     {
         $this->container->instance('events', $dispatcher);
+    }
+
+    /**
+     * Setup the default database configuration options.
+     *
+     * @return void
+     */
+    protected function setupDefaultConfiguration()
+    {
+        $this->container['config']['database.fetch'] = PDO::FETCH_OBJ;
+
+        $this->container['config']['database.default'] = 'default';
+    }
+
+    /**
+     * Build the database manager instance.
+     *
+     * @return void
+     */
+    protected function setupManager()
+    {
+        $factory = new ConnectionFactory($this->container);
+
+        $this->manager = new DatabaseManager($this->container, $factory);
     }
 }

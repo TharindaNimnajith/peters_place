@@ -46,82 +46,6 @@ trait HasEvents
     }
 
     /**
-     * Register a single observer with the model.
-     *
-     * @param object|string $class
-     * @return void
-     *
-     * @throws RuntimeException
-     */
-    protected function registerObserver($class)
-    {
-        $className = $this->resolveObserverClassName($class);
-
-        // When registering a model observer, we will spin through the possible events
-        // and determine if this observer has that method. If it does, we will hook
-        // it into the model's event system, making it convenient to watch these.
-        foreach ($this->getObservableEvents() as $event) {
-            if (method_exists($class, $event)) {
-                static::registerModelEvent($event, $className . '@' . $event);
-            }
-        }
-    }
-
-    /**
-     * Resolve the observer's class name from an object or string.
-     *
-     * @param object|string $class
-     * @return string
-     *
-     * @throws InvalidArgumentException
-     */
-    private function resolveObserverClassName($class)
-    {
-        if (is_object($class)) {
-            return get_class($class);
-        }
-
-        if (class_exists($class)) {
-            return $class;
-        }
-
-        throw new InvalidArgumentException('Unable to find observer: ' . $class);
-    }
-
-    /**
-     * Get the observable event names.
-     *
-     * @return array
-     */
-    public function getObservableEvents()
-    {
-        return array_merge(
-            [
-                'retrieved', 'creating', 'created', 'updating', 'updated',
-                'saving', 'saved', 'restoring', 'restored', 'replicating',
-                'deleting', 'deleted', 'forceDeleted',
-            ],
-            $this->observables
-        );
-    }
-
-    /**
-     * Register a model event with the dispatcher.
-     *
-     * @param string $event
-     * @param Closure|string $callback
-     * @return void
-     */
-    protected static function registerModelEvent($event, $callback)
-    {
-        if (isset(static::$dispatcher)) {
-            $name = static::class;
-
-            static::$dispatcher->listen("eloquent.{$event}: {$name}", $callback);
-        }
-    }
-
-    /**
      * Register a retrieved model event with the dispatcher.
      *
      * @param Closure|string $callback
@@ -306,6 +230,39 @@ trait HasEvents
     }
 
     /**
+     * Register a model event with the dispatcher.
+     *
+     * @param string $event
+     * @param Closure|string $callback
+     * @return void
+     */
+    protected static function registerModelEvent($event, $callback)
+    {
+        if (isset(static::$dispatcher)) {
+            $name = static::class;
+
+            static::$dispatcher->listen("eloquent.{$event}: {$name}", $callback);
+        }
+    }
+
+    /**
+     * Get the observable event names.
+     *
+     * @return array
+     */
+    public function getObservableEvents()
+    {
+        return array_merge(
+            [
+                'retrieved', 'creating', 'created', 'updating', 'updated',
+                'saving', 'saved', 'restoring', 'restored', 'replicating',
+                'deleting', 'deleted', 'forceDeleted',
+            ],
+            $this->observables
+        );
+    }
+
+    /**
      * Set the observable event names.
      *
      * @param array $observables
@@ -342,6 +299,28 @@ trait HasEvents
         $this->observables = array_diff(
             $this->observables, is_array($observables) ? $observables : func_get_args()
         );
+    }
+
+    /**
+     * Register a single observer with the model.
+     *
+     * @param object|string $class
+     * @return void
+     *
+     * @throws RuntimeException
+     */
+    protected function registerObserver($class)
+    {
+        $className = $this->resolveObserverClassName($class);
+
+        // When registering a model observer, we will spin through the possible events
+        // and determine if this observer has that method. If it does, we will hook
+        // it into the model's event system, making it convenient to watch these.
+        foreach ($this->getObservableEvents() as $event) {
+            if (method_exists($class, $event)) {
+                static::registerModelEvent($event, $className . '@' . $event);
+            }
+        }
     }
 
     /**
@@ -410,5 +389,26 @@ trait HasEvents
         if (!is_null($result)) {
             return $result;
         }
+    }
+
+    /**
+     * Resolve the observer's class name from an object or string.
+     *
+     * @param object|string $class
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    private function resolveObserverClassName($class)
+    {
+        if (is_object($class)) {
+            return get_class($class);
+        }
+
+        if (class_exists($class)) {
+            return $class;
+        }
+
+        throw new InvalidArgumentException('Unable to find observer: ' . $class);
     }
 }

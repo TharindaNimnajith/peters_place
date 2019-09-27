@@ -508,6 +508,90 @@ class Str
     }
 
     /**
+     * Determine if a given string starts with a given substring.
+     *
+     * @param string $haystack
+     * @param string|array $needles
+     * @return bool
+     */
+    public static function startsWith($haystack, $needles)
+    {
+        foreach ((array)$needles as $needle) {
+            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string)$needle) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Make a string's first character uppercase.
+     *
+     * @param string $string
+     * @return string
+     */
+    public static function ucfirst($string)
+    {
+        return static::upper(static::substr($string, 0, 1)) . static::substr($string, 1);
+    }
+
+    /**
+     * Convert the given string to upper-case.
+     *
+     * @param string $value
+     * @return string
+     */
+    public static function upper($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    /**
+     * Returns the portion of string specified by the start and length parameters.
+     *
+     * @param string $string
+     * @param int $start
+     * @param int|null $length
+     * @return string
+     */
+    public static function substr($string, $start, $length = null)
+    {
+        return mb_substr($string, $start, $length, 'UTF-8');
+    }
+
+    /**
+     * Generate a UUID (version 4).
+     *
+     * @return UuidInterface
+     */
+    public static function uuid()
+    {
+        return Uuid::uuid4();
+    }
+
+    /**
+     * Generate a time-ordered UUID (version 4).
+     *
+     * @return UuidInterface
+     */
+    public static function orderedUuid()
+    {
+        $factory = new UuidFactory;
+
+        $factory->setRandomGenerator(new CombGenerator(
+            $factory->getRandomGenerator(),
+            $factory->getNumberConverter()
+        ));
+
+        $factory->setCodec(new TimestampFirstCombCodec(
+            $factory->getUuidBuilder()
+        ));
+
+        return $factory->uuid4();
+    }
+
+    /**
      * Returns the language specific replacements for the ascii method.
      *
      * Note: Adapted from Stringy\Stringy.
@@ -677,89 +761,5 @@ class Str
             'Zh' => ['Ж'],
             ' ' => ["\xC2\xA0", "\xE2\x80\x80", "\xE2\x80\x81", "\xE2\x80\x82", "\xE2\x80\x83", "\xE2\x80\x84", "\xE2\x80\x85", "\xE2\x80\x86", "\xE2\x80\x87", "\xE2\x80\x88", "\xE2\x80\x89", "\xE2\x80\x8A", "\xE2\x80\xAF", "\xE2\x81\x9F", "\xE3\x80\x80", "\xEF\xBE\xA0"],
         ];
-    }
-
-    /**
-     * Determine if a given string starts with a given substring.
-     *
-     * @param string $haystack
-     * @param string|array $needles
-     * @return bool
-     */
-    public static function startsWith($haystack, $needles)
-    {
-        foreach ((array)$needles as $needle) {
-            if ($needle !== '' && substr($haystack, 0, strlen($needle)) === (string)$needle) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Make a string's first character uppercase.
-     *
-     * @param string $string
-     * @return string
-     */
-    public static function ucfirst($string)
-    {
-        return static::upper(static::substr($string, 0, 1)) . static::substr($string, 1);
-    }
-
-    /**
-     * Convert the given string to upper-case.
-     *
-     * @param string $value
-     * @return string
-     */
-    public static function upper($value)
-    {
-        return mb_strtoupper($value, 'UTF-8');
-    }
-
-    /**
-     * Returns the portion of string specified by the start and length parameters.
-     *
-     * @param string $string
-     * @param int $start
-     * @param int|null $length
-     * @return string
-     */
-    public static function substr($string, $start, $length = null)
-    {
-        return mb_substr($string, $start, $length, 'UTF-8');
-    }
-
-    /**
-     * Generate a UUID (version 4).
-     *
-     * @return UuidInterface
-     */
-    public static function uuid()
-    {
-        return Uuid::uuid4();
-    }
-
-    /**
-     * Generate a time-ordered UUID (version 4).
-     *
-     * @return UuidInterface
-     */
-    public static function orderedUuid()
-    {
-        $factory = new UuidFactory;
-
-        $factory->setRandomGenerator(new CombGenerator(
-            $factory->getRandomGenerator(),
-            $factory->getNumberConverter()
-        ));
-
-        $factory->setCodec(new TimestampFirstCombCodec(
-            $factory->getUuidBuilder()
-        ));
-
-        return $factory->uuid4();
     }
 }

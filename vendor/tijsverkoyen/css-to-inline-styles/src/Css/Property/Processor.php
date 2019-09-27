@@ -40,24 +40,6 @@ class Processor
     }
 
     /**
-     * @param $string
-     * @return mixed|string
-     */
-    private function cleanup($string)
-    {
-        $string = str_replace(array("\r", "\n"), '', $string);
-        $string = str_replace(array("\t"), ' ', $string);
-        $string = str_replace('"', '\'', $string);
-        $string = preg_replace('|/\*.*?\*/|', '', $string);
-        $string = preg_replace('/\s\s+/', ' ', $string);
-
-        $string = trim($string);
-        $string = rtrim($string, ';');
-
-        return $string;
-    }
-
-    /**
      * Convert an array of property-strings into objects
      *
      * @param array $properties
@@ -118,5 +100,23 @@ class Processor
         }
 
         return implode(' ', $chunks);
+    }
+
+    /**
+     * @param $string
+     * @return mixed|string
+     */
+    private function cleanup($string)
+    {
+        $string = str_replace(array("\r", "\n"), '', $string);
+        $string = str_replace(array("\t"), ' ', $string);
+        $string = str_replace('"', '\'', $string);
+        $string = preg_replace('|/\*.*?\*/|', '', $string);
+        $string = preg_replace('/\s\s+/', ' ', $string);
+
+        $string = trim($string);
+        $string = rtrim($string, ';');
+
+        return $string;
     }
 }

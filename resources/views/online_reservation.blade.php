@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Peter's Place Hotel || Online Room Reservation</title>
 
@@ -29,6 +30,7 @@
         #s label {
             margin-top: 3.5%;
         }
+
     </style>
 
     <!--Materialize CSS-->
@@ -111,17 +113,20 @@
                             <div class="panel-body">
                                 <div class="form-group">
                                     <label>First Name</label>
-                                    <input name="fname" type="text" class="form-control" value="{{ old('fname') }}"/>
+                                    <input name="fname" type="text" class="form-control"
+                                           value="{{ old('fname') }}"/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
-                                    <input name="lname" type="text" class="form-control" value="{{ old('lname') }}"/>
+                                    <input name="lname" type="text" class="form-control"
+                                           value="{{ old('lname') }}"/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone Number</label>
-                                    <input name="phone" type="text" class="form-control" value="{{ old('phone') }}"/>
+                                    <input name="phone" type="text" class="form-control"
+                                           value="{{ old('phone') }}"/>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +156,8 @@
                                     <select name="rtype" class="form-control">
                                         @foreach ($rt as $item)
                                             @if (isset($item))
-                                                <option value="{{ $item->id }}"
-                                                        @if (old('rtype') == '{{ $item->id }}') selected @endif>{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}" @if (old('rtype')=='{{ $item->id }}' )
+                                                selected @endif>{{ $item->name }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -182,4 +187,5 @@
     </div>
 </div>
 </body>
+
 </html>

@@ -79,16 +79,6 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         return $this;
     }
 
-    /** Set parameters which are used by each extension handler */
-    private function setHandlerParams()
-    {
-        foreach ($this->handlers as $keyword => $handler) {
-            if (array_key_exists($keyword, $this->capabilities)) {
-                $handler->setKeywordParams($this->capabilities[$keyword]);
-            }
-        }
-    }
-
     /**
      * Set the host to connect to.
      *
@@ -303,6 +293,37 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         trigger_error('Call to undefined method ' . $method, E_USER_ERROR);
     }
 
+    /**
+     * Run a command against the buffer, expecting the given response codes.
+     *
+     * If no response codes are given, the response will not be validated.
+     * If codes are given, an exception will be thrown on an invalid response.
+     *
+     * @param string $command
+     * @param int[] $codes
+     * @param string[] $failures An array of failures by-reference
+     * @param bool $pipeline Do not wait for response
+     * @param string $address The address, if command is RCPT TO.
+     *
+     * @return string|null The server response, or null if pipelining is enabled
+     */
+    public function executeCommand($command, $codes = [], &$failures = null, $pipeline = false, $address = null)
+    {
+        $failures = (array)$failures;
+        $stopSignal = false;
+        $response = null;
+        foreach ($this->getActiveHandlers() as $handler) {
+            $response = $handler->onCommand(
+                $this, $command, $codes, $failures, $stopSignal
+            );
+            if ($stopSignal) {
+                return $response;
+            }
+        }
+
+        return parent::executeCommand($command, $codes, $failures, $pipeline, $address);
+    }
+
     /** Get the params to initialize the buffer */
     protected function getBufferParams()
     {
@@ -351,35 +372,44 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         }
     }
 
-    /**
-     * Run a command against the buffer, expecting the given response codes.
-     *
-     * If no response codes are given, the response will not be validated.
-     * If codes are given, an exception will be thrown on an invalid response.
-     *
-     * @param string $command
-     * @param int[] $codes
-     * @param string[] $failures An array of failures by-reference
-     * @param bool $pipeline Do not wait for response
-     * @param string $address The address, if command is RCPT TO.
-     *
-     * @return string|null The server response, or null if pipelining is enabled
-     */
-    public function executeCommand($command, $codes = [], &$failures = null, $pipeline = false, $address = null)
+    /** Overridden to add Extension support */
+    protected function doMailFromCommand($address)
     {
-        $failures = (array)$failures;
-        $stopSignal = false;
-        $response = null;
-        foreach ($this->getActiveHandlers() as $handler) {
-            $response = $handler->onCommand(
-                $this, $command, $codes, $failures, $stopSignal
-            );
-            if ($stopSignal) {
-                return $response;
+        $address = $this->addressEncoder->encodeString($address);
+        $handlers = $this->getActiveHandlers();
+        $params = [];
+        foreach ($handlers as $handler) {
+            $params = array_merge($params, (array)$handler->getMailParams());
+        }
+        $paramStr = !empty($params) ? ' ' . implode(' ', $params) : '';
+        $this->executeCommand(
+            sprintf("MAIL FROM:<%s>%s\r\n", $address, $paramStr), [250], $failures, true
+        );
+    }
+
+    /** Overridden to add Extension support */
+    protected function doRcptToCommand($address)
+    {
+        $address = $this->addressEncoder->encodeString($address);
+        $handlers = $this->getActiveHandlers();
+        $params = [];
+        foreach ($handlers as $handler) {
+            $params = array_merge($params, (array)$handler->getRcptParams());
+        }
+        $paramStr = !empty($params) ? ' ' . implode(' ', $params) : '';
+        $this->executeCommand(
+            sprintf("RCPT TO:<%s>%s\r\n", $address, $paramStr), [250, 251, 252], $failures, true, $address
+        );
+    }
+
+    /** Set parameters which are used by each extension handler */
+    private function setHandlerParams()
+    {
+        foreach ($this->handlers as $keyword => $handler) {
+            if (array_key_exists($keyword, $this->capabilities)) {
+                $handler->setKeywordParams($this->capabilities[$keyword]);
             }
         }
-
-        return parent::executeCommand($command, $codes, $failures, $pipeline, $address);
     }
 
     /** Get ESMTP handlers which are currently ok to use */
@@ -412,35 +442,5 @@ class Swift_Transport_EsmtpTransport extends Swift_Transport_AbstractSmtpTranspo
         }
 
         return $capabilities;
-    }
-
-    /** Overridden to add Extension support */
-    protected function doMailFromCommand($address)
-    {
-        $address = $this->addressEncoder->encodeString($address);
-        $handlers = $this->getActiveHandlers();
-        $params = [];
-        foreach ($handlers as $handler) {
-            $params = array_merge($params, (array)$handler->getMailParams());
-        }
-        $paramStr = !empty($params) ? ' ' . implode(' ', $params) : '';
-        $this->executeCommand(
-            sprintf("MAIL FROM:<%s>%s\r\n", $address, $paramStr), [250], $failures, true
-        );
-    }
-
-    /** Overridden to add Extension support */
-    protected function doRcptToCommand($address)
-    {
-        $address = $this->addressEncoder->encodeString($address);
-        $handlers = $this->getActiveHandlers();
-        $params = [];
-        foreach ($handlers as $handler) {
-            $params = array_merge($params, (array)$handler->getRcptParams());
-        }
-        $paramStr = !empty($params) ? ' ' . implode(' ', $params) : '';
-        $this->executeCommand(
-            sprintf("RCPT TO:<%s>%s\r\n", $address, $paramStr), [250, 251, 252], $failures, true, $address
-        );
     }
 }

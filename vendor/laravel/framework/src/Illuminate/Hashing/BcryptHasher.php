@@ -56,17 +56,6 @@ class BcryptHasher extends AbstractHasher implements HasherContract
     }
 
     /**
-     * Extract the cost value from the options array.
-     *
-     * @param array $options
-     * @return int
-     */
-    protected function cost(array $options = [])
-    {
-        return $options['rounds'] ?? $this->rounds;
-    }
-
-    /**
      * Check the given plain value against a hash.
      *
      * @param string $value
@@ -110,5 +99,16 @@ class BcryptHasher extends AbstractHasher implements HasherContract
         $this->rounds = (int)$rounds;
 
         return $this;
+    }
+
+    /**
+     * Extract the cost value from the options array.
+     *
+     * @param array $options
+     * @return int
+     */
+    protected function cost(array $options = [])
+    {
+        return $options['rounds'] ?? $this->rounds;
     }
 }

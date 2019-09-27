@@ -31,6 +31,16 @@ final class RelatedPart extends AbstractMultipartPart
         parent::__construct($part, ...$parts);
     }
 
+    public function getParts(): array
+    {
+        return array_merge([$this->mainPart], parent::getParts());
+    }
+
+    public function getMediaSubtype(): string
+    {
+        return 'related';
+    }
+
     private function prepareParts(AbstractPart ...$parts): void
     {
         foreach ($parts as $part) {
@@ -43,15 +53,5 @@ final class RelatedPart extends AbstractMultipartPart
     private function generateContentId(): string
     {
         return bin2hex(random_bytes(16)) . '@symfony';
-    }
-
-    public function getParts(): array
-    {
-        return array_merge([$this->mainPart], parent::getParts());
-    }
-
-    public function getMediaSubtype(): string
-    {
-        return 'related';
     }
 }

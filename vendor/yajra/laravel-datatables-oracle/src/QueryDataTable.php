@@ -2,9 +2,13 @@
 
 namespace Yajra\DataTables;
 
+use Exception;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Yajra\DataTables\Utilities\Helper;
 
@@ -13,14 +17,14 @@ class QueryDataTable extends DataTableAbstract
     /**
      * Builder object.
      *
-     * @var \Illuminate\Database\Query\Builder
+     * @var Builder
      */
     protected $query;
 
     /**
      * Database connection used.
      *
-     * @var \Illuminate\Database\Connection
+     * @var Connection
      */
     protected $connection;
 
@@ -60,7 +64,7 @@ class QueryDataTable extends DataTableAbstract
     protected $keepSelectBindings = false;
 
     /**
-     * @param \Illuminate\Database\Query\Builder $builder
+     * @param Builder $builder
      */
     public function __construct(Builder $builder)
     {
@@ -89,8 +93,8 @@ class QueryDataTable extends DataTableAbstract
      * Organizes works.
      *
      * @param bool $mDataSupport
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Exception
+     * @return JsonResponse
+     * @throws Exception
      */
     public function make($mDataSupport = true)
     {
@@ -102,27 +106,9 @@ class QueryDataTable extends DataTableAbstract
             $data = $this->transform($results, $processed);
 
             return $this->render($data);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return $this->errorResponse($exception);
         }
-    }
-
-    /**
-     * Prepare query by executing count, filter, order and paginate.
-     */
-    protected function prepareQuery()
-    {
-        if (!$this->prepared) {
-            $this->totalRecords = $this->totalCount();
-
-            if ($this->totalRecords) {
-                $this->filterRecords();
-                $this->ordering();
-                $this->paginate();
-            }
-        }
-
-        $this->prepared = true;
     }
 
     /**
@@ -155,51 +141,9 @@ class QueryDataTable extends DataTableAbstract
     }
 
     /**
-     * Prepare count query builder.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
-     */
-    protected function prepareCountQuery()
-    {
-        $builder = clone $this->query;
-
-        if (!$this->isComplexQuery($builder)) {
-            $row_count = $this->wrap('row_count');
-            $builder->select($this->connection->raw("'1' as {$row_count}"));
-            if (!$this->keepSelectBindings) {
-                $builder->setBindings([], 'select');
-            }
-        }
-
-        return $builder;
-    }
-
-    /**
-     * Check if builder query uses complex sql.
-     *
-     * @param \Illuminate\Database\Query\Builder $builder
-     * @return bool
-     */
-    protected function isComplexQuery($builder)
-    {
-        return Str::contains(Str::lower($builder->toSql()), ['union', 'having', 'distinct', 'order by', 'group by']);
-    }
-
-    /**
-     * Wrap column with DB grammar.
-     *
-     * @param string $column
-     * @return string
-     */
-    protected function wrap($column)
-    {
-        return $this->connection->getQueryGrammar()->wrap($column);
-    }
-
-    /**
      * Get paginated results.
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
     public function results()
     {
@@ -272,6 +216,192 @@ class QueryDataTable extends DataTableAbstract
     }
 
     /**
+     * Add custom filter handler for the give column.
+     *
+     * @param string $column
+     * @param callable $callback
+     * @return $this
+     */
+    public function filterColumn($column, callable $callback)
+    {
+        $this->columnDef['filter'][$column] = ['method' => $callback];
+
+        return $this;
+    }
+
+    /**
+     * Order each given columns versus the given custom sql.
+     *
+     * @param array $columns
+     * @param string $sql
+     * @param array $bindings
+     * @return $this
+     */
+    public function orderColumns(array $columns, $sql, $bindings = [])
+    {
+        foreach ($columns as $column) {
+            $this->orderColumn($column, str_replace(':column', $column, $sql), $bindings);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Override default column ordering.
+     *
+     * @param string $column
+     * @param string $sql
+     * @param array $bindings
+     * @return $this
+     * @internal string $1 Special variable that returns the requested order direction of the column.
+     */
+    public function orderColumn($column, $sql, $bindings = [])
+    {
+        $this->columnDef['order'][$column] = compact('sql', 'bindings');
+
+        return $this;
+    }
+
+    /**
+     * Set datatables to do ordering with NULLS LAST option.
+     *
+     * @return $this
+     */
+    public function orderByNullsLast()
+    {
+        $this->nullsLast = true;
+
+        return $this;
+    }
+
+    /**
+     * Paginate dataTable using limit without offset
+     * with additional where clause via callback.
+     *
+     * @param callable $callback
+     * @return $this
+     */
+    public function limit(callable $callback)
+    {
+        $this->limitCallback = $callback;
+
+        return $this;
+    }
+
+    /**
+     * Perform pagination.
+     *
+     * @return void
+     */
+    public function paging()
+    {
+        $limit = (int)$this->request->input('length') > 0 ? $this->request->input('length') : 10;
+        if (is_callable($this->limitCallback)) {
+            $this->query->limit($limit);
+            call_user_func_array($this->limitCallback, [$this->query]);
+        } else {
+            $this->query->skip($this->request->input('start'))->take($limit);
+        }
+    }
+
+    /**
+     * Add column in collection.
+     *
+     * @param string $name
+     * @param string|callable $content
+     * @param bool|int $order
+     * @return $this
+     */
+    public function addColumn($name, $content, $order = false)
+    {
+        $this->pushToBlacklist($name);
+
+        return parent::addColumn($name, $content, $order);
+    }
+
+    /**
+     * Get filtered, ordered and paginated query.
+     *
+     * @return EloquentBuilder|Builder
+     */
+    public function getFilteredQuery()
+    {
+        $this->prepareQuery();
+
+        return $this->getQuery();
+    }
+
+    /**
+     * Get query builder instance.
+     *
+     * @return EloquentBuilder|Builder
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
+
+    /**
+     * Prepare query by executing count, filter, order and paginate.
+     */
+    protected function prepareQuery()
+    {
+        if (!$this->prepared) {
+            $this->totalRecords = $this->totalCount();
+
+            if ($this->totalRecords) {
+                $this->filterRecords();
+                $this->ordering();
+                $this->paginate();
+            }
+        }
+
+        $this->prepared = true;
+    }
+
+    /**
+     * Prepare count query builder.
+     *
+     * @return EloquentBuilder|Builder
+     */
+    protected function prepareCountQuery()
+    {
+        $builder = clone $this->query;
+
+        if (!$this->isComplexQuery($builder)) {
+            $row_count = $this->wrap('row_count');
+            $builder->select($this->connection->raw("'1' as {$row_count}"));
+            if (!$this->keepSelectBindings) {
+                $builder->setBindings([], 'select');
+            }
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Check if builder query uses complex sql.
+     *
+     * @param Builder $builder
+     * @return bool
+     */
+    protected function isComplexQuery($builder)
+    {
+        return Str::contains(Str::lower($builder->toSql()), ['union', 'having', 'distinct', 'order by', 'group by']);
+    }
+
+    /**
+     * Wrap column with DB grammar.
+     *
+     * @param string $column
+     * @return string
+     */
+    protected function wrap($column)
+    {
+        return $this->connection->getQueryGrammar()->wrap($column);
+    }
+
+    /**
      * Get column keyword to use for search.
      *
      * @param int $i
@@ -316,7 +446,7 @@ class QueryDataTable extends DataTableAbstract
      * Get the base query builder instance.
      *
      * @param mixed $instance
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     protected function getBaseQueryBuilder($instance = null)
     {
@@ -476,110 +606,6 @@ class QueryDataTable extends DataTableAbstract
     }
 
     /**
-     * Add custom filter handler for the give column.
-     *
-     * @param string $column
-     * @param callable $callback
-     * @return $this
-     */
-    public function filterColumn($column, callable $callback)
-    {
-        $this->columnDef['filter'][$column] = ['method' => $callback];
-
-        return $this;
-    }
-
-    /**
-     * Order each given columns versus the given custom sql.
-     *
-     * @param array $columns
-     * @param string $sql
-     * @param array $bindings
-     * @return $this
-     */
-    public function orderColumns(array $columns, $sql, $bindings = [])
-    {
-        foreach ($columns as $column) {
-            $this->orderColumn($column, str_replace(':column', $column, $sql), $bindings);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Override default column ordering.
-     *
-     * @param string $column
-     * @param string $sql
-     * @param array $bindings
-     * @return $this
-     * @internal string $1 Special variable that returns the requested order direction of the column.
-     */
-    public function orderColumn($column, $sql, $bindings = [])
-    {
-        $this->columnDef['order'][$column] = compact('sql', 'bindings');
-
-        return $this;
-    }
-
-    /**
-     * Set datatables to do ordering with NULLS LAST option.
-     *
-     * @return $this
-     */
-    public function orderByNullsLast()
-    {
-        $this->nullsLast = true;
-
-        return $this;
-    }
-
-    /**
-     * Paginate dataTable using limit without offset
-     * with additional where clause via callback.
-     *
-     * @param callable $callback
-     * @return $this
-     */
-    public function limit(callable $callback)
-    {
-        $this->limitCallback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Perform pagination.
-     *
-     * @return void
-     */
-    public function paging()
-    {
-        $limit = (int)$this->request->input('length') > 0 ? $this->request->input('length') : 10;
-        if (is_callable($this->limitCallback)) {
-            $this->query->limit($limit);
-            call_user_func_array($this->limitCallback, [$this->query]);
-        } else {
-            $this->query->skip($this->request->input('start'))->take($limit);
-        }
-    }
-
-    /**
-     * Add column in collection.
-     *
-     * @param string $name
-     * @param string|callable $content
-     * @param bool|int $order
-     * @return $this
-     */
-    public function addColumn($name, $content, $order = false)
-    {
-        $this->pushToBlacklist($name);
-
-        return parent::addColumn($name, $content, $order);
-    }
-
-    /**
      * Count filtered items.
      *
      * @return int
@@ -597,7 +623,7 @@ class QueryDataTable extends DataTableAbstract
     /**
      * Resolve callback parameter instance.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     protected function resolveCallbackParameter()
     {
@@ -735,27 +761,5 @@ class QueryDataTable extends DataTableAbstract
         }
 
         return array_merge($data, $appends);
-    }
-
-    /**
-     * Get filtered, ordered and paginated query.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
-     */
-    public function getFilteredQuery()
-    {
-        $this->prepareQuery();
-
-        return $this->getQuery();
-    }
-
-    /**
-     * Get query builder instance.
-     *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
-     */
-    public function getQuery()
-    {
-        return $this->query;
     }
 }

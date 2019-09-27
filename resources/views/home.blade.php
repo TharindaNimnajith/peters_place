@@ -15,7 +15,8 @@
                         @endif
 
 
-                        <h3 style="margin-top:130px">Today:<h3 id="date">Today</h3></h3>
+                        <h3 style="margin-top:130px">Today:<h3 id="date">Today</h3>
+                        </h3>
 
                         @if(session()->has('success'))
                             <div class="alert alert-success">
@@ -45,9 +46,8 @@
                                                 <i class="fa fa-address-card"></i>
                                             </div>
                                         </div>
-                                        <input id="ID" name="ID" onkeypress="return tabE(this,event)"
-                                               placeholder="E001" type="text" class="form-control"
-                                               required="required">
+                                        <input id="ID" name="ID" onkeypress="return tabE(this,event)" placeholder="E001"
+                                               type="text" class="form-control" required="required">
                                     </div>
                                 </div>
                             </div>
@@ -62,10 +62,10 @@
                             <div class="form-group row">
                                 <label for="Employee_type" class="col-4 col-form-label">Type</label>
                                 <div class="col-8">
-                                    <input type="radio" name="type" onkeypress="return tabE(this,event)"
-                                           value="normal" checked> NORMAL<br>
-                                    <input type="radio" name="type" onkeypress="return tabE(this,event)"
-                                           value="admin"> ADMIN<br>
+                                    <input type="radio" name="type" onkeypress="return tabE(this,event)" value="normal"
+                                           checked> NORMAL<br>
+                                    <input type="radio" name="type" onkeypress="return tabE(this,event)" value="admin">
+                                    ADMIN<br>
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -86,8 +86,8 @@
                             <div class="form-group row">
                                 <label for="text2" class="col-4 col-form-label">No Of Days</label>
                                 <div class="col-8">
-                                    <input id="#days" name="#days" onkeypress="return tabE(this,event)"
-                                           placeholder="2" type="text" class="form-control">
+                                    <input id="#days" name="#days" onkeypress="return tabE(this,event)" placeholder="2"
+                                           type="text" class="form-control">
                                 </div>
                             </div>
                             <div class="form-group row">

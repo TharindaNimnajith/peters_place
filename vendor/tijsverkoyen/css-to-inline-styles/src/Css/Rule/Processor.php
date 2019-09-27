@@ -42,24 +42,6 @@ class Processor
     }
 
     /**
-     * @param string $string
-     * @return string
-     */
-    private function cleanup($string)
-    {
-        $string = str_replace(array("\r", "\n"), '', $string);
-        $string = str_replace(array("\t"), ' ', $string);
-        $string = str_replace('"', '\'', $string);
-        $string = preg_replace('|/\*.*?\*/|', '', $string);
-        $string = preg_replace('/\s\s+/', ' ', $string);
-
-        $string = trim($string);
-        $string = rtrim($string, '}');
-
-        return $string;
-    }
-
-    /**
      * @param array $rules
      * @return Rule[]
      */
@@ -151,5 +133,23 @@ class Processor
             preg_match_all("/{$classAttributesPseudoClassesSelectorsPattern}/ix", $selector, $matches),
             preg_match_all("/{$typePseudoElementsSelectorPattern}/ix", $selector, $matches)
         );
+    }
+
+    /**
+     * @param string $string
+     * @return string
+     */
+    private function cleanup($string)
+    {
+        $string = str_replace(array("\r", "\n"), '', $string);
+        $string = str_replace(array("\t"), ' ', $string);
+        $string = str_replace('"', '\'', $string);
+        $string = preg_replace('|/\*.*?\*/|', '', $string);
+        $string = preg_replace('/\s\s+/', ' ', $string);
+
+        $string = trim($string);
+        $string = rtrim($string, '}');
+
+        return $string;
     }
 }

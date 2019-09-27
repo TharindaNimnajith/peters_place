@@ -27,6 +27,21 @@ trait ManagesLayouts
     protected $sectionStack = [];
 
     /**
+     * Get the parent placeholder for the current request.
+     *
+     * @param string $section
+     * @return string
+     */
+    public static function parentPlaceholder($section = '')
+    {
+        if (!isset(static::$parentPlaceholder[$section])) {
+            static::$parentPlaceholder[$section] = '##parent-placeholder-' . sha1($section) . '##';
+        }
+
+        return static::$parentPlaceholder[$section];
+    }
+
+    /**
      * Inject inline content into a section.
      *
      * @param string $section
@@ -54,37 +69,6 @@ trait ManagesLayouts
         } else {
             $this->extendSection($section, $content instanceof View ? $content : e($content));
         }
-    }
-
-    /**
-     * Append content to a given section.
-     *
-     * @param string $section
-     * @param string $content
-     * @return void
-     */
-    protected function extendSection($section, $content)
-    {
-        if (isset($this->sections[$section])) {
-            $content = str_replace(static::parentPlaceholder($section), $content, $this->sections[$section]);
-        }
-
-        $this->sections[$section] = $content;
-    }
-
-    /**
-     * Get the parent placeholder for the current request.
-     *
-     * @param string $section
-     * @return string
-     */
-    public static function parentPlaceholder($section = '')
-    {
-        if (!isset(static::$parentPlaceholder[$section])) {
-            static::$parentPlaceholder[$section] = '##parent-placeholder-' . sha1($section) . '##';
-        }
-
-        return static::$parentPlaceholder[$section];
     }
 
     /**
@@ -214,5 +198,21 @@ trait ManagesLayouts
     {
         $this->sections = [];
         $this->sectionStack = [];
+    }
+
+    /**
+     * Append content to a given section.
+     *
+     * @param string $section
+     * @param string $content
+     * @return void
+     */
+    protected function extendSection($section, $content)
+    {
+        if (isset($this->sections[$section])) {
+            $content = str_replace(static::parentPlaceholder($section), $content, $this->sections[$section]);
+        }
+
+        $this->sections[$section] = $content;
     }
 }

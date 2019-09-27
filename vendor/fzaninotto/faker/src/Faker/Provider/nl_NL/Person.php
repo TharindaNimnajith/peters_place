@@ -259,11 +259,6 @@ class Person extends \Faker\Provider\Person
         return static::title();
     }
 
-    public function title($gender = null)
-    {
-        return static::randomElement(static::$title);
-    }
-
     /**
      * replaced by specific unisex dutch title
      */
@@ -283,6 +278,11 @@ class Person extends \Faker\Provider\Person
     public static function prefix()
     {
         return static::randomElement(static::$prefix);
+    }
+
+    public function title($gender = null)
+    {
+        return static::randomElement(static::$title);
     }
 
     /*

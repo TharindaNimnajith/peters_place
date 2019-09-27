@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,6 +21,7 @@
         #form_body {
             margin-top: 4%;
         }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -32,6 +34,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -62,6 +65,7 @@
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
                             onclick="window.location='/room_management';">&times;
                     </button>
+
                     <h4 class="model-title">Update Room</h4>
                 </div>
 
@@ -77,7 +81,7 @@
                         <label>Room Type</label>
 
                     <!--
-                        @if ($details->t_id == '1')
+                    @if ($details->t_id == '1')
                         <select name="roomtype" class="form-control">
                             <option value="1" selected>Single Bedroom</option>
                             <option value="2">Double Bedroom</option>
@@ -91,7 +95,7 @@
                             <option value="2" selected>Double Bedroom</option>
                             <option value="3">Family Bedroom</option>
                         </select>
-@endif
+                    @endif
 
                     @if ($details->t_id == '3')
                         <select name="roomtype" class="form-control">
@@ -99,7 +103,7 @@
                             <option value="2">Double Bedroom</option>
                             <option value="3" selected>Family Bedroom</option>
                         </select>
-@endif
+                    @endif
                         -->
 
 
@@ -110,7 +114,6 @@
 
                         @if ($details->floor == '1')
                             <select name="floor" class="form-control">
-
                                 <option value="1" selected>1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -215,6 +218,7 @@
                 <div class="model-footer">
                     <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
                            onclick="window.location='/room_management';">
+
                     <input type="submit" class="btn btn-info" value="Save">
                 </div>
             </form>
@@ -222,4 +226,5 @@
     </div>
 </div>
 </body>
+
 </html>

@@ -139,44 +139,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     }
 
     /**
-     * Get the array of locales to be checked.
-     *
-     * @param string|null $locale
-     * @return array
-     */
-    protected function localeArray($locale)
-    {
-        return array_filter([$locale ?: $this->locale, $this->fallback]);
-    }
-
-    /**
-     * Retrieve a language line out the loaded array.
-     *
-     * @param string $namespace
-     * @param string $group
-     * @param string $locale
-     * @param string $item
-     * @param array $replace
-     * @return string|array|null
-     */
-    protected function getLine($namespace, $group, $locale, $item, array $replace)
-    {
-        $this->load($namespace, $group, $locale);
-
-        $line = Arr::get($this->loaded[$namespace][$group][$locale], $item);
-
-        if (is_string($line)) {
-            return $this->makeReplacements($line, $replace);
-        } elseif (is_array($line) && count($line) > 0) {
-            foreach ($line as $key => $value) {
-                $line[$key] = $this->makeReplacements($value, $replace);
-            }
-
-            return $line;
-        }
-    }
-
-    /**
      * Load the specified language group.
      *
      * @param string $namespace
@@ -196,58 +158,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         $lines = $this->loader->load($locale, $group, $namespace);
 
         $this->loaded[$namespace][$group][$locale] = $lines;
-    }
-
-    /**
-     * Determine if the given group has been loaded.
-     *
-     * @param string $namespace
-     * @param string $group
-     * @param string $locale
-     * @return bool
-     */
-    protected function isLoaded($namespace, $group, $locale)
-    {
-        return isset($this->loaded[$namespace][$group][$locale]);
-    }
-
-    /**
-     * Make the place-holder replacements on a line.
-     *
-     * @param string $line
-     * @param array $replace
-     * @return string
-     */
-    protected function makeReplacements($line, array $replace)
-    {
-        if (empty($replace)) {
-            return $line;
-        }
-
-        $replace = $this->sortReplacements($replace);
-
-        foreach ($replace as $key => $value) {
-            $line = str_replace(
-                [':' . $key, ':' . Str::upper($key), ':' . Str::ucfirst($key)],
-                [$value, Str::upper($value), Str::ucfirst($value)],
-                $line
-            );
-        }
-
-        return $line;
-    }
-
-    /**
-     * Sort the replacements array.
-     *
-     * @param array $replace
-     * @return array
-     */
-    protected function sortReplacements(array $replace)
-    {
-        return (new Collection($replace))->sortBy(function ($value, $key) {
-            return mb_strlen($key) * -1;
-        })->all();
     }
 
     /**
@@ -337,17 +247,6 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
         return $this->makeReplacements(
             $this->getSelector()->choose($line, $number, $locale), $replace
         );
-    }
-
-    /**
-     * Get the proper locale for a choice operation.
-     *
-     * @param string|null $locale
-     * @return string
-     */
-    protected function localeForChoice($locale)
-    {
-        return $locale ?: $this->locale ?: $this->fallback;
     }
 
     /**
@@ -486,5 +385,106 @@ class Translator extends NamespacedItemResolver implements TranslatorContract
     public function setLoaded(array $loaded)
     {
         $this->loaded = $loaded;
+    }
+
+    /**
+     * Get the array of locales to be checked.
+     *
+     * @param string|null $locale
+     * @return array
+     */
+    protected function localeArray($locale)
+    {
+        return array_filter([$locale ?: $this->locale, $this->fallback]);
+    }
+
+    /**
+     * Retrieve a language line out the loaded array.
+     *
+     * @param string $namespace
+     * @param string $group
+     * @param string $locale
+     * @param string $item
+     * @param array $replace
+     * @return string|array|null
+     */
+    protected function getLine($namespace, $group, $locale, $item, array $replace)
+    {
+        $this->load($namespace, $group, $locale);
+
+        $line = Arr::get($this->loaded[$namespace][$group][$locale], $item);
+
+        if (is_string($line)) {
+            return $this->makeReplacements($line, $replace);
+        } elseif (is_array($line) && count($line) > 0) {
+            foreach ($line as $key => $value) {
+                $line[$key] = $this->makeReplacements($value, $replace);
+            }
+
+            return $line;
+        }
+    }
+
+    /**
+     * Determine if the given group has been loaded.
+     *
+     * @param string $namespace
+     * @param string $group
+     * @param string $locale
+     * @return bool
+     */
+    protected function isLoaded($namespace, $group, $locale)
+    {
+        return isset($this->loaded[$namespace][$group][$locale]);
+    }
+
+    /**
+     * Make the place-holder replacements on a line.
+     *
+     * @param string $line
+     * @param array $replace
+     * @return string
+     */
+    protected function makeReplacements($line, array $replace)
+    {
+        if (empty($replace)) {
+            return $line;
+        }
+
+        $replace = $this->sortReplacements($replace);
+
+        foreach ($replace as $key => $value) {
+            $line = str_replace(
+                [':' . $key, ':' . Str::upper($key), ':' . Str::ucfirst($key)],
+                [$value, Str::upper($value), Str::ucfirst($value)],
+                $line
+            );
+        }
+
+        return $line;
+    }
+
+    /**
+     * Sort the replacements array.
+     *
+     * @param array $replace
+     * @return array
+     */
+    protected function sortReplacements(array $replace)
+    {
+        return (new Collection($replace))->sortBy(function ($value, $key) {
+            return mb_strlen($key) * -1;
+        })->all();
+    }
+
+    /**
+     * Get the proper locale for a choice operation.
+     *
+     * @param string|null $locale
+     * @return string
+     */
+    protected function localeForChoice($locale)
+    {
+        return $locale ?: $this->locale ?: $this->fallback;
     }
 }

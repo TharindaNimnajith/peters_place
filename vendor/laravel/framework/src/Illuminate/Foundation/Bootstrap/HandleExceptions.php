@@ -84,17 +84,6 @@ class HandleExceptions
     }
 
     /**
-     * Determine if the error type is fatal.
-     *
-     * @param int $type
-     * @return bool
-     */
-    protected function isFatal($type)
-    {
-        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
-    }
-
-    /**
      * Handle an uncaught exception from the application.
      *
      * Note: Most exceptions can be handled via the try / catch block in
@@ -123,6 +112,17 @@ class HandleExceptions
         } else {
             $this->renderHttpResponse($e);
         }
+    }
+
+    /**
+     * Determine if the error type is fatal.
+     *
+     * @param int $type
+     * @return bool
+     */
+    protected function isFatal($type)
+    {
+        return in_array($type, [E_COMPILE_ERROR, E_CORE_ERROR, E_ERROR, E_PARSE]);
     }
 
     /**

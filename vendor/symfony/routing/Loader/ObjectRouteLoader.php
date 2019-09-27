@@ -11,9 +11,17 @@
 
 namespace Symfony\Component\Routing\Loader;
 
+use BadMethodCallException;
+use InvalidArgumentException;
+use LogicException;
+use ReflectionClass;
 use Symfony\Component\Config\Loader\Loader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Routing\RouteCollection;
+use function get_class;
+use function gettype;
+use function is_callable;
+use function is_object;
 
 /**
  * A route loader that calls a method on an object to load the routes.
@@ -33,7 +41,7 @@ abstract class ObjectRouteLoader extends Loader
     public function load($resource, $type = null)
     {
         if (!preg_match('/^[^\:]+(?:::?(?:[^\:]+))?$/', $resource)) {
-            throw new \InvalidArgumentException(sprintf('Invalid resource "%s" passed to the "service" route loader: use the format "service::method" or "service" if your service has an "__invoke" method.', $resource));
+            throw new InvalidArgumentException(sprintf('Invalid resource "%s" passed to the "service" route loader: use the format "service::method" or "service" if your service has an "__invoke" method.', $resource));
         }
 
         if (1 === substr_count($resource, ':')) {
@@ -47,26 +55,34 @@ abstract class ObjectRouteLoader extends Loader
 
         $loaderObject = $this->getServiceObject($serviceString);
 
-        if (!\is_object($loaderObject)) {
-            throw new \LogicException(sprintf('%s:getServiceObject() must return an object: %s returned', \get_class($this), \gettype($loaderObject)));
+        if (!is_object($loaderObject)) {
+            throw new LogicException(sprintf('%s:getServiceObject() must return an object: %s returned', get_class($this), gettype($loaderObject)));
         }
 
-        if (!\is_callable([$loaderObject, $method])) {
-            throw new \BadMethodCallException(sprintf('Method "%s" not found on "%s" when importing routing resource "%s"', $method, \get_class($loaderObject), $resource));
+        if (!is_callable([$loaderObject, $method])) {
+            throw new BadMethodCallException(sprintf('Method "%s" not found on "%s" when importing routing resource "%s"', $method, get_class($loaderObject), $resource));
         }
 
         $routeCollection = $loaderObject->$method($this);
 
         if (!$routeCollection instanceof RouteCollection) {
-            $type = \is_object($routeCollection) ? \get_class($routeCollection) : \gettype($routeCollection);
+            $type = is_object($routeCollection) ? get_class($routeCollection) : gettype($routeCollection);
 
-            throw new \LogicException(sprintf('The %s::%s method must return a RouteCollection: %s returned', \get_class($loaderObject), $method, $type));
+            throw new LogicException(sprintf('The %s::%s method must return a RouteCollection: %s returned', get_class($loaderObject), $method, $type));
         }
 
         // make the service file tracked so that if it changes, the cache rebuilds
-        $this->addClassResource(new \ReflectionClass($loaderObject), $routeCollection);
+        $this->addClassResource(new ReflectionClass($loaderObject), $routeCollection);
 
         return $routeCollection;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supports($resource, $type = null)
+    {
+        return 'service' === $type;
     }
 
     /**
@@ -81,20 +97,12 @@ abstract class ObjectRouteLoader extends Loader
      */
     abstract protected function getServiceObject($id);
 
-    private function addClassResource(\ReflectionClass $class, RouteCollection $collection)
+    private function addClassResource(ReflectionClass $class, RouteCollection $collection)
     {
         do {
             if (is_file($class->getFileName())) {
                 $collection->addResource(new FileResource($class->getFileName()));
             }
         } while ($class = $class->getParentClass());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null)
-    {
-        return 'service' === $type;
     }
 }

@@ -148,52 +148,6 @@ HELP
     }
 
     /**
-     * Validate that input options make sense, provide defaults when called without options.
-     *
-     * @param InputInterface $input
-     * @throws RuntimeException if options are inconsistent
-     *
-     */
-    private function validateInput(InputInterface $input)
-    {
-        if (!$input->getArgument('target')) {
-            // if no target is passed, there can be no properties or methods
-            foreach (['properties', 'methods', 'no-inherit'] as $option) {
-                if ($input->getOption($option)) {
-                    throw new RuntimeException('--' . $option . ' does not make sense without a specified target');
-                }
-            }
-
-            foreach (['globals', 'vars', 'constants', 'functions', 'classes', 'interfaces', 'traits'] as $option) {
-                if ($input->getOption($option)) {
-                    return;
-                }
-            }
-
-            // default to --vars if no other options are passed
-            $input->setOption('vars', true);
-        } else {
-            // if a target is passed, classes, functions, etc don't make sense
-            foreach (['vars', 'globals', 'functions', 'classes', 'interfaces', 'traits'] as $option) {
-                if ($input->getOption($option)) {
-                    throw new RuntimeException('--' . $option . ' does not make sense with a specified target');
-                }
-            }
-
-            foreach (['constants', 'properties', 'methods'] as $option) {
-                if ($input->getOption($option)) {
-                    return;
-                }
-            }
-
-            // default to --constants --properties --methods if no other options are passed
-            $input->setOption('constants', true);
-            $input->setOption('properties', true);
-            $input->setOption('methods', true);
-        }
-    }
-
-    /**
      * Initialize Enumerators.
      */
     protected function initEnumerators()
@@ -262,6 +216,52 @@ HELP
             } else {
                 $table->render();
             }
+        }
+    }
+
+    /**
+     * Validate that input options make sense, provide defaults when called without options.
+     *
+     * @param InputInterface $input
+     * @throws RuntimeException if options are inconsistent
+     *
+     */
+    private function validateInput(InputInterface $input)
+    {
+        if (!$input->getArgument('target')) {
+            // if no target is passed, there can be no properties or methods
+            foreach (['properties', 'methods', 'no-inherit'] as $option) {
+                if ($input->getOption($option)) {
+                    throw new RuntimeException('--' . $option . ' does not make sense without a specified target');
+                }
+            }
+
+            foreach (['globals', 'vars', 'constants', 'functions', 'classes', 'interfaces', 'traits'] as $option) {
+                if ($input->getOption($option)) {
+                    return;
+                }
+            }
+
+            // default to --vars if no other options are passed
+            $input->setOption('vars', true);
+        } else {
+            // if a target is passed, classes, functions, etc don't make sense
+            foreach (['vars', 'globals', 'functions', 'classes', 'interfaces', 'traits'] as $option) {
+                if ($input->getOption($option)) {
+                    throw new RuntimeException('--' . $option . ' does not make sense with a specified target');
+                }
+            }
+
+            foreach (['constants', 'properties', 'methods'] as $option) {
+                if ($input->getOption($option)) {
+                    return;
+                }
+            }
+
+            // default to --constants --properties --methods if no other options are passed
+            $input->setOption('constants', true);
+            $input->setOption('properties', true);
+            $input->setOption('methods', true);
         }
     }
 

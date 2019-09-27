@@ -69,6 +69,37 @@ class MigrationCreator
     }
 
     /**
+     * Get the path to the stubs.
+     *
+     * @return string
+     */
+    public function stubPath()
+    {
+        return __DIR__ . '/stubs';
+    }
+
+    /**
+     * Register a post migration create hook.
+     *
+     * @param Closure $callback
+     * @return void
+     */
+    public function afterCreate(Closure $callback)
+    {
+        $this->postCreate[] = $callback;
+    }
+
+    /**
+     * Get the filesystem instance.
+     *
+     * @return Filesystem
+     */
+    public function getFilesystem()
+    {
+        return $this->files;
+    }
+
+    /**
      * Ensure that a migration with the given name doesn't already exist.
      *
      * @param string $name
@@ -113,16 +144,6 @@ class MigrationCreator
         $stub = $create ? 'create.stub' : 'update.stub';
 
         return $this->files->get($this->stubPath() . "/{$stub}");
-    }
-
-    /**
-     * Get the path to the stubs.
-     *
-     * @return string
-     */
-    public function stubPath()
-    {
-        return __DIR__ . '/stubs';
     }
 
     /**
@@ -180,26 +201,5 @@ class MigrationCreator
         foreach ($this->postCreate as $callback) {
             call_user_func($callback, $table);
         }
-    }
-
-    /**
-     * Register a post migration create hook.
-     *
-     * @param Closure $callback
-     * @return void
-     */
-    public function afterCreate(Closure $callback)
-    {
-        $this->postCreate[] = $callback;
-    }
-
-    /**
-     * Get the filesystem instance.
-     *
-     * @return Filesystem
-     */
-    public function getFilesystem()
-    {
-        return $this->files;
     }
 }

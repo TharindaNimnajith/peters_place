@@ -292,67 +292,6 @@ class PrettyPageHandler extends Handler
     }
 
     /**
-     * Finds a resource, by its relative path, in all available search paths.
-     * The search is performed starting at the last search path, and all the
-     * way back to the first, enabling a cascading-type system of overrides
-     * for all resources.
-     *
-     * @param string $resource
-     * @return string
-     * @throws RuntimeException If resource cannot be found in any of the available paths
-     *
-     */
-    protected function getResource($resource)
-    {
-        // If the resource was found before, we can speed things up
-        // by caching its absolute, resolved path:
-        if (isset($this->resourceCache[$resource])) {
-            return $this->resourceCache[$resource];
-        }
-
-        // Search through available search paths, until we find the
-        // resource we're after:
-        foreach ($this->searchPaths as $path) {
-            $fullPath = $path . "/$resource";
-
-            if (is_file($fullPath)) {
-                // Cache the result:
-                $this->resourceCache[$resource] = $fullPath;
-                return $fullPath;
-            }
-        }
-
-        // If we got this far, nothing was found.
-        throw new RuntimeException(
-            "Could not find resource '$resource' in any resource paths."
-            . "(searched: " . join(", ", $this->searchPaths) . ")"
-        );
-    }
-
-    /**
-     * Get the stack trace frames of the exception that is currently being handled.
-     *
-     * @return FrameCollection;
-     */
-    protected function getExceptionFrames()
-    {
-        $frames = $this->getInspector()->getFrames();
-
-        if ($this->getApplicationPaths()) {
-            foreach ($frames as $frame) {
-                foreach ($this->getApplicationPaths() as $path) {
-                    if (strpos($frame->getFile(), $path) === 0) {
-                        $frame->setApplication(true);
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $frames;
-    }
-
-    /**
      * Return the application paths.
      *
      * @return array
@@ -373,24 +312,6 @@ class PrettyPageHandler extends Handler
     }
 
     /**
-     * Get the code of the exception that is currently being handled.
-     *
-     * @return string
-     */
-    protected function getExceptionCode()
-    {
-        $exception = $this->getException();
-
-        $code = $exception->getCode();
-        if ($exception instanceof ErrorException) {
-            // ErrorExceptions wrap the php-error types within the 'severity' property
-            $code = Misc::translateErrorCode($exception->getSeverity());
-        }
-
-        return (string)$code;
-    }
-
-    /**
      * @return string
      */
     public function getPageTitle()
@@ -405,29 +326,6 @@ class PrettyPageHandler extends Handler
     public function setPageTitle($title)
     {
         $this->pageTitle = (string)$title;
-    }
-
-    /**
-     * Checks all values within the given superGlobal array.
-     * Blacklisted values will be replaced by a equal length string cointaining only '*' characters.
-     *
-     * We intentionally dont rely on $GLOBALS as it depends on 'auto_globals_jit' php.ini setting.
-     *
-     * @param $superGlobal array One of the superglobal arrays
-     * @param $superGlobalName string the name of the superglobal array, e.g. '_GET'
-     * @return array $values without sensitive data
-     */
-    private function masked(array $superGlobal, $superGlobalName)
-    {
-        $blacklisted = $this->blacklist[$superGlobalName];
-
-        $values = $superGlobal;
-        foreach ($blacklisted as $key) {
-            if (isset($superGlobal[$key]) && is_string($superGlobal[$key])) {
-                $values[$key] = str_repeat('*', strlen($superGlobal[$key]));
-            }
-        }
-        return $values;
     }
 
     /**
@@ -557,81 +455,6 @@ class PrettyPageHandler extends Handler
      *
      * @param string $filePath
      * @param int $line
-     * @return array
-     */
-    protected function getEditor($filePath, $line)
-    {
-        if (!$this->editor || (!is_string($this->editor) && !is_callable($this->editor))) {
-            return [];
-        }
-
-        if (is_string($this->editor) && isset($this->editors[$this->editor]) && !is_callable($this->editors[$this->editor])) {
-            return [
-                'ajax' => false,
-                'url' => $this->editors[$this->editor],
-            ];
-        }
-
-        if (is_callable($this->editor) || (isset($this->editors[$this->editor]) && is_callable($this->editors[$this->editor]))) {
-            if (is_callable($this->editor)) {
-                $callback = call_user_func($this->editor, $filePath, $line);
-            } else {
-                $callback = call_user_func($this->editors[$this->editor], $filePath, $line);
-            }
-
-            if (empty($callback)) {
-                return [];
-            }
-
-            if (is_string($callback)) {
-                return [
-                    'ajax' => false,
-                    'url' => $callback,
-                ];
-            }
-
-            return [
-                'ajax' => isset($callback['ajax']) ? $callback['ajax'] : false,
-                'url' => isset($callback['url']) ? $callback['url'] : $callback,
-            ];
-        }
-
-        return [];
-    }
-
-    /**
-     * Set the editor to use to open referenced files, by a string
-     * identifier, or a callable that will be executed for every
-     * file reference, with a $file and $line argument, and should
-     * return a string.
-     *
-     * @param string|callable $editor
-     * @throws InvalidArgumentException If invalid argument identifier provided
-     * @example
-     *   $run->setEditor(function($file, $line) { return "file:///{$file}"; });
-     * @example
-     *   $run->setEditor('sublime');
-     *
-     */
-    public function setEditor($editor)
-    {
-        if (!is_callable($editor) && !isset($this->editors[$editor])) {
-            throw new InvalidArgumentException(
-                "Unknown editor identifier: $editor. Known editors:" .
-                implode(",", array_keys($this->editors))
-            );
-        }
-
-        $this->editor = $editor;
-    }
-
-    /**
-     * Given a boolean if the editor link should
-     * act as an Ajax request. The editor must be a
-     * valid callable function/closure
-     *
-     * @param string $filePath
-     * @param int $line
      * @return bool
      * @throws UnexpectedValueException  If editor resolver does not return a boolean
      */
@@ -719,5 +542,182 @@ class PrettyPageHandler extends Handler
     public function setApplicationRootPath($applicationRootPath)
     {
         $this->templateHelper->setApplicationRootPath($applicationRootPath);
+    }
+
+    /**
+     * Finds a resource, by its relative path, in all available search paths.
+     * The search is performed starting at the last search path, and all the
+     * way back to the first, enabling a cascading-type system of overrides
+     * for all resources.
+     *
+     * @param string $resource
+     * @return string
+     * @throws RuntimeException If resource cannot be found in any of the available paths
+     *
+     */
+    protected function getResource($resource)
+    {
+        // If the resource was found before, we can speed things up
+        // by caching its absolute, resolved path:
+        if (isset($this->resourceCache[$resource])) {
+            return $this->resourceCache[$resource];
+        }
+
+        // Search through available search paths, until we find the
+        // resource we're after:
+        foreach ($this->searchPaths as $path) {
+            $fullPath = $path . "/$resource";
+
+            if (is_file($fullPath)) {
+                // Cache the result:
+                $this->resourceCache[$resource] = $fullPath;
+                return $fullPath;
+            }
+        }
+
+        // If we got this far, nothing was found.
+        throw new RuntimeException(
+            "Could not find resource '$resource' in any resource paths."
+            . "(searched: " . join(", ", $this->searchPaths) . ")"
+        );
+    }
+
+    /**
+     * Get the stack trace frames of the exception that is currently being handled.
+     *
+     * @return FrameCollection;
+     */
+    protected function getExceptionFrames()
+    {
+        $frames = $this->getInspector()->getFrames();
+
+        if ($this->getApplicationPaths()) {
+            foreach ($frames as $frame) {
+                foreach ($this->getApplicationPaths() as $path) {
+                    if (strpos($frame->getFile(), $path) === 0) {
+                        $frame->setApplication(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $frames;
+    }
+
+    /**
+     * Get the code of the exception that is currently being handled.
+     *
+     * @return string
+     */
+    protected function getExceptionCode()
+    {
+        $exception = $this->getException();
+
+        $code = $exception->getCode();
+        if ($exception instanceof ErrorException) {
+            // ErrorExceptions wrap the php-error types within the 'severity' property
+            $code = Misc::translateErrorCode($exception->getSeverity());
+        }
+
+        return (string)$code;
+    }
+
+    /**
+     * Given a boolean if the editor link should
+     * act as an Ajax request. The editor must be a
+     * valid callable function/closure
+     *
+     * @param string $filePath
+     * @param int $line
+     * @return array
+     */
+    protected function getEditor($filePath, $line)
+    {
+        if (!$this->editor || (!is_string($this->editor) && !is_callable($this->editor))) {
+            return [];
+        }
+
+        if (is_string($this->editor) && isset($this->editors[$this->editor]) && !is_callable($this->editors[$this->editor])) {
+            return [
+                'ajax' => false,
+                'url' => $this->editors[$this->editor],
+            ];
+        }
+
+        if (is_callable($this->editor) || (isset($this->editors[$this->editor]) && is_callable($this->editors[$this->editor]))) {
+            if (is_callable($this->editor)) {
+                $callback = call_user_func($this->editor, $filePath, $line);
+            } else {
+                $callback = call_user_func($this->editors[$this->editor], $filePath, $line);
+            }
+
+            if (empty($callback)) {
+                return [];
+            }
+
+            if (is_string($callback)) {
+                return [
+                    'ajax' => false,
+                    'url' => $callback,
+                ];
+            }
+
+            return [
+                'ajax' => isset($callback['ajax']) ? $callback['ajax'] : false,
+                'url' => isset($callback['url']) ? $callback['url'] : $callback,
+            ];
+        }
+
+        return [];
+    }
+
+    /**
+     * Set the editor to use to open referenced files, by a string
+     * identifier, or a callable that will be executed for every
+     * file reference, with a $file and $line argument, and should
+     * return a string.
+     *
+     * @param string|callable $editor
+     * @throws InvalidArgumentException If invalid argument identifier provided
+     * @example
+     *   $run->setEditor(function($file, $line) { return "file:///{$file}"; });
+     * @example
+     *   $run->setEditor('sublime');
+     *
+     */
+    public function setEditor($editor)
+    {
+        if (!is_callable($editor) && !isset($this->editors[$editor])) {
+            throw new InvalidArgumentException(
+                "Unknown editor identifier: $editor. Known editors:" .
+                implode(",", array_keys($this->editors))
+            );
+        }
+
+        $this->editor = $editor;
+    }
+
+    /**
+     * Checks all values within the given superGlobal array.
+     * Blacklisted values will be replaced by a equal length string cointaining only '*' characters.
+     *
+     * We intentionally dont rely on $GLOBALS as it depends on 'auto_globals_jit' php.ini setting.
+     *
+     * @param $superGlobal array One of the superglobal arrays
+     * @param $superGlobalName string the name of the superglobal array, e.g. '_GET'
+     * @return array $values without sensitive data
+     */
+    private function masked(array $superGlobal, $superGlobalName)
+    {
+        $blacklisted = $this->blacklist[$superGlobalName];
+
+        $values = $superGlobal;
+        foreach ($blacklisted as $key) {
+            if (isset($superGlobal[$key]) && is_string($superGlobal[$key])) {
+                $values[$key] = str_repeat('*', strlen($superGlobal[$key]));
+            }
+        }
+        return $values;
     }
 }

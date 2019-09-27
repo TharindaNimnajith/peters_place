@@ -263,7 +263,7 @@
 
                         validatorNamesToInspect = newValidatorNamesToInspect;
 
-                    } while (validatorNamesToInspect.length > 0)
+                    } while (validatorNamesToInspect.length > 0);
 
                     // =============================================================
                     //                                       SET UP VALIDATOR ARRAYS
@@ -278,11 +278,10 @@
                         var foundValidator = false;
                         message =
                             (
-                                message
-                                    ? message
-                                    : "'" + el + "' validation failed <!-- Add attribute 'data-validation-" + el.toLowerCase() + "-message' to input to change this message -->"
-                            )
-                        ;
+                                message ?
+                                    message :
+                                    "'" + el + "' validation failed <!-- Add attribute 'data-validation-" + el.toLowerCase() + "-message' to input to change this message -->"
+                            );
 
                         $.each(
                             settings.validatorTypes,
@@ -293,8 +292,7 @@
                                 if (!foundValidator && $this.data("validation" + el + formatValidatorName(validatorTemplate.name)) !== undefined) {
                                     validators[validatorType].push(
                                         $.extend(
-                                            true,
-                                            {
+                                            true, {
                                                 name: formatValidatorName(validatorTemplate.name),
                                                 message: message
                                             },
@@ -350,36 +348,36 @@
                     $helpBlock.data(
                         "original-contents",
                         (
-                            $helpBlock.data("original-contents")
-                                ? $helpBlock.data("original-contents")
-                                : $helpBlock.html()
+                            $helpBlock.data("original-contents") ?
+                                $helpBlock.data("original-contents") :
+                                $helpBlock.html()
                         )
                     );
 
                     $helpBlock.data(
                         "original-role",
                         (
-                            $helpBlock.data("original-role")
-                                ? $helpBlock.data("original-role")
-                                : $helpBlock.attr("role")
+                            $helpBlock.data("original-role") ?
+                                $helpBlock.data("original-role") :
+                                $helpBlock.attr("role")
                         )
                     );
 
                     $controlGroup.data(
                         "original-classes",
                         (
-                            $controlGroup.data("original-clases")
-                                ? $controlGroup.data("original-classes")
-                                : $controlGroup.attr("class")
+                            $controlGroup.data("original-clases") ?
+                                $controlGroup.data("original-classes") :
+                                $controlGroup.attr("class")
                         )
                     );
 
                     $this.data(
                         "original-aria-invalid",
                         (
-                            $this.data("original-aria-invalid")
-                                ? $this.data("original-aria-invalid")
-                                : $this.attr("aria-invalid")
+                            $this.data("original-aria-invalid") ?
+                                $this.data("original-aria-invalid") :
+                                $this.attr("aria-invalid")
                         )
                     );
 
@@ -423,7 +421,9 @@
                     $this.bind(
                         "submit.validation",
                         function () {
-                            return $this.triggerHandler("change.validation", {submitting: true});
+                            return $this.triggerHandler("change.validation", {
+                                submitting: true
+                            });
                         }
                     );
                     $this.bind(
@@ -527,7 +527,9 @@
                 this.each(function (i, el) {
                     var $el = $(el);
                     var name = $el.attr("name");
-                    var errors = $el.triggerHandler("validation.validation", {includeEmpty: true});
+                    var errors = $el.triggerHandler("validation.validation", {
+                        includeEmpty: true
+                    });
                     errorMessages[name] = $.extend(true, errors, errorMessages[name]);
                 });
 
@@ -546,7 +548,9 @@
 
                 this.each(function (i, el) {
                     errorMessages = errorMessages.concat(
-                        $(el).triggerHandler("getValidators.validation") ? $(el).triggerHandler("validation.validation", {submitting: true}) : []
+                        $(el).triggerHandler("getValidators.validation") ? $(el).triggerHandler("validation.validation", {
+                            submitting: true
+                        }) : []
                     );
                 });
 
@@ -664,11 +668,13 @@
             regex: {
                 name: "regex",
                 init: function ($this, name) {
-                    return {regex: regexFromString($this.data("validation" + name + "Regex"))};
+                    return {
+                        regex: regexFromString($this.data("validation" + name + "Regex"))
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (!validator.regex.test(value) && !validator.negative)
-                        || (validator.regex.test(value) && validator.negative);
+                    return (!validator.regex.test(value) && !validator.negative) ||
+                        (validator.regex.test(value) && validator.negative);
                 }
             },
             required: {
@@ -677,8 +683,8 @@
                     return {};
                 },
                 validate: function ($this, value, validator) {
-                    return !!(value.length === 0 && !validator.negative)
-                        || !!(value.length > 0 && validator.negative);
+                    return !!(value.length === 0 && !validator.negative) ||
+                        !!(value.length > 0 && validator.negative);
                 },
                 blockSubmit: true
             },
@@ -687,54 +693,66 @@
                 init: function ($this, name) {
                     var element = $this.parents("form").first().find("[name=\"" + $this.data("validation" + name + "Match") + "\"]").first();
                     element.bind("validation.validation", function () {
-                        $this.trigger("change.validation", {submitting: true});
+                        $this.trigger("change.validation", {
+                            submitting: true
+                        });
                     });
-                    return {"element": element};
+                    return {
+                        "element": element
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (value !== validator.element.val() && !validator.negative)
-                        || (value === validator.element.val() && validator.negative);
+                    return (value !== validator.element.val() && !validator.negative) ||
+                        (value === validator.element.val() && validator.negative);
                 },
                 blockSubmit: true
             },
             max: {
                 name: "max",
                 init: function ($this, name) {
-                    return {max: $this.data("validation" + name + "Max")};
+                    return {
+                        max: $this.data("validation" + name + "Max")
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (parseFloat(value, 10) > parseFloat(validator.max, 10) && !validator.negative)
-                        || (parseFloat(value, 10) <= parseFloat(validator.max, 10) && validator.negative);
+                    return (parseFloat(value, 10) > parseFloat(validator.max, 10) && !validator.negative) ||
+                        (parseFloat(value, 10) <= parseFloat(validator.max, 10) && validator.negative);
                 }
             },
             min: {
                 name: "min",
                 init: function ($this, name) {
-                    return {min: $this.data("validation" + name + "Min")};
+                    return {
+                        min: $this.data("validation" + name + "Min")
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (parseFloat(value) < parseFloat(validator.min) && !validator.negative)
-                        || (parseFloat(value) >= parseFloat(validator.min) && validator.negative);
+                    return (parseFloat(value) < parseFloat(validator.min) && !validator.negative) ||
+                        (parseFloat(value) >= parseFloat(validator.min) && validator.negative);
                 }
             },
             maxlength: {
                 name: "maxlength",
                 init: function ($this, name) {
-                    return {maxlength: $this.data("validation" + name + "Maxlength")};
+                    return {
+                        maxlength: $this.data("validation" + name + "Maxlength")
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return ((value.length > validator.maxlength) && !validator.negative)
-                        || ((value.length <= validator.maxlength) && validator.negative);
+                    return ((value.length > validator.maxlength) && !validator.negative) ||
+                        ((value.length <= validator.maxlength) && validator.negative);
                 }
             },
             minlength: {
                 name: "minlength",
                 init: function ($this, name) {
-                    return {minlength: $this.data("validation" + name + "Minlength")};
+                    return {
+                        minlength: $this.data("validation" + name + "Minlength")
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return ((value.length < validator.minlength) && !validator.negative)
-                        || ((value.length >= validator.minlength) && validator.negative);
+                    return ((value.length < validator.minlength) && !validator.negative) ||
+                        ((value.length >= validator.minlength) && validator.negative);
                 }
             },
             maxchecked: {
@@ -742,13 +760,18 @@
                 init: function ($this, name) {
                     var elements = $this.parents("form").first().find("[name=\"" + $this.attr("name") + "\"]");
                     elements.bind("click.validation", function () {
-                        $this.trigger("change.validation", {includeEmpty: true});
+                        $this.trigger("change.validation", {
+                            includeEmpty: true
+                        });
                     });
-                    return {maxchecked: $this.data("validation" + name + "Maxchecked"), elements: elements};
+                    return {
+                        maxchecked: $this.data("validation" + name + "Maxchecked"),
+                        elements: elements
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (validator.elements.filter(":checked").length > validator.maxchecked && !validator.negative)
-                        || (validator.elements.filter(":checked").length <= validator.maxchecked && validator.negative);
+                    return (validator.elements.filter(":checked").length > validator.maxchecked && !validator.negative) ||
+                        (validator.elements.filter(":checked").length <= validator.maxchecked && validator.negative);
                 },
                 blockSubmit: true
             },
@@ -757,13 +780,18 @@
                 init: function ($this, name) {
                     var elements = $this.parents("form").first().find("[name=\"" + $this.attr("name") + "\"]");
                     elements.bind("click.validation", function () {
-                        $this.trigger("change.validation", {includeEmpty: true});
+                        $this.trigger("change.validation", {
+                            includeEmpty: true
+                        });
                     });
-                    return {minchecked: $this.data("validation" + name + "Minchecked"), elements: elements};
+                    return {
+                        minchecked: $this.data("validation" + name + "Minchecked"),
+                        elements: elements
+                    };
                 },
                 validate: function ($this, value, validator) {
-                    return (validator.elements.filter(":checked").length < validator.minchecked && !validator.negative)
-                        || (validator.elements.filter(":checked").length >= validator.minchecked && validator.negative);
+                    return (validator.elements.filter(":checked").length < validator.minchecked && !validator.negative) ||
+                        (validator.elements.filter(":checked").length >= validator.minchecked && validator.negative);
                 },
                 blockSubmit: true
             }
@@ -842,8 +870,7 @@
                 function (m, p1, p2) {
                     return p1 + p2.toUpperCase();
                 }
-            )
-            ;
+            );
     };
 
     var getValue = function ($this) {

@@ -121,7 +121,8 @@ html[xmlns] .slides {
     opacity: 1;
 }
 
-.flexslider:hover .flex-next:hover, .flexslider:hover .flex-prev:hover {
+.flexslider:hover .flex-next:hover,
+.flexslider:hover .flex-prev:hover {
     opacity: 1;
 }
 

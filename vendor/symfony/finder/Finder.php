@@ -11,6 +11,20 @@
 
 namespace Symfony\Component\Finder;
 
+use AppendIterator;
+use ArrayIterator;
+use Closure;
+use Countable;
+use InvalidArgumentException;
+use Iterator;
+use IteratorAggregate;
+use LogicException;
+use PHPUnit\Framework\MockObject\MockObject;
+use Prophecy\Prophecy\ProphecySubjectInterface;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ReflectionMethod;
+use RuntimeException;
 use Symfony\Component\Finder\Comparator\DateComparator;
 use Symfony\Component\Finder\Comparator\NumberComparator;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
@@ -22,6 +36,13 @@ use Symfony\Component\Finder\Iterator\FilecontentFilterIterator;
 use Symfony\Component\Finder\Iterator\FilenameFilterIterator;
 use Symfony\Component\Finder\Iterator\SizeRangeFilterIterator;
 use Symfony\Component\Finder\Iterator\SortableIterator;
+use Traversable;
+use function count;
+use function defined;
+use function func_num_args;
+use function get_class;
+use function is_array;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * Finder allows to build rules to find files and directories.
@@ -36,7 +57,7 @@ use Symfony\Component\Finder\Iterator\SortableIterator;
  *
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class Finder implements \IteratorAggregate, \Countable
+class Finder implements IteratorAggregate, Countable
 {
     const IGNORE_VCS_FILES = 1;
     const IGNORE_DOT_FILES = 2;
@@ -418,7 +439,7 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * @see SortableIterator
      */
-    public function sort(\Closure $closure)
+    public function sort(Closure $closure)
     {
         $this->sort = $closure;
 
@@ -438,10 +459,10 @@ class Finder implements \IteratorAggregate, \Countable
      */
     public function sortByName(/* bool $useNaturalSort = false */)
     {
-        if (\func_num_args() < 1 && __CLASS__ !== \get_class($this) && __CLASS__ !== (new \ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof \PHPUnit\Framework\MockObject\MockObject && !$this instanceof \Prophecy\Prophecy\ProphecySubjectInterface) {
+        if (func_num_args() < 1 && __CLASS__ !== get_class($this) && __CLASS__ !== (new ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof MockObject && !$this instanceof ProphecySubjectInterface) {
             @trigger_error(sprintf('The "%s()" method will have a new "bool $useNaturalSort = false" argument in version 5.0, not defining it is deprecated since Symfony 4.2.', __METHOD__), E_USER_DEPRECATED);
         }
-        $useNaturalSort = 0 < \func_num_args() && func_get_arg(0);
+        $useNaturalSort = 0 < func_num_args() && func_get_arg(0);
 
         $this->sort = $useNaturalSort ? Iterator\SortableIterator::SORT_BY_NAME_NATURAL : Iterator\SortableIterator::SORT_BY_NAME;
 
@@ -542,7 +563,7 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * @see CustomFilterIterator
      */
-    public function filter(\Closure $closure)
+    public function filter(Closure $closure)
     {
         $this->filters[] = $closure;
 
@@ -593,7 +614,7 @@ class Finder implements \IteratorAggregate, \Countable
         foreach ((array)$dirs as $dir) {
             if (is_dir($dir)) {
                 $resolvedDirs[] = $this->normalizeDir($dir);
-            } elseif ($glob = glob($dir, (\defined('GLOB_BRACE') ? GLOB_BRACE : 0) | GLOB_ONLYDIR)) {
+            } elseif ($glob = glob($dir, (defined('GLOB_BRACE') ? GLOB_BRACE : 0) | GLOB_ONLYDIR)) {
                 $resolvedDirs = array_merge($resolvedDirs, array_map([$this, 'normalizeDir'], $glob));
             } else {
                 throw new DirectoryNotFoundException(sprintf('The "%s" directory does not exist.', $dir));
@@ -606,26 +627,6 @@ class Finder implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Normalizes given directory names by removing trailing slashes.
-     *
-     * Excluding: (s)ftp:// wrapper
-     *
-     * @param string $dir
-     *
-     * @return string
-     */
-    private function normalizeDir($dir)
-    {
-        $dir = rtrim($dir, '/' . \DIRECTORY_SEPARATOR);
-
-        if (preg_match('#^s?ftp://#', $dir)) {
-            $dir .= '/';
-        }
-
-        return $dir;
-    }
-
-    /**
      * Appends an existing set of files/directories to the finder.
      *
      * The set can be another Finder, an Iterator, an IteratorAggregate, or even a plain array.
@@ -634,22 +635,22 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException when the given argument is not iterable
+     * @throws InvalidArgumentException when the given argument is not iterable
      */
     public function append($iterator)
     {
-        if ($iterator instanceof \IteratorAggregate) {
+        if ($iterator instanceof IteratorAggregate) {
             $this->iterators[] = $iterator->getIterator();
-        } elseif ($iterator instanceof \Iterator) {
+        } elseif ($iterator instanceof Iterator) {
             $this->iterators[] = $iterator;
-        } elseif ($iterator instanceof \Traversable || \is_array($iterator)) {
-            $it = new \ArrayIterator();
+        } elseif ($iterator instanceof Traversable || is_array($iterator)) {
+            $it = new ArrayIterator();
             foreach ($iterator as $file) {
                 $it->append($file instanceof \SplFileInfo ? $file : new \SplFileInfo($file));
             }
             $this->iterators[] = $it;
         } else {
-            throw new \InvalidArgumentException('Finder::append() method wrong argument type.');
+            throw new InvalidArgumentException('Finder::append() method wrong argument type.');
         }
 
         return $this;
@@ -674,21 +675,21 @@ class Finder implements \IteratorAggregate, \Countable
      *
      * This method implements the IteratorAggregate interface.
      *
-     * @return \Iterator|SplFileInfo[] An iterator
+     * @return Iterator|SplFileInfo[] An iterator
      *
-     * @throws \LogicException if the in() method has not been called
+     * @throws LogicException if the in() method has not been called
      */
     public function getIterator()
     {
-        if (0 === \count($this->dirs) && 0 === \count($this->iterators)) {
-            throw new \LogicException('You must call one of in() or append() methods before iterating over a Finder.');
+        if (0 === count($this->dirs) && 0 === count($this->iterators)) {
+            throw new LogicException('You must call one of in() or append() methods before iterating over a Finder.');
         }
 
-        if (1 === \count($this->dirs) && 0 === \count($this->iterators)) {
+        if (1 === count($this->dirs) && 0 === count($this->iterators)) {
             return $this->searchInDirectory($this->dirs[0]);
         }
 
-        $iterator = new \AppendIterator();
+        $iterator = new AppendIterator();
         foreach ($this->dirs as $dir) {
             $iterator->append($this->searchInDirectory($dir));
         }
@@ -700,7 +701,37 @@ class Finder implements \IteratorAggregate, \Countable
         return $iterator;
     }
 
-    private function searchInDirectory(string $dir): \Iterator
+    /**
+     * Counts all the results collected by the iterators.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return iterator_count($this->getIterator());
+    }
+
+    /**
+     * Normalizes given directory names by removing trailing slashes.
+     *
+     * Excluding: (s)ftp:// wrapper
+     *
+     * @param string $dir
+     *
+     * @return string
+     */
+    private function normalizeDir($dir)
+    {
+        $dir = rtrim($dir, '/' . DIRECTORY_SEPARATOR);
+
+        if (preg_match('#^s?ftp://#', $dir)) {
+            $dir .= '/';
+        }
+
+        return $dir;
+    }
+
+    private function searchInDirectory(string $dir): Iterator
     {
         $exclude = $this->exclude;
         $notPaths = $this->notPaths;
@@ -716,7 +747,7 @@ class Finder implements \IteratorAggregate, \Countable
         if (static::IGNORE_VCS_IGNORED_FILES === (static::IGNORE_VCS_IGNORED_FILES & $this->ignore)) {
             $gitignoreFilePath = sprintf('%s/.gitignore', $dir);
             if (!is_readable($gitignoreFilePath)) {
-                throw new \RuntimeException(sprintf('The "ignoreVCSIgnored" option cannot be used by the Finder as the "%s" file is not readable.', $gitignoreFilePath));
+                throw new RuntimeException(sprintf('The "ignoreVCSIgnored" option cannot be used by the Finder as the "%s" file is not readable.', $gitignoreFilePath));
             }
             $notPaths = array_merge($notPaths, [Gitignore::toRegex(file_get_contents($gitignoreFilePath))]);
         }
@@ -743,10 +774,10 @@ class Finder implements \IteratorAggregate, \Countable
             }
         }
 
-        $flags = \RecursiveDirectoryIterator::SKIP_DOTS;
+        $flags = RecursiveDirectoryIterator::SKIP_DOTS;
 
         if ($this->followLinks) {
-            $flags |= \RecursiveDirectoryIterator::FOLLOW_SYMLINKS;
+            $flags |= RecursiveDirectoryIterator::FOLLOW_SYMLINKS;
         }
 
         $iterator = new Iterator\RecursiveDirectoryIterator($dir, $flags, $this->ignoreUnreadableDirs);
@@ -755,7 +786,7 @@ class Finder implements \IteratorAggregate, \Countable
             $iterator = new Iterator\ExcludeDirectoryFilterIterator($iterator, $exclude);
         }
 
-        $iterator = new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::SELF_FIRST);
+        $iterator = new RecursiveIteratorIterator($iterator, RecursiveIteratorIterator::SELF_FIRST);
 
         if ($minDepth > 0 || $maxDepth < PHP_INT_MAX) {
             $iterator = new Iterator\DepthRangeFilterIterator($iterator, $minDepth, $maxDepth);
@@ -795,15 +826,5 @@ class Finder implements \IteratorAggregate, \Countable
         }
 
         return $iterator;
-    }
-
-    /**
-     * Counts all the results collected by the iterators.
-     *
-     * @return int
-     */
-    public function count()
-    {
-        return iterator_count($this->getIterator());
     }
 }

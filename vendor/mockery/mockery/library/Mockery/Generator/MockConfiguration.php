@@ -115,69 +115,6 @@ class MockConfiguration
         $this->constantsMap = $constantsMap;
     }
 
-    protected function addTargets($interfaces)
-    {
-        foreach ($interfaces as $interface) {
-            $this->addTarget($interface);
-        }
-    }
-
-    protected function addTarget($target)
-    {
-        if (is_object($target)) {
-            $this->setTargetObject($target);
-            $this->setTargetClassName(get_class($target));
-            return $this;
-        }
-
-        if ($target[0] !== "\\") {
-            $target = "\\" . $target;
-        }
-
-        if (class_exists($target)) {
-            $this->setTargetClassName($target);
-            return $this;
-        }
-
-        if (interface_exists($target)) {
-            $this->addTargetInterfaceName($target);
-            return $this;
-        }
-
-        if (trait_exists($target)) {
-            $this->addTargetTraitName($target);
-            return $this;
-        }
-
-        /**
-         * Default is to set as class, or interface if class already set
-         *
-         * Don't like this condition, can't remember what the default
-         * targetClass is for
-         */
-        if ($this->getTargetClassName()) {
-            $this->addTargetInterfaceName($target);
-            return $this;
-        }
-
-        $this->setTargetClassName($target);
-    }
-
-    /**
-     * If we attempt to implement Traversable, we must ensure we are also
-     * implementing either Iterator or IteratorAggregate, and that whichever one
-     * it is comes before Traversable in the list of implements.
-     */
-    protected function addTargetInterfaceName($targetInterface)
-    {
-        $this->targetInterfaceNames[] = $targetInterface;
-    }
-
-    protected function addTargetTraitName($targetTraitName)
-    {
-        $this->targetTraitNames[] = $targetTraitName;
-    }
-
     public function getTargetClassName()
     {
         return $this->targetClassName;
@@ -264,72 +201,6 @@ class MockConfiguration
         }
 
         return array_values($methods);
-    }
-
-    protected function getAllMethods()
-    {
-        if ($this->allMethods) {
-            return $this->allMethods;
-        }
-
-        $classes = $this->getTargetInterfaces();
-
-        if ($this->getTargetClass()) {
-            $classes[] = $this->getTargetClass();
-        }
-
-        $methods = array();
-        foreach ($classes as $class) {
-            $methods = array_merge($methods, $class->getMethods());
-        }
-
-        foreach ($this->getTargetTraits() as $trait) {
-            foreach ($trait->getMethods() as $method) {
-                if ($method->isAbstract()) {
-                    $methods[] = $method;
-                }
-            }
-        }
-
-        $names = array();
-        $methods = array_filter($methods, function ($method) use (&$names) {
-            if (in_array($method->getName(), $names)) {
-                return false;
-            }
-
-            $names[] = $method->getName();
-            return true;
-        });
-
-        // In HHVM, class methods can be annotated with the built-in
-        // <<__Memoize>> attribute (similar to a Python decorator),
-        // which builds an LRU cache of method arguments and their
-        // return values.
-        // https://docs.hhvm.com/hack/attributes/special#__memoize
-        //
-        // HHVM implements this behavior by inserting a private helper
-        // method into the class at runtime which is named as the
-        // method to be memoized, suffixed by `$memoize_impl`.
-        // https://github.com/facebook/hhvm/blob/6aa46f1e8c2351b97d65e67b73e26f274a7c3f2e/hphp/runtime/vm/func.cpp#L364
-        //
-        // Ordinarily, PHP does not all allow the `$` token in method
-        // names, but since the memoization helper is inserted at
-        // runtime (and not in userland), HHVM allows it.
-        //
-        // We use code generation and eval() for some types of mocks,
-        // so to avoid syntax errors from these memoization helpers,
-        // we must filter them from our list of class methods.
-        //
-        // This effectively disables the memoization behavior in HHVM,
-        // but that's preferable to failing catastrophically when
-        // attempting to mock a class using the attribute.
-        if (defined('HHVM_VERSION')) {
-            $methods = array_filter($methods, function ($method) {
-                return strpos($method->getName(), '$memoize_impl') === false;
-            });
-        }
-
-        return $this->allMethods = $methods;
     }
 
     public function getTargetInterfaces()
@@ -573,5 +444,134 @@ class MockConfiguration
     public function getConstantsMap()
     {
         return $this->constantsMap;
+    }
+
+    protected function addTargets($interfaces)
+    {
+        foreach ($interfaces as $interface) {
+            $this->addTarget($interface);
+        }
+    }
+
+    protected function addTarget($target)
+    {
+        if (is_object($target)) {
+            $this->setTargetObject($target);
+            $this->setTargetClassName(get_class($target));
+            return $this;
+        }
+
+        if ($target[0] !== "\\") {
+            $target = "\\" . $target;
+        }
+
+        if (class_exists($target)) {
+            $this->setTargetClassName($target);
+            return $this;
+        }
+
+        if (interface_exists($target)) {
+            $this->addTargetInterfaceName($target);
+            return $this;
+        }
+
+        if (trait_exists($target)) {
+            $this->addTargetTraitName($target);
+            return $this;
+        }
+
+        /**
+         * Default is to set as class, or interface if class already set
+         *
+         * Don't like this condition, can't remember what the default
+         * targetClass is for
+         */
+        if ($this->getTargetClassName()) {
+            $this->addTargetInterfaceName($target);
+            return $this;
+        }
+
+        $this->setTargetClassName($target);
+    }
+
+    /**
+     * If we attempt to implement Traversable, we must ensure we are also
+     * implementing either Iterator or IteratorAggregate, and that whichever one
+     * it is comes before Traversable in the list of implements.
+     */
+    protected function addTargetInterfaceName($targetInterface)
+    {
+        $this->targetInterfaceNames[] = $targetInterface;
+    }
+
+    protected function addTargetTraitName($targetTraitName)
+    {
+        $this->targetTraitNames[] = $targetTraitName;
+    }
+
+    protected function getAllMethods()
+    {
+        if ($this->allMethods) {
+            return $this->allMethods;
+        }
+
+        $classes = $this->getTargetInterfaces();
+
+        if ($this->getTargetClass()) {
+            $classes[] = $this->getTargetClass();
+        }
+
+        $methods = array();
+        foreach ($classes as $class) {
+            $methods = array_merge($methods, $class->getMethods());
+        }
+
+        foreach ($this->getTargetTraits() as $trait) {
+            foreach ($trait->getMethods() as $method) {
+                if ($method->isAbstract()) {
+                    $methods[] = $method;
+                }
+            }
+        }
+
+        $names = array();
+        $methods = array_filter($methods, function ($method) use (&$names) {
+            if (in_array($method->getName(), $names)) {
+                return false;
+            }
+
+            $names[] = $method->getName();
+            return true;
+        });
+
+        // In HHVM, class methods can be annotated with the built-in
+        // <<__Memoize>> attribute (similar to a Python decorator),
+        // which builds an LRU cache of method arguments and their
+        // return values.
+        // https://docs.hhvm.com/hack/attributes/special#__memoize
+        //
+        // HHVM implements this behavior by inserting a private helper
+        // method into the class at runtime which is named as the
+        // method to be memoized, suffixed by `$memoize_impl`.
+        // https://github.com/facebook/hhvm/blob/6aa46f1e8c2351b97d65e67b73e26f274a7c3f2e/hphp/runtime/vm/func.cpp#L364
+        //
+        // Ordinarily, PHP does not all allow the `$` token in method
+        // names, but since the memoization helper is inserted at
+        // runtime (and not in userland), HHVM allows it.
+        //
+        // We use code generation and eval() for some types of mocks,
+        // so to avoid syntax errors from these memoization helpers,
+        // we must filter them from our list of class methods.
+        //
+        // This effectively disables the memoization behavior in HHVM,
+        // but that's preferable to failing catastrophically when
+        // attempting to mock a class using the attribute.
+        if (defined('HHVM_VERSION')) {
+            $methods = array_filter($methods, function ($method) {
+                return strpos($method->getName(), '$memoize_impl') === false;
+            });
+        }
+
+        return $this->allMethods = $methods;
     }
 }

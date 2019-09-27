@@ -99,35 +99,6 @@ EOF;
         $this->testCase->run();
     }
 
-    /**
-     * Defines the content of the current PHPT test.
-     *
-     * @param string $content
-     */
-    private function setPhpContent($content): void
-    {
-        file_put_contents($this->filename, $content);
-    }
-
-    /**
-     * Ensures the correct line ending is used for comparison
-     *
-     * @param string $content
-     *
-     * @return string
-     */
-    private function ensureCorrectEndOfLine($content)
-    {
-        return strtr(
-            $content,
-            [
-                "\r\n" => PHP_EOL,
-                "\r" => PHP_EOL,
-                "\n" => PHP_EOL,
-            ]
-        );
-    }
-
     public function testRenderFileSection(): void
     {
         $this->setPhpContent($this->ensureCorrectEndOfLine(
@@ -353,5 +324,34 @@ EOF
 
         $this->phpProcess = null;
         $this->testCase = null;
+    }
+
+    /**
+     * Defines the content of the current PHPT test.
+     *
+     * @param string $content
+     */
+    private function setPhpContent($content): void
+    {
+        file_put_contents($this->filename, $content);
+    }
+
+    /**
+     * Ensures the correct line ending is used for comparison
+     *
+     * @param string $content
+     *
+     * @return string
+     */
+    private function ensureCorrectEndOfLine($content)
+    {
+        return strtr(
+            $content,
+            [
+                "\r\n" => PHP_EOL,
+                "\r" => PHP_EOL,
+                "\n" => PHP_EOL,
+            ]
+        );
     }
 }

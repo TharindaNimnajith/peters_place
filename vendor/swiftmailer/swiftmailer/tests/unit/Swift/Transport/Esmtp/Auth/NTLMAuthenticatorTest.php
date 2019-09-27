@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Transport_Esmtp_Auth_NTLMAuthenticatorTest extends \SwiftMailerTestCase
+class Swift_Transport_Esmtp_Auth_NTLMAuthenticatorTest extends SwiftMailerTestCase
 {
     private $message1 = '4e544c4d535350000100000007020000';
     private $message2 = '4e544c4d53535000020000000c000c003000000035828980514246973ea892c10000000000000000460046003c00000054004500530054004e00540002000c0054004500530054004e00540001000c004d0045004d0042004500520003001e006d0065006d006200650072002e0074006500730074002e0063006f006d0000000000';
@@ -12,25 +12,12 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticatorTest extends \SwiftMailerTestC
         $this->assertEquals('NTLM', $login->getAuthKeyword());
     }
 
-    private function getAuthenticator()
-    {
-        return new Swift_Transport_Esmtp_Auth_NTLMAuthenticator();
-    }
-
     public function testMessage1Generator()
     {
         $login = $this->getAuthenticator();
         $message1 = $this->invokePrivateMethod('createMessage1', $login);
 
         $this->assertEquals($this->message1, bin2hex($message1), '%s: We send the smallest ntlm message which should never fail.');
-    }
-
-    private function invokePrivateMethod($method, $instance, array $args = [])
-    {
-        $methodC = new ReflectionMethod($instance, trim($method));
-        $methodC->setAccessible(true);
-
-        return $methodC->invokeArgs($instance, $args);
     }
 
     public function testLMv1Generator()
@@ -166,13 +153,8 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticatorTest extends \SwiftMailerTestC
         $this->assertTrue($ntlm->authenticate($agent, $username . '@' . $domain, $secret, hex2bin('30fa7e3c677bc301'), hex2bin('f5ce3d2401c8f6e9')), '%s: The buffer accepted all commands authentication should succeed');
     }
 
-    private function getAgent()
-    {
-        return $this->getMockery('Swift_Transport_SmtpAgent')->shouldIgnoreMissing();
-    }
-
     /**
-     * @expectedException \Swift_TransportException
+     * @expectedException Swift_TransportException
      */
     public function testAuthenticationFailureSendRset()
     {
@@ -200,5 +182,23 @@ class Swift_Transport_Esmtp_Auth_NTLMAuthenticatorTest extends \SwiftMailerTestC
         if (!function_exists('openssl_encrypt') || !function_exists('bcmul')) {
             $this->markTestSkipped('One of the required functions is not available.');
         }
+    }
+
+    private function getAuthenticator()
+    {
+        return new Swift_Transport_Esmtp_Auth_NTLMAuthenticator();
+    }
+
+    private function invokePrivateMethod($method, $instance, array $args = [])
+    {
+        $methodC = new ReflectionMethod($instance, trim($method));
+        $methodC->setAccessible(true);
+
+        return $methodC->invokeArgs($instance, $args);
+    }
+
+    private function getAgent()
+    {
+        return $this->getMockery('Swift_Transport_SmtpAgent')->shouldIgnoreMissing();
     }
 }

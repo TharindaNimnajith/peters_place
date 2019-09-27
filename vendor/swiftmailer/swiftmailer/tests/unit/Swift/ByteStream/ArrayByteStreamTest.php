@@ -1,6 +1,8 @@
 <?php
 
-class Swift_ByteStream_ArrayByteStreamTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_ByteStream_ArrayByteStreamTest extends TestCase
 {
     public function testReadingSingleBytesFromBaseInput()
     {
@@ -13,11 +15,6 @@ class Swift_ByteStream_ArrayByteStreamTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($input, $output,
             '%s: Bytes read from stream should be the same as bytes in constructor'
         );
-    }
-
-    private function createArrayStream($input)
-    {
-        return new Swift_ByteStream_ArrayByteStream($input);
     }
 
     public function testReadingMultipleBytesFromBaseInput()
@@ -198,5 +195,10 @@ class Swift_ByteStream_ArrayByteStreamTest extends \PHPUnit\Framework\TestCase
         $bs->unbind($is2);
 
         $bs->write('y');
+    }
+
+    private function createArrayStream($input)
+    {
+        return new Swift_ByteStream_ArrayByteStream($input);
     }
 }

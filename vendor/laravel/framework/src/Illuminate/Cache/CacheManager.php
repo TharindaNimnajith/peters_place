@@ -83,6 +83,81 @@ class CacheManager implements FactoryContract
     }
 
     /**
+     * Set the default cache driver name.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setDefaultDriver($name)
+    {
+        $this->app['config']['cache.default'] = $name;
+    }
+
+    /**
+     * Unset the given driver instances.
+     *
+     * @param array|string|null $name
+     * @return $this
+     */
+    public function forgetDriver($name = null)
+    {
+        $name = $name ?? $this->getDefaultDriver();
+
+        foreach ((array)$name as $cacheName) {
+            if (isset($this->stores[$cacheName])) {
+                unset($this->stores[$cacheName]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Register a custom driver creator Closure.
+     *
+     * @param string $driver
+     * @param Closure $callback
+     * @return $this
+     */
+    public function extend($driver, Closure $callback)
+    {
+        $this->customCreators[$driver] = $callback->bindTo($this, $this);
+
+        return $this;
+    }
+
+    /**
+     * Dynamically call the default driver instance.
+     *
+     * @param string $method
+     * @param array $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->store()->$method(...$parameters);
+    }
+
+    /**
+     * Create a new cache repository with the given implementation.
+     *
+     * @param Store $store
+     * @return Repository
+     */
+    public function repository(Store $store)
+    {
+        $repository = new Repository($store);
+
+        if ($this->app->bound(DispatcherContract::class)) {
+            $repository->setEventDispatcher(
+                $this->app[DispatcherContract::class]
+            );
+        }
+
+        return $repository;
+    }
+
+    /**
      * Attempt to get the store from the local cache.
      *
      * @param string $name
@@ -145,62 +220,6 @@ class CacheManager implements FactoryContract
     }
 
     /**
-     * Set the default cache driver name.
-     *
-     * @param string $name
-     * @return void
-     */
-    public function setDefaultDriver($name)
-    {
-        $this->app['config']['cache.default'] = $name;
-    }
-
-    /**
-     * Unset the given driver instances.
-     *
-     * @param array|string|null $name
-     * @return $this
-     */
-    public function forgetDriver($name = null)
-    {
-        $name = $name ?? $this->getDefaultDriver();
-
-        foreach ((array)$name as $cacheName) {
-            if (isset($this->stores[$cacheName])) {
-                unset($this->stores[$cacheName]);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Register a custom driver creator Closure.
-     *
-     * @param string $driver
-     * @param Closure $callback
-     * @return $this
-     */
-    public function extend($driver, Closure $callback)
-    {
-        $this->customCreators[$driver] = $callback->bindTo($this, $this);
-
-        return $this;
-    }
-
-    /**
-     * Dynamically call the default driver instance.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        return $this->store()->$method(...$parameters);
-    }
-
-    /**
      * Create an instance of the APC cache driver.
      *
      * @param array $config
@@ -222,25 +241,6 @@ class CacheManager implements FactoryContract
     protected function getPrefix(array $config)
     {
         return $config['prefix'] ?? $this->app['config']['cache.prefix'];
-    }
-
-    /**
-     * Create a new cache repository with the given implementation.
-     *
-     * @param Store $store
-     * @return Repository
-     */
-    public function repository(Store $store)
-    {
-        $repository = new Repository($store);
-
-        if ($this->app->bound(DispatcherContract::class)) {
-            $repository->setEventDispatcher(
-                $this->app[DispatcherContract::class]
-            );
-        }
-
-        return $repository;
     }
 
     /**

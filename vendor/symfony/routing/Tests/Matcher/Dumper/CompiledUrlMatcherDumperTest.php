@@ -11,13 +11,16 @@
 
 namespace Symfony\Component\Routing\Tests\Matcher\Dumper;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\Routing\Matcher\CompiledUrlMatcher;
 use Symfony\Component\Routing\Matcher\Dumper\CompiledUrlMatcherDumper;
 use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use const DIRECTORY_SEPARATOR;
 
 class CompiledUrlMatcherDumperTest extends TestCase
 {
@@ -35,20 +38,6 @@ class CompiledUrlMatcherDumperTest extends TestCase
         $matcher->expects($this->once())->method('redirect')->with('/foo%3Abar/', 'foo')->willReturn([]);
 
         $matcher->match('/foo%3Abar');
-    }
-
-    private function generateDumpedMatcher(RouteCollection $collection)
-    {
-        $dumper = new CompiledUrlMatcherDumper($collection);
-        $code = $dumper->dump();
-
-        file_put_contents($this->dumpPath, $code);
-        $compiledRoutes = require $this->dumpPath;
-
-        return $this->getMockBuilder(TestCompiledUrlMatcher::class)
-            ->setConstructorArgs([$compiledRoutes, new RequestContext()])
-            ->setMethods(['redirect'])
-            ->getMock();
     }
 
     /**
@@ -461,13 +450,13 @@ class CompiledUrlMatcherDumperTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Symfony\Component\Routing\Route cannot contain objects
      */
     public function testGenerateDumperMatcherWithObject()
     {
         $routeCollection = new RouteCollection();
-        $routeCollection->add('_', new Route('/', [new \stdClass()]));
+        $routeCollection->add('_', new Route('/', [new stdClass()]));
         $dumper = new CompiledUrlMatcherDumper($routeCollection);
         $dumper->dump();
     }
@@ -476,7 +465,7 @@ class CompiledUrlMatcherDumperTest extends TestCase
     {
         parent::setUp();
 
-        $this->dumpPath = sys_get_temp_dir() . \DIRECTORY_SEPARATOR . 'php_matcher.' . uniqid('CompiledUrlMatcher') . '.php';
+        $this->dumpPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'php_matcher.' . uniqid('CompiledUrlMatcher') . '.php';
     }
 
     protected function tearDown()
@@ -484,6 +473,20 @@ class CompiledUrlMatcherDumperTest extends TestCase
         parent::tearDown();
 
         @unlink($this->dumpPath);
+    }
+
+    private function generateDumpedMatcher(RouteCollection $collection)
+    {
+        $dumper = new CompiledUrlMatcherDumper($collection);
+        $code = $dumper->dump();
+
+        file_put_contents($this->dumpPath, $code);
+        $compiledRoutes = require $this->dumpPath;
+
+        return $this->getMockBuilder(TestCompiledUrlMatcher::class)
+            ->setConstructorArgs([$compiledRoutes, new RequestContext()])
+            ->setMethods(['redirect'])
+            ->getMock();
     }
 }
 

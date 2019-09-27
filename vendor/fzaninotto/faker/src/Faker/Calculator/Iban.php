@@ -51,16 +51,6 @@ class Iban
     }
 
     /**
-     * @param string $match
-     *
-     * @return int
-     */
-    private static function alphaToNumberCallback($match)
-    {
-        return self::alphaToNumber($match[0]);
-    }
-
-    /**
      * Converts letter to number
      *
      * @param string $char
@@ -69,5 +59,15 @@ class Iban
     public static function alphaToNumber($char)
     {
         return ord($char) - 55;
+    }
+
+    /**
+     * @param string $match
+     *
+     * @return int
+     */
+    private static function alphaToNumberCallback($match)
+    {
+        return self::alphaToNumber($match[0]);
     }
 }

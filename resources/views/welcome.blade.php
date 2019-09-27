@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
-<head><title>PetersPlace</title>
+
+<head>
+    <title>PetersPlace</title>
 
     <link rel="stylesheet" type="text/css" href="home.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,42 +30,50 @@
     <tr>
         <td>
             <center><a href=""><img class="image" src="front.png" alt="our story" width="200" height="130"/></a>
-                <h2>Front Office<br>Management</h2></center>
+                <h2>Front Office<br>Management</h2>
+            </center>
         </td>
         <td>
             <center><a href=""><img class="image" src="event.png" alt="our story" width="200" height="130"/></a>
-                <h2>Event<br>Management</h2></center>
+                <h2>Event<br>Management</h2>
+            </center>
         </td>
         <td>
             <center><a href=""><img class="image" src="finance.png" alt="our story" width="200" height="130"/></a>
-                <h2>Finance<br>Management</h2></center>
+                <h2>Finance<br>Management</h2>
+            </center>
         </td>
         <td>
-            <center><a href=""><img class="image" src="reservation.png" alt="our story" width="200" height="130"/></a>
-                <h2>Room Reservation &<br> Room Management</h2></center>
+            <center><a href=""><img class="image" src="reservation.png" alt="our story" width="200"
+                                    height="130"/></a>
+                <h2>Room Reservation &<br> Room Management</h2>
+            </center>
         </td>
     </tr>
     <tr>
         <td>
             <center><a href=""><img class="image" src="supplier.png" alt="our story" width="200" height="130"/></a>
-                <h2>Supplier<br>Management</h2></center>
+                <h2>Supplier<br>Management</h2>
+            </center>
         </td>
         <td>
             <center><a href=""><img class="image" src="hr.png" alt="our story" width="200" height="130"/></a>
-                <h2>Human Resources<br>Management</h2></center>
+                <h2>Human Resources<br>Management</h2>
+            </center>
         </td>
         <td>
             <center><a href=""><img class="image" src="house.png" alt="our story" width="200" height="130"/></a>
-                <h2>House Keeping<br>Management</h2></center>
+                <h2>House Keeping<br>Management</h2>
+            </center>
         </td>
         <td>
-            <center><a href=""><img class="image" src="inventory.png" alt="our story" width="200" height="130"/></a>
-                <h2>Inventory<br>Management</h2></center>
+            <center><a href=""><img class="image" src="inventory.png" alt="our story" width="200"
+                                    height="130"/></a>
+                <h2>Inventory<br>Management</h2>
+            </center>
         </td>
     </tr>
-
 </table>
-
-
 </body>
+
 </html>

@@ -3,6 +3,8 @@
 namespace Faker\ORM\CakePHP;
 
 use Cake\ORM\TableRegistry;
+use Exception;
+use RuntimeException;
 
 class EntityPopulator
 {
@@ -79,15 +81,6 @@ class EntityPopulator
         return $formatters;
     }
 
-    protected function getTable($class)
-    {
-        $options = [];
-        if (!empty($this->connectionName)) {
-            $options['connection'] = $this->connectionName;
-        }
-        return TableRegistry::get($class, $options);
-    }
-
     /**
      * @return array
      */
@@ -115,7 +108,7 @@ class EntityPopulator
                 }
 
                 if (empty($foreignKeys)) {
-                    throw new \Exception(sprintf('%s belongsTo %s, which seems empty at this point.', $this->getTable($this->class)->table(), $assoc->table()));
+                    throw new Exception(sprintf('%s belongsTo %s, which seems empty at this point.', $this->getTable($this->class)->table(), $assoc->table()));
                 }
 
                 $foreignKey = $foreignKeys[array_rand($foreignKeys)];
@@ -148,7 +141,7 @@ class EntityPopulator
         }
 
         if (!$entity = $table->save($entity, $options)) {
-            throw new \RuntimeException("Failed saving $class record");
+            throw new RuntimeException("Failed saving $class record");
         }
 
         $pk = $table->primaryKey();
@@ -162,5 +155,14 @@ class EntityPopulator
     public function setConnection($name)
     {
         $this->connectionName = $name;
+    }
+
+    protected function getTable($class)
+    {
+        $options = [];
+        if (!empty($this->connectionName)) {
+            $options['connection'] = $this->connectionName;
+        }
+        return TableRegistry::get($class, $options);
     }
 }

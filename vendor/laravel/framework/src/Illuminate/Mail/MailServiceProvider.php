@@ -47,6 +47,18 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
     }
 
     /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'mailer', 'swift.mailer', 'swift.transport', Markdown::class,
+        ];
+    }
+
+    /**
      * Register the Swift Transport instance.
      *
      * @return void
@@ -130,17 +142,5 @@ class MailServiceProvider extends ServiceProvider implements DeferrableProvider
                 'paths' => $config->get('mail.markdown.paths', []),
             ]);
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'mailer', 'swift.mailer', 'swift.transport', Markdown::class,
-        ];
     }
 }

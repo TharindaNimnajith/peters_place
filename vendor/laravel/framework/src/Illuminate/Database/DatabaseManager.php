@@ -132,6 +132,100 @@ class DatabaseManager implements ConnectionResolverInterface
     }
 
     /**
+     * Disconnect from the given database and remove from local cache.
+     *
+     * @param string|null $name
+     * @return void
+     */
+    public function purge($name = null)
+    {
+        $name = $name ?: $this->getDefaultConnection();
+
+        $this->disconnect($name);
+
+        unset($this->connections[$name]);
+    }
+
+    /**
+     * Set the default connection name.
+     *
+     * @param string $name
+     * @return void
+     */
+    public function setDefaultConnection($name)
+    {
+        $this->app['config']['database.default'] = $name;
+    }
+
+    /**
+     * Get all of the drivers that are actually available.
+     *
+     * @return array
+     */
+    public function availableDrivers()
+    {
+        return array_intersect(
+            $this->supportedDrivers(),
+            str_replace('dblib', 'sqlsrv', PDO::getAvailableDrivers())
+        );
+    }
+
+    /**
+     * Get all of the support drivers.
+     *
+     * @return array
+     */
+    public function supportedDrivers()
+    {
+        return ['mysql', 'pgsql', 'sqlite', 'sqlsrv'];
+    }
+
+    /**
+     * Register an extension connection resolver.
+     *
+     * @param string $name
+     * @param callable $resolver
+     * @return void
+     */
+    public function extend($name, callable $resolver)
+    {
+        $this->extensions[$name] = $resolver;
+    }
+
+    /**
+     * Return all of the created connections.
+     *
+     * @return array
+     */
+    public function getConnections()
+    {
+        return $this->connections;
+    }
+
+    /**
+     * Set the database reconnector callback.
+     *
+     * @param callable $reconnector
+     * @return void
+     */
+    public function setReconnector(callable $reconnector)
+    {
+        $this->reconnector = $reconnector;
+    }
+
+    /**
+     * Dynamically pass methods to the default connection.
+     *
+     * @param string $method
+     * @param array $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->connection()->$method(...$parameters);
+    }
+
+    /**
      * Parse the connection into an array of the name and read / write type.
      *
      * @param string $name
@@ -254,99 +348,5 @@ class DatabaseManager implements ConnectionResolverInterface
         return $this->connections[$name]
             ->setPdo($fresh->getPdo())
             ->setReadPdo($fresh->getReadPdo());
-    }
-
-    /**
-     * Disconnect from the given database and remove from local cache.
-     *
-     * @param string|null $name
-     * @return void
-     */
-    public function purge($name = null)
-    {
-        $name = $name ?: $this->getDefaultConnection();
-
-        $this->disconnect($name);
-
-        unset($this->connections[$name]);
-    }
-
-    /**
-     * Set the default connection name.
-     *
-     * @param string $name
-     * @return void
-     */
-    public function setDefaultConnection($name)
-    {
-        $this->app['config']['database.default'] = $name;
-    }
-
-    /**
-     * Get all of the drivers that are actually available.
-     *
-     * @return array
-     */
-    public function availableDrivers()
-    {
-        return array_intersect(
-            $this->supportedDrivers(),
-            str_replace('dblib', 'sqlsrv', PDO::getAvailableDrivers())
-        );
-    }
-
-    /**
-     * Get all of the support drivers.
-     *
-     * @return array
-     */
-    public function supportedDrivers()
-    {
-        return ['mysql', 'pgsql', 'sqlite', 'sqlsrv'];
-    }
-
-    /**
-     * Register an extension connection resolver.
-     *
-     * @param string $name
-     * @param callable $resolver
-     * @return void
-     */
-    public function extend($name, callable $resolver)
-    {
-        $this->extensions[$name] = $resolver;
-    }
-
-    /**
-     * Return all of the created connections.
-     *
-     * @return array
-     */
-    public function getConnections()
-    {
-        return $this->connections;
-    }
-
-    /**
-     * Set the database reconnector callback.
-     *
-     * @param callable $reconnector
-     * @return void
-     */
-    public function setReconnector(callable $reconnector)
-    {
-        $this->reconnector = $reconnector;
-    }
-
-    /**
-     * Dynamically pass methods to the default connection.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        return $this->connection()->$method(...$parameters);
     }
 }

@@ -12,8 +12,11 @@
 namespace Symfony\Component\VarDumper\Server;
 
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Symfony\Component\VarDumper\Cloner\Stub;
+use function count;
+use function is_array;
 
 /**
  * A server collecting Data clones sent by a ServerDumper.
@@ -56,7 +59,7 @@ class DumpServer
                 continue;
             }
 
-            if (!\is_array($payload) || \count($payload) < 2 || !$payload[0] instanceof Data || !\is_array($payload[1])) {
+            if (!is_array($payload) || count($payload) < 2 || !$payload[0] instanceof Data || !is_array($payload[1])) {
                 if ($this->logger) {
                     $this->logger->warning('Invalid payload from {clientId} client. Expected an array of two elements (Data $data, array $context)', ['clientId' => $clientId]);
                 }
@@ -73,8 +76,13 @@ class DumpServer
     public function start(): void
     {
         if (!$this->socket = stream_socket_server($this->host, $errno, $errstr)) {
-            throw new \RuntimeException(sprintf('Server start failed on "%s": %s %s.', $this->host, $errstr, $errno));
+            throw new RuntimeException(sprintf('Server start failed on "%s": %s %s.', $this->host, $errstr, $errno));
         }
+    }
+
+    public function getHost(): string
+    {
+        return $this->host;
     }
 
     private function getMessages(): iterable
@@ -98,10 +106,5 @@ class DumpServer
                 }
             }
         }
-    }
-
-    public function getHost(): string
-    {
-        return $this->host;
     }
 }

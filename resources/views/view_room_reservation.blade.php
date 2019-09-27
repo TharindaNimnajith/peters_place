@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
     <style>
         #model1 {
             margin-top: 6.5%;
-        }         
+        }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -32,6 +34,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -47,12 +50,14 @@
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
                             onclick="window.location='/room_reservation_management';">&times;
                     </button>
+
                     <h4 class="model-title" id="title">View Room Reservation</h4>
                 </div>
 
                 <div class="model-body" id="body">
                     <div class="col-md-6" id="col1">
                         <br/>
+
                         <div class="form-group">
                             <label>Reservation ID</label>
                             <input type="text" name="rid" class="form-control" value="{{ $details->id }}" disabled>
@@ -98,15 +103,14 @@
                         </div>
 
                         <div class="form-group">
-
                             <label>Reserved Date Time</label>
                             <input name="cin" type="text" class="form-control"
-                                   value="{{ $details->resereved_date_time }}"
-                                   disabled>
+                                   value="{{ $details->resereved_date_time }}" disabled>
                         </div>
 
                         <div class="form-group">
                             <br/>
+
                             <label>Check In</label>
                             <input name="cin" type="date" class="form-control" value="{{ $details->check_in }}"
                                    disabled>
@@ -114,6 +118,7 @@
 
                         <div class="form-group">
                             <br/>
+
                             <label>Check Out</label>
                             <input name="cout" type="date" class="form-control" value="{{ $details->check_out }}"
                                    disabled>
@@ -130,4 +135,5 @@
     </div>
 </div>
 </body>
+
 </html>

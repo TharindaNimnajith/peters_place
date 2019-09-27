@@ -10,16 +10,20 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
+use DateTime;
+use DOMElement;
 use SebastianBergmann\Environment\Runtime;
+use function constant;
+use function phpversion;
 
 final class BuildInformation
 {
     /**
-     * @var \DOMElement
+     * @var DOMElement
      */
     private $contextNode;
 
-    public function __construct(\DOMElement $contextNode)
+    public function __construct(DOMElement $contextNode)
     {
         $this->contextNode = $contextNode;
     }
@@ -36,16 +40,27 @@ final class BuildInformation
 
         if ($runtime->hasPHPDBGCodeCoverage()) {
             $driverNode->setAttribute('name', 'phpdbg');
-            $driverNode->setAttribute('version', \constant('PHPDBG_VERSION'));
+            $driverNode->setAttribute('version', constant('PHPDBG_VERSION'));
         }
 
         if ($runtime->hasXdebug()) {
             $driverNode->setAttribute('name', 'xdebug');
-            $driverNode->setAttribute('version', \phpversion('xdebug'));
+            $driverNode->setAttribute('version', phpversion('xdebug'));
         }
     }
 
-    private function getNodeByName(string $name): \DOMElement
+    public function setBuildTime(DateTime $date): void
+    {
+        $this->contextNode->setAttribute('time', $date->format('D M j G:i:s T Y'));
+    }
+
+    public function setGeneratorVersions(string $phpUnitVersion, string $coverageVersion): void
+    {
+        $this->contextNode->setAttribute('phpunit', $phpUnitVersion);
+        $this->contextNode->setAttribute('coverage', $coverageVersion);
+    }
+
+    private function getNodeByName(string $name): DOMElement
     {
         $node = $this->contextNode->getElementsByTagNameNS(
             'https://schema.phpunit.de/coverage/1.0',
@@ -62,16 +77,5 @@ final class BuildInformation
         }
 
         return $node;
-    }
-
-    public function setBuildTime(\DateTime $date): void
-    {
-        $this->contextNode->setAttribute('time', $date->format('D M j G:i:s T Y'));
-    }
-
-    public function setGeneratorVersions(string $phpUnitVersion, string $coverageVersion): void
-    {
-        $this->contextNode->setAttribute('phpunit', $phpUnitVersion);
-        $this->contextNode->setAttribute('coverage', $coverageVersion);
     }
 }

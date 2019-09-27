@@ -90,6 +90,22 @@ class Person extends \Faker\Provider\Person
     }
 
     /**
+     * @example 'アキラ'
+     */
+    public static function firstKanaNameMale()
+    {
+        return static::randomElement(static::$firstKanaNameMale);
+    }
+
+    /**
+     * @example 'アケミ'
+     */
+    public static function firstKanaNameFemale()
+    {
+        return static::randomElement(static::$firstKanaNameFemale);
+    }
+
+    /**
      * @param string|null $gender 'male', 'female' or null for any
      * @return string
      * @example 'アオタ アキラ'
@@ -121,21 +137,5 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$firstKanaNameFormat));
-    }
-
-    /**
-     * @example 'アキラ'
-     */
-    public static function firstKanaNameMale()
-    {
-        return static::randomElement(static::$firstKanaNameMale);
-    }
-
-    /**
-     * @example 'アケミ'
-     */
-    public static function firstKanaNameFemale()
-    {
-        return static::randomElement(static::$firstKanaNameFemale);
     }
 }

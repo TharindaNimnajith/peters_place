@@ -161,6 +161,24 @@ final class MockMethod
         );
     }
 
+    public static function fromName(string $fullClassName, string $methodName, bool $cloneArguments): self
+    {
+        return new self(
+            $fullClassName,
+            $methodName,
+            $cloneArguments,
+            'public',
+            '',
+            '',
+            '',
+            '',
+            false,
+            false,
+            null,
+            false
+        );
+    }
+
     /**
      * Returns the parameters of a function or method.
      *
@@ -247,24 +265,6 @@ final class MockMethod
         }
 
         return implode(', ', $parameters);
-    }
-
-    public static function fromName(string $fullClassName, string $methodName, bool $cloneArguments): self
-    {
-        return new self(
-            $fullClassName,
-            $methodName,
-            $cloneArguments,
-            'public',
-            '',
-            '',
-            '',
-            '',
-            false,
-            false,
-            null,
-            false
-        );
     }
 
     public function getName(): string

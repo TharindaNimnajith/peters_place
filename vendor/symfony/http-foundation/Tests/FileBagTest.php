@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\HttpFoundation\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\FileBag;
@@ -24,7 +25,7 @@ use Symfony\Component\HttpFoundation\FileBag;
 class FileBagTest extends TestCase
 {
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testFileMustBeAnArrayOrUploadedFile()
     {
@@ -45,14 +46,6 @@ class FileBagTest extends TestCase
         ]]);
 
         $this->assertEquals($file, $bag->get('file'));
-    }
-
-    protected function createTempFile()
-    {
-        $tempFile = tempnam(sys_get_temp_dir() . '/form_test', 'FormTest');
-        file_put_contents($tempFile, '1');
-
-        return $tempFile;
     }
 
     public function testShouldSetEmptyUploadedFilesToNull()
@@ -160,6 +153,14 @@ class FileBagTest extends TestCase
 
         $files = $bag->all();
         $this->assertEquals($file, $files['image']['file']);
+    }
+
+    protected function createTempFile()
+    {
+        $tempFile = tempnam(sys_get_temp_dir() . '/form_test', 'FormTest');
+        file_put_contents($tempFile, '1');
+
+        return $tempFile;
     }
 
     protected function setUp()

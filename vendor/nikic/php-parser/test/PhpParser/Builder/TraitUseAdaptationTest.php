@@ -35,11 +35,6 @@ class TraitUseAdaptationTest extends TestCase
         );
     }
 
-    protected function createTraitUseAdaptationBuilder($trait, $method)
-    {
-        return new TraitUseAdaptation($trait, $method);
-    }
-
     public function testInsteadof()
     {
         $node = $this->createTraitUseAdaptationBuilder('SomeTrait', 'foo')
@@ -106,5 +101,10 @@ class TraitUseAdaptationTest extends TestCase
         $this->expectExceptionMessage('Type of adaptation is not defined');
         $this->createTraitUseAdaptationBuilder(null, 'foo')
             ->getNode();
+    }
+
+    protected function createTraitUseAdaptationBuilder($trait, $method)
+    {
+        return new TraitUseAdaptation($trait, $method);
     }
 }

@@ -36,15 +36,6 @@ class VerificationDirector
         return $this->cloneApplyAndVerify("with", $args);
     }
 
-    protected function cloneApplyAndVerify($method, $args)
-    {
-        $expectation = clone $this->expectation;
-        call_user_func_array(array($expectation, $method), $args);
-        $director = new VerificationDirector($this->receivedMethodCalls, $expectation);
-        $director->verify();
-        return $director;
-    }
-
     public function verify()
     {
         return $this->receivedMethodCalls->verify($this->expectation);
@@ -70,16 +61,6 @@ class VerificationDirector
         return $this->cloneWithoutCountValidatorsApplyAndVerify("times", array($limit));
     }
 
-    protected function cloneWithoutCountValidatorsApplyAndVerify($method, $args)
-    {
-        $expectation = clone $this->expectation;
-        $expectation->clearCountValidators();
-        call_user_func_array(array($expectation, $method), $args);
-        $director = new VerificationDirector($this->receivedMethodCalls, $expectation);
-        $director->verify();
-        return $director;
-    }
-
     public function once()
     {
         return $this->cloneWithoutCountValidatorsApplyAndVerify("once", array());
@@ -103,5 +84,24 @@ class VerificationDirector
     public function between($minimum, $maximum)
     {
         return $this->cloneWithoutCountValidatorsApplyAndVerify("between", array($minimum, $maximum));
+    }
+
+    protected function cloneApplyAndVerify($method, $args)
+    {
+        $expectation = clone $this->expectation;
+        call_user_func_array(array($expectation, $method), $args);
+        $director = new VerificationDirector($this->receivedMethodCalls, $expectation);
+        $director->verify();
+        return $director;
+    }
+
+    protected function cloneWithoutCountValidatorsApplyAndVerify($method, $args)
+    {
+        $expectation = clone $this->expectation;
+        $expectation->clearCountValidators();
+        call_user_func_array(array($expectation, $method), $args);
+        $director = new VerificationDirector($this->receivedMethodCalls, $expectation);
+        $director->verify();
+        return $director;
     }
 }

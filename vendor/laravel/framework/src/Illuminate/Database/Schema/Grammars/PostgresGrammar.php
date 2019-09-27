@@ -419,17 +419,6 @@ class PostgresGrammar extends Grammar
     }
 
     /**
-     * Format the column definition for a PostGIS spatial type.
-     *
-     * @param string $type
-     * @return string
-     */
-    private function formatPostGisType(string $type)
-    {
-        return "geography($type, 4326)";
-    }
-
-    /**
      * Create the column definition for a char type.
      *
      * @param Fluent $column
@@ -931,5 +920,16 @@ class PostgresGrammar extends Grammar
         if ((in_array($column->type, $this->serials) || ($column->generatedAs !== null)) && $column->autoIncrement) {
             return ' primary key';
         }
+    }
+
+    /**
+     * Format the column definition for a PostGIS spatial type.
+     *
+     * @param string $type
+     * @return string
+     */
+    private function formatPostGisType(string $type)
+    {
+        return "geography($type, 4326)";
     }
 }

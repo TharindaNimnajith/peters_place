@@ -104,56 +104,6 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Define the application's command schedule.
-     *
-     * @return void
-     */
-    protected function defineConsoleSchedule()
-    {
-        $this->app->singleton(Schedule::class, function ($app) {
-            return (new Schedule($this->scheduleTimezone()))
-                ->useCache($this->scheduleCache());
-        });
-
-        $schedule = $this->app->make(Schedule::class);
-
-        $this->schedule($schedule);
-    }
-
-    /**
-     * Get the timezone that should be used by default for scheduled events.
-     *
-     * @return DateTimeZone|string|null
-     */
-    protected function scheduleTimezone()
-    {
-        $config = $this->app['config'];
-
-        return $config->get('app.schedule_timezone', $config->get('app.timezone'));
-    }
-
-    /**
-     * Get the name of the cache store that should manage scheduling mutexes.
-     *
-     * @return string
-     */
-    protected function scheduleCache()
-    {
-        return $_ENV['SCHEDULE_CACHE_DRIVER'] ?? null;
-    }
-
-    /**
-     * Define the application's command schedule.
-     *
-     * @param Schedule $schedule
-     * @return void
-     */
-    protected function schedule(Schedule $schedule)
-    {
-        //
-    }
-
-    /**
      * Run the console application.
      *
      * @param InputInterface $input
@@ -201,75 +151,6 @@ class Kernel implements KernelContract
 
             $this->commandsLoaded = true;
         }
-    }
-
-    /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return $this->bootstrappers;
-    }
-
-    /**
-     * Register the Closure based commands for the application.
-     *
-     * @return void
-     */
-    protected function commands()
-    {
-        //
-    }
-
-    /**
-     * Get the Artisan application instance.
-     *
-     * @return Artisan
-     */
-    protected function getArtisan()
-    {
-        if (is_null($this->artisan)) {
-            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
-                ->resolveCommands($this->commands);
-        }
-
-        return $this->artisan;
-    }
-
-    /**
-     * Set the Artisan application instance.
-     *
-     * @param Artisan $artisan
-     * @return void
-     */
-    public function setArtisan($artisan)
-    {
-        $this->artisan = $artisan;
-    }
-
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param Exception $e
-     * @return void
-     */
-    protected function reportException(Exception $e)
-    {
-        $this->app[ExceptionHandler::class]->report($e);
-    }
-
-    /**
-     * Render the given exception.
-     *
-     * @param OutputInterface $output
-     * @param Exception $e
-     * @return void
-     */
-    protected function renderException($output, Exception $e)
-    {
-        $this->app[ExceptionHandler::class]->renderForConsole($output, $e);
     }
 
     /**
@@ -364,6 +245,125 @@ class Kernel implements KernelContract
         $this->bootstrap();
 
         return $this->getArtisan()->output();
+    }
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @return void
+     */
+    protected function defineConsoleSchedule()
+    {
+        $this->app->singleton(Schedule::class, function ($app) {
+            return (new Schedule($this->scheduleTimezone()))
+                ->useCache($this->scheduleCache());
+        });
+
+        $schedule = $this->app->make(Schedule::class);
+
+        $this->schedule($schedule);
+    }
+
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        $config = $this->app['config'];
+
+        return $config->get('app.schedule_timezone', $config->get('app.timezone'));
+    }
+
+    /**
+     * Get the name of the cache store that should manage scheduling mutexes.
+     *
+     * @return string
+     */
+    protected function scheduleCache()
+    {
+        return $_ENV['SCHEDULE_CACHE_DRIVER'] ?? null;
+    }
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @param Schedule $schedule
+     * @return void
+     */
+    protected function schedule(Schedule $schedule)
+    {
+        //
+    }
+
+    /**
+     * Get the bootstrap classes for the application.
+     *
+     * @return array
+     */
+    protected function bootstrappers()
+    {
+        return $this->bootstrappers;
+    }
+
+    /**
+     * Register the Closure based commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        //
+    }
+
+    /**
+     * Get the Artisan application instance.
+     *
+     * @return Artisan
+     */
+    protected function getArtisan()
+    {
+        if (is_null($this->artisan)) {
+            return $this->artisan = (new Artisan($this->app, $this->events, $this->app->version()))
+                ->resolveCommands($this->commands);
+        }
+
+        return $this->artisan;
+    }
+
+    /**
+     * Set the Artisan application instance.
+     *
+     * @param Artisan $artisan
+     * @return void
+     */
+    public function setArtisan($artisan)
+    {
+        $this->artisan = $artisan;
+    }
+
+    /**
+     * Report the exception to the exception handler.
+     *
+     * @param Exception $e
+     * @return void
+     */
+    protected function reportException(Exception $e)
+    {
+        $this->app[ExceptionHandler::class]->report($e);
+    }
+
+    /**
+     * Render the given exception.
+     *
+     * @param OutputInterface $output
+     * @param Exception $e
+     * @return void
+     */
+    protected function renderException($output, Exception $e)
+    {
+        $this->app[ExceptionHandler::class]->renderForConsole($output, $e);
     }
 
     /**

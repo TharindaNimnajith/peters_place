@@ -110,17 +110,10 @@
                                 <div class="col-2" style="margin-left: 230px;margin-top: 60px">
                                     <img src="{{ asset ('uploads/appsetting/loho.jpg') }}"
                                          style="  width: 200px;height: 200px;border: 2px solid #51D2B7;">
-
                                 </div>
-
-
                             </div>
-
                         </div>
-
-
                     </div>
-
                 </div>
             </div>
         </div>

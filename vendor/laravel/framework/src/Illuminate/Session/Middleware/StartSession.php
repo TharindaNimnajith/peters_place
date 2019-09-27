@@ -69,6 +69,19 @@ class StartSession
     }
 
     /**
+     * Get the session implementation from the manager.
+     *
+     * @param Request $request
+     * @return Session
+     */
+    public function getSession(Request $request)
+    {
+        return tap($this->manager->driver(), function ($session) use ($request) {
+            $session->setId($request->cookies->get($session->getName()));
+        });
+    }
+
+    /**
      * Determine if a session driver has been configured.
      *
      * @return bool
@@ -90,19 +103,6 @@ class StartSession
             $session->setRequestOnHandler($request);
 
             $session->start();
-        });
-    }
-
-    /**
-     * Get the session implementation from the manager.
-     *
-     * @param Request $request
-     * @return Session
-     */
-    public function getSession(Request $request)
-    {
-        return tap($this->manager->driver(), function ($session) use ($request) {
-            $session->setId($request->cookies->get($session->getName()));
         });
     }
 

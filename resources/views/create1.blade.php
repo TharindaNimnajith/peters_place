@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
-<head><title>PetersPlace</title>
+
+<head>
+    <title>PetersPlace</title>
     <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all'/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +56,7 @@
                 font-size: 18px;
             }
         }
+
     </style>
 </head>
 
@@ -90,6 +93,7 @@
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
     }
+
 </script>
 
 @extends('layout')

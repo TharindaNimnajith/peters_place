@@ -1,4 +1,5 @@
 <html>
+
 <head>
 
     <title>Update Room Status</title>
@@ -8,6 +9,7 @@
 
 
 </head>
+
 <body>
 
 <div class="form-group">
@@ -40,53 +42,53 @@
                     <table>
 
 
-                       <table class="table table-dark">
-        <thead>
-        <tr>
-            <th scope="col">Task</th>
-            <th scope="col">RoomNo</th>
-            <th scope="col">RoomType</th>
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Task</th>
+                                    <th scope="col">RoomNo</th>
+                                    <th scope="col">RoomType</th>
 
-            <th scope="col">Status</th>
-            <th scope="col">Action</th>
-        </tr>
-        </thead>
-
-
-
-            @foreach($up as $stat)
-
-                               <tbody>
-                            <tr>
-                                <td>{{$stat->room_no}}</td>
-                                <td> {{$stat->floor}}</td>
-                                <td>{{$stat->availability}}</td>
-                                <td>{{$stat->status}}</td>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
 
 
 
+                            @foreach($up as $stat)
+
+                                <tbody>
+                                <tr>
+                                    <td>{{$stat->room_no}}</td>
+                                    <td> {{$stat->floor}}</td>
+                                    <td>{{$stat->availability}}</td>
+                                    <td>{{$stat->status}}</td>
 
 
-                                <td class="dropdown">
-                                <a>Update</a>
+
+
+
+                                    <td class="dropdown">
+                                        <a>Update</a>
 
 
                                         <select>
                                             <option value="volvo">Clean</option>
                                             <option value="saab">Dirty</option>
                                             <option value="opel">Out of Service</option>
-                                    </select>
+                                        </select>
                                     </td>
-                            </tr>
+                                </tr>
 
 
 
-                @endforeach
+                                @endforeach
 
 
 
                             </tbody>
-                    </table>
+                        </table>
                 </div>
             </div>
         </span>
@@ -94,10 +96,5 @@
 
 
 </body>
+
 </html>
-
-
-
-
-
-

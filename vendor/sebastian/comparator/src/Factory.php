@@ -10,6 +10,8 @@
 
 namespace SebastianBergmann\Comparator;
 
+use function array_unshift;
+
 /**
  * Factory for comparators which compare values for equality.
  */
@@ -36,29 +38,6 @@ class Factory
     public function __construct()
     {
         $this->registerDefaultComparators();
-    }
-
-    private function registerDefaultComparators()
-    {
-        $this->registerDefaultComparator(new MockObjectComparator);
-        $this->registerDefaultComparator(new DateTimeComparator);
-        $this->registerDefaultComparator(new DOMNodeComparator);
-        $this->registerDefaultComparator(new SplObjectStorageComparator);
-        $this->registerDefaultComparator(new ExceptionComparator);
-        $this->registerDefaultComparator(new ObjectComparator);
-        $this->registerDefaultComparator(new ResourceComparator);
-        $this->registerDefaultComparator(new ArrayComparator);
-        $this->registerDefaultComparator(new DoubleComparator);
-        $this->registerDefaultComparator(new NumericComparator);
-        $this->registerDefaultComparator(new ScalarComparator);
-        $this->registerDefaultComparator(new TypeComparator);
-    }
-
-    private function registerDefaultComparator(Comparator $comparator)
-    {
-        $this->defaultComparators[] = $comparator;
-
-        $comparator->setFactory($this);
     }
 
     /**
@@ -108,7 +87,7 @@ class Factory
      */
     public function register(Comparator $comparator)
     {
-        \array_unshift($this->customComparators, $comparator);
+        array_unshift($this->customComparators, $comparator);
 
         $comparator->setFactory($this);
     }
@@ -135,5 +114,28 @@ class Factory
     public function reset()
     {
         $this->customComparators = [];
+    }
+
+    private function registerDefaultComparators()
+    {
+        $this->registerDefaultComparator(new MockObjectComparator);
+        $this->registerDefaultComparator(new DateTimeComparator);
+        $this->registerDefaultComparator(new DOMNodeComparator);
+        $this->registerDefaultComparator(new SplObjectStorageComparator);
+        $this->registerDefaultComparator(new ExceptionComparator);
+        $this->registerDefaultComparator(new ObjectComparator);
+        $this->registerDefaultComparator(new ResourceComparator);
+        $this->registerDefaultComparator(new ArrayComparator);
+        $this->registerDefaultComparator(new DoubleComparator);
+        $this->registerDefaultComparator(new NumericComparator);
+        $this->registerDefaultComparator(new ScalarComparator);
+        $this->registerDefaultComparator(new TypeComparator);
+    }
+
+    private function registerDefaultComparator(Comparator $comparator)
+    {
+        $this->defaultComparators[] = $comparator;
+
+        $comparator->setFactory($this);
     }
 }

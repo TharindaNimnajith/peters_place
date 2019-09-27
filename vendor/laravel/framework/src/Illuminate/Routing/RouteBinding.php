@@ -26,27 +26,6 @@ class RouteBinding
     }
 
     /**
-     * Create a class based binding using the IoC container.
-     *
-     * @param Container $container
-     * @param string $binding
-     * @return Closure
-     */
-    protected static function createClassBinding($container, $binding)
-    {
-        return function ($value, $route) use ($container, $binding) {
-            // If the binding has an @ sign, we will assume it's being used to delimit
-            // the class name from the bind method name. This allows for bindings
-            // to run multiple bind methods in a single class for convenience.
-            [$class, $method] = Str::parseCallback($binding, 'bind');
-
-            $callable = [$container->make($class), $method];
-
-            return call_user_func($callable, $value, $route);
-        };
-    }
-
-    /**
      * Create a Route model binding for a model.
      *
      * @param Container $container
@@ -78,6 +57,27 @@ class RouteBinding
             }
 
             throw (new ModelNotFoundException)->setModel($class);
+        };
+    }
+
+    /**
+     * Create a class based binding using the IoC container.
+     *
+     * @param Container $container
+     * @param string $binding
+     * @return Closure
+     */
+    protected static function createClassBinding($container, $binding)
+    {
+        return function ($value, $route) use ($container, $binding) {
+            // If the binding has an @ sign, we will assume it's being used to delimit
+            // the class name from the bind method name. This allows for bindings
+            // to run multiple bind methods in a single class for convenience.
+            [$class, $method] = Str::parseCallback($binding, 'bind');
+
+            $callable = [$container->make($class), $method];
+
+            return call_user_func($callable, $value, $route);
         };
     }
 }

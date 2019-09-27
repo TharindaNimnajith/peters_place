@@ -72,23 +72,6 @@ class ListFailedCommand extends Command
     }
 
     /**
-     * Extract the failed job name from payload.
-     *
-     * @param string $payload
-     * @return string|null
-     */
-    private function extractJobName($payload)
-    {
-        $payload = json_decode($payload, true);
-
-        if ($payload && (!isset($payload['data']['command']))) {
-            return $payload['job'] ?? null;
-        } elseif ($payload && isset($payload['data']['command'])) {
-            return $this->matchJobName($payload);
-        }
-    }
-
-    /**
      * Match the job name from the payload.
      *
      * @param array $payload
@@ -110,5 +93,22 @@ class ListFailedCommand extends Command
     protected function displayFailedJobs(array $jobs)
     {
         $this->table($this->headers, $jobs);
+    }
+
+    /**
+     * Extract the failed job name from payload.
+     *
+     * @param string $payload
+     * @return string|null
+     */
+    private function extractJobName($payload)
+    {
+        $payload = json_decode($payload, true);
+
+        if ($payload && (!isset($payload['data']['command']))) {
+            return $payload['job'] ?? null;
+        } elseif ($payload && isset($payload['data']['command'])) {
+            return $this->matchJobName($payload);
+        }
     }
 }

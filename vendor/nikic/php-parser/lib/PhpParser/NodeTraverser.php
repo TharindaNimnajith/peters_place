@@ -198,24 +198,6 @@ class NodeTraverser implements NodeTraverserInterface
         return $nodes;
     }
 
-    private function ensureReplacementReasonable($old, $new)
-    {
-        if ($old instanceof Node\Stmt && $new instanceof Node\Expr) {
-            throw new LogicException(
-                "Trying to replace statement ({$old->getType()}) " .
-                "with expression ({$new->getType()}). Are you missing a " .
-                "Stmt_Expression wrapper?"
-            );
-        }
-
-        if ($old instanceof Node\Expr && $new instanceof Node\Stmt) {
-            throw new LogicException(
-                "Trying to replace expression ({$old->getType()}) " .
-                "with statement ({$new->getType()})"
-            );
-        }
-    }
-
     /**
      * Recursively traverse a node.
      *
@@ -297,5 +279,23 @@ class NodeTraverser implements NodeTraverserInterface
         }
 
         return $node;
+    }
+
+    private function ensureReplacementReasonable($old, $new)
+    {
+        if ($old instanceof Node\Stmt && $new instanceof Node\Expr) {
+            throw new LogicException(
+                "Trying to replace statement ({$old->getType()}) " .
+                "with expression ({$new->getType()}). Are you missing a " .
+                "Stmt_Expression wrapper?"
+            );
+        }
+
+        if ($old instanceof Node\Expr && $new instanceof Node\Stmt) {
+            throw new LogicException(
+                "Trying to replace expression ({$old->getType()}) " .
+                "with statement ({$new->getType()})"
+            );
+        }
     }
 }

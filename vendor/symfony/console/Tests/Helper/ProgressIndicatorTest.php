@@ -2,6 +2,8 @@
 
 namespace Symfony\Component\Console\Tests\Helper;
 
+use InvalidArgumentException;
+use LogicException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Helper\ProgressIndicator;
 use Symfony\Component\Console\Output\StreamOutput;
@@ -55,18 +57,6 @@ class ProgressIndicatorTest extends TestCase
         );
     }
 
-    protected function getOutputStream($decorated = true, $verbosity = StreamOutput::VERBOSITY_NORMAL)
-    {
-        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, $decorated);
-    }
-
-    protected function generateOutput($expected)
-    {
-        $count = substr_count($expected, "\n");
-
-        return "\x0D\x1B[2K" . ($count ? sprintf("\033[%dA", $count) : '') . $expected;
-    }
-
     public function testNonDecoratedOutput()
     {
         $bar = new ProgressIndicator($output = $this->getOutputStream(false));
@@ -113,7 +103,7 @@ class ProgressIndicatorTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Must have at least 2 indicator value characters.
      */
     public function testCannotSetInvalidIndicatorCharacters()
@@ -122,7 +112,7 @@ class ProgressIndicatorTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Progress indicator already started.
      */
     public function testCannotStartAlreadyStartedIndicator()
@@ -133,7 +123,7 @@ class ProgressIndicatorTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Progress indicator has not yet been started.
      */
     public function testCannotAdvanceUnstartedIndicator()
@@ -143,7 +133,7 @@ class ProgressIndicatorTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Progress indicator has not yet been started.
      */
     public function testCannotFinishUnstartedIndicator()
@@ -179,5 +169,17 @@ class ProgressIndicatorTest extends TestCase
             ['very_verbose'],
             ['debug'],
         ];
+    }
+
+    protected function getOutputStream($decorated = true, $verbosity = StreamOutput::VERBOSITY_NORMAL)
+    {
+        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, $decorated);
+    }
+
+    protected function generateOutput($expected)
+    {
+        $count = substr_count($expected, "\n");
+
+        return "\x0D\x1B[2K" . ($count ? sprintf("\033[%dA", $count) : '') . $expected;
     }
 }

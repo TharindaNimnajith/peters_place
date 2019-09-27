@@ -118,6 +118,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -127,12 +128,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -147,7 +148,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -159,7 +161,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -168,7 +171,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -177,7 +181,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -192,10 +198,12 @@
             <ul class="my">
                 <li class="my"><a href="http://127.0.0.1:8000/employee"><img
                             src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
-                <li class="my"><a href="#news"><img src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
+                <li class="my"><a href="#news"><img src="https://img.icons8.com/metro/26/000000/add-user-male.png">
+                        Add
                         Employee</a>
                 </li>
-                <li class="my"><a href="#contact"><img src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                <li class="my"><a href="#contact"><img
+                            src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                 </li>
             </ul>
             <p style="  margin-top: 50px"></p>
@@ -230,8 +238,7 @@
                                     <div class="col">
 
                                         <input type="text" name="leve_type" class="form-control"
-                                               placeholder="Leave Type"
-                                               onkeypress="return tabE(this,event)">
+                                               placeholder="Leave Type" onkeypress="return tabE(this,event)">
                                     </div>
                                     <div class="col">
                                         <input type="text" name="days" class="form-control" placeholder="Days"
@@ -286,6 +293,3 @@
 </body>
 
 </html>
-
-
-

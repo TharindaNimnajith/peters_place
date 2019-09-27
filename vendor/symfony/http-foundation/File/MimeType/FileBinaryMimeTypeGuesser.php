@@ -14,6 +14,8 @@ namespace Symfony\Component\HttpFoundation\File\MimeType;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\Mime\FileBinaryMimeTypeGuesser as NewFileBinaryMimeTypeGuesser;
+use function function_exists;
+use const DIRECTORY_SEPARATOR;
 
 @trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.3, use "%s" instead.', FileBinaryMimeTypeGuesser::class, NewFileBinaryMimeTypeGuesser::class), E_USER_DEPRECATED);
 
@@ -39,6 +41,30 @@ class FileBinaryMimeTypeGuesser implements MimeTypeGuesserInterface
     public function __construct(string $cmd = 'file -b --mime %s 2>/dev/null')
     {
         $this->cmd = $cmd;
+    }
+
+    /**
+     * Returns whether this guesser is supported on the current OS.
+     *
+     * @return bool
+     */
+    public static function isSupported()
+    {
+        static $supported = null;
+
+        if (null !== $supported) {
+            return $supported;
+        }
+
+        if ('\\' === DIRECTORY_SEPARATOR || !function_exists('passthru') || !function_exists('escapeshellarg')) {
+            return $supported = false;
+        }
+
+        ob_start();
+        passthru('command -v file', $exitStatus);
+        $binPath = trim(ob_get_clean());
+
+        return $supported = 0 === $exitStatus && '' !== $binPath;
     }
 
     /**
@@ -76,29 +102,5 @@ class FileBinaryMimeTypeGuesser implements MimeTypeGuesserInterface
         }
 
         return $match[1];
-    }
-
-    /**
-     * Returns whether this guesser is supported on the current OS.
-     *
-     * @return bool
-     */
-    public static function isSupported()
-    {
-        static $supported = null;
-
-        if (null !== $supported) {
-            return $supported;
-        }
-
-        if ('\\' === \DIRECTORY_SEPARATOR || !\function_exists('passthru') || !\function_exists('escapeshellarg')) {
-            return $supported = false;
-        }
-
-        ob_start();
-        passthru('command -v file', $exitStatus);
-        $binPath = trim(ob_get_clean());
-
-        return $supported = 0 === $exitStatus && '' !== $binPath;
     }
 }

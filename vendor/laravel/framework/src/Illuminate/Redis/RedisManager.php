@@ -159,24 +159,6 @@ class RedisManager implements Factory
     }
 
     /**
-     * Configure the given connection to prepare it for commands.
-     *
-     * @param Connection $connection
-     * @param string $name
-     * @return Connection
-     */
-    protected function configure(Connection $connection, $name)
-    {
-        $connection->setName($name);
-
-        if ($this->events && $this->app->bound('events')) {
-            $connection->setEventDispatcher($this->app->make('events'));
-        }
-
-        return $connection;
-    }
-
-    /**
      * Resolve the given connection by name.
      *
      * @param string|null $name
@@ -202,6 +184,24 @@ class RedisManager implements Factory
         }
 
         throw new InvalidArgumentException("Redis connection [{$name}] not configured.");
+    }
+
+    /**
+     * Configure the given connection to prepare it for commands.
+     *
+     * @param Connection $connection
+     * @param string $name
+     * @return Connection
+     */
+    protected function configure(Connection $connection, $name)
+    {
+        $connection->setName($name);
+
+        if ($this->events && $this->app->bound('events')) {
+            $connection->setEventDispatcher($this->app->make('events'));
+        }
+
+        return $connection;
     }
 
     /**

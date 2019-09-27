@@ -114,30 +114,6 @@ class NativeMailerHandler extends MailHandler
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function send($content, array $records)
-    {
-        $content = wordwrap($content, $this->maxColumnWidth);
-        $headers = ltrim(implode("\r\n", $this->headers) . "\r\n", "\r\n");
-        $headers .= 'Content-type: ' . $this->getContentType() . '; charset=' . $this->getEncoding() . "\r\n";
-        if ($this->getContentType() == 'text/html' && false === strpos($headers, 'MIME-Version:')) {
-            $headers .= 'MIME-Version: 1.0' . "\r\n";
-        }
-
-        $subject = $this->subject;
-        if ($records) {
-            $subjectFormatter = new LineFormatter($this->subject);
-            $subject = $subjectFormatter->format($this->getHighestRecord($records));
-        }
-
-        $parameters = implode(' ', $this->parameters);
-        foreach ($this->to as $to) {
-            mail($to, $subject, $content, $headers, $parameters);
-        }
-    }
-
-    /**
      * @return string $contentType
      */
     public function getContentType()
@@ -182,5 +158,29 @@ class NativeMailerHandler extends MailHandler
         $this->encoding = $encoding;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function send($content, array $records)
+    {
+        $content = wordwrap($content, $this->maxColumnWidth);
+        $headers = ltrim(implode("\r\n", $this->headers) . "\r\n", "\r\n");
+        $headers .= 'Content-type: ' . $this->getContentType() . '; charset=' . $this->getEncoding() . "\r\n";
+        if ($this->getContentType() == 'text/html' && false === strpos($headers, 'MIME-Version:')) {
+            $headers .= 'MIME-Version: 1.0' . "\r\n";
+        }
+
+        $subject = $this->subject;
+        if ($records) {
+            $subjectFormatter = new LineFormatter($this->subject);
+            $subject = $subjectFormatter->format($this->getHighestRecord($records));
+        }
+
+        $parameters = implode(' ', $this->parameters);
+        foreach ($this->to as $to) {
+            mail($to, $subject, $content, $headers, $parameters);
+        }
     }
 }

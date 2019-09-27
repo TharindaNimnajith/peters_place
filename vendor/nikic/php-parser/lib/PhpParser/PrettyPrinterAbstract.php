@@ -185,6 +185,92 @@ abstract class PrettyPrinterAbstract
     }
 
     /**
+     * Pretty prints a file of statements (includes the opening <?php tag if it is required).
+     *
+     * @param Node[] $stmts Array of statements
+     *
+     * @return string Pretty printed statements
+     */
+    public function prettyPrintFile(array $stmts): string
+    {
+        if (!$stmts) {
+            return "<?php\n\n";
+        }
+
+        $p = "<?php\n\n" . $this->prettyPrint($stmts);
+
+        if ($stmts[0] instanceof Stmt\InlineHTML) {
+            $p = preg_replace('/^<\?php\s+\?>\n?/', '', $p);
+        }
+        if ($stmts[count($stmts) - 1] instanceof Stmt\InlineHTML) {
+            $p = preg_replace('/<\?php$/', '', rtrim($p));
+        }
+
+        return $p;
+    }
+
+    /**
+     * Pretty prints an array of statements.
+     *
+     * @param Node[] $stmts Array of statements
+     *
+     * @return string Pretty printed statements
+     */
+    public function prettyPrint(array $stmts): string
+    {
+        $this->resetState();
+        $this->preprocessNodes($stmts);
+
+        return ltrim($this->handleMagicTokens($this->pStmts($stmts, false)));
+    }
+
+    /**
+     * Perform a format-preserving pretty print of an AST.
+     *
+     * The format preservation is best effort. For some changes to the AST the formatting will not
+     * be preserved (at least not locally).
+     *
+     * In order to use this method a number of prerequisites must be satisfied:
+     *  * The startTokenPos and endTokenPos attributes in the lexer must be enabled.
+     *  * The CloningVisitor must be run on the AST prior to modification.
+     *  * The original tokens must be provided, using the getTokens() method on the lexer.
+     *
+     * @param Node[] $stmts Modified AST with links to original AST
+     * @param Node[] $origStmts Original AST with token offset information
+     * @param array $origTokens Tokens of the original code
+     *
+     * @return string
+     */
+    public function printFormatPreserving(array $stmts, array $origStmts, array $origTokens): string
+    {
+        $this->initializeNodeListDiffer();
+        $this->initializeLabelCharMap();
+        $this->initializeFixupMap();
+        $this->initializeRemovalMap();
+        $this->initializeInsertionMap();
+        $this->initializeListInsertionMap();
+        $this->initializeEmptyListInsertionMap();
+        $this->initializeModifierChangeMap();
+
+        $this->resetState();
+        $this->origTokens = new TokenStream($origTokens);
+
+        $this->preprocessNodes($stmts);
+
+        $pos = 0;
+        $result = $this->pArray($stmts, $origStmts, $pos, 0, 'File', 'stmts', null);
+        if (null !== $result) {
+            $result .= $this->origTokens->getTokenCode($pos, count($origTokens), 0);
+        } else {
+            // Fallback
+            // TODO Add <?php properly
+            $result = "<?php\n" . $this->pStmts($stmts, false);
+        }
+
+        return ltrim($this->handleMagicTokens($result));
+    }
+
+    /**
      * Reset pretty printing state.
      */
     protected function resetState()
@@ -856,46 +942,6 @@ abstract class PrettyPrinterAbstract
     }
 
     /**
-     * Pretty prints a file of statements (includes the opening <?php tag if it is required).
-     *
-     * @param Node[] $stmts Array of statements
-     *
-     * @return string Pretty printed statements
-     */
-    public function prettyPrintFile(array $stmts): string
-    {
-        if (!$stmts) {
-            return "<?php\n\n";
-        }
-
-        $p = "<?php\n\n" . $this->prettyPrint($stmts);
-
-        if ($stmts[0] instanceof Stmt\InlineHTML) {
-            $p = preg_replace('/^<\?php\s+\?>\n?/', '', $p);
-        }
-        if ($stmts[count($stmts) - 1] instanceof Stmt\InlineHTML) {
-            $p = preg_replace('/<\?php$/', '', rtrim($p));
-        }
-
-        return $p;
-    }
-
-    /**
-     * Pretty prints an array of statements.
-     *
-     * @param Node[] $stmts Array of statements
-     *
-     * @return string Pretty printed statements
-     */
-    public function prettyPrint(array $stmts): string
-    {
-        $this->resetState();
-        $this->preprocessNodes($stmts);
-
-        return ltrim($this->handleMagicTokens($this->pStmts($stmts, false)));
-    }
-
-    /**
      * Preprocesses the top-level nodes to initialize pretty printer state.
      *
      * @param Node[] $nodes Array of nodes
@@ -963,52 +1009,6 @@ abstract class PrettyPrinterAbstract
         assert($this->indentLevel >= 4);
         $this->indentLevel -= 4;
         $this->nl = "\n" . str_repeat(' ', $this->indentLevel);
-    }
-
-    /**
-     * Perform a format-preserving pretty print of an AST.
-     *
-     * The format preservation is best effort. For some changes to the AST the formatting will not
-     * be preserved (at least not locally).
-     *
-     * In order to use this method a number of prerequisites must be satisfied:
-     *  * The startTokenPos and endTokenPos attributes in the lexer must be enabled.
-     *  * The CloningVisitor must be run on the AST prior to modification.
-     *  * The original tokens must be provided, using the getTokens() method on the lexer.
-     *
-     * @param Node[] $stmts Modified AST with links to original AST
-     * @param Node[] $origStmts Original AST with token offset information
-     * @param array $origTokens Tokens of the original code
-     *
-     * @return string
-     */
-    public function printFormatPreserving(array $stmts, array $origStmts, array $origTokens): string
-    {
-        $this->initializeNodeListDiffer();
-        $this->initializeLabelCharMap();
-        $this->initializeFixupMap();
-        $this->initializeRemovalMap();
-        $this->initializeInsertionMap();
-        $this->initializeListInsertionMap();
-        $this->initializeEmptyListInsertionMap();
-        $this->initializeModifierChangeMap();
-
-        $this->resetState();
-        $this->origTokens = new TokenStream($origTokens);
-
-        $this->preprocessNodes($stmts);
-
-        $pos = 0;
-        $result = $this->pArray($stmts, $origStmts, $pos, 0, 'File', 'stmts', null);
-        if (null !== $result) {
-            $result .= $this->origTokens->getTokenCode($pos, count($origTokens), 0);
-        } else {
-            // Fallback
-            // TODO Add <?php properly
-            $result = "<?php\n" . $this->pStmts($stmts, false);
-        }
-
-        return ltrim($this->handleMagicTokens($result));
     }
 
     /**

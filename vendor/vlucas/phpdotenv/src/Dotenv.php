@@ -82,20 +82,6 @@ class Dotenv
     }
 
     /**
-     * Actually load the data.
-     *
-     * @param bool $overload
-     *
-     * @return array<string|null>
-     * @throws InvalidPathException|InvalidFileException
-     *
-     */
-    protected function loadData($overload = false)
-    {
-        return $this->loader->setImmutable(!$overload)->load();
-    }
-
-    /**
      * Load environment file in given directory, silently failing if it doesn't exist.
      *
      * @return array<string|null>
@@ -144,5 +130,19 @@ class Dotenv
     public function getEnvironmentVariableNames()
     {
         return $this->loader->getEnvironmentVariableNames();
+    }
+
+    /**
+     * Actually load the data.
+     *
+     * @param bool $overload
+     *
+     * @return array<string|null>
+     * @throws InvalidPathException|InvalidFileException
+     *
+     */
+    protected function loadData($overload = false)
+    {
+        return $this->loader->setImmutable(!$overload)->load();
     }
 }

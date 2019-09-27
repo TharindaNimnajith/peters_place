@@ -38,33 +38,6 @@ class HipChatHandlerTest extends TestCase
         return $content;
     }
 
-    private function createHandler($token = 'myToken', $room = 'room1', $name = 'Monolog', $notify = false, $host = 'api.hipchat.com', $version = 'v1')
-    {
-        $constructorArgs = array($token, $room, $name, $notify, Logger::DEBUG, true, true, 'text', $host, $version);
-        $this->res = fopen('php://memory', 'a');
-        $this->handler = $this->getMock(
-            '\Monolog\Handler\HipChatHandler',
-            array('fsockopen', 'streamSetTimeout', 'closeSocket'),
-            $constructorArgs
-        );
-
-        $reflectionProperty = new ReflectionProperty('\Monolog\Handler\SocketHandler', 'connectionString');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->handler, 'localhost:1234');
-
-        $this->handler->expects($this->any())
-            ->method('fsockopen')
-            ->will($this->returnValue($this->res));
-        $this->handler->expects($this->any())
-            ->method('streamSetTimeout')
-            ->will($this->returnValue(true));
-        $this->handler->expects($this->any())
-            ->method('closeSocket')
-            ->will($this->returnValue(true));
-
-        $this->handler->setFormatter($this->getIdentityFormatter());
-    }
-
     public function testWriteCustomHostHeader()
     {
         $this->createHandler('myToken', 'room1', 'Monolog', true, 'hipchat.foo.bar');
@@ -277,5 +250,32 @@ class HipChatHandlerTest extends TestCase
     {
         // creating a handler with too long of a name but using the v2 api doesn't matter.
         $hipChatHandler = new HipChatHandler('token', 'room', 'SixteenCharsHere', false, Logger::CRITICAL, true, true, 'test', 'api.hipchat.com', 'v2');
+    }
+
+    private function createHandler($token = 'myToken', $room = 'room1', $name = 'Monolog', $notify = false, $host = 'api.hipchat.com', $version = 'v1')
+    {
+        $constructorArgs = array($token, $room, $name, $notify, Logger::DEBUG, true, true, 'text', $host, $version);
+        $this->res = fopen('php://memory', 'a');
+        $this->handler = $this->getMock(
+            '\Monolog\Handler\HipChatHandler',
+            array('fsockopen', 'streamSetTimeout', 'closeSocket'),
+            $constructorArgs
+        );
+
+        $reflectionProperty = new ReflectionProperty('\Monolog\Handler\SocketHandler', 'connectionString');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($this->handler, 'localhost:1234');
+
+        $this->handler->expects($this->any())
+            ->method('fsockopen')
+            ->will($this->returnValue($this->res));
+        $this->handler->expects($this->any())
+            ->method('streamSetTimeout')
+            ->will($this->returnValue(true));
+        $this->handler->expects($this->any())
+            ->method('closeSocket')
+            ->will($this->returnValue(true));
+
+        $this->handler->setFormatter($this->getIdentityFormatter());
     }
 }

@@ -115,6 +115,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -130,7 +131,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -142,7 +144,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -151,7 +154,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -161,7 +165,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -191,8 +197,8 @@
 
             <form method="post" action="/EmployeeDetailsPdf" enctype="multipart/form-data">
                 {{csrf_field()}}
-                <input type="text" class="form-control" id="inputEmail3" name="Rno" value="{{$row->id}}"
-                       readonly hidden>
+                <input type="text" class="form-control" id="inputEmail3" name="Rno" value="{{$row->id}}" readonly
+                       hidden>
                 <input type="submit" class="btn btn-secondary btn-sm" value="DOWNLOAD PDF">
             </form>
 
@@ -229,8 +235,8 @@
 
                         <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Employee Type</b></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputEmail3"
-                                   value="{{$row->type}}" readonly>
+                            <input type="text" class="form-control" id="inputEmail3" value="{{$row->type}}"
+                                   readonly>
                             <select id="category" name="gender" required="required" class="custom-select">
                                 <option value="{{$row->type}}">{{$row->type}}</option>
                                 <option value="Room Service">Room Service</option>
@@ -259,8 +265,8 @@
 
                             <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Gender</b></label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="inputEmail3"
-                                       value="{{$row->gender}}" readonly>
+                                <input type="text" class="form-control" id="inputEmail3" value="{{$row->gender}}"
+                                       readonly>
                                 <select id="category" name="gender" required="required" class="custom-select">
                                     <option value="{{$row->gender}}">{{$row->gender}}</option>
                                     <option value="Male">Male</option>
@@ -270,8 +276,8 @@
 
                                 <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Join Date</b></label>
                                 <div class="col-sm-8">
-                                    <input type="date" class="form-control" id="inputEmail3" name="joindate" required
-                                           value="{{$row->joindate}}">
+                                    <input type="date" class="form-control" id="inputEmail3" name="joindate"
+                                           required value="{{$row->joindate}}">
                                 </div>
                                 <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Salary</b></label>
                                 <div class="col-sm-8">
@@ -281,20 +287,18 @@
 
                                 <hr size="2" color="black">
 
-                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Telephone No:</b></label>
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Telephone
+                                        No:</b></label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputEmail3" placeholder="" name="tp"
-                                           required
-                                           value="{{$row->tp}}">
+                                    <input type="text" class="form-control" id="inputEmail3" placeholder=""
+                                           name="tp" required value="{{$row->tp}}">
                                 </div>
 
 
                                 <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Email</b></label>
                                 <div class="col-sm-8">
                                     <input type="email" class="form-control" id="inputEmail3" placeholder=""
-                                           name="email"
-                                           required
-                                           value="{{$row->Email}}">
+                                           name="email" required value="{{$row->Email}}">
                                 </div>
 
                                 <hr size="2" color="black">
@@ -302,15 +306,13 @@
                                 <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Remark</b></label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" id="inputEmail3" placeholder=""
-                                           name="remark"
-                                           value="{{$row->remark}}">
+                                           name="remark" value="{{$row->remark}}">
                                 </div>
 
 
                                 <div class="col-sm-8">
                                     <input type="submit" class="btn btn-primary btn"
-                                           style="margin-top:4px;margin-left: 440px"
-                                           value="Update">
+                                           style="margin-top:4px;margin-left: 440px" value="Update">
                                 </div>
                             </div>
                         </div>

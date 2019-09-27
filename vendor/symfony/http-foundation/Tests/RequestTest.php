@@ -11,7 +11,13 @@
 
 namespace Symfony\Component\HttpFoundation\Tests;
 
+use BadMethodCallException;
+use Locale;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
+use ReflectionMethod;
+use RuntimeException;
+use Symfony\Component\HttpFoundation\Exception\ConflictingHeadersException;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -887,7 +893,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testGetHostWithFakeHttpHostValue()
     {
@@ -956,14 +962,6 @@ class RequestTest extends TestCase
         $this->assertSame('POST', $request->getMethod(), '->getMethod() returns the request method if invalid type is defined in query');
     }
 
-    private function disableHttpMethodParameterOverride()
-    {
-        $class = new \ReflectionClass('Symfony\\Component\\HttpFoundation\\Request');
-        $property = $class->getProperty('httpMethodParameterOverride');
-        $property->setAccessible(true);
-        $property->setValue(false);
-    }
-
     /**
      * @dataProvider getClientIpsProvider
      */
@@ -972,24 +970,6 @@ class RequestTest extends TestCase
         $request = $this->getRequestInstanceForClientIpTests($remoteAddr, $httpForwardedFor, $trustedProxies);
 
         $this->assertEquals($expected[0], $request->getClientIp());
-    }
-
-    private function getRequestInstanceForClientIpTests($remoteAddr, $httpForwardedFor, $trustedProxies)
-    {
-        $request = new Request();
-
-        $server = ['REMOTE_ADDR' => $remoteAddr];
-        if (null !== $httpForwardedFor) {
-            $server['HTTP_X_FORWARDED_FOR'] = $httpForwardedFor;
-        }
-
-        if ($trustedProxies) {
-            Request::setTrustedProxies($trustedProxies, Request::HEADER_X_FORWARDED_ALL);
-        }
-
-        $request->initialize([], [], [], [], [], $server);
-
-        return $request;
     }
 
     /**
@@ -1010,25 +990,6 @@ class RequestTest extends TestCase
         $request = $this->getRequestInstanceForClientIpsForwardedTests($remoteAddr, $httpForwarded, $trustedProxies);
 
         $this->assertEquals($expected, $request->getClientIps());
-    }
-
-    private function getRequestInstanceForClientIpsForwardedTests($remoteAddr, $httpForwarded, $trustedProxies)
-    {
-        $request = new Request();
-
-        $server = ['REMOTE_ADDR' => $remoteAddr];
-
-        if (null !== $httpForwarded) {
-            $server['HTTP_FORWARDED'] = $httpForwarded;
-        }
-
-        if ($trustedProxies) {
-            Request::setTrustedProxies($trustedProxies, Request::HEADER_FORWARDED);
-        }
-
-        $request->initialize([], [], [], [], [], $server);
-
-        return $request;
     }
 
     public function getClientIpsForwardedProvider()
@@ -1100,7 +1061,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\HttpFoundation\Exception\ConflictingHeadersException
+     * @expectedException ConflictingHeadersException
      * @dataProvider getClientIpsWithConflictingHeadersProvider
      */
     public function testGetClientIpsWithConflictingHeaders($httpForwarded, $httpXForwardedFor)
@@ -1517,15 +1478,15 @@ class RequestTest extends TestCase
 
         $request->setDefaultLocale('fr');
         $this->assertEquals('fr', $request->getLocale());
-        $this->assertEquals('fr', \Locale::getDefault());
+        $this->assertEquals('fr', Locale::getDefault());
 
         $request->setLocale('en');
         $this->assertEquals('en', $request->getLocale());
-        $this->assertEquals('en', \Locale::getDefault());
+        $this->assertEquals('en', Locale::getDefault());
 
         $request->setDefaultLocale('de');
         $this->assertEquals('en', $request->getLocale());
-        $this->assertEquals('en', \Locale::getDefault());
+        $this->assertEquals('en', Locale::getDefault());
     }
 
     public function testGetCharsets()
@@ -1791,7 +1752,7 @@ class RequestTest extends TestCase
     {
         $request = new Request();
 
-        $me = new \ReflectionMethod($request, 'getUrlencodedPrefix');
+        $me = new ReflectionMethod($request, 'getUrlencodedPrefix');
         $me->setAccessible(true);
 
         $this->assertSame($expect, $me->invoke($request, $string, $prefix));
@@ -2129,7 +2090,7 @@ class RequestTest extends TestCase
     }
 
     /**
-     * @expectedException \BadMethodCallException
+     * @expectedException BadMethodCallException
      */
     public function testMethodSafeChecksCacheable()
     {
@@ -2314,6 +2275,51 @@ class RequestTest extends TestCase
     {
         Request::setTrustedProxies([], -1);
         Request::setTrustedHosts([]);
+    }
+
+    private function disableHttpMethodParameterOverride()
+    {
+        $class = new ReflectionClass('Symfony\\Component\\HttpFoundation\\Request');
+        $property = $class->getProperty('httpMethodParameterOverride');
+        $property->setAccessible(true);
+        $property->setValue(false);
+    }
+
+    private function getRequestInstanceForClientIpTests($remoteAddr, $httpForwardedFor, $trustedProxies)
+    {
+        $request = new Request();
+
+        $server = ['REMOTE_ADDR' => $remoteAddr];
+        if (null !== $httpForwardedFor) {
+            $server['HTTP_X_FORWARDED_FOR'] = $httpForwardedFor;
+        }
+
+        if ($trustedProxies) {
+            Request::setTrustedProxies($trustedProxies, Request::HEADER_X_FORWARDED_ALL);
+        }
+
+        $request->initialize([], [], [], [], [], $server);
+
+        return $request;
+    }
+
+    private function getRequestInstanceForClientIpsForwardedTests($remoteAddr, $httpForwarded, $trustedProxies)
+    {
+        $request = new Request();
+
+        $server = ['REMOTE_ADDR' => $remoteAddr];
+
+        if (null !== $httpForwarded) {
+            $server['HTTP_FORWARDED'] = $httpForwarded;
+        }
+
+        if ($trustedProxies) {
+            Request::setTrustedProxies($trustedProxies, Request::HEADER_FORWARDED);
+        }
+
+        $request->initialize([], [], [], [], [], $server);
+
+        return $request;
     }
 }
 

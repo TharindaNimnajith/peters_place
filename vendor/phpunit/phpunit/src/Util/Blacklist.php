@@ -155,6 +155,23 @@ final class Blacklist
         return self::$directories;
     }
 
+    public function isBlacklisted(string $file): bool
+    {
+        if (defined('PHPUNIT_TESTSUITE')) {
+            return false;
+        }
+
+        $this->initialize();
+
+        foreach (self::$directories as $directory) {
+            if (strpos($file, $directory) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function initialize(): void
     {
         if (self::$directories === null) {
@@ -182,22 +199,5 @@ final class Blacklist
                 self::$directories[] = sys_get_temp_dir() . '\\PHP';
             }
         }
-    }
-
-    public function isBlacklisted(string $file): bool
-    {
-        if (defined('PHPUNIT_TESTSUITE')) {
-            return false;
-        }
-
-        $this->initialize();
-
-        foreach (self::$directories as $directory) {
-            if (strpos($file, $directory) === 0) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

@@ -22,6 +22,14 @@ use function sprintf;
 class IsEmpty extends Constraint
 {
     /**
+     * Returns a string representation of the constraint.
+     */
+    public function toString(): string
+    {
+        return 'is empty';
+    }
+
+    /**
      * Evaluates the constraint for parameter $other. Returns true if the
      * constraint is met, false otherwise.
      *
@@ -58,13 +66,5 @@ class IsEmpty extends Constraint
             $type,
             $this->toString()
         );
-    }
-
-    /**
-     * Returns a string representation of the constraint.
-     */
-    public function toString(): string
-    {
-        return 'is empty';
     }
 }

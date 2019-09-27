@@ -112,44 +112,6 @@ final class BuilderHelpers
     }
 
     /**
-     * Normalizes a name: Converts string names to Name nodes, optionally allowing expressions.
-     *
-     * @param Expr|Name|string $name The name to normalize
-     * @param bool $allowExpr Whether to also allow expressions
-     *
-     * @return Name|Expr The normalized name, or expression (if allowed)
-     */
-    private static function normalizeNameCommon($name, bool $allowExpr)
-    {
-        if ($name instanceof Name) {
-            return $name;
-        } elseif (is_string($name)) {
-            if (!$name) {
-                throw new LogicException('Name cannot be empty');
-            }
-
-            if ($name[0] === '\\') {
-                return new Name\FullyQualified(substr($name, 1));
-            } elseif (0 === strpos($name, 'namespace\\')) {
-                return new Name\Relative(substr($name, strlen('namespace\\')));
-            } else {
-                return new Name($name);
-            }
-        }
-
-        if ($allowExpr) {
-            if ($name instanceof Expr) {
-                return $name;
-            }
-            throw new LogicException(
-                'Name must be a string or an instance of Node\Name or Node\Expr'
-            );
-        } else {
-            throw new LogicException('Name must be a string or an instance of Node\Name');
-        }
-    }
-
-    /**
      * Normalizes a type: Converts plain-text type names into proper AST representation.
      *
      * In particular, builtin types become Identifiers, custom types become Names and nullables
@@ -286,5 +248,43 @@ final class BuilderHelpers
     {
         Stmt\Class_::verifyModifier($modifiers, $modifier);
         return $modifiers | $modifier;
+    }
+
+    /**
+     * Normalizes a name: Converts string names to Name nodes, optionally allowing expressions.
+     *
+     * @param Expr|Name|string $name The name to normalize
+     * @param bool $allowExpr Whether to also allow expressions
+     *
+     * @return Name|Expr The normalized name, or expression (if allowed)
+     */
+    private static function normalizeNameCommon($name, bool $allowExpr)
+    {
+        if ($name instanceof Name) {
+            return $name;
+        } elseif (is_string($name)) {
+            if (!$name) {
+                throw new LogicException('Name cannot be empty');
+            }
+
+            if ($name[0] === '\\') {
+                return new Name\FullyQualified(substr($name, 1));
+            } elseif (0 === strpos($name, 'namespace\\')) {
+                return new Name\Relative(substr($name, strlen('namespace\\')));
+            } else {
+                return new Name($name);
+            }
+        }
+
+        if ($allowExpr) {
+            if ($name instanceof Expr) {
+                return $name;
+            }
+            throw new LogicException(
+                'Name must be a string or an instance of Node\Name or Node\Expr'
+            );
+        } else {
+            throw new LogicException('Name must be a string or an instance of Node\Name');
+        }
     }
 }

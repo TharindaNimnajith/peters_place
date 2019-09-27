@@ -10,25 +10,6 @@ use ReflectionParameter;
 trait RouteDependencyResolverTrait
 {
     /**
-     * Resolve the object method's type-hinted dependencies.
-     *
-     * @param array $parameters
-     * @param object $instance
-     * @param string $method
-     * @return array
-     */
-    protected function resolveClassMethodDependencies(array $parameters, $instance, $method)
-    {
-        if (!method_exists($instance, $method)) {
-            return $parameters;
-        }
-
-        return $this->resolveMethodDependencies(
-            $parameters, new ReflectionMethod($instance, $method)
-        );
-    }
-
-    /**
      * Resolve the given method's type-hinted dependencies.
      *
      * @param array $parameters
@@ -57,6 +38,25 @@ trait RouteDependencyResolverTrait
         }
 
         return $parameters;
+    }
+
+    /**
+     * Resolve the object method's type-hinted dependencies.
+     *
+     * @param array $parameters
+     * @param object $instance
+     * @param string $method
+     * @return array
+     */
+    protected function resolveClassMethodDependencies(array $parameters, $instance, $method)
+    {
+        if (!method_exists($instance, $method)) {
+            return $parameters;
+        }
+
+        return $this->resolveMethodDependencies(
+            $parameters, new ReflectionMethod($instance, $method)
+        );
     }
 
     /**

@@ -11,10 +11,23 @@
 namespace SebastianBergmann\Diff\Output;
 
 use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
 use SebastianBergmann\Diff\Differ;
 use SebastianBergmann\Diff\Utils\FileUtils;
 use SebastianBergmann\Diff\Utils\UnifiedDiffAssertTrait;
+use SplFileInfo;
 use Symfony\Component\Process\Process;
+use function escapeshellarg;
+use function file_put_contents;
+use function implode;
+use function is_dir;
+use function preg_replace;
+use function preg_split;
+use function realpath;
+use function sprintf;
+use function unlink;
 
 /**
  * @covers SebastianBergmann\Diff\Output\StrictUnifiedDiffOutputBuilder
@@ -35,6 +48,15 @@ final class StrictUnifiedDiffOutputBuilderIntegrationTest extends TestCase
     private $fileTo;
 
     private $filePatch;
+
+    private static function setDiffFileHeader(string $diff, string $file): string
+    {
+        $diffLines = preg_split('/(.*\R)/', $diff, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $diffLines[0] = preg_replace('#^\-\-\- .*#', '--- /' . $file, $diffLines[0], 1);
+        $diffLines[1] = preg_replace('#^\+\+\+ .*#', '+++ /' . $file, $diffLines[1], 1);
+
+        return implode('', $diffLines);
+    }
 
     /**
      * Integration test
@@ -66,50 +88,6 @@ final class StrictUnifiedDiffOutputBuilderIntegrationTest extends TestCase
         $this->doIntegrationTestGitApply($diff, $from, $to);
     }
 
-    private function doIntegrationTestGitApply(string $diff, string $from, string $to): void
-    {
-        $this->assertNotSame('', $diff);
-        $this->assertValidUnifiedDiffFormat($diff);
-
-        $diff = self::setDiffFileHeader($diff, $this->fileFrom);
-
-        $this->assertNotFalse(\file_put_contents($this->fileFrom, $from));
-        $this->assertNotFalse(\file_put_contents($this->filePatch, $diff));
-
-        $p = new Process(\sprintf(
-            'git --git-dir %s apply --check -v --unsafe-paths --ignore-whitespace %s',
-            \escapeshellarg($this->dir),
-            \escapeshellarg($this->filePatch)
-        ));
-
-        $p->run();
-
-        $this->assertProcessSuccessful($p);
-    }
-
-    private static function setDiffFileHeader(string $diff, string $file): string
-    {
-        $diffLines = \preg_split('/(.*\R)/', $diff, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        $diffLines[0] = \preg_replace('#^\-\-\- .*#', '--- /' . $file, $diffLines[0], 1);
-        $diffLines[1] = \preg_replace('#^\+\+\+ .*#', '+++ /' . $file, $diffLines[1], 1);
-
-        return \implode('', $diffLines);
-    }
-
-    private function assertProcessSuccessful(Process $p): void
-    {
-        $this->assertTrue(
-            $p->isSuccessful(),
-            \sprintf(
-                "Command exec. was not successful:\n\"%s\"\nOutput:\n\"%s\"\nStdErr:\n\"%s\"\nExit code %d.\n",
-                $p->getCommandLine(),
-                $p->getOutput(),
-                $p->getErrorOutput(),
-                $p->getExitCode()
-            )
-        );
-    }
-
     /**
      * Integration test
      *
@@ -138,34 +116,6 @@ final class StrictUnifiedDiffOutputBuilderIntegrationTest extends TestCase
         }
 
         $this->doIntegrationTestPatch($diff, $from, $to);
-    }
-
-    private function doIntegrationTestPatch(string $diff, string $from, string $to): void
-    {
-        $this->assertNotSame('', $diff);
-        $this->assertValidUnifiedDiffFormat($diff);
-
-        $diff = self::setDiffFileHeader($diff, $this->fileFrom);
-
-        $this->assertNotFalse(\file_put_contents($this->fileFrom, $from));
-        $this->assertNotFalse(\file_put_contents($this->filePatch, $diff));
-
-        $command = \sprintf(
-            'patch -u --verbose --posix %s < %s',
-            \escapeshellarg($this->fileFrom),
-            \escapeshellarg($this->filePatch)
-        );
-
-        $p = new Process($command);
-        $p->run();
-
-        $this->assertProcessSuccessful($p);
-
-        $this->assertStringEqualsFile(
-            $this->fileFrom,
-            $to,
-            \sprintf('Patch command "%s".', $command)
-        );
     }
 
     /**
@@ -215,18 +165,18 @@ final class StrictUnifiedDiffOutputBuilderIntegrationTest extends TestCase
     {
         $cases = [];
         $fromFile = __FILE__;
-        $vendorDir = \realpath(__DIR__ . '/../../../vendor');
+        $vendorDir = realpath(__DIR__ . '/../../../vendor');
 
-        $fileIterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($vendorDir, \RecursiveDirectoryIterator::SKIP_DOTS));
+        $fileIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($vendorDir, RecursiveDirectoryIterator::SKIP_DOTS));
 
-        /** @var \SplFileInfo $file */
+        /** @var SplFileInfo $file */
         foreach ($fileIterator as $file) {
             if ('php' !== $file->getExtension()) {
                 continue;
             }
 
             $toFile = $file->getPathname();
-            $cases[\sprintf("Diff file:\n\"%s\"\nvs.\n\"%s\"\n", \realpath($fromFile), \realpath($toFile))] = [$fromFile, $toFile];
+            $cases[sprintf("Diff file:\n\"%s\"\nvs.\n\"%s\"\n", realpath($fromFile), realpath($toFile))] = [$fromFile, $toFile];
             $fromFile = $toFile;
         }
 
@@ -247,53 +197,116 @@ final class StrictUnifiedDiffOutputBuilderIntegrationTest extends TestCase
         $this->assertNotSame('', $diff);
         $this->assertValidUnifiedDiffFormat($diff);
 
-        $this->assertNotFalse(\file_put_contents($this->fileFrom, $from));
-        $this->assertNotFalse(\file_put_contents($this->fileTo, $to));
+        $this->assertNotFalse(file_put_contents($this->fileFrom, $from));
+        $this->assertNotFalse(file_put_contents($this->fileTo, $to));
 
-        $p = new Process(\sprintf('diff -u %s %s', \escapeshellarg($this->fileFrom), \escapeshellarg($this->fileTo)));
+        $p = new Process(sprintf('diff -u %s %s', escapeshellarg($this->fileFrom), escapeshellarg($this->fileTo)));
         $p->run();
         $this->assertSame(1, $p->getExitCode()); // note: Process assumes exit code 0 for `isSuccessful`, however `diff` uses the exit code `1` for success with diff
 
         $output = $p->getOutput();
 
-        $diffLines = \preg_split('/(.*\R)/', $diff, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        $diffLines[0] = \preg_replace('#^\-\-\- .*#', '--- /' . $this->fileFrom, $diffLines[0], 1);
-        $diffLines[1] = \preg_replace('#^\+\+\+ .*#', '+++ /' . $this->fileFrom, $diffLines[1], 1);
-        $diff = \implode('', $diffLines);
+        $diffLines = preg_split('/(.*\R)/', $diff, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $diffLines[0] = preg_replace('#^\-\-\- .*#', '--- /' . $this->fileFrom, $diffLines[0], 1);
+        $diffLines[1] = preg_replace('#^\+\+\+ .*#', '+++ /' . $this->fileFrom, $diffLines[1], 1);
+        $diff = implode('', $diffLines);
 
-        $outputLines = \preg_split('/(.*\R)/', $output, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        $outputLines[0] = \preg_replace('#^\-\-\- .*#', '--- /' . $this->fileFrom, $outputLines[0], 1);
-        $outputLines[1] = \preg_replace('#^\+\+\+ .*#', '+++ /' . $this->fileFrom, $outputLines[1], 1);
-        $output = \implode('', $outputLines);
+        $outputLines = preg_split('/(.*\R)/', $output, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+        $outputLines[0] = preg_replace('#^\-\-\- .*#', '--- /' . $this->fileFrom, $outputLines[0], 1);
+        $outputLines[1] = preg_replace('#^\+\+\+ .*#', '+++ /' . $this->fileFrom, $outputLines[1], 1);
+        $output = implode('', $outputLines);
 
         $this->assertSame($diff, $output);
     }
 
     protected function setUp(): void
     {
-        $this->dir = \realpath(__DIR__ . '/../../fixtures/out') . '/';
+        $this->dir = realpath(__DIR__ . '/../../fixtures/out') . '/';
         $this->fileFrom = $this->dir . 'from.txt';
         $this->fileTo = $this->dir . 'to.txt';
         $this->filePatch = $this->dir . 'diff.patch';
 
-        if (!\is_dir($this->dir)) {
-            throw new \RuntimeException('Integration test working directory not found.');
+        if (!is_dir($this->dir)) {
+            throw new RuntimeException('Integration test working directory not found.');
         }
 
         $this->cleanUpTempFiles();
     }
 
-    private function cleanUpTempFiles(): void
-    {
-        @\unlink($this->fileFrom . '.orig');
-        @\unlink($this->fileFrom . '.rej');
-        @\unlink($this->fileFrom);
-        @\unlink($this->fileTo);
-        @\unlink($this->filePatch);
-    }
-
     protected function tearDown(): void
     {
         $this->cleanUpTempFiles();
+    }
+
+    private function doIntegrationTestGitApply(string $diff, string $from, string $to): void
+    {
+        $this->assertNotSame('', $diff);
+        $this->assertValidUnifiedDiffFormat($diff);
+
+        $diff = self::setDiffFileHeader($diff, $this->fileFrom);
+
+        $this->assertNotFalse(file_put_contents($this->fileFrom, $from));
+        $this->assertNotFalse(file_put_contents($this->filePatch, $diff));
+
+        $p = new Process(sprintf(
+            'git --git-dir %s apply --check -v --unsafe-paths --ignore-whitespace %s',
+            escapeshellarg($this->dir),
+            escapeshellarg($this->filePatch)
+        ));
+
+        $p->run();
+
+        $this->assertProcessSuccessful($p);
+    }
+
+    private function assertProcessSuccessful(Process $p): void
+    {
+        $this->assertTrue(
+            $p->isSuccessful(),
+            sprintf(
+                "Command exec. was not successful:\n\"%s\"\nOutput:\n\"%s\"\nStdErr:\n\"%s\"\nExit code %d.\n",
+                $p->getCommandLine(),
+                $p->getOutput(),
+                $p->getErrorOutput(),
+                $p->getExitCode()
+            )
+        );
+    }
+
+    private function doIntegrationTestPatch(string $diff, string $from, string $to): void
+    {
+        $this->assertNotSame('', $diff);
+        $this->assertValidUnifiedDiffFormat($diff);
+
+        $diff = self::setDiffFileHeader($diff, $this->fileFrom);
+
+        $this->assertNotFalse(file_put_contents($this->fileFrom, $from));
+        $this->assertNotFalse(file_put_contents($this->filePatch, $diff));
+
+        $command = sprintf(
+            'patch -u --verbose --posix %s < %s',
+            escapeshellarg($this->fileFrom),
+            escapeshellarg($this->filePatch)
+        );
+
+        $p = new Process($command);
+        $p->run();
+
+        $this->assertProcessSuccessful($p);
+
+        $this->assertStringEqualsFile(
+            $this->fileFrom,
+            $to,
+            sprintf('Patch command "%s".', $command)
+        );
+    }
+
+    private function cleanUpTempFiles(): void
+    {
+        @unlink($this->fileFrom . '.orig');
+        @unlink($this->fileFrom . '.rej');
+        @unlink($this->fileFrom);
+        @unlink($this->fileTo);
+        @unlink($this->filePatch);
     }
 }

@@ -35,20 +35,6 @@ trait InteractsWithSession
     }
 
     /**
-     * Start the session for the application.
-     *
-     * @return $this
-     */
-    protected function startSession()
-    {
-        if (!$this->app['session']->isStarted()) {
-            $this->app['session']->start();
-        }
-
-        return $this;
-    }
-
-    /**
      * Flush all of the current session data.
      *
      * @return $this
@@ -58,6 +44,20 @@ trait InteractsWithSession
         $this->startSession();
 
         $this->app['session']->flush();
+
+        return $this;
+    }
+
+    /**
+     * Start the session for the application.
+     *
+     * @return $this
+     */
+    protected function startSession()
+    {
+        if (!$this->app['session']->isStarted()) {
+            $this->app['session']->start();
+        }
 
         return $this;
     }

@@ -147,26 +147,6 @@ class Kernel implements KernelContract
     }
 
     /**
-     * Send the given request through the middleware / router.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    protected function sendRequestThroughRouter($request)
-    {
-        $this->app->instance('request', $request);
-
-        Facade::clearResolvedInstance('request');
-
-        $this->bootstrap();
-
-        return (new Pipeline($this->app))
-            ->send($request)
-            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
-            ->then($this->dispatchToRouter());
-    }
-
-    /**
      * Bootstrap the application for HTTP requests.
      *
      * @return void
@@ -176,53 +156,6 @@ class Kernel implements KernelContract
         if (!$this->app->hasBeenBootstrapped()) {
             $this->app->bootstrapWith($this->bootstrappers());
         }
-    }
-
-    /**
-     * Get the bootstrap classes for the application.
-     *
-     * @return array
-     */
-    protected function bootstrappers()
-    {
-        return $this->bootstrappers;
-    }
-
-    /**
-     * Get the route dispatcher callback.
-     *
-     * @return Closure
-     */
-    protected function dispatchToRouter()
-    {
-        return function ($request) {
-            $this->app->instance('request', $request);
-
-            return $this->router->dispatch($request);
-        };
-    }
-
-    /**
-     * Report the exception to the exception handler.
-     *
-     * @param Exception $e
-     * @return void
-     */
-    protected function reportException(Exception $e)
-    {
-        $this->app[ExceptionHandler::class]->report($e);
-    }
-
-    /**
-     * Render the exception to a response.
-     *
-     * @param Request $request
-     * @param Exception $e
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    protected function renderException($request, Exception $e)
-    {
-        return $this->app[ExceptionHandler::class]->render($request, $e);
     }
 
     /**
@@ -237,67 +170,6 @@ class Kernel implements KernelContract
         $this->terminateMiddleware($request, $response);
 
         $this->app->terminate();
-    }
-
-    /**
-     * Call the terminate method on any terminable middleware.
-     *
-     * @param Request $request
-     * @param Response $response
-     * @return void
-     */
-    protected function terminateMiddleware($request, $response)
-    {
-        $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
-            $this->gatherRouteMiddleware($request),
-            $this->middleware
-        );
-
-        foreach ($middlewares as $middleware) {
-            if (!is_string($middleware)) {
-                continue;
-            }
-
-            [$name] = $this->parseMiddleware($middleware);
-
-            $instance = $this->app->make($name);
-
-            if (method_exists($instance, 'terminate')) {
-                $instance->terminate($request, $response);
-            }
-        }
-    }
-
-    /**
-     * Gather the route middleware for the given request.
-     *
-     * @param Request $request
-     * @return array
-     */
-    protected function gatherRouteMiddleware($request)
-    {
-        if ($route = $request->route()) {
-            return $this->router->gatherRouteMiddleware($route);
-        }
-
-        return [];
-    }
-
-    /**
-     * Parse a middleware string to get the name and parameters.
-     *
-     * @param string $middleware
-     * @return array
-     */
-    protected function parseMiddleware($middleware)
-    {
-        [$name, $parameters] = array_pad(explode(':', $middleware, 2), 2, []);
-
-        if (is_string($parameters)) {
-            $parameters = explode(',', $parameters);
-        }
-
-        return [$name, $parameters];
     }
 
     /**
@@ -369,5 +241,133 @@ class Kernel implements KernelContract
     public function getApplication()
     {
         return $this->app;
+    }
+
+    /**
+     * Send the given request through the middleware / router.
+     *
+     * @param Request $request
+     * @return Response
+     */
+    protected function sendRequestThroughRouter($request)
+    {
+        $this->app->instance('request', $request);
+
+        Facade::clearResolvedInstance('request');
+
+        $this->bootstrap();
+
+        return (new Pipeline($this->app))
+            ->send($request)
+            ->through($this->app->shouldSkipMiddleware() ? [] : $this->middleware)
+            ->then($this->dispatchToRouter());
+    }
+
+    /**
+     * Get the bootstrap classes for the application.
+     *
+     * @return array
+     */
+    protected function bootstrappers()
+    {
+        return $this->bootstrappers;
+    }
+
+    /**
+     * Get the route dispatcher callback.
+     *
+     * @return Closure
+     */
+    protected function dispatchToRouter()
+    {
+        return function ($request) {
+            $this->app->instance('request', $request);
+
+            return $this->router->dispatch($request);
+        };
+    }
+
+    /**
+     * Report the exception to the exception handler.
+     *
+     * @param Exception $e
+     * @return void
+     */
+    protected function reportException(Exception $e)
+    {
+        $this->app[ExceptionHandler::class]->report($e);
+    }
+
+    /**
+     * Render the exception to a response.
+     *
+     * @param Request $request
+     * @param Exception $e
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    protected function renderException($request, Exception $e)
+    {
+        return $this->app[ExceptionHandler::class]->render($request, $e);
+    }
+
+    /**
+     * Call the terminate method on any terminable middleware.
+     *
+     * @param Request $request
+     * @param Response $response
+     * @return void
+     */
+    protected function terminateMiddleware($request, $response)
+    {
+        $middlewares = $this->app->shouldSkipMiddleware() ? [] : array_merge(
+            $this->gatherRouteMiddleware($request),
+            $this->middleware
+        );
+
+        foreach ($middlewares as $middleware) {
+            if (!is_string($middleware)) {
+                continue;
+            }
+
+            [$name] = $this->parseMiddleware($middleware);
+
+            $instance = $this->app->make($name);
+
+            if (method_exists($instance, 'terminate')) {
+                $instance->terminate($request, $response);
+            }
+        }
+    }
+
+    /**
+     * Gather the route middleware for the given request.
+     *
+     * @param Request $request
+     * @return array
+     */
+    protected function gatherRouteMiddleware($request)
+    {
+        if ($route = $request->route()) {
+            return $this->router->gatherRouteMiddleware($route);
+        }
+
+        return [];
+    }
+
+    /**
+     * Parse a middleware string to get the name and parameters.
+     *
+     * @param string $middleware
+     * @return array
+     */
+    protected function parseMiddleware($middleware)
+    {
+        [$name, $parameters] = array_pad(explode(':', $middleware, 2), 2, []);
+
+        if (is_string($parameters)) {
+            $parameters = explode(',', $parameters);
+        }
+
+        return [$name, $parameters];
     }
 }

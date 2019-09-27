@@ -17,6 +17,8 @@ use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\Process\Process;
+use function is_string;
+use const DIRECTORY_SEPARATOR;
 
 class ProcessHelperTest extends TestCase
 {
@@ -25,7 +27,7 @@ class ProcessHelperTest extends TestCase
      */
     public function testVariousProcessRuns($expected, $cmd, $verbosity, $error)
     {
-        if (\is_string($cmd)) {
+        if (is_string($cmd)) {
             $cmd = method_exists(Process::class, 'fromShellCommandline') ? Process::fromShellCommandline($cmd) : new Process($cmd);
         }
 
@@ -34,18 +36,6 @@ class ProcessHelperTest extends TestCase
         $output = $this->getOutputStream($verbosity);
         $helper->run($output, $cmd, $error);
         $this->assertEquals($expected, $this->getOutput($output));
-    }
-
-    private function getOutputStream($verbosity)
-    {
-        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, false);
-    }
-
-    private function getOutput(StreamOutput $output)
-    {
-        rewind($output->getStream());
-
-        return stream_get_contents($output->getStream());
     }
 
     public function testPassedCallbackIsExecuted()
@@ -101,7 +91,7 @@ EOT;
 
 EOT;
 
-        $PHP = '\\' === \DIRECTORY_SEPARATOR ? '"!PHP!"' : '"$PHP"';
+        $PHP = '\\' === DIRECTORY_SEPARATOR ? '"!PHP!"' : '"$PHP"';
         $successOutputPhp = <<<EOT
   RUN  php -r $PHP
   OUT  42
@@ -133,5 +123,17 @@ EOT;
             [$successOutputProcessDebug, [new Process(['php', '-r', 'echo 42;'])], StreamOutput::VERBOSITY_DEBUG, null],
             [$successOutputPhp, [$fromShellCommandline('php -r ' . $PHP), 'PHP' => 'echo 42;'], StreamOutput::VERBOSITY_DEBUG, null],
         ];
+    }
+
+    private function getOutputStream($verbosity)
+    {
+        return new StreamOutput(fopen('php://memory', 'r+', false), $verbosity, false);
+    }
+
+    private function getOutput(StreamOutput $output)
+    {
+        rewind($output->getStream());
+
+        return stream_get_contents($output->getStream());
     }
 }

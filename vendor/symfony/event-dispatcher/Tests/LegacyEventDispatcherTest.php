@@ -15,6 +15,7 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Contracts\EventDispatcher\Event as ContractsEvent;
+use TypeError;
 
 /**
  * @group legacy
@@ -31,11 +32,6 @@ class LegacyEventDispatcherTest extends EventDispatcherTest
         $this->createEventDispatcher()->dispatch('foo');
     }
 
-    protected function createEventDispatcher()
-    {
-        return LegacyEventDispatcherProxy::decorate(new TestLegacyEventDispatcher());
-    }
-
     /**
      * @group legacy
      * @expectedDeprecation The signature of the "Symfony\Component\EventDispatcher\Tests\TestLegacyEventDispatcher::dispatch()" method should be updated to "dispatch($event, string $eventName = null)", not doing so is deprecated since Symfony 4.3.
@@ -47,12 +43,17 @@ class LegacyEventDispatcherTest extends EventDispatcherTest
     }
 
     /**
-     * @expectedException \TypeError
+     * @expectedException TypeError
      * @expectedExceptionMessage Argument 1 passed to "Symfony\Contracts\EventDispatcher\EventDispatcherInterface::dispatch()" must be an object, string given.
      */
     public function testLegacySignatureWithNewEventObject()
     {
         $this->createEventDispatcher()->dispatch('foo', new ContractsEvent());
+    }
+
+    protected function createEventDispatcher()
+    {
+        return LegacyEventDispatcherProxy::decorate(new TestLegacyEventDispatcher());
     }
 }
 

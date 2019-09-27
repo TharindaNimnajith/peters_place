@@ -65,18 +65,6 @@ class MultipleTest extends ParserTest
         ];
     }
 
-    private function getPrefer5()
-    {
-        $lexer = new Lexer(['usedAttributes' => []]);
-        return new Multiple([new Php5($lexer), new Php7($lexer)]);
-    }
-
-    private function getPrefer7()
-    {
-        $lexer = new Lexer(['usedAttributes' => []]);
-        return new Multiple([new Php7($lexer), new Php5($lexer)]);
-    }
-
     public function testThrownError()
     {
         $this->expectException(Error::class);
@@ -97,5 +85,17 @@ class MultipleTest extends ParserTest
     protected function getParser(Lexer $lexer)
     {
         return new Multiple([new Php5($lexer), new Php7($lexer)]);
+    }
+
+    private function getPrefer5()
+    {
+        $lexer = new Lexer(['usedAttributes' => []]);
+        return new Multiple([new Php5($lexer), new Php7($lexer)]);
+    }
+
+    private function getPrefer7()
+    {
+        $lexer = new Lexer(['usedAttributes' => []]);
+        return new Multiple([new Php7($lexer), new Php5($lexer)]);
     }
 }

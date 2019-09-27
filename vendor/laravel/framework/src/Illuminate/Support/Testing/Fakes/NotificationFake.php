@@ -109,18 +109,6 @@ class NotificationFake implements NotificationFactory, NotificationDispatcher
     }
 
     /**
-     * Get all of the notifications for a notifiable entity by type.
-     *
-     * @param mixed $notifiable
-     * @param string $notification
-     * @return array
-     */
-    protected function notificationsFor($notifiable, $notification)
-    {
-        return $this->notifications[get_class($notifiable)][$notifiable->getKey()][$notification] ?? [];
-    }
-
-    /**
      * Determine if a notification was sent based on a truth-test callback.
      *
      * @param mixed $notifiable
@@ -241,5 +229,17 @@ class NotificationFake implements NotificationFactory, NotificationDispatcher
         $this->locale = $locale;
 
         return $this;
+    }
+
+    /**
+     * Get all of the notifications for a notifiable entity by type.
+     *
+     * @param mixed $notifiable
+     * @param string $notification
+     * @return array
+     */
+    protected function notificationsFor($notifiable, $notification)
+    {
+        return $this->notifications[get_class($notifiable)][$notifiable->getKey()][$notification] ?? [];
     }
 }

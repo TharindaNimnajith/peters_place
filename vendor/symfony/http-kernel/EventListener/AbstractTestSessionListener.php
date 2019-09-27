@@ -68,13 +68,6 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
     }
 
     /**
-     * Gets the session object.
-     *
-     * @return SessionInterface|null A SessionInterface instance or null if no session is available
-     */
-    abstract protected function getSession();
-
-    /**
      * Checks if session was initialized and saves if current request is master
      * Runs on 'kernel.response' in test environment.
      */
@@ -112,4 +105,11 @@ abstract class AbstractTestSessionListener implements EventSubscriberInterface
             $this->sessionId = $session->getId();
         }
     }
+
+    /**
+     * Gets the session object.
+     *
+     * @return SessionInterface|null A SessionInterface instance or null if no session is available
+     */
+    abstract protected function getSession();
 }

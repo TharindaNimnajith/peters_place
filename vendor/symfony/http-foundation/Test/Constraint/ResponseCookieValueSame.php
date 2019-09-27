@@ -31,6 +31,23 @@ final class ResponseCookieValueSame extends Constraint
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function toString(): string
+    {
+        $str = sprintf('has cookie "%s"', $this->name);
+        if ('/' !== $this->path) {
+            $str .= sprintf(' with path "%s"', $this->path);
+        }
+        if ($this->domain) {
+            $str .= sprintf(' for domain "%s"', $this->domain);
+        }
+        $str .= sprintf(' with value "%s"', $this->value);
+
+        return $str;
+    }
+
+    /**
      * @param Response $response
      *
      * {@inheritdoc}
@@ -64,22 +81,5 @@ final class ResponseCookieValueSame extends Constraint
     protected function failureDescription($response): string
     {
         return 'the Response ' . $this->toString();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function toString(): string
-    {
-        $str = sprintf('has cookie "%s"', $this->name);
-        if ('/' !== $this->path) {
-            $str .= sprintf(' with path "%s"', $this->path);
-        }
-        if ($this->domain) {
-            $str .= sprintf(' for domain "%s"', $this->domain);
-        }
-        $str .= sprintf(' with value "%s"', $this->value);
-
-        return $str;
     }
 }

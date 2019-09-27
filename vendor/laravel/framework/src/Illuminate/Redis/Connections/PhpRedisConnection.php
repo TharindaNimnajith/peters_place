@@ -65,19 +65,6 @@ class PhpRedisConnection extends Connection implements ConnectionContract
     }
 
     /**
-     * Apply prefix to the given key if necessary.
-     *
-     * @param string $key
-     * @return string
-     */
-    private function applyPrefix($key)
-    {
-        $prefix = (string)$this->client->getOption(Redis::OPT_PREFIX);
-
-        return $prefix . $key;
-    }
-
-    /**
      * Execute a raw command.
      *
      * @param array $parameters
@@ -449,5 +436,18 @@ class PhpRedisConnection extends Connection implements ConnectionContract
     public function __call($method, $parameters)
     {
         return parent::__call(strtolower($method), $parameters);
+    }
+
+    /**
+     * Apply prefix to the given key if necessary.
+     *
+     * @param string $key
+     * @return string
+     */
+    private function applyPrefix($key)
+    {
+        $prefix = (string)$this->client->getOption(Redis::OPT_PREFIX);
+
+        return $prefix . $key;
     }
 }

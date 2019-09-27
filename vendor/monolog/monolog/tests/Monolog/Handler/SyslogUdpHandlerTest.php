@@ -57,11 +57,6 @@ class SyslogUdpHandlerTest extends TestCase
         $handler->handle($this->getRecordWithMessage("hej\nlol"));
     }
 
-    protected function getRecordWithMessage($msg)
-    {
-        return array('message' => $msg, 'level' => Logger::WARNING, 'context' => null, 'extra' => array(), 'channel' => 'lol');
-    }
-
     public function testSplitWorksOnEmptyMsg()
     {
         $handler = new SyslogUdpHandler("127.0.0.1", 514, "authpriv");
@@ -74,5 +69,10 @@ class SyslogUdpHandlerTest extends TestCase
         $handler->setSocket($socket);
 
         $handler->handle($this->getRecordWithMessage(null));
+    }
+
+    protected function getRecordWithMessage($msg)
+    {
+        return array('message' => $msg, 'level' => Logger::WARNING, 'context' => null, 'extra' => array(), 'channel' => 'lol');
     }
 }

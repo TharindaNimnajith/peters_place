@@ -2,6 +2,8 @@
 
 namespace Faker\Provider\id_ID;
 
+use DateTime;
+
 class Person extends \Faker\Provider\Person
 {
     protected static $lastNameFormat = array(
@@ -213,26 +215,6 @@ class Person extends \Faker\Provider\Person
     }
 
     /**
-     * Return last name
-     *
-     * @param string|null $gender male or female or null for any
-     *
-     * @return string last name
-     */
-    public function lastName($gender = null)
-    {
-        if ($gender === static::GENDER_MALE) {
-            return static::lastNameMale();
-        }
-        if ($gender === static::GENDER_FEMALE) {
-            return static::lastNameFemale();
-        }
-        $lastNameRandomElement = static::randomElement(static::$lastNameFormat);
-
-        return $this->generator->parse($lastNameRandomElement);
-    }
-
-    /**
      * Return last name for male
      *
      * @access public
@@ -255,12 +237,32 @@ class Person extends \Faker\Provider\Person
     }
 
     /**
+     * Return last name
+     *
+     * @param string|null $gender male or female or null for any
+     *
+     * @return string last name
+     */
+    public function lastName($gender = null)
+    {
+        if ($gender === static::GENDER_MALE) {
+            return static::lastNameMale();
+        }
+        if ($gender === static::GENDER_FEMALE) {
+            return static::lastNameFemale();
+        }
+        $lastNameRandomElement = static::randomElement(static::$lastNameFormat);
+
+        return $this->generator->parse($lastNameRandomElement);
+    }
+
+    /**
      * Generates Nomor Induk Kependudukan (NIK)
      *
      * @link https://en.wikipedia.org/wiki/National_identification_number#Indonesia
      *
      * @param null|string $gender
-     * @param null|\DateTime $birthDate
+     * @param null|DateTime $birthDate
      * @return string
      */
     public function nik($gender = null, $birthDate = null)

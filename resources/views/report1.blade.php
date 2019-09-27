@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>report</title>
@@ -63,10 +64,12 @@
                 font-size: 18px;
             }
         }
+
     </style>
 
 
 </head>
+
 <body>
 
 <div id="main">
@@ -101,6 +104,7 @@
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
     }
+
 </script>
 
 
@@ -113,7 +117,9 @@
         <br>
         <br>
         <br>
-        <center><h2>Front Office Management Report</h2></center>
+        <center>
+            <h2>Front Office Management Report</h2>
+        </center>
         <table class="table table-bordered" style="margin-top:80px; margin-left: 40px; margin-right: 40px">
             <thead>
             <tr>
@@ -167,4 +173,5 @@
 <br>
 <br>
 </body>
+
 </html>

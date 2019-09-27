@@ -161,58 +161,6 @@ class Mailable implements MailableContract, Renderable
     }
 
     /**
-     * Build the view for the message.
-     *
-     * @return array|string
-     *
-     * @throws ReflectionException
-     */
-    protected function buildView()
-    {
-        if (isset($this->html)) {
-            return array_filter([
-                'html' => new HtmlString($this->html),
-                'text' => $this->textView ?? null,
-            ]);
-        }
-
-        if (isset($this->markdown)) {
-            return $this->buildMarkdownView();
-        }
-
-        if (isset($this->view, $this->textView)) {
-            return [$this->view, $this->textView];
-        } elseif (isset($this->textView)) {
-            return ['text' => $this->textView];
-        }
-
-        return $this->view;
-    }
-
-    /**
-     * Build the Markdown view for the message.
-     *
-     * @return array
-     *
-     * @throws ReflectionException
-     */
-    protected function buildMarkdownView()
-    {
-        $markdown = Container::getInstance()->make(Markdown::class);
-
-        if (isset($this->theme)) {
-            $markdown->theme($this->theme);
-        }
-
-        $data = $this->buildViewData();
-
-        return [
-            'html' => $markdown->render($this->markdown, $data),
-            'text' => $this->buildMarkdownText($markdown, $data),
-        ];
-    }
-
-    /**
      * Build the view data for the message.
      *
      * @return array
@@ -234,127 +182,6 @@ class Mailable implements MailableContract, Renderable
         }
 
         return $data;
-    }
-
-    /**
-     * Build the text view for a Markdown message.
-     *
-     * @param Markdown $markdown
-     * @param array $data
-     * @return string
-     */
-    protected function buildMarkdownText($markdown, $data)
-    {
-        return $this->textView
-            ?? $markdown->renderText($this->markdown, $data);
-    }
-
-    /**
-     * Add all of the attachments to the message.
-     *
-     * @param Message $message
-     * @return $this
-     */
-    protected function buildAttachments($message)
-    {
-        foreach ($this->attachments as $attachment) {
-            $message->attach($attachment['file'], $attachment['options']);
-        }
-
-        foreach ($this->rawAttachments as $attachment) {
-            $message->attachData(
-                $attachment['data'], $attachment['name'], $attachment['options']
-            );
-        }
-
-        $this->buildDiskAttachments($message);
-
-        return $this;
-    }
-
-    /**
-     * Add all of the disk attachments to the message.
-     *
-     * @param Message $message
-     * @return void
-     */
-    protected function buildDiskAttachments($message)
-    {
-        foreach ($this->diskAttachments as $attachment) {
-            $storage = Container::getInstance()->make(
-                FilesystemFactory::class
-            )->disk($attachment['disk']);
-
-            $message->attachData(
-                $storage->get($attachment['path']),
-                $attachment['name'] ?? basename($attachment['path']),
-                array_merge(['mime' => $storage->mimeType($attachment['path'])], $attachment['options'])
-            );
-        }
-    }
-
-    /**
-     * Run the callbacks for the message.
-     *
-     * @param Message $message
-     * @return $this
-     */
-    protected function runCallbacks($message)
-    {
-        foreach ($this->callbacks as $callback) {
-            $callback($message->getSwiftMessage());
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set the subject for the message.
-     *
-     * @param Message $message
-     * @return $this
-     */
-    protected function buildSubject($message)
-    {
-        if ($this->subject) {
-            $message->subject($this->subject);
-        } else {
-            $message->subject(Str::title(Str::snake(class_basename($this), ' ')));
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add all of the recipients to the message.
-     *
-     * @param Message $message
-     * @return $this
-     */
-    protected function buildRecipients($message)
-    {
-        foreach (['to', 'cc', 'bcc', 'replyTo'] as $type) {
-            foreach ($this->{$type} as $recipient) {
-                $message->{$type}($recipient['address'], $recipient['name']);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add the sender to the message.
-     *
-     * @param Message $message
-     * @return $this
-     */
-    protected function buildFrom($message)
-    {
-        if (!empty($this->from)) {
-            $message->from($this->from[0]['address'], $this->from[0]['name']);
-        }
-
-        return $this;
     }
 
     /**
@@ -457,63 +284,6 @@ class Mailable implements MailableContract, Renderable
     }
 
     /**
-     * Set the recipients of the message.
-     *
-     * All recipients are stored internally as [['name' => ?, 'address' => ?]]
-     *
-     * @param object|array|string $address
-     * @param string|null $name
-     * @param string $property
-     * @return $this
-     */
-    protected function setAddress($address, $name = null, $property = 'to')
-    {
-        foreach ($this->addressesToArray($address, $name) as $recipient) {
-            $recipient = $this->normalizeRecipient($recipient);
-
-            $this->{$property}[] = [
-                'name' => $recipient->name ?? null,
-                'address' => $recipient->email,
-            ];
-        }
-
-        return $this;
-    }
-
-    /**
-     * Convert the given recipient arguments to an array.
-     *
-     * @param object|array|string $address
-     * @param string|null $name
-     * @return array
-     */
-    protected function addressesToArray($address, $name)
-    {
-        if (!is_array($address) && !$address instanceof Collection) {
-            $address = is_string($name) ? [['name' => $name, 'email' => $address]] : [$address];
-        }
-
-        return $address;
-    }
-
-    /**
-     * Convert the given recipient into an object.
-     *
-     * @param mixed $recipient
-     * @return object
-     */
-    protected function normalizeRecipient($recipient)
-    {
-        if (is_array($recipient)) {
-            return (object)$recipient;
-        } elseif (is_string($recipient)) {
-            return (object)['email' => $recipient];
-        }
-
-        return $recipient;
-    }
-
-    /**
      * Determine if the given recipient is set on the mailable.
      *
      * @param object|array|string $address
@@ -523,34 +293,6 @@ class Mailable implements MailableContract, Renderable
     public function hasFrom($address, $name = null)
     {
         return $this->hasRecipient($address, $name, 'from');
-    }
-
-    /**
-     * Determine if the given recipient is set on the mailable.
-     *
-     * @param object|array|string $address
-     * @param string|null $name
-     * @param string $property
-     * @return bool
-     */
-    protected function hasRecipient($address, $name = null, $property = 'to')
-    {
-        $expected = $this->normalizeRecipient(
-            $this->addressesToArray($address, $name)[0]
-        );
-
-        $expected = [
-            'name' => $expected->name ?? null,
-            'address' => $expected->email,
-        ];
-
-        return collect($this->{$property})->contains(function ($actual) use ($expected) {
-            if (!isset($expected['name'])) {
-                return $actual['address'] == $expected['address'];
-            }
-
-            return $actual == $expected;
-        });
     }
 
     /**
@@ -830,5 +572,263 @@ class Mailable implements MailableContract, Renderable
         }
 
         return $this;
+    }
+
+    /**
+     * Build the view for the message.
+     *
+     * @return array|string
+     *
+     * @throws ReflectionException
+     */
+    protected function buildView()
+    {
+        if (isset($this->html)) {
+            return array_filter([
+                'html' => new HtmlString($this->html),
+                'text' => $this->textView ?? null,
+            ]);
+        }
+
+        if (isset($this->markdown)) {
+            return $this->buildMarkdownView();
+        }
+
+        if (isset($this->view, $this->textView)) {
+            return [$this->view, $this->textView];
+        } elseif (isset($this->textView)) {
+            return ['text' => $this->textView];
+        }
+
+        return $this->view;
+    }
+
+    /**
+     * Build the Markdown view for the message.
+     *
+     * @return array
+     *
+     * @throws ReflectionException
+     */
+    protected function buildMarkdownView()
+    {
+        $markdown = Container::getInstance()->make(Markdown::class);
+
+        if (isset($this->theme)) {
+            $markdown->theme($this->theme);
+        }
+
+        $data = $this->buildViewData();
+
+        return [
+            'html' => $markdown->render($this->markdown, $data),
+            'text' => $this->buildMarkdownText($markdown, $data),
+        ];
+    }
+
+    /**
+     * Build the text view for a Markdown message.
+     *
+     * @param Markdown $markdown
+     * @param array $data
+     * @return string
+     */
+    protected function buildMarkdownText($markdown, $data)
+    {
+        return $this->textView
+            ?? $markdown->renderText($this->markdown, $data);
+    }
+
+    /**
+     * Add all of the attachments to the message.
+     *
+     * @param Message $message
+     * @return $this
+     */
+    protected function buildAttachments($message)
+    {
+        foreach ($this->attachments as $attachment) {
+            $message->attach($attachment['file'], $attachment['options']);
+        }
+
+        foreach ($this->rawAttachments as $attachment) {
+            $message->attachData(
+                $attachment['data'], $attachment['name'], $attachment['options']
+            );
+        }
+
+        $this->buildDiskAttachments($message);
+
+        return $this;
+    }
+
+    /**
+     * Add all of the disk attachments to the message.
+     *
+     * @param Message $message
+     * @return void
+     */
+    protected function buildDiskAttachments($message)
+    {
+        foreach ($this->diskAttachments as $attachment) {
+            $storage = Container::getInstance()->make(
+                FilesystemFactory::class
+            )->disk($attachment['disk']);
+
+            $message->attachData(
+                $storage->get($attachment['path']),
+                $attachment['name'] ?? basename($attachment['path']),
+                array_merge(['mime' => $storage->mimeType($attachment['path'])], $attachment['options'])
+            );
+        }
+    }
+
+    /**
+     * Run the callbacks for the message.
+     *
+     * @param Message $message
+     * @return $this
+     */
+    protected function runCallbacks($message)
+    {
+        foreach ($this->callbacks as $callback) {
+            $callback($message->getSwiftMessage());
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the subject for the message.
+     *
+     * @param Message $message
+     * @return $this
+     */
+    protected function buildSubject($message)
+    {
+        if ($this->subject) {
+            $message->subject($this->subject);
+        } else {
+            $message->subject(Str::title(Str::snake(class_basename($this), ' ')));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add all of the recipients to the message.
+     *
+     * @param Message $message
+     * @return $this
+     */
+    protected function buildRecipients($message)
+    {
+        foreach (['to', 'cc', 'bcc', 'replyTo'] as $type) {
+            foreach ($this->{$type} as $recipient) {
+                $message->{$type}($recipient['address'], $recipient['name']);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add the sender to the message.
+     *
+     * @param Message $message
+     * @return $this
+     */
+    protected function buildFrom($message)
+    {
+        if (!empty($this->from)) {
+            $message->from($this->from[0]['address'], $this->from[0]['name']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set the recipients of the message.
+     *
+     * All recipients are stored internally as [['name' => ?, 'address' => ?]]
+     *
+     * @param object|array|string $address
+     * @param string|null $name
+     * @param string $property
+     * @return $this
+     */
+    protected function setAddress($address, $name = null, $property = 'to')
+    {
+        foreach ($this->addressesToArray($address, $name) as $recipient) {
+            $recipient = $this->normalizeRecipient($recipient);
+
+            $this->{$property}[] = [
+                'name' => $recipient->name ?? null,
+                'address' => $recipient->email,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * Convert the given recipient arguments to an array.
+     *
+     * @param object|array|string $address
+     * @param string|null $name
+     * @return array
+     */
+    protected function addressesToArray($address, $name)
+    {
+        if (!is_array($address) && !$address instanceof Collection) {
+            $address = is_string($name) ? [['name' => $name, 'email' => $address]] : [$address];
+        }
+
+        return $address;
+    }
+
+    /**
+     * Convert the given recipient into an object.
+     *
+     * @param mixed $recipient
+     * @return object
+     */
+    protected function normalizeRecipient($recipient)
+    {
+        if (is_array($recipient)) {
+            return (object)$recipient;
+        } elseif (is_string($recipient)) {
+            return (object)['email' => $recipient];
+        }
+
+        return $recipient;
+    }
+
+    /**
+     * Determine if the given recipient is set on the mailable.
+     *
+     * @param object|array|string $address
+     * @param string|null $name
+     * @param string $property
+     * @return bool
+     */
+    protected function hasRecipient($address, $name = null, $property = 'to')
+    {
+        $expected = $this->normalizeRecipient(
+            $this->addressesToArray($address, $name)[0]
+        );
+
+        $expected = [
+            'name' => $expected->name ?? null,
+            'address' => $expected->email,
+        ];
+
+        return collect($this->{$property})->contains(function ($actual) use ($expected) {
+            if (!isset($expected['name'])) {
+                return $actual['address'] == $expected['address'];
+            }
+
+            return $actual == $expected;
+        });
     }
 }

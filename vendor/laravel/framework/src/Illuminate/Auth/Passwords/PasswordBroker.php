@@ -125,29 +125,6 @@ class PasswordBroker implements PasswordBrokerContract
     }
 
     /**
-     * Validate a password reset for the given credentials.
-     *
-     * @param array $credentials
-     * @return CanResetPasswordContract|string
-     */
-    protected function validateReset(array $credentials)
-    {
-        if (is_null($user = $this->getUser($credentials))) {
-            return static::INVALID_USER;
-        }
-
-        if (!$this->validateNewPassword($credentials)) {
-            return static::INVALID_PASSWORD;
-        }
-
-        if (!$this->tokens->exists($user, $credentials['token'])) {
-            return static::INVALID_TOKEN;
-        }
-
-        return $user;
-    }
-
-    /**
      * Determine if the passwords match for the request.
      *
      * @param array $credentials
@@ -167,22 +144,6 @@ class PasswordBroker implements PasswordBrokerContract
         }
 
         return $this->validatePasswordWithDefaults($credentials);
-    }
-
-    /**
-     * Determine if the passwords are valid for the request.
-     *
-     * @param array $credentials
-     * @return bool
-     */
-    protected function validatePasswordWithDefaults(array $credentials)
-    {
-        [$password, $confirm] = [
-            $credentials['password'],
-            $credentials['password_confirmation'],
-        ];
-
-        return $password === $confirm && mb_strlen($password) >= 8;
     }
 
     /**
@@ -238,5 +199,44 @@ class PasswordBroker implements PasswordBrokerContract
     public function getRepository()
     {
         return $this->tokens;
+    }
+
+    /**
+     * Validate a password reset for the given credentials.
+     *
+     * @param array $credentials
+     * @return CanResetPasswordContract|string
+     */
+    protected function validateReset(array $credentials)
+    {
+        if (is_null($user = $this->getUser($credentials))) {
+            return static::INVALID_USER;
+        }
+
+        if (!$this->validateNewPassword($credentials)) {
+            return static::INVALID_PASSWORD;
+        }
+
+        if (!$this->tokens->exists($user, $credentials['token'])) {
+            return static::INVALID_TOKEN;
+        }
+
+        return $user;
+    }
+
+    /**
+     * Determine if the passwords are valid for the request.
+     *
+     * @param array $credentials
+     * @return bool
+     */
+    protected function validatePasswordWithDefaults(array $credentials)
+    {
+        [$password, $confirm] = [
+            $credentials['password'],
+            $credentials['password_confirmation'],
+        ];
+
+        return $password === $confirm && mb_strlen($password) >= 8;
     }
 }

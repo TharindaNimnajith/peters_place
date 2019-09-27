@@ -136,25 +136,6 @@ class FingersCrossedHandler extends AbstractHandler
     }
 
     /**
-     * Resets the state of the handler. Stops forwarding records to the wrapped handler.
-     */
-    private function flushBuffer()
-    {
-        if (null !== $this->passthruLevel) {
-            $level = $this->passthruLevel;
-            $this->buffer = array_filter($this->buffer, function ($record) use ($level) {
-                return $record['level'] >= $level;
-            });
-            if (count($this->buffer) > 0) {
-                $this->handler->handleBatch($this->buffer);
-            }
-        }
-
-        $this->buffer = array();
-        $this->buffering = true;
-    }
-
-    /**
      * Clears the buffer without flushing any messages down to the wrapped handler.
      *
      * It also resets the handler to its initial buffering state.
@@ -174,5 +155,24 @@ class FingersCrossedHandler extends AbstractHandler
         if ($this->handler instanceof ResettableInterface) {
             $this->handler->reset();
         }
+    }
+
+    /**
+     * Resets the state of the handler. Stops forwarding records to the wrapped handler.
+     */
+    private function flushBuffer()
+    {
+        if (null !== $this->passthruLevel) {
+            $level = $this->passthruLevel;
+            $this->buffer = array_filter($this->buffer, function ($record) use ($level) {
+                return $record['level'] >= $level;
+            });
+            if (count($this->buffer) > 0) {
+                $this->handler->handleBatch($this->buffer);
+            }
+        }
+
+        $this->buffer = array();
+        $this->buffering = true;
     }
 }

@@ -63,6 +63,40 @@ class NormalizerFormatter implements FormatterInterface
         return $this->normalize($record);
     }
 
+    /**
+     * Detect invalid UTF-8 string characters and convert to valid UTF-8.
+     *
+     * Valid UTF-8 input will be left unmodified, but strings containing
+     * invalid UTF-8 codepoints will be reencoded as UTF-8 with an assumed
+     * original encoding of ISO-8859-15. This conversion may result in
+     * incorrect output if the actual encoding was not ISO-8859-15, but it
+     * will be clean UTF-8 output and will not rely on expensive and fragile
+     * detection algorithms.
+     *
+     * Function converts the input in place in the passed variable so that it
+     * can be used as a callback for array_walk_recursive.
+     *
+     * @param mixed &$data Input to check and convert if needed
+     * @private
+     */
+    public function detectAndCleanUtf8(&$data)
+    {
+        if (is_string($data) && !preg_match('//u', $data)) {
+            $data = preg_replace_callback(
+                '/[\x80-\xFF]+/',
+                function ($m) {
+                    return utf8_encode($m[0]);
+                },
+                $data
+            );
+            $data = str_replace(
+                array('¤', '¦', '¨', '´', '¸', '¼', '½', '¾'),
+                array('€', 'Š', 'š', 'Ž', 'ž', 'Œ', 'œ', 'Ÿ'),
+                $data
+            );
+        }
+    }
+
     protected function normalize($data, $depth = 0)
     {
         if ($depth > 9) {
@@ -285,39 +319,5 @@ class NormalizerFormatter implements FormatterInterface
         }
 
         throw new RuntimeException('JSON encoding failed: ' . $msg . '. Encoding: ' . var_export($data, true));
-    }
-
-    /**
-     * Detect invalid UTF-8 string characters and convert to valid UTF-8.
-     *
-     * Valid UTF-8 input will be left unmodified, but strings containing
-     * invalid UTF-8 codepoints will be reencoded as UTF-8 with an assumed
-     * original encoding of ISO-8859-15. This conversion may result in
-     * incorrect output if the actual encoding was not ISO-8859-15, but it
-     * will be clean UTF-8 output and will not rely on expensive and fragile
-     * detection algorithms.
-     *
-     * Function converts the input in place in the passed variable so that it
-     * can be used as a callback for array_walk_recursive.
-     *
-     * @param mixed &$data Input to check and convert if needed
-     * @private
-     */
-    public function detectAndCleanUtf8(&$data)
-    {
-        if (is_string($data) && !preg_match('//u', $data)) {
-            $data = preg_replace_callback(
-                '/[\x80-\xFF]+/',
-                function ($m) {
-                    return utf8_encode($m[0]);
-                },
-                $data
-            );
-            $data = str_replace(
-                array('¤', '¦', '¨', '´', '¸', '¼', '½', '¾'),
-                array('€', 'Š', 'š', 'Ž', 'ž', 'Œ', 'œ', 'Ÿ'),
-                $data
-            );
-        }
     }
 }

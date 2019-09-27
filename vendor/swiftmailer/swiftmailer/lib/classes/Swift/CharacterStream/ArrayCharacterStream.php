@@ -202,20 +202,6 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
         fclose($fp);
     }
 
-    private function reloadBuffer($fp, $len)
-    {
-        if (!feof($fp) && false !== ($bytes = fread($fp, $len))) {
-            $buf = [];
-            for ($i = 0, $len = strlen($bytes); $i < $len; ++$i) {
-                $buf[] = self::$byteMap[$bytes[$i]];
-            }
-
-            return $buf;
-        }
-
-        return false;
-    }
-
     /**
      * Read $length characters from the stream and move the internal pointer
      * $length further into the stream.
@@ -287,5 +273,19 @@ class Swift_CharacterStream_ArrayCharacterStream implements Swift_CharacterStrea
             $charOffset = 0;
         }
         $this->offset = $charOffset;
+    }
+
+    private function reloadBuffer($fp, $len)
+    {
+        if (!feof($fp) && false !== ($bytes = fread($fp, $len))) {
+            $buf = [];
+            for ($i = 0, $len = strlen($bytes); $i < $len; ++$i) {
+                $buf[] = self::$byteMap[$bytes[$i]];
+            }
+
+            return $buf;
+        }
+
+        return false;
     }
 }

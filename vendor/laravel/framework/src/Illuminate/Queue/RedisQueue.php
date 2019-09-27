@@ -94,16 +94,6 @@ class RedisQueue extends Queue implements QueueContract
     }
 
     /**
-     * Get the connection for the queue.
-     *
-     * @return Connection
-     */
-    protected function getConnection()
-    {
-        return $this->redis->connection($this->connection);
-    }
-
-    /**
      * Push a new job onto the queue.
      *
      * @param object|string $job
@@ -149,23 +139,6 @@ class RedisQueue extends Queue implements QueueContract
     }
 
     /**
-     * Push a raw job onto the queue after a delay.
-     *
-     * @param DateTimeInterface|DateInterval|int $delay
-     * @param string $payload
-     * @param string|null $queue
-     * @return mixed
-     */
-    protected function laterRaw($delay, $payload, $queue = null)
-    {
-        $this->getConnection()->zadd(
-            $this->getQueue($queue) . ':delayed', $this->availableAt($delay), $payload
-        );
-
-        return json_decode($payload, true)['id'] ?? null;
-    }
-
-    /**
      * Pop the next job off of the queue.
      *
      * @param string|null $queue
@@ -190,21 +163,6 @@ class RedisQueue extends Queue implements QueueContract
     }
 
     /**
-     * Migrate any delayed or expired jobs onto the primary queue.
-     *
-     * @param string $queue
-     * @return void
-     */
-    protected function migrate($queue)
-    {
-        $this->migrateExpiredJobs($queue . ':delayed', $queue);
-
-        if (!is_null($this->retryAfter)) {
-            $this->migrateExpiredJobs($queue . ':reserved', $queue);
-        }
-    }
-
-    /**
      * Migrate the delayed jobs that are ready to the regular queue.
      *
      * @param string $from
@@ -216,34 +174,6 @@ class RedisQueue extends Queue implements QueueContract
         return $this->getConnection()->eval(
             LuaScripts::migrateExpiredJobs(), 3, $from, $to, $to . ':notify', $this->currentTime()
         );
-    }
-
-    /**
-     * Retrieve the next job from the queue.
-     *
-     * @param string $queue
-     * @param bool $block
-     * @return array
-     */
-    protected function retrieveNextJob($queue, $block = true)
-    {
-        $nextJob = $this->getConnection()->eval(
-            LuaScripts::pop(), 3, $queue, $queue . ':reserved', $queue . ':notify',
-            $this->availableAt($this->retryAfter)
-        );
-
-        if (empty($nextJob)) {
-            return [null, null];
-        }
-
-        [$job, $reserved] = $nextJob;
-
-        if (!$job && !is_null($this->blockFor) && $block &&
-            $this->getConnection()->blpop([$queue . ':notify'], $this->blockFor)) {
-            return $this->retrieveNextJob($queue, false);
-        }
-
-        return [$job, $reserved];
     }
 
     /**
@@ -284,6 +214,76 @@ class RedisQueue extends Queue implements QueueContract
     public function getRedis()
     {
         return $this->redis;
+    }
+
+    /**
+     * Get the connection for the queue.
+     *
+     * @return Connection
+     */
+    protected function getConnection()
+    {
+        return $this->redis->connection($this->connection);
+    }
+
+    /**
+     * Push a raw job onto the queue after a delay.
+     *
+     * @param DateTimeInterface|DateInterval|int $delay
+     * @param string $payload
+     * @param string|null $queue
+     * @return mixed
+     */
+    protected function laterRaw($delay, $payload, $queue = null)
+    {
+        $this->getConnection()->zadd(
+            $this->getQueue($queue) . ':delayed', $this->availableAt($delay), $payload
+        );
+
+        return json_decode($payload, true)['id'] ?? null;
+    }
+
+    /**
+     * Migrate any delayed or expired jobs onto the primary queue.
+     *
+     * @param string $queue
+     * @return void
+     */
+    protected function migrate($queue)
+    {
+        $this->migrateExpiredJobs($queue . ':delayed', $queue);
+
+        if (!is_null($this->retryAfter)) {
+            $this->migrateExpiredJobs($queue . ':reserved', $queue);
+        }
+    }
+
+    /**
+     * Retrieve the next job from the queue.
+     *
+     * @param string $queue
+     * @param bool $block
+     * @return array
+     */
+    protected function retrieveNextJob($queue, $block = true)
+    {
+        $nextJob = $this->getConnection()->eval(
+            LuaScripts::pop(), 3, $queue, $queue . ':reserved', $queue . ':notify',
+            $this->availableAt($this->retryAfter)
+        );
+
+        if (empty($nextJob)) {
+            return [null, null];
+        }
+
+        [$job, $reserved] = $nextJob;
+
+        if (!$job && !is_null($this->blockFor) && $block &&
+            $this->getConnection()->blpop([$queue . ':notify'], $this->blockFor)) {
+            return $this->retrieveNextJob($queue, false);
+        }
+
+        return [$job, $reserved];
     }
 
     /**

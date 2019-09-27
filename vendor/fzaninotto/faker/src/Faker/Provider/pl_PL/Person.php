@@ -2,6 +2,8 @@
 
 namespace Faker\Provider\pl_PL;
 
+use Faker\Provider\DateTime;
+
 /**
  * Most popular first and last names published by Ministry of the Interior:
  * @link https://msw.gov.pl/pl/sprawy-obywatelskie/ewidencja-ludnosci-dowo/statystyki-imion-i-nazw
@@ -95,11 +97,6 @@ class Person extends \Faker\Provider\Person
         return static::title();
     }
 
-    public function title($gender = null)
-    {
-        return static::randomElement(static::$title);
-    }
-
     /**
      * replaced by specific unisex Polish title
      */
@@ -118,7 +115,7 @@ class Person extends \Faker\Provider\Person
     public static function pesel($birthdate = null, $sex = null)
     {
         if ($birthdate === null) {
-            $birthdate = \Faker\Provider\DateTime::dateTimeThisCentury();
+            $birthdate = DateTime::dateTimeThisCentury();
         }
 
         $weights = array(1, 3, 7, 9, 1, 3, 7, 9, 1, 3);
@@ -200,6 +197,21 @@ class Person extends \Faker\Provider\Person
         return implode('', $result);
     }
 
+    public static function lastNameMale()
+    {
+        return static::randomElement(static::$lastNameMale);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::randomElement(static::$lastNameFemale);
+    }
+
+    public function title($gender = null)
+    {
+        return static::randomElement(static::$title);
+    }
+
     /**
      * @param string|null $gender 'male', 'female' or null for any
      * @example 'Adamczyk'
@@ -213,15 +225,5 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$lastNameFormat));
-    }
-
-    public static function lastNameMale()
-    {
-        return static::randomElement(static::$lastNameMale);
-    }
-
-    public static function lastNameFemale()
-    {
-        return static::randomElement(static::$lastNameFemale);
     }
 }

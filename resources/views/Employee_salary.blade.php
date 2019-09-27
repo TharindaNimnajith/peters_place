@@ -116,6 +116,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -125,12 +126,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -145,7 +146,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -157,7 +159,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -191,12 +194,14 @@
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
+                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    </li>
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="#contact"><img src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                    <li class="my"><a href="#contact"><img
+                                src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                     </li>
                 </ul>
             </div>
@@ -226,7 +231,9 @@
                 <div class="row">
                     <div class="col-8">
                         <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-left: -1ch">
-                            <b><h4 id="date" style="margin-top: 20px;"></h4></b>
+                            <b>
+                                <h4 id="date" style="margin-top: 20px;"></h4>
+                            </b>
 
                             <table class="table table-bordered" style="margin-left: -1ch">
                                 <thead>
@@ -275,8 +282,8 @@
                                             <input type="hidden" name="id" value="{{$row['id']}}"/>
                                             <input type="hidden" name="type" value="{{$row['type']}}"/>
                                             <input type="hidden" name="name" value="{{$row['name']}}"/>
-                                            <td><input type="submit" value="Cal Salary" class="btn btn-primary btn-sm"
-                                                       style="margin-left: 0px">
+                                            <td><input type="submit" value="Cal Salary"
+                                                       class="btn btn-primary btn-sm" style="margin-left: 0px">
 
                                             </td>
                                         </form>
@@ -290,7 +297,9 @@
 
                     <div class="col-4">
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                            <b><h4 id="date" style="margin-top: 20px;"></h4></b>
+                            <b>
+                                <h4 id="date" style="margin-top: 20px;"></h4>
+                            </b>
 
                             <table class="table table-bordered">
                                 <thead>
@@ -320,4 +329,5 @@
                 </div>
 
 </body>
+
 </html>

@@ -20,6 +20,18 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
     }
 
     /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'validator', 'validation.presence',
+        ];
+    }
+
+    /**
      * Register the database presence verifier.
      *
      * @return void
@@ -50,17 +62,5 @@ class ValidationServiceProvider extends ServiceProvider implements DeferrablePro
 
             return $validator;
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'validator', 'validation.presence',
-        ];
     }
 }

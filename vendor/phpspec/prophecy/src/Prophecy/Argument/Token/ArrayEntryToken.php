@@ -38,17 +38,6 @@ class ArrayEntryToken implements TokenInterface
     }
 
     /**
-     * Wraps non token $value into ExactValueToken
-     *
-     * @param $value
-     * @return TokenInterface
-     */
-    private function wrapIntoExactValueToken($value)
-    {
-        return $value instanceof TokenInterface ? $value : new ExactValueToken($value);
-    }
-
-    /**
      * Scores half of combined scores from key and value tokens for same entry. Capped at 8.
      * If argument implements \ArrayAccess without \Traversable, then key token is restricted to ExactValueToken.
      *
@@ -78,29 +67,6 @@ class ArrayEntryToken implements TokenInterface
         };
 
         return max(array_map($scoreEntry, $valueScores, $keyScores));
-    }
-
-    /**
-     * Converts instance of \ArrayAccess to key => value array entry
-     *
-     * @param ArrayAccess $object
-     *
-     * @return array|null
-     * @throws InvalidArgumentException
-     */
-    private function convertArrayAccessToEntry(ArrayAccess $object)
-    {
-        if (!$this->key instanceof ExactValueToken) {
-            throw new InvalidArgumentException(sprintf(
-                'You can only use exact value tokens to match key of ArrayAccess object' . PHP_EOL .
-                'But you used `%s`.',
-                $this->key
-            ));
-        }
-
-        $key = $this->key->getValue();
-
-        return $object->offsetExists($key) ? array($key => $object[$key]) : array();
     }
 
     /**
@@ -141,5 +107,39 @@ class ArrayEntryToken implements TokenInterface
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Wraps non token $value into ExactValueToken
+     *
+     * @param $value
+     * @return TokenInterface
+     */
+    private function wrapIntoExactValueToken($value)
+    {
+        return $value instanceof TokenInterface ? $value : new ExactValueToken($value);
+    }
+
+    /**
+     * Converts instance of \ArrayAccess to key => value array entry
+     *
+     * @param ArrayAccess $object
+     *
+     * @return array|null
+     * @throws InvalidArgumentException
+     */
+    private function convertArrayAccessToEntry(ArrayAccess $object)
+    {
+        if (!$this->key instanceof ExactValueToken) {
+            throw new InvalidArgumentException(sprintf(
+                'You can only use exact value tokens to match key of ArrayAccess object' . PHP_EOL .
+                'But you used `%s`.',
+                $this->key
+            ));
+        }
+
+        $key = $this->key->getValue();
+
+        return $object->offsetExists($key) ? array($key => $object[$key]) : array();
     }
 }

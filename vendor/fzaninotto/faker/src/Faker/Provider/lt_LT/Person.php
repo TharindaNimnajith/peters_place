@@ -2,6 +2,8 @@
 
 namespace Faker\Provider\lt_LT;
 
+use Faker\Provider\DateTime;
+
 class Person extends \Faker\Provider\Person
 {
 
@@ -248,6 +250,30 @@ class Person extends \Faker\Provider\Person
     );
 
     /**
+     * Calculate the sum of personal code
+     * @link https://en.wikipedia.org/wiki/National_identification_number#Lithuania
+     * @link https://lt.wikipedia.org/wiki/Asmens_kodas
+     * @param string $numbers
+     * @param int $time [1|2]
+     * @return int
+     */
+    private static function calculateSum($numbers, $time = 1)
+    {
+        if ($time == 1) {
+            $multipliers = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 1);
+        } else {
+            $multipliers = array(3, 4, 5, 6, 7, 8, 9, 1, 2, 3);
+        }
+
+        $sum = 0;
+        for ($i = 1; $i <= 10; $i++) {
+            $sum += $numbers[$i - 1] * $multipliers[$i - 1];
+        }
+
+        return (int)$sum;
+    }
+
+    /**
      * Return male last name
      * @return string
      * @example 'Vasiliauskas'
@@ -299,7 +325,7 @@ class Person extends \Faker\Provider\Person
     public function personalIdentityNumber($gender = 'male', \DateTime $birthdate = null, $randomNumber = '')
     {
         if (!$birthdate) {
-            $birthdate = \Faker\Provider\DateTime::dateTimeThisCentury();
+            $birthdate = DateTime::dateTimeThisCentury();
         }
 
         $genderNumber = ($gender == 'male') ? (int)1 : (int)0;
@@ -322,29 +348,5 @@ class Person extends \Faker\Provider\Person
 
         $lastNumber = ($liekana !== 10) ? $liekana : 0;
         return $firstNumber . $datePart . $randomDigits . $lastNumber;
-    }
-
-    /**
-     * Calculate the sum of personal code
-     * @link https://en.wikipedia.org/wiki/National_identification_number#Lithuania
-     * @link https://lt.wikipedia.org/wiki/Asmens_kodas
-     * @param string $numbers
-     * @param int $time [1|2]
-     * @return int
-     */
-    private static function calculateSum($numbers, $time = 1)
-    {
-        if ($time == 1) {
-            $multipliers = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 1);
-        } else {
-            $multipliers = array(3, 4, 5, 6, 7, 8, 9, 1, 2, 3);
-        }
-
-        $sum = 0;
-        for ($i = 1; $i <= 10; $i++) {
-            $sum += $numbers[$i - 1] * $multipliers[$i - 1];
-        }
-
-        return (int)$sum;
     }
 }

@@ -60,16 +60,6 @@ class ThrowPromise implements PromiseInterface
     }
 
     /**
-     * @param string $exception
-     *
-     * @return bool
-     */
-    private function isAValidThrowable($exception)
-    {
-        return is_a($exception, 'Exception', true) || is_subclass_of($exception, 'Throwable', true);
-    }
-
-    /**
      * Throws predefined exception.
      *
      * @param array $args
@@ -97,5 +87,15 @@ class ThrowPromise implements PromiseInterface
         }
 
         throw $this->exception;
+    }
+
+    /**
+     * @param string $exception
+     *
+     * @return bool
+     */
+    private function isAValidThrowable($exception)
+    {
+        return is_a($exception, 'Exception', true) || is_subclass_of($exception, 'Throwable', true);
     }
 }

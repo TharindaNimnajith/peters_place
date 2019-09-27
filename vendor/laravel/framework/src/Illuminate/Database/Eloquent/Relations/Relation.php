@@ -68,13 +68,6 @@ abstract class Relation
     }
 
     /**
-     * Set the base constraints on the relation query.
-     *
-     * @return void
-     */
-    abstract public function addConstraints();
-
-    /**
      * Run a callback with constraints disabled on the relation.
      *
      * @param Closure $callback
@@ -116,6 +109,17 @@ abstract class Relation
     }
 
     /**
+     * Get the model associated with a custom polymorphic type.
+     *
+     * @param string $alias
+     * @return string|null
+     */
+    public static function getMorphedModel($alias)
+    {
+        return static::$morphMap[$alias] ?? null;
+    }
+
+    /**
      * Builds a table-keyed array from model class names.
      *
      * @param string[]|null $models
@@ -133,15 +137,11 @@ abstract class Relation
     }
 
     /**
-     * Get the model associated with a custom polymorphic type.
+     * Set the base constraints on the relation query.
      *
-     * @param string $alias
-     * @return string|null
+     * @return void
      */
-    public static function getMorphedModel($alias)
-    {
-        return static::$morphMap[$alias] ?? null;
-    }
+    abstract public function addConstraints();
 
     /**
      * Set the constraints for an eager load of the relation.

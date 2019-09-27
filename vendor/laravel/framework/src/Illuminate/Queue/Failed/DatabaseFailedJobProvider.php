@@ -66,16 +66,6 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface
     }
 
     /**
-     * Get a new query builder instance for the table.
-     *
-     * @return Builder
-     */
-    protected function getTable()
-    {
-        return $this->resolver->connection($this->database)->table($this->table);
-    }
-
-    /**
      * Get a list of all of the failed jobs.
      *
      * @return array
@@ -115,5 +105,15 @@ class DatabaseFailedJobProvider implements FailedJobProviderInterface
     public function flush()
     {
         $this->getTable()->delete();
+    }
+
+    /**
+     * Get a new query builder instance for the table.
+     *
+     * @return Builder
+     */
+    protected function getTable()
+    {
+        return $this->resolver->connection($this->database)->table($this->table);
     }
 }

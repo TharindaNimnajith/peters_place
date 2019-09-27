@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\VarDumper\Tests\Caster;
 
+use __TwigTemplate_VarDumperFixture_u75a09;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\VarDumper\Caster\Caster;
 use Symfony\Component\VarDumper\Caster\ExceptionCaster;
@@ -18,6 +20,8 @@ use Symfony\Component\VarDumper\Caster\FrameStub;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Symfony\Component\VarDumper\Test\VarDumperTestTrait;
+use function dirname;
+use function get_class;
 
 class ExceptionCasterTest extends TestCase
 {
@@ -47,11 +51,6 @@ EODUMP;
 
         $this->assertDumpMatchesFormat($expectedDump, $e);
         $this->assertSame(['foo'], $ref);
-    }
-
-    private function getTestException($msg, &$ref = null)
-    {
-        return new \Exception('' . $msg);
     }
 
     public function testSeek()
@@ -158,19 +157,19 @@ EODUMP;
      */
     public function testFrameWithTwig()
     {
-        require_once \dirname(__DIR__) . '/Fixtures/Twig.php';
+        require_once dirname(__DIR__) . '/Fixtures/Twig.php';
 
         $f = [
             new FrameStub([
-                'file' => \dirname(__DIR__) . '/Fixtures/Twig.php',
+                'file' => dirname(__DIR__) . '/Fixtures/Twig.php',
                 'line' => 20,
                 'class' => '__TwigTemplate_VarDumperFixture_u75a09',
             ]),
             new FrameStub([
-                'file' => \dirname(__DIR__) . '/Fixtures/Twig.php',
+                'file' => dirname(__DIR__) . '/Fixtures/Twig.php',
                 'line' => 21,
                 'class' => '__TwigTemplate_VarDumperFixture_u75a09',
-                'object' => new \__TwigTemplate_VarDumperFixture_u75a09(null, __FILE__),
+                'object' => new __TwigTemplate_VarDumperFixture_u75a09(null, __FILE__),
             ]),
         ];
 
@@ -224,7 +223,7 @@ EODUMP;
 
     public function testAnonymous()
     {
-        $e = new \Exception(sprintf('Boo "%s" ba.', \get_class(new class('Foo') extends \Exception
+        $e = new Exception(sprintf('Boo "%s" ba.', get_class(new class('Foo') extends Exception
         {
         })));
 
@@ -244,5 +243,10 @@ EODUMP;
     {
         ExceptionCaster::$srcContext = 1;
         ExceptionCaster::$traceArgs = true;
+    }
+
+    private function getTestException($msg, &$ref = null)
+    {
+        return new Exception('' . $msg);
     }
 }

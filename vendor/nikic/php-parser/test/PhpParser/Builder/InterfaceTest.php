@@ -19,11 +19,6 @@ class InterfaceTest extends TestCase
         $this->assertEquals(new Node\Identifier('Contract'), $contract->name);
     }
 
-    protected function createInterfaceBuilder()
-    {
-        return new Interface_('Contract');
-    }
-
     public function testExtending()
     {
         $contract = $this->createInterfaceBuilder()
@@ -101,6 +96,11 @@ class InterfaceTest extends TestCase
         eval($this->dump($contract));
 
         $this->assertTrue(interface_exists('Contract', false));
+    }
+
+    protected function createInterfaceBuilder()
+    {
+        return new Interface_('Contract');
     }
 
     private function dump($node)

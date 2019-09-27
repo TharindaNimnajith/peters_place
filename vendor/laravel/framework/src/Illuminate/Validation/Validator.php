@@ -302,136 +302,6 @@ class Validator implements ValidatorContract
     }
 
     /**
-     * Validate a given attribute against a rule.
-     *
-     * @param string $attribute
-     * @param string $rule
-     * @return void
-     */
-    protected function validateAttribute($attribute, $rule)
-    {
-        $this->currentRule = $rule;
-
-        [$rule, $parameters] = ValidationRuleParser::parse($rule);
-
-        if ($rule == '') {
-            return;
-        }
-
-        // First we will get the correct keys for the given attribute in case the field is nested in
-        // an array. Then we determine if the given rule accepts other field names as parameters.
-        // If so, we will replace any asterisks found in the parameters with the correct keys.
-        if (($keys = $this->getExplicitKeys($attribute)) &&
-            $this->dependsOnOtherFields($rule)) {
-            $parameters = $this->replaceAsterisksInParameters($parameters, $keys);
-        }
-
-        $value = $this->getValue($attribute);
-
-        // If the attribute is a file, we will verify that the file upload was actually successful
-        // and if it wasn't we will add a failure for the attribute. Files may not successfully
-        // upload if they are too large based on PHP's settings so we will bail in this case.
-        if ($value instanceof UploadedFile && !$value->isValid() &&
-            $this->hasRule($attribute, array_merge($this->fileRules, $this->implicitRules))
-        ) {
-            return $this->addFailure($attribute, 'uploaded', []);
-        }
-
-        // If we have made it this far we will make sure the attribute is validatable and if it is
-        // we will call the validation method with the attribute. If a method returns false the
-        // attribute is invalid and we will add a failure message for this failing attribute.
-        $validatable = $this->isValidatable($rule, $attribute, $value);
-
-        if ($rule instanceof RuleContract) {
-            return $validatable
-                ? $this->validateUsingCustomRule($attribute, $value, $rule)
-                : null;
-        }
-
-        $method = "validate{$rule}";
-
-        if ($validatable && !$this->$method($attribute, $value, $parameters, $this)) {
-            $this->addFailure($attribute, $rule, $parameters);
-        }
-    }
-
-    /**
-     * Get the explicit keys from an attribute flattened with dot notation.
-     *
-     * E.g. 'foo.1.bar.spark.baz' -> [1, 'spark'] for 'foo.*.bar.*.baz'
-     *
-     * @param string $attribute
-     * @return array
-     */
-    protected function getExplicitKeys($attribute)
-    {
-        $pattern = str_replace('\*', '([^\.]+)', preg_quote($this->getPrimaryAttribute($attribute), '/'));
-
-        if (preg_match('/^' . $pattern . '/', $attribute, $keys)) {
-            array_shift($keys);
-
-            return $keys;
-        }
-
-        return [];
-    }
-
-    /**
-     * Get the primary attribute name.
-     *
-     * For example, if "name.0" is given, "name.*" will be returned.
-     *
-     * @param string $attribute
-     * @return string
-     */
-    protected function getPrimaryAttribute($attribute)
-    {
-        foreach ($this->implicitAttributes as $unparsed => $parsed) {
-            if (in_array($attribute, $parsed)) {
-                return $unparsed;
-            }
-        }
-
-        return $attribute;
-    }
-
-    /**
-     * Determine if the given rule depends on other fields.
-     *
-     * @param string $rule
-     * @return bool
-     */
-    protected function dependsOnOtherFields($rule)
-    {
-        return in_array($rule, $this->dependentRules);
-    }
-
-    /**
-     * Replace each field parameter which has asterisks with the given keys.
-     *
-     * @param array $parameters
-     * @param array $keys
-     * @return array
-     */
-    protected function replaceAsterisksInParameters(array $parameters, array $keys)
-    {
-        return array_map(function ($field) use ($keys) {
-            return vsprintf(str_replace('*', '%s', $field), $keys);
-        }, $parameters);
-    }
-
-    /**
-     * Get the value of a given attribute.
-     *
-     * @param string $attribute
-     * @return mixed
-     */
-    protected function getValue($attribute)
-    {
-        return Arr::get($this->data, $attribute);
-    }
-
-    /**
      * Determine if the given attribute has a rule in the given set.
      *
      * @param string $attribute
@@ -441,30 +311,6 @@ class Validator implements ValidatorContract
     public function hasRule($attribute, $rules)
     {
         return !is_null($this->getRule($attribute, $rules));
-    }
-
-    /**
-     * Get a rule and its parameters for a given attribute.
-     *
-     * @param string $attribute
-     * @param string|array $rules
-     * @return array|null
-     */
-    protected function getRule($attribute, $rules)
-    {
-        if (!array_key_exists($attribute, $this->rules)) {
-            return;
-        }
-
-        $rules = (array)$rules;
-
-        foreach ($this->rules[$attribute] as $rule) {
-            [$rule, $parameters] = ValidationRuleParser::parse($rule);
-
-            if (in_array($rule, $rules)) {
-                return [$rule, $parameters];
-            }
-        }
     }
 
     /**
@@ -486,148 +332,6 @@ class Validator implements ValidatorContract
         ));
 
         $this->failedRules[$attribute][$rule] = $parameters;
-    }
-
-    /**
-     * Determine if the attribute is validatable.
-     *
-     * @param object|string $rule
-     * @param string $attribute
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isValidatable($rule, $attribute, $value)
-    {
-        return $this->presentOrRuleIsImplicit($rule, $attribute, $value) &&
-            $this->passesOptionalCheck($attribute) &&
-            $this->isNotNullIfMarkedAsNullable($rule, $attribute) &&
-            $this->hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute);
-    }
-
-    /**
-     * Determine if the field is present, or the rule implies required.
-     *
-     * @param object|string $rule
-     * @param string $attribute
-     * @param mixed $value
-     * @return bool
-     */
-    protected function presentOrRuleIsImplicit($rule, $attribute, $value)
-    {
-        if (is_string($value) && trim($value) === '') {
-            return $this->isImplicit($rule);
-        }
-
-        return $this->validatePresent($attribute, $value) ||
-            $this->isImplicit($rule);
-    }
-
-    /**
-     * Determine if a given rule implies the attribute is required.
-     *
-     * @param object|string $rule
-     * @return bool
-     */
-    protected function isImplicit($rule)
-    {
-        return $rule instanceof ImplicitRule ||
-            in_array($rule, $this->implicitRules);
-    }
-
-    /**
-     * Determine if the attribute passes any optional check.
-     *
-     * @param string $attribute
-     * @return bool
-     */
-    protected function passesOptionalCheck($attribute)
-    {
-        if (!$this->hasRule($attribute, ['Sometimes'])) {
-            return true;
-        }
-
-        $data = ValidationData::initializeAndGatherData($attribute, $this->data);
-
-        return array_key_exists($attribute, $data)
-            || array_key_exists($attribute, $this->data);
-    }
-
-    /**
-     * Determine if the attribute fails the nullable check.
-     *
-     * @param string $rule
-     * @param string $attribute
-     * @return bool
-     */
-    protected function isNotNullIfMarkedAsNullable($rule, $attribute)
-    {
-        if ($this->isImplicit($rule) || !$this->hasRule($attribute, ['Nullable'])) {
-            return true;
-        }
-
-        return !is_null(Arr::get($this->data, $attribute, 0));
-    }
-
-    /**
-     * Determine if it's a necessary presence validation.
-     *
-     * This is to avoid possible database type comparison errors.
-     *
-     * @param string $rule
-     * @param string $attribute
-     * @return bool
-     */
-    protected function hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute)
-    {
-        return in_array($rule, ['Unique', 'Exists']) ? !$this->messages->has($attribute) : true;
-    }
-
-    /**
-     * Validate an attribute using a custom rule object.
-     *
-     * @param string $attribute
-     * @param mixed $value
-     * @param RuleContract $rule
-     * @return void
-     */
-    protected function validateUsingCustomRule($attribute, $value, $rule)
-    {
-        if (!$rule->passes($attribute, $value)) {
-            $this->failedRules[$attribute][get_class($rule)] = [];
-
-            $messages = $rule->message() ? (array)$rule->message() : [get_class($rule)];
-
-            foreach ($messages as $message) {
-                $this->messages->add($attribute, $this->makeReplacements(
-                    $message, $attribute, get_class($rule), []
-                ));
-            }
-        }
-    }
-
-    /**
-     * Check if we should stop further validations on a given attribute.
-     *
-     * @param string $attribute
-     * @return bool
-     */
-    protected function shouldStopValidating($attribute)
-    {
-        if ($this->hasRule($attribute, ['Bail'])) {
-            return $this->messages->has($attribute);
-        }
-
-        if (isset($this->failedRules[$attribute]) &&
-            array_key_exists('uploaded', $this->failedRules[$attribute])) {
-            return true;
-        }
-
-        // In case the attribute has any rule that indicates that the field is required
-        // and that rule already failed then we should stop validation at this point
-        // as now there is no point in calling other rules with this field empty.
-        return $this->hasRule($attribute, $this->implicitRules) &&
-            isset($this->failedRules[$attribute]) &&
-            array_intersect(array_keys($this->failedRules[$attribute]), $this->implicitRules);
     }
 
     /**
@@ -672,18 +376,6 @@ class Validator implements ValidatorContract
         return array_intersect_key(
             $this->data, $this->attributesThatHaveMessages()
         );
-    }
-
-    /**
-     * Generate an array of all attributes that have messages.
-     *
-     * @return array
-     */
-    protected function attributesThatHaveMessages()
-    {
-        return collect($this->messages()->toArray())->map(function ($message, $key) {
-            return explode('.', $key)[0];
-        })->unique()->flip()->all();
     }
 
     /**
@@ -1138,6 +830,314 @@ class Validator implements ValidatorContract
         throw new BadMethodCallException(sprintf(
             'Method %s::%s does not exist.', static::class, $method
         ));
+    }
+
+    /**
+     * Validate a given attribute against a rule.
+     *
+     * @param string $attribute
+     * @param string $rule
+     * @return void
+     */
+    protected function validateAttribute($attribute, $rule)
+    {
+        $this->currentRule = $rule;
+
+        [$rule, $parameters] = ValidationRuleParser::parse($rule);
+
+        if ($rule == '') {
+            return;
+        }
+
+        // First we will get the correct keys for the given attribute in case the field is nested in
+        // an array. Then we determine if the given rule accepts other field names as parameters.
+        // If so, we will replace any asterisks found in the parameters with the correct keys.
+        if (($keys = $this->getExplicitKeys($attribute)) &&
+            $this->dependsOnOtherFields($rule)) {
+            $parameters = $this->replaceAsterisksInParameters($parameters, $keys);
+        }
+
+        $value = $this->getValue($attribute);
+
+        // If the attribute is a file, we will verify that the file upload was actually successful
+        // and if it wasn't we will add a failure for the attribute. Files may not successfully
+        // upload if they are too large based on PHP's settings so we will bail in this case.
+        if ($value instanceof UploadedFile && !$value->isValid() &&
+            $this->hasRule($attribute, array_merge($this->fileRules, $this->implicitRules))
+        ) {
+            return $this->addFailure($attribute, 'uploaded', []);
+        }
+
+        // If we have made it this far we will make sure the attribute is validatable and if it is
+        // we will call the validation method with the attribute. If a method returns false the
+        // attribute is invalid and we will add a failure message for this failing attribute.
+        $validatable = $this->isValidatable($rule, $attribute, $value);
+
+        if ($rule instanceof RuleContract) {
+            return $validatable
+                ? $this->validateUsingCustomRule($attribute, $value, $rule)
+                : null;
+        }
+
+        $method = "validate{$rule}";
+
+        if ($validatable && !$this->$method($attribute, $value, $parameters, $this)) {
+            $this->addFailure($attribute, $rule, $parameters);
+        }
+    }
+
+    /**
+     * Get the explicit keys from an attribute flattened with dot notation.
+     *
+     * E.g. 'foo.1.bar.spark.baz' -> [1, 'spark'] for 'foo.*.bar.*.baz'
+     *
+     * @param string $attribute
+     * @return array
+     */
+    protected function getExplicitKeys($attribute)
+    {
+        $pattern = str_replace('\*', '([^\.]+)', preg_quote($this->getPrimaryAttribute($attribute), '/'));
+
+        if (preg_match('/^' . $pattern . '/', $attribute, $keys)) {
+            array_shift($keys);
+
+            return $keys;
+        }
+
+        return [];
+    }
+
+    /**
+     * Get the primary attribute name.
+     *
+     * For example, if "name.0" is given, "name.*" will be returned.
+     *
+     * @param string $attribute
+     * @return string
+     */
+    protected function getPrimaryAttribute($attribute)
+    {
+        foreach ($this->implicitAttributes as $unparsed => $parsed) {
+            if (in_array($attribute, $parsed)) {
+                return $unparsed;
+            }
+        }
+
+        return $attribute;
+    }
+
+    /**
+     * Determine if the given rule depends on other fields.
+     *
+     * @param string $rule
+     * @return bool
+     */
+    protected function dependsOnOtherFields($rule)
+    {
+        return in_array($rule, $this->dependentRules);
+    }
+
+    /**
+     * Replace each field parameter which has asterisks with the given keys.
+     *
+     * @param array $parameters
+     * @param array $keys
+     * @return array
+     */
+    protected function replaceAsterisksInParameters(array $parameters, array $keys)
+    {
+        return array_map(function ($field) use ($keys) {
+            return vsprintf(str_replace('*', '%s', $field), $keys);
+        }, $parameters);
+    }
+
+    /**
+     * Get the value of a given attribute.
+     *
+     * @param string $attribute
+     * @return mixed
+     */
+    protected function getValue($attribute)
+    {
+        return Arr::get($this->data, $attribute);
+    }
+
+    /**
+     * Get a rule and its parameters for a given attribute.
+     *
+     * @param string $attribute
+     * @param string|array $rules
+     * @return array|null
+     */
+    protected function getRule($attribute, $rules)
+    {
+        if (!array_key_exists($attribute, $this->rules)) {
+            return;
+        }
+
+        $rules = (array)$rules;
+
+        foreach ($this->rules[$attribute] as $rule) {
+            [$rule, $parameters] = ValidationRuleParser::parse($rule);
+
+            if (in_array($rule, $rules)) {
+                return [$rule, $parameters];
+            }
+        }
+    }
+
+    /**
+     * Determine if the attribute is validatable.
+     *
+     * @param object|string $rule
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isValidatable($rule, $attribute, $value)
+    {
+        return $this->presentOrRuleIsImplicit($rule, $attribute, $value) &&
+            $this->passesOptionalCheck($attribute) &&
+            $this->isNotNullIfMarkedAsNullable($rule, $attribute) &&
+            $this->hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute);
+    }
+
+    /**
+     * Determine if the field is present, or the rule implies required.
+     *
+     * @param object|string $rule
+     * @param string $attribute
+     * @param mixed $value
+     * @return bool
+     */
+    protected function presentOrRuleIsImplicit($rule, $attribute, $value)
+    {
+        if (is_string($value) && trim($value) === '') {
+            return $this->isImplicit($rule);
+        }
+
+        return $this->validatePresent($attribute, $value) ||
+            $this->isImplicit($rule);
+    }
+
+    /**
+     * Determine if a given rule implies the attribute is required.
+     *
+     * @param object|string $rule
+     * @return bool
+     */
+    protected function isImplicit($rule)
+    {
+        return $rule instanceof ImplicitRule ||
+            in_array($rule, $this->implicitRules);
+    }
+
+    /**
+     * Determine if the attribute passes any optional check.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function passesOptionalCheck($attribute)
+    {
+        if (!$this->hasRule($attribute, ['Sometimes'])) {
+            return true;
+        }
+
+        $data = ValidationData::initializeAndGatherData($attribute, $this->data);
+
+        return array_key_exists($attribute, $data)
+            || array_key_exists($attribute, $this->data);
+    }
+
+    /**
+     * Determine if the attribute fails the nullable check.
+     *
+     * @param string $rule
+     * @param string $attribute
+     * @return bool
+     */
+    protected function isNotNullIfMarkedAsNullable($rule, $attribute)
+    {
+        if ($this->isImplicit($rule) || !$this->hasRule($attribute, ['Nullable'])) {
+            return true;
+        }
+
+        return !is_null(Arr::get($this->data, $attribute, 0));
+    }
+
+    /**
+     * Determine if it's a necessary presence validation.
+     *
+     * This is to avoid possible database type comparison errors.
+     *
+     * @param string $rule
+     * @param string $attribute
+     * @return bool
+     */
+    protected function hasNotFailedPreviousRuleIfPresenceRule($rule, $attribute)
+    {
+        return in_array($rule, ['Unique', 'Exists']) ? !$this->messages->has($attribute) : true;
+    }
+
+    /**
+     * Validate an attribute using a custom rule object.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param RuleContract $rule
+     * @return void
+     */
+    protected function validateUsingCustomRule($attribute, $value, $rule)
+    {
+        if (!$rule->passes($attribute, $value)) {
+            $this->failedRules[$attribute][get_class($rule)] = [];
+
+            $messages = $rule->message() ? (array)$rule->message() : [get_class($rule)];
+
+            foreach ($messages as $message) {
+                $this->messages->add($attribute, $this->makeReplacements(
+                    $message, $attribute, get_class($rule), []
+                ));
+            }
+        }
+    }
+
+    /**
+     * Check if we should stop further validations on a given attribute.
+     *
+     * @param string $attribute
+     * @return bool
+     */
+    protected function shouldStopValidating($attribute)
+    {
+        if ($this->hasRule($attribute, ['Bail'])) {
+            return $this->messages->has($attribute);
+        }
+
+        if (isset($this->failedRules[$attribute]) &&
+            array_key_exists('uploaded', $this->failedRules[$attribute])) {
+            return true;
+        }
+
+        // In case the attribute has any rule that indicates that the field is required
+        // and that rule already failed then we should stop validation at this point
+        // as now there is no point in calling other rules with this field empty.
+        return $this->hasRule($attribute, $this->implicitRules) &&
+            isset($this->failedRules[$attribute]) &&
+            array_intersect(array_keys($this->failedRules[$attribute]), $this->implicitRules);
+    }
+
+    /**
+     * Generate an array of all attributes that have messages.
+     *
+     * @return array
+     */
+    protected function attributesThatHaveMessages()
+    {
+        return collect($this->messages()->toArray())->map(function ($message, $key) {
+            return explode('.', $key)[0];
+        })->unique()->flip()->all();
     }
 
     /**

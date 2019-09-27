@@ -2,6 +2,10 @@
 
 namespace Faker\Provider;
 
+use DateInterval;
+use DateTimeZone;
+use InvalidArgumentException;
+
 class DateTime extends Base
 {
     protected static $century = array('I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI');
@@ -25,45 +29,6 @@ class DateTime extends Base
             new \DateTime('@' . mt_rand($min, static::getMaxTimestamp($max))),
             $timezone
         );
-    }
-
-    /**
-     * Internal method to set the time zone on a DateTime.
-     *
-     * @param \DateTime $dt
-     * @param string|null $timezone
-     *
-     * @return \DateTime
-     */
-    private static function setTimezone(\DateTime $dt, $timezone)
-    {
-        return $dt->setTimezone(new \DateTimeZone(static::resolveTimezone($timezone)));
-    }
-
-    /**
-     * @param string|null $timezone
-     * @return null|string
-     */
-    private static function resolveTimezone($timezone)
-    {
-        return ((null === $timezone) ? ((null === static::$defaultTimezone) ? date_default_timezone_get() : static::$defaultTimezone) : $timezone);
-    }
-
-    /**
-     * @param string|float|int $max
-     * @return int|false
-     */
-    protected static function getMaxTimestamp($max = 'now')
-    {
-        if (is_numeric($max)) {
-            return (int)$max;
-        }
-
-        if ($max instanceof \DateTime) {
-            return $max->getTimestamp();
-        }
-
-        return strtotime(empty($max) ? 'now' : $max);
     }
 
     /**
@@ -150,7 +115,7 @@ class DateTime extends Base
      */
     public static function dateTimeInInterval($date = '-30 years', $interval = '+5 days', $timezone = null)
     {
-        $intervalObject = \DateInterval::createFromDateString($interval);
+        $intervalObject = DateInterval::createFromDateString($interval);
         $datetime = $date instanceof \DateTime ? $date : new \DateTime($date);
         $otherDatetime = clone $datetime;
         $otherDatetime->add($intervalObject);
@@ -183,7 +148,7 @@ class DateTime extends Base
         $endTimestamp = static::getMaxTimestamp($endDate);
 
         if ($startTimestamp > $endTimestamp) {
-            throw new \InvalidArgumentException('Start date must be anterior to end date.');
+            throw new InvalidArgumentException('Start date must be anterior to end date.');
         }
 
         $timestamp = mt_rand($startTimestamp, $endTimestamp);
@@ -313,7 +278,7 @@ class DateTime extends Base
      */
     public static function timezone()
     {
-        return static::randomElement(\DateTimeZone::listIdentifiers());
+        return static::randomElement(DateTimeZone::listIdentifiers());
     }
 
     /**
@@ -336,5 +301,44 @@ class DateTime extends Base
     public static function setDefaultTimezone($timezone = null)
     {
         static::$defaultTimezone = $timezone;
+    }
+
+    /**
+     * @param string|float|int $max
+     * @return int|false
+     */
+    protected static function getMaxTimestamp($max = 'now')
+    {
+        if (is_numeric($max)) {
+            return (int)$max;
+        }
+
+        if ($max instanceof \DateTime) {
+            return $max->getTimestamp();
+        }
+
+        return strtotime(empty($max) ? 'now' : $max);
+    }
+
+    /**
+     * Internal method to set the time zone on a DateTime.
+     *
+     * @param \DateTime $dt
+     * @param string|null $timezone
+     *
+     * @return \DateTime
+     */
+    private static function setTimezone(\DateTime $dt, $timezone)
+    {
+        return $dt->setTimezone(new DateTimeZone(static::resolveTimezone($timezone)));
+    }
+
+    /**
+     * @param string|null $timezone
+     * @return null|string
+     */
+    private static function resolveTimezone($timezone)
+    {
+        return ((null === $timezone) ? ((null === static::$defaultTimezone) ? date_default_timezone_get() : static::$defaultTimezone) : $timezone);
     }
 }

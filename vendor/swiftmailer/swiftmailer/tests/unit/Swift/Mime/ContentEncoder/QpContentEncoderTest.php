@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Mime_ContentEncoder_QpContentEncoderTest extends \SwiftMailerTestCase
+class Swift_Mime_ContentEncoder_QpContentEncoderTest extends SwiftMailerTestCase
 {
     public function testNameIsQuotedPrintable()
     {
@@ -25,11 +25,6 @@ class Swift_Mime_ContentEncoder_QpContentEncoderTest extends \SwiftMailerTestCas
                     rule must be followed except when the following rules
                     allow an alternative encoding.
                     */
-
-    private function createCharacterStream($stub = false)
-    {
-        return $this->getMockery('Swift_CharacterStream')->shouldIgnoreMissing();
-    }
 
     public function testPermittedCharactersAreNotEncoded()
     {
@@ -69,16 +64,6 @@ class Swift_Mime_ContentEncoder_QpContentEncoderTest extends \SwiftMailerTestCas
             $encoder->encodeByteStream($os, $is);
             $this->assertIdenticalBinary($char, $collection->content);
         }
-    }
-
-    private function createOutputByteStream($stub = false)
-    {
-        return $this->getMockery('Swift_OutputByteStream')->shouldIgnoreMissing();
-    }
-
-    private function createInputByteStream($stub = false)
-    {
-        return $this->getMockery('Swift_InputByteStream')->shouldIgnoreMissing();
     }
 
     public function testLinearWhiteSpaceAtLineEndingIsEncoded()
@@ -504,6 +489,21 @@ class Swift_Mime_ContentEncoder_QpContentEncoderTest extends \SwiftMailerTestCas
         $this->assertEquals(
             $input, $os->read(PHP_INT_MAX)
         );
+    }
+
+    private function createCharacterStream($stub = false)
+    {
+        return $this->getMockery('Swift_CharacterStream')->shouldIgnoreMissing();
+    }
+
+    private function createOutputByteStream($stub = false)
+    {
+        return $this->getMockery('Swift_OutputByteStream')->shouldIgnoreMissing();
+    }
+
+    private function createInputByteStream($stub = false)
+    {
+        return $this->getMockery('Swift_InputByteStream')->shouldIgnoreMissing();
     }
 
     private function createEncoder()

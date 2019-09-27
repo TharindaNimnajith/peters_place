@@ -74,27 +74,6 @@ class RedirectResponse extends BaseRedirectResponse
     }
 
     /**
-     * Remove all uploaded files form the given input array.
-     *
-     * @param array $input
-     * @return array
-     */
-    protected function removeFilesFromInput(array $input)
-    {
-        foreach ($input as $key => $value) {
-            if (is_array($value)) {
-                $input[$key] = $this->removeFilesFromInput($value);
-            }
-
-            if ($value instanceof SymfonyUploadedFile) {
-                unset($input[$key]);
-            }
-        }
-
-        return $input;
-    }
-
-    /**
      * Flash an array of input to the session.
      *
      * @return $this
@@ -126,21 +105,6 @@ class RedirectResponse extends BaseRedirectResponse
         );
 
         return $this;
-    }
-
-    /**
-     * Parse the given errors into an appropriate value.
-     *
-     * @param MessageProvider|array|string $provider
-     * @return MessageBag
-     */
-    protected function parseErrors($provider)
-    {
-        if ($provider instanceof MessageProvider) {
-            return $provider->getMessageBag();
-        }
-
-        return new MessageBag((array)$provider);
     }
 
     /**
@@ -233,5 +197,41 @@ class RedirectResponse extends BaseRedirectResponse
         }
 
         return $this;
+    }
+
+    /**
+     * Remove all uploaded files form the given input array.
+     *
+     * @param array $input
+     * @return array
+     */
+    protected function removeFilesFromInput(array $input)
+    {
+        foreach ($input as $key => $value) {
+            if (is_array($value)) {
+                $input[$key] = $this->removeFilesFromInput($value);
+            }
+
+            if ($value instanceof SymfonyUploadedFile) {
+                unset($input[$key]);
+            }
+        }
+
+        return $input;
+    }
+
+    /**
+     * Parse the given errors into an appropriate value.
+     *
+     * @param MessageProvider|array|string $provider
+     * @return MessageBag
+     */
+    protected function parseErrors($provider)
+    {
+        if ($provider instanceof MessageProvider) {
+            return $provider->getMessageBag();
+        }
+
+        return new MessageBag((array)$provider);
     }
 }

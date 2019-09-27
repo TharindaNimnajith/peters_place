@@ -17,6 +17,9 @@ use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
+use function array_key_exists;
+use function count;
+use function in_array;
 
 /**
  * UrlGenerator can generate a URL or a path for any route in the RouteCollection
@@ -85,6 +88,57 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         $this->context = $context;
         $this->logger = $logger;
         $this->defaultLocale = $defaultLocale;
+    }
+
+    /**
+     * Returns the target path as relative reference from the base path.
+     *
+     * Only the URIs path component (no schema, host etc.) is relevant and must be given, starting with a slash.
+     * Both paths must be absolute and not contain relative parts.
+     * Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
+     * Furthermore, they can be used to reduce the link size in documents.
+     *
+     * Example target paths, given a base path of "/a/b/c/d":
+     * - "/a/b/c/d"     -> ""
+     * - "/a/b/c/"      -> "./"
+     * - "/a/b/"        -> "../"
+     * - "/a/b/c/other" -> "other"
+     * - "/a/x/y"       -> "../../x/y"
+     *
+     * @param string $basePath The base path
+     * @param string $targetPath The target path
+     *
+     * @return string The relative target path
+     */
+    public static function getRelativePath($basePath, $targetPath)
+    {
+        if ($basePath === $targetPath) {
+            return '';
+        }
+
+        $sourceDirs = explode('/', isset($basePath[0]) && '/' === $basePath[0] ? substr($basePath, 1) : $basePath);
+        $targetDirs = explode('/', isset($targetPath[0]) && '/' === $targetPath[0] ? substr($targetPath, 1) : $targetPath);
+        array_pop($sourceDirs);
+        $targetFile = array_pop($targetDirs);
+
+        foreach ($sourceDirs as $i => $dir) {
+            if (isset($targetDirs[$i]) && $dir === $targetDirs[$i]) {
+                unset($sourceDirs[$i], $targetDirs[$i]);
+            } else {
+                break;
+            }
+        }
+
+        $targetDirs[] = $targetFile;
+        $path = str_repeat('../', count($sourceDirs)) . implode('/', $targetDirs);
+
+        // A reference to the same base directory or an empty subdirectory must be prefixed with "./".
+        // This also applies to a segment with a colon character (e.g., "file:colon") that cannot be used
+        // as the first segment of a relative-path reference, as it would be mistaken for a scheme name
+        // (see http://tools.ietf.org/html/rfc3986#section-4.2).
+        return '' === $path || '/' === $path[0]
+        || false !== ($colonPos = strpos($path, ':')) && ($colonPos < ($slashPos = strpos($path, '/')) || false === $slashPos)
+            ? "./$path" : $path;
     }
 
     /**
@@ -172,7 +226,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
                 // variable is not important by default
                 $important = $token[5] ?? false;
 
-                if (!$optional || $important || !\array_key_exists($varName, $defaults) || (null !== $mergedParams[$varName] && (string)$mergedParams[$varName] !== (string)$defaults[$varName])) {
+                if (!$optional || $important || !array_key_exists($varName, $defaults) || (null !== $mergedParams[$varName] && (string)$mergedParams[$varName] !== (string)$defaults[$varName])) {
                     // check requirement (while ignoring look-around patterns)
                     if (null !== $this->strictRequirements && !preg_match('#^' . preg_replace('/\(\?(?:=|<=|!|<!)((?:[^()\\\\]+|\\\\.|\((?1)\))*)\)/', '', $token[2]) . '$#i' . (empty($token[4]) ? '' : 'u'), $mergedParams[$token[3]])) {
                         if ($this->strictRequirements) {
@@ -218,7 +272,7 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         $scheme = $this->context->getScheme();
 
         if ($requiredSchemes) {
-            if (!\in_array($scheme, $requiredSchemes, true)) {
+            if (!in_array($scheme, $requiredSchemes, true)) {
                 $referenceType = self::ABSOLUTE_URL;
                 $scheme = current($requiredSchemes);
             }
@@ -297,56 +351,5 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         }
 
         return $url;
-    }
-
-    /**
-     * Returns the target path as relative reference from the base path.
-     *
-     * Only the URIs path component (no schema, host etc.) is relevant and must be given, starting with a slash.
-     * Both paths must be absolute and not contain relative parts.
-     * Relative URLs from one resource to another are useful when generating self-contained downloadable document archives.
-     * Furthermore, they can be used to reduce the link size in documents.
-     *
-     * Example target paths, given a base path of "/a/b/c/d":
-     * - "/a/b/c/d"     -> ""
-     * - "/a/b/c/"      -> "./"
-     * - "/a/b/"        -> "../"
-     * - "/a/b/c/other" -> "other"
-     * - "/a/x/y"       -> "../../x/y"
-     *
-     * @param string $basePath The base path
-     * @param string $targetPath The target path
-     *
-     * @return string The relative target path
-     */
-    public static function getRelativePath($basePath, $targetPath)
-    {
-        if ($basePath === $targetPath) {
-            return '';
-        }
-
-        $sourceDirs = explode('/', isset($basePath[0]) && '/' === $basePath[0] ? substr($basePath, 1) : $basePath);
-        $targetDirs = explode('/', isset($targetPath[0]) && '/' === $targetPath[0] ? substr($targetPath, 1) : $targetPath);
-        array_pop($sourceDirs);
-        $targetFile = array_pop($targetDirs);
-
-        foreach ($sourceDirs as $i => $dir) {
-            if (isset($targetDirs[$i]) && $dir === $targetDirs[$i]) {
-                unset($sourceDirs[$i], $targetDirs[$i]);
-            } else {
-                break;
-            }
-        }
-
-        $targetDirs[] = $targetFile;
-        $path = str_repeat('../', \count($sourceDirs)) . implode('/', $targetDirs);
-
-        // A reference to the same base directory or an empty subdirectory must be prefixed with "./".
-        // This also applies to a segment with a colon character (e.g., "file:colon") that cannot be used
-        // as the first segment of a relative-path reference, as it would be mistaken for a scheme name
-        // (see http://tools.ietf.org/html/rfc3986#section-4.2).
-        return '' === $path || '/' === $path[0]
-        || false !== ($colonPos = strpos($path, ':')) && ($colonPos < ($slashPos = strpos($path, '/')) || false === $slashPos)
-            ? "./$path" : $path;
     }
 }

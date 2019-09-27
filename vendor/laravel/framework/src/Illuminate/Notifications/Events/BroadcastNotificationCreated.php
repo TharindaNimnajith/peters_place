@@ -65,22 +65,6 @@ class BroadcastNotificationCreated implements ShouldBroadcast
     }
 
     /**
-     * Get the broadcast channel name for the event.
-     *
-     * @return string
-     */
-    protected function channelName()
-    {
-        if (method_exists($this->notifiable, 'receivesBroadcastNotificationsOn')) {
-            return $this->notifiable->receivesBroadcastNotificationsOn($this->notification);
-        }
-
-        $class = str_replace('\\', '.', get_class($this->notifiable));
-
-        return $class . '.' . $this->notifiable->getKey();
-    }
-
-    /**
      * Get the data that should be sent with the broadcasted event.
      *
      * @return array
@@ -103,5 +87,21 @@ class BroadcastNotificationCreated implements ShouldBroadcast
         return method_exists($this->notification, 'broadcastType')
             ? $this->notification->broadcastType()
             : get_class($this->notification);
+    }
+
+    /**
+     * Get the broadcast channel name for the event.
+     *
+     * @return string
+     */
+    protected function channelName()
+    {
+        if (method_exists($this->notifiable, 'receivesBroadcastNotificationsOn')) {
+            return $this->notifiable->receivesBroadcastNotificationsOn($this->notification);
+        }
+
+        $class = str_replace('\\', '.', get_class($this->notifiable));
+
+        return $class . '.' . $this->notifiable->getKey();
     }
 }

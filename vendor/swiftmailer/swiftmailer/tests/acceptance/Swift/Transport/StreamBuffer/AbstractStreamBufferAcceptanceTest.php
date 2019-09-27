@@ -1,6 +1,8 @@
 <?php
 
-abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest extends TestCase
 {
     protected $buffer;
 
@@ -16,8 +18,6 @@ abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest e
         $this->assertRegExp('/^[0-9]{3}.*?\r\n$/D', $line);
         $this->buffer->terminate();
     }
-
-    abstract protected function initializeBuffer();
 
     public function testWrite()
     {
@@ -65,11 +65,6 @@ abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest e
         $this->buffer->write('y');
     }
 
-    private function createMockInputStream()
-    {
-        return $this->getMockBuilder('Swift_InputByteStream')->getMock();
-    }
-
     public function testBindingOtherStreamsMirrorsFlushOperations()
     {
         $this->initializeBuffer();
@@ -115,6 +110,8 @@ abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest e
         $this->buffer->write('y');
     }
 
+    abstract protected function initializeBuffer();
+
     protected function setUp()
     {
         if (true == getenv('TRAVIS')) {
@@ -127,5 +124,10 @@ abstract class Swift_Transport_StreamBuffer_AbstractStreamBufferAcceptanceTest e
         $this->buffer = new Swift_Transport_StreamBuffer(
             $this->getMockBuilder('Swift_ReplacementFilterFactory')->getMock()
         );
+    }
+
+    private function createMockInputStream()
+    {
+        return $this->getMockBuilder('Swift_InputByteStream')->getMock();
     }
 }

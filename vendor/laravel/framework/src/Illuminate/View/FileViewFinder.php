@@ -91,77 +91,6 @@ class FileViewFinder implements ViewFinderInterface
     }
 
     /**
-     * Get the path to a template with a named path.
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function findNamespacedView($name)
-    {
-        [$namespace, $view] = $this->parseNamespaceSegments($name);
-
-        return $this->findInPaths($view, $this->hints[$namespace]);
-    }
-
-    /**
-     * Get the segments of a template with a named path.
-     *
-     * @param string $name
-     * @return array
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function parseNamespaceSegments($name)
-    {
-        $segments = explode(static::HINT_PATH_DELIMITER, $name);
-
-        if (count($segments) !== 2) {
-            throw new InvalidArgumentException("View [{$name}] has an invalid name.");
-        }
-
-        if (!isset($this->hints[$segments[0]])) {
-            throw new InvalidArgumentException("No hint path defined for [{$segments[0]}].");
-        }
-
-        return $segments;
-    }
-
-    /**
-     * Find the given view in the list of paths.
-     *
-     * @param string $name
-     * @param array $paths
-     * @return string
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function findInPaths($name, $paths)
-    {
-        foreach ((array)$paths as $path) {
-            foreach ($this->getPossibleViewFiles($name) as $file) {
-                if ($this->files->exists($viewPath = $path . '/' . $file)) {
-                    return $viewPath;
-                }
-            }
-        }
-
-        throw new InvalidArgumentException("View [{$name}] not found.");
-    }
-
-    /**
-     * Get an array of possible view files.
-     *
-     * @param string $name
-     * @return array
-     */
-    protected function getPossibleViewFiles($name)
-    {
-        return array_map(function ($extension) use ($name) {
-            return str_replace('.', '/', $name) . '.' . $extension;
-        }, $this->extensions);
-    }
-
-    /**
      * Add a location to the finder.
      *
      * @param string $location
@@ -170,17 +99,6 @@ class FileViewFinder implements ViewFinderInterface
     public function addLocation($location)
     {
         $this->paths[] = $this->resolvePath($location);
-    }
-
-    /**
-     * Resolve the path.
-     *
-     * @param string $path
-     * @return string
-     */
-    protected function resolvePath($path)
-    {
-        return realpath($path) ?: $path;
     }
 
     /**
@@ -328,5 +246,87 @@ class FileViewFinder implements ViewFinderInterface
     public function getExtensions()
     {
         return $this->extensions;
+    }
+
+    /**
+     * Get the path to a template with a named path.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function findNamespacedView($name)
+    {
+        [$namespace, $view] = $this->parseNamespaceSegments($name);
+
+        return $this->findInPaths($view, $this->hints[$namespace]);
+    }
+
+    /**
+     * Get the segments of a template with a named path.
+     *
+     * @param string $name
+     * @return array
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function parseNamespaceSegments($name)
+    {
+        $segments = explode(static::HINT_PATH_DELIMITER, $name);
+
+        if (count($segments) !== 2) {
+            throw new InvalidArgumentException("View [{$name}] has an invalid name.");
+        }
+
+        if (!isset($this->hints[$segments[0]])) {
+            throw new InvalidArgumentException("No hint path defined for [{$segments[0]}].");
+        }
+
+        return $segments;
+    }
+
+    /**
+     * Find the given view in the list of paths.
+     *
+     * @param string $name
+     * @param array $paths
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function findInPaths($name, $paths)
+    {
+        foreach ((array)$paths as $path) {
+            foreach ($this->getPossibleViewFiles($name) as $file) {
+                if ($this->files->exists($viewPath = $path . '/' . $file)) {
+                    return $viewPath;
+                }
+            }
+        }
+
+        throw new InvalidArgumentException("View [{$name}] not found.");
+    }
+
+    /**
+     * Get an array of possible view files.
+     *
+     * @param string $name
+     * @return array
+     */
+    protected function getPossibleViewFiles($name)
+    {
+        return array_map(function ($extension) use ($name) {
+            return str_replace('.', '/', $name) . '.' . $extension;
+        }, $this->extensions);
+    }
+
+    /**
+     * Resolve the path.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function resolvePath($path)
+    {
+        return realpath($path) ?: $path;
     }
 }

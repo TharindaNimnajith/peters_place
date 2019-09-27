@@ -29,22 +29,6 @@ class GitProcessor implements ProcessorInterface
         $this->level = Logger::toMonologLevel($level);
     }
 
-    /**
-     * @param array $record
-     * @return array
-     */
-    public function __invoke(array $record)
-    {
-        // return if the level is not high enough
-        if ($record['level'] < $this->level) {
-            return $record;
-        }
-
-        $record['extra']['git'] = self::getGitInfo();
-
-        return $record;
-    }
-
     private static function getGitInfo()
     {
         if (self::$cache) {
@@ -60,5 +44,21 @@ class GitProcessor implements ProcessorInterface
         }
 
         return self::$cache = array();
+    }
+
+    /**
+     * @param array $record
+     * @return array
+     */
+    public function __invoke(array $record)
+    {
+        // return if the level is not high enough
+        if ($record['level'] < $this->level) {
+            return $record;
+        }
+
+        $record['extra']['git'] = self::getGitInfo();
+
+        return $record;
     }
 }

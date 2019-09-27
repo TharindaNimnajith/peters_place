@@ -1,6 +1,6 @@
 <?php
 
-class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
+class Swift_Plugins_LoggerPluginTest extends SwiftMailerTestCase
 {
     public function testLoggerDelegatesAddingEntries()
     {
@@ -11,16 +11,6 @@ class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
 
         $plugin = $this->createPlugin($logger);
         $plugin->add('foo');
-    }
-
-    private function createLogger()
-    {
-        return $this->getMockBuilder('Swift_Plugins_Logger')->getMock();
-    }
-
-    private function createPlugin($logger)
-    {
-        return new Swift_Plugins_LoggerPlugin($logger);
     }
 
     public function testLoggerDelegatesDumpingEntries()
@@ -56,18 +46,6 @@ class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
         $plugin->commandSent($evt);
     }
 
-    private function createCommandEvent($command)
-    {
-        $evt = $this->getMockBuilder('Swift_Events_CommandEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getCommand')
-            ->will($this->returnValue($command));
-
-        return $evt;
-    }
-
     public function testResponseIsSentToLogger()
     {
         $evt = $this->createResponseEvent("354 Go ahead\r\n");
@@ -80,18 +58,6 @@ class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
         $plugin->responseReceived($evt);
     }
 
-    private function createResponseEvent($response)
-    {
-        $evt = $this->getMockBuilder('Swift_Events_ResponseEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getResponse')
-            ->will($this->returnValue($response));
-
-        return $evt;
-    }
-
     public function testTransportBeforeStartChangeIsSentToLogger()
     {
         $evt = $this->createTransportChangeEvent();
@@ -102,23 +68,6 @@ class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
 
         $plugin = $this->createPlugin($logger);
         $plugin->beforeTransportStarted($evt);
-    }
-
-    private function createTransportChangeEvent()
-    {
-        $evt = $this->getMockBuilder('Swift_Events_TransportChangeEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getSource')
-            ->will($this->returnValue($this->createTransport()));
-
-        return $evt;
-    }
-
-    private function createTransport()
-    {
-        return $this->getMockBuilder('Swift_Transport')->getMock();
     }
 
     public function testTransportStartChangeIsSentToLogger()
@@ -184,5 +133,56 @@ class Swift_Plugins_LoggerPluginTest extends \SwiftMailerTestCase
             ->will($this->returnValue(new Swift_TransportException('')));
 
         return $evt;
+    }
+
+    private function createLogger()
+    {
+        return $this->getMockBuilder('Swift_Plugins_Logger')->getMock();
+    }
+
+    private function createPlugin($logger)
+    {
+        return new Swift_Plugins_LoggerPlugin($logger);
+    }
+
+    private function createCommandEvent($command)
+    {
+        $evt = $this->getMockBuilder('Swift_Events_CommandEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getCommand')
+            ->will($this->returnValue($command));
+
+        return $evt;
+    }
+
+    private function createResponseEvent($response)
+    {
+        $evt = $this->getMockBuilder('Swift_Events_ResponseEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getResponse')
+            ->will($this->returnValue($response));
+
+        return $evt;
+    }
+
+    private function createTransportChangeEvent()
+    {
+        $evt = $this->getMockBuilder('Swift_Events_TransportChangeEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getSource')
+            ->will($this->returnValue($this->createTransport()));
+
+        return $evt;
+    }
+
+    private function createTransport()
+    {
+        return $this->getMockBuilder('Swift_Transport')->getMock();
     }
 }

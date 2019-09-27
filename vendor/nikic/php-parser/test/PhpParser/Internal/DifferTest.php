@@ -16,31 +16,6 @@ class DifferTest extends TestCase
         $this->assertSame($expectedDiffStr, $this->formatDiffString($diff));
     }
 
-    private function formatDiffString(array $diff)
-    {
-        $diffStr = '';
-        foreach ($diff as $diffElem) {
-            switch ($diffElem->type) {
-                case DiffElem::TYPE_KEEP:
-                    $diffStr .= $diffElem->old;
-                    break;
-                case DiffElem::TYPE_REMOVE:
-                    $diffStr .= '-' . $diffElem->old;
-                    break;
-                case DiffElem::TYPE_ADD:
-                    $diffStr .= '+' . $diffElem->new;
-                    break;
-                case DiffElem::TYPE_REPLACE:
-                    $diffStr .= '/' . $diffElem->old . $diffElem->new;
-                    break;
-                default:
-                    assert(false);
-                    break;
-            }
-        }
-        return $diffStr;
-    }
-
     public function provideTestDiff()
     {
         return [
@@ -72,5 +47,30 @@ class DifferTest extends TestCase
             ['abcde', 'axye', 'a-b-c-d+x+ye'],
             ['abcde', 'axyzue', 'a-b-c-d+x+y+z+ue'],
         ];
+    }
+
+    private function formatDiffString(array $diff)
+    {
+        $diffStr = '';
+        foreach ($diff as $diffElem) {
+            switch ($diffElem->type) {
+                case DiffElem::TYPE_KEEP:
+                    $diffStr .= $diffElem->old;
+                    break;
+                case DiffElem::TYPE_REMOVE:
+                    $diffStr .= '-' . $diffElem->old;
+                    break;
+                case DiffElem::TYPE_ADD:
+                    $diffStr .= '+' . $diffElem->new;
+                    break;
+                case DiffElem::TYPE_REPLACE:
+                    $diffStr .= '/' . $diffElem->old . $diffElem->new;
+                    break;
+                default:
+                    assert(false);
+                    break;
+            }
+        }
+        return $diffStr;
     }
 }

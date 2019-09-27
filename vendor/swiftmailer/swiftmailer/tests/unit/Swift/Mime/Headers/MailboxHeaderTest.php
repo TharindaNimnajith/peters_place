@@ -2,7 +2,7 @@
 
 use Egulias\EmailValidator\EmailValidator;
 
-class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
+class Swift_Mime_Headers_MailboxHeaderTest extends SwiftMailerTestCase
 {
     /* -- RFC 2822, 3.6.2 for all tests.
      */
@@ -13,26 +13,6 @@ class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
     {
         $header = $this->getHeader('To');
         $this->assertEquals(Swift_Mime_Header::TYPE_MAILBOX, $header->getFieldType());
-    }
-
-    private function getHeader($name, $encoder = null, $addressEncoder = null)
-    {
-        $encoder = $encoder ?? $this->getEncoder('Q', true);
-        $addressEncoder = $addressEncoder ?? new Swift_AddressEncoder_IdnAddressEncoder();
-        $header = new Swift_Mime_Headers_MailboxHeader($name, $encoder, new EmailValidator(), $addressEncoder);
-        $header->setCharset($this->charset);
-
-        return $header;
-    }
-
-    private function getEncoder($type)
-    {
-        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
-        $encoder->shouldReceive('getName')
-            ->zeroOrMoreTimes()
-            ->andReturn($type);
-
-        return $encoder;
     }
 
     public function testMailboxIsSetForAddress()
@@ -104,7 +84,7 @@ class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
     }
 
     /**
-     * @expectedException \Swift_AddressEncoderException
+     * @expectedException Swift_AddressEncoderException
      */
     public function testUtf8CharsInLocalPartThrows()
     {
@@ -253,7 +233,7 @@ class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($name, \Mockery::any(), \Mockery::any(), \Mockery::any())
+            ->with($name, Mockery::any(), Mockery::any(), Mockery::any())
             ->andReturn('C=8Frbyn');
 
         $header = $this->getHeader('From', $encoder);
@@ -278,7 +258,7 @@ class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
         $encoder = $this->getEncoder('Q');
         $encoder->shouldReceive('encodeString')
             ->once()
-            ->with($name, \Mockery::any(), \Mockery::any(), \Mockery::any())
+            ->with($name, Mockery::any(), Mockery::any(), Mockery::any())
             ->andReturn('C=8Frbyn');
 
         $header = $this->getHeader('From', $encoder);
@@ -363,5 +343,25 @@ class Swift_Mime_Headers_MailboxHeaderTest extends \SwiftMailerTestCase
             'Mark Corbyn <mark@swiftmailer.org>' . "\r\n",
             $header->toString()
         );
+    }
+
+    private function getHeader($name, $encoder = null, $addressEncoder = null)
+    {
+        $encoder = $encoder ?? $this->getEncoder('Q', true);
+        $addressEncoder = $addressEncoder ?? new Swift_AddressEncoder_IdnAddressEncoder();
+        $header = new Swift_Mime_Headers_MailboxHeader($name, $encoder, new EmailValidator(), $addressEncoder);
+        $header->setCharset($this->charset);
+
+        return $header;
+    }
+
+    private function getEncoder($type)
+    {
+        $encoder = $this->getMockery('Swift_Mime_HeaderEncoder')->shouldIgnoreMissing();
+        $encoder->shouldReceive('getName')
+            ->zeroOrMoreTimes()
+            ->andReturn($type);
+
+        return $encoder;
     }
 }

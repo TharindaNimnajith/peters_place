@@ -185,25 +185,6 @@ class SimpleMessage
     }
 
     /**
-     * Format the given line of text.
-     *
-     * @param Htmlable|string|array $line
-     * @return Htmlable|string
-     */
-    protected function formatLine($line)
-    {
-        if ($line instanceof Htmlable) {
-            return $line;
-        }
-
-        if (is_array($line)) {
-            return implode(' ', array_map('trim', $line));
-        }
-
-        return trim(implode(' ', array_map('trim', preg_split('/\\r\\n|\\r|\\n/', $line))));
-    }
-
-    /**
      * Get an array representation of the message.
      *
      * @return array
@@ -220,5 +201,24 @@ class SimpleMessage
             'actionText' => $this->actionText,
             'actionUrl' => $this->actionUrl,
         ];
+    }
+
+    /**
+     * Format the given line of text.
+     *
+     * @param Htmlable|string|array $line
+     * @return Htmlable|string
+     */
+    protected function formatLine($line)
+    {
+        if ($line instanceof Htmlable) {
+            return $line;
+        }
+
+        if (is_array($line)) {
+            return implode(' ', array_map('trim', $line));
+        }
+
+        return trim(implode(' ', array_map('trim', preg_split('/\\r\\n|\\r|\\n/', $line))));
     }
 }

@@ -118,6 +118,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -127,12 +128,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -145,14 +146,16 @@
             <div class="container-fluid" style="margin-top: 150px">
                 <div class="center">
 
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;" src="{{ asset ('uploads/home.png') }}">
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
                 </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark" style="">
                         <tr class="btn" style="">
                             <th class="text-center" scope="row"
-                                style="width:300px ; height:10px ; background-color:#264348"><b>EMPLOYEE MANAGEMENT</b>
+                                style="width:300px ; height:10px ; background-color:#264348"><b>EMPLOYEE
+                                    MANAGEMENT</b>
                             </th>
                         </tr>
 
@@ -164,7 +167,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -184,7 +188,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -198,7 +204,8 @@
             <div class="container-fluid" style="width: 2000px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
+                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    </li>
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
@@ -215,8 +222,8 @@
                     <div class="input-group input-group-sm mb-3">
                         <input type="search" name="search" class="form-control">
                         <span class="input-group-prepend" style="width: 510px">
-					<button type="submit" class="btn btn-primary"> Search</button>
-				</span>
+                                <button type="submit" class="btn btn-primary"> Search</button>
+                            </span>
                     </div>
                 </form>
             </div>
@@ -252,7 +259,8 @@
                             <td>{{$row->tp}}</td>
                             <td><a href="/show/{{$row->id}} " class="btn btn-warning btn-sm"
                                    style="margin-top:4px">View</a></td>
-                            <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm" style="margin-top:4px"
+                            <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm"
+                                   style="margin-top:4px"
                                    onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                             </td>
                         <!-- <td>  <a href="EmployeeDetailsPdf/{{$row->id}}">Print</a></td> -->

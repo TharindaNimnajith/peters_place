@@ -159,40 +159,6 @@ class JUnit extends Printer implements TestListener
     }
 
     /**
-     * Method which generalizes addError() and addFailure()
-     *
-     * @throws \InvalidArgumentException
-     */
-    private function doAddFault(Test $test, Throwable $t, float $time, $type): void
-    {
-        if ($this->currentTestCase === null) {
-            return;
-        }
-
-        if ($test instanceof SelfDescribing) {
-            $buffer = $test->toString() . "\n";
-        } else {
-            $buffer = '';
-        }
-
-        $buffer .= TestFailure::exceptionToString($t) . "\n" .
-            Filter::getFilteredStacktrace($t);
-
-        $fault = $this->document->createElement(
-            $type,
-            Xml::prepareString($buffer)
-        );
-
-        if ($t instanceof ExceptionWrapper) {
-            $fault->setAttribute('type', $t->getClassName());
-        } else {
-            $fault->setAttribute('type', get_class($t));
-        }
-
-        $this->currentTestCase->appendChild($fault);
-    }
-
-    /**
      * A warning occurred.
      *
      * @throws \InvalidArgumentException
@@ -220,18 +186,6 @@ class JUnit extends Printer implements TestListener
     public function addIncompleteTest(Test $test, Throwable $t, float $time): void
     {
         $this->doAddSkipped($test);
-    }
-
-    private function doAddSkipped(Test $test): void
-    {
-        if ($this->currentTestCase === null) {
-            return;
-        }
-
-        $skipped = $this->document->createElement('skipped');
-        $this->currentTestCase->appendChild($skipped);
-
-        $this->testSuiteSkipped[$this->testSuiteLevel]++;
     }
 
     /**
@@ -438,5 +392,51 @@ class JUnit extends Printer implements TestListener
         if (is_bool($flag)) {
             $this->writeDocument = $flag;
         }
+    }
+
+    /**
+     * Method which generalizes addError() and addFailure()
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function doAddFault(Test $test, Throwable $t, float $time, $type): void
+    {
+        if ($this->currentTestCase === null) {
+            return;
+        }
+
+        if ($test instanceof SelfDescribing) {
+            $buffer = $test->toString() . "\n";
+        } else {
+            $buffer = '';
+        }
+
+        $buffer .= TestFailure::exceptionToString($t) . "\n" .
+            Filter::getFilteredStacktrace($t);
+
+        $fault = $this->document->createElement(
+            $type,
+            Xml::prepareString($buffer)
+        );
+
+        if ($t instanceof ExceptionWrapper) {
+            $fault->setAttribute('type', $t->getClassName());
+        } else {
+            $fault->setAttribute('type', get_class($t));
+        }
+
+        $this->currentTestCase->appendChild($fault);
+    }
+
+    private function doAddSkipped(Test $test): void
+    {
+        if ($this->currentTestCase === null) {
+            return;
+        }
+
+        $skipped = $this->document->createElement('skipped');
+        $this->currentTestCase->appendChild($skipped);
+
+        $this->testSuiteSkipped[$this->testSuiteLevel]++;
     }
 }

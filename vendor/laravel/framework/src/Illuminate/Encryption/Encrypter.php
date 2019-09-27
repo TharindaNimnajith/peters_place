@@ -125,18 +125,6 @@ class Encrypter implements EncrypterContract
     }
 
     /**
-     * Create a MAC for the given value.
-     *
-     * @param string $iv
-     * @param mixed $value
-     * @return string
-     */
-    protected function hash($iv, $value)
-    {
-        return hash_hmac('sha256', $iv . $value, $this->key);
-    }
-
-    /**
      * Decrypt the given string without unserialization.
      *
      * @param string $payload
@@ -176,6 +164,28 @@ class Encrypter implements EncrypterContract
         }
 
         return $unserialize ? unserialize($decrypted) : $decrypted;
+    }
+
+    /**
+     * Get the encryption key.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Create a MAC for the given value.
+     *
+     * @param string $iv
+     * @param mixed $value
+     * @return string
+     */
+    protected function hash($iv, $value)
+    {
+        return hash_hmac('sha256', $iv . $value, $this->key);
     }
 
     /**
@@ -243,15 +253,5 @@ class Encrypter implements EncrypterContract
         return hash_hmac(
             'sha256', $this->hash($payload['iv'], $payload['value']), $bytes, true
         );
-    }
-
-    /**
-     * Get the encryption key.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
     }
 }

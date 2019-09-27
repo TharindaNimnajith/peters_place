@@ -11,6 +11,11 @@
 
 namespace Symfony\Component\HttpFoundation\Session\Storage\Handler;
 
+use LogicException;
+use SessionHandlerInterface;
+use SessionUpdateTimestampHandlerInterface;
+use function get_class;
+
 /**
  * Adds basic `SessionUpdateTimestampHandlerInterface` behaviors to another `SessionHandlerInterface`.
  *
@@ -21,10 +26,10 @@ class StrictSessionHandler extends AbstractSessionHandler
     private $handler;
     private $doDestroy;
 
-    public function __construct(\SessionHandlerInterface $handler)
+    public function __construct(SessionHandlerInterface $handler)
     {
-        if ($handler instanceof \SessionUpdateTimestampHandlerInterface) {
-            throw new \LogicException(sprintf('"%s" is already an instance of "SessionUpdateTimestampHandlerInterface", you cannot wrap it with "%s".', \get_class($handler), self::class));
+        if ($handler instanceof SessionUpdateTimestampHandlerInterface) {
+            throw new LogicException(sprintf('"%s" is already an instance of "SessionUpdateTimestampHandlerInterface", you cannot wrap it with "%s".', get_class($handler), self::class));
         }
 
         $this->handler = $handler;
@@ -62,16 +67,6 @@ class StrictSessionHandler extends AbstractSessionHandler
     /**
      * {@inheritdoc}
      */
-    protected function doDestroy($sessionId)
-    {
-        $this->doDestroy = false;
-
-        return $this->handler->destroy($sessionId);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function close()
     {
         return $this->handler->close();
@@ -83,6 +78,16 @@ class StrictSessionHandler extends AbstractSessionHandler
     public function gc($maxlifetime)
     {
         return $this->handler->gc($maxlifetime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDestroy($sessionId)
+    {
+        $this->doDestroy = false;
+
+        return $this->handler->destroy($sessionId);
     }
 
     /**

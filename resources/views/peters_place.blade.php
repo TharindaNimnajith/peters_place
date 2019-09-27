@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Peter's Place Hotel</title>
 
@@ -36,6 +37,7 @@
         jQuery(function ($) {
             $(".swipebox").swipebox();
         });
+
     </script>
 
     <script>
@@ -48,6 +50,7 @@
                 }, 1000);
             });
         });
+
     </script>
 
     <script>
@@ -60,6 +63,7 @@
                 }
             });
         });
+
     </script>
 
     <script>
@@ -80,6 +84,7 @@
                 }
             });
         });
+
     </script>
 
     <script>
@@ -105,6 +110,7 @@
                 fit: true
             });
         });
+
     </script>
 
     <script>
@@ -113,12 +119,14 @@
                 easingType: 'easeOutQuart'
             });
         });
+
     </script>
 
     <script>
         $(function () {
             $("#datepicker, #datepicker1, #datepicker2, #datepicker3").datepicker();
         });
+
     </script>
 
     <script>
@@ -129,6 +137,7 @@
         function hideURLbar() {
             window.scrollTo(0, 1);
         }
+
     </script>
 </head>
 
@@ -278,8 +287,10 @@
 
                 <h5>We know what you love</h5>
 
-                <p>Providing guests unique and enchanting views from their rooms with its exceptional amenities, makes
-                    Peter's Place Hotel one of the best in its kind in Sri Lanka. Try our food menu, awesome services
+                <p>Providing guests unique and enchanting views from their rooms with its exceptional amenities,
+                    makes
+                    Peter's Place Hotel one of the best in its kind in Sri Lanka. Try our food menu, awesome
+                    services
                     and friendly staff while you are here.</p>
             </div>
         </div>
@@ -345,18 +356,24 @@
                 Hiriketiya in
                 Dikwella, Matara.
                 <br/><br/>
-                Hiriketiya bay beach is a hidden gem in south coast of Sri Lanka. Also known as Hiri Beach, it is one of
-                those sleepy Southern beaches, beautifully clear water, lots of greeny small beach with great surfing,
-                located in the Hiriketiya Bay, which is a 500m beautiful horseshoe shaped cove. It is unique in shape
+                Hiriketiya bay beach is a hidden gem in south coast of Sri Lanka. Also known as Hiri Beach, it is
+                one of
+                those sleepy Southern beaches, beautifully clear water, lots of greeny small beach with great
+                surfing,
+                located in the Hiriketiya Bay, which is a 500m beautiful horseshoe shaped cove. It is unique in
+                shape
                 and topography making surf available approximately ten months of the year.
                 <br/><br/>
-                During peak holiday seasons from Dec-Feb smaller swells from the west create a perfect beginners beach
+                During peak holiday seasons from Dec-Feb smaller swells from the west create a perfect beginners
+                beach
                 break wave and the occasional ride on the left point break. Surf films, photos, travel, culture,
-                characters, coaching & news brought to you by your friends at Surf Simply. We are a community of surfing
+                characters, coaching & news brought to you by your friends at Surf Simply. We are a community of
+                surfing
                 enthusiasts with a passion for surfing. Our intention is to create a fun, loving, and safe surfing
                 experience.
                 <br/><br/>
-                Peter's place provides you a delicious Sri Lankan and Italian foods and beverages. Try our food menu,
+                Peter's place provides you a delicious Sri Lankan and Italian foods and beverages. Try our food
+                menu,
                 awesome
                 services and friendly staff while you are here.
             </p>
@@ -788,7 +805,8 @@
                     <br/>
 
                     <p>
-                        Providing guests unique and enchanting views from their rooms with its exceptional amenities,
+                        Providing guests unique and enchanting views from their rooms with its exceptional
+                        amenities,
                         makes Peter's
                         Place Hotel one of the best in its kind in Sri Lanka.
                         <br/>
@@ -841,4 +859,5 @@
     </a>
 </div>
 </body>
+
 </html>

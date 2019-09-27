@@ -19,13 +19,6 @@ class Swift_Mime_SimpleMessageTest extends Swift_Mime_MimePartTest
         );
     }
 
-    private function createMessage($headers, $encoder, $cache)
-    {
-        $idGenerator = new Swift_Mime_IdGenerator('example.com');
-
-        return new Swift_Mime_SimpleMessage($headers, $encoder, $cache, $idGenerator);
-    }
-
     public function testDateIsReturnedFromHeader()
     {
         $dateTime = new DateTimeImmutable();
@@ -789,8 +782,6 @@ class Swift_Mime_SimpleMessageTest extends Swift_Mime_MimePartTest
         $this->assertEquals('cid:foo@bar', $message->embed($child));
     }
 
-    //abstract
-
     public function testFluidInterface()
     {
         $child = $this->createChild();
@@ -826,6 +817,8 @@ class Swift_Mime_SimpleMessageTest extends Swift_Mime_MimePartTest
         );
     }
 
+    //abstract
+
     protected function createEntity($headers, $encoder, $cache)
     {
         return $this->createMessage($headers, $encoder, $cache);
@@ -834,5 +827,12 @@ class Swift_Mime_SimpleMessageTest extends Swift_Mime_MimePartTest
     protected function createMimePart($headers, $encoder, $cache)
     {
         return $this->createMessage($headers, $encoder, $cache);
+    }
+
+    private function createMessage($headers, $encoder, $cache)
+    {
+        $idGenerator = new Swift_Mime_IdGenerator('example.com');
+
+        return new Swift_Mime_SimpleMessage($headers, $encoder, $cache, $idGenerator);
     }
 }

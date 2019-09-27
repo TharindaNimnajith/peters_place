@@ -73,6 +73,44 @@ class ErrorHandler
         return $handler;
     }
 
+    private static function codeToString($code)
+    {
+        switch ($code) {
+            case E_ERROR:
+                return 'E_ERROR';
+            case E_WARNING:
+                return 'E_WARNING';
+            case E_PARSE:
+                return 'E_PARSE';
+            case E_NOTICE:
+                return 'E_NOTICE';
+            case E_CORE_ERROR:
+                return 'E_CORE_ERROR';
+            case E_CORE_WARNING:
+                return 'E_CORE_WARNING';
+            case E_COMPILE_ERROR:
+                return 'E_COMPILE_ERROR';
+            case E_COMPILE_WARNING:
+                return 'E_COMPILE_WARNING';
+            case E_USER_ERROR:
+                return 'E_USER_ERROR';
+            case E_USER_WARNING:
+                return 'E_USER_WARNING';
+            case E_USER_NOTICE:
+                return 'E_USER_NOTICE';
+            case E_STRICT:
+                return 'E_STRICT';
+            case E_RECOVERABLE_ERROR:
+                return 'E_RECOVERABLE_ERROR';
+            case E_DEPRECATED:
+                return 'E_DEPRECATED';
+            case E_USER_DEPRECATED:
+                return 'E_USER_DEPRECATED';
+        }
+
+        return 'Unknown PHP error';
+    }
+
     public function registerErrorHandler(array $levelMap = array(), $callPrevious = true, $errorTypes = -1, $handleOnlyReportedErrors = true)
     {
         $prev = set_error_handler(array($this, 'handleError'), $errorTypes);
@@ -82,27 +120,6 @@ class ErrorHandler
         }
 
         $this->handleOnlyReportedErrors = $handleOnlyReportedErrors;
-    }
-
-    protected function defaultErrorLevelMap()
-    {
-        return array(
-            E_ERROR => LogLevel::CRITICAL,
-            E_WARNING => LogLevel::WARNING,
-            E_PARSE => LogLevel::ALERT,
-            E_NOTICE => LogLevel::NOTICE,
-            E_CORE_ERROR => LogLevel::CRITICAL,
-            E_CORE_WARNING => LogLevel::WARNING,
-            E_COMPILE_ERROR => LogLevel::ALERT,
-            E_COMPILE_WARNING => LogLevel::WARNING,
-            E_USER_ERROR => LogLevel::ERROR,
-            E_USER_WARNING => LogLevel::WARNING,
-            E_USER_NOTICE => LogLevel::NOTICE,
-            E_STRICT => LogLevel::NOTICE,
-            E_RECOVERABLE_ERROR => LogLevel::ERROR,
-            E_DEPRECATED => LogLevel::NOTICE,
-            E_USER_DEPRECATED => LogLevel::NOTICE,
-        );
     }
 
     public function registerExceptionHandler($level = null, $callPrevious = true)
@@ -170,44 +187,6 @@ class ErrorHandler
         }
     }
 
-    private static function codeToString($code)
-    {
-        switch ($code) {
-            case E_ERROR:
-                return 'E_ERROR';
-            case E_WARNING:
-                return 'E_WARNING';
-            case E_PARSE:
-                return 'E_PARSE';
-            case E_NOTICE:
-                return 'E_NOTICE';
-            case E_CORE_ERROR:
-                return 'E_CORE_ERROR';
-            case E_CORE_WARNING:
-                return 'E_CORE_WARNING';
-            case E_COMPILE_ERROR:
-                return 'E_COMPILE_ERROR';
-            case E_COMPILE_WARNING:
-                return 'E_COMPILE_WARNING';
-            case E_USER_ERROR:
-                return 'E_USER_ERROR';
-            case E_USER_WARNING:
-                return 'E_USER_WARNING';
-            case E_USER_NOTICE:
-                return 'E_USER_NOTICE';
-            case E_STRICT:
-                return 'E_STRICT';
-            case E_RECOVERABLE_ERROR:
-                return 'E_RECOVERABLE_ERROR';
-            case E_DEPRECATED:
-                return 'E_DEPRECATED';
-            case E_USER_DEPRECATED:
-                return 'E_USER_DEPRECATED';
-        }
-
-        return 'Unknown PHP error';
-    }
-
     /**
      * @private
      */
@@ -231,5 +210,26 @@ class ErrorHandler
                 }
             }
         }
+    }
+
+    protected function defaultErrorLevelMap()
+    {
+        return array(
+            E_ERROR => LogLevel::CRITICAL,
+            E_WARNING => LogLevel::WARNING,
+            E_PARSE => LogLevel::ALERT,
+            E_NOTICE => LogLevel::NOTICE,
+            E_CORE_ERROR => LogLevel::CRITICAL,
+            E_CORE_WARNING => LogLevel::WARNING,
+            E_COMPILE_ERROR => LogLevel::ALERT,
+            E_COMPILE_WARNING => LogLevel::WARNING,
+            E_USER_ERROR => LogLevel::ERROR,
+            E_USER_WARNING => LogLevel::WARNING,
+            E_USER_NOTICE => LogLevel::NOTICE,
+            E_STRICT => LogLevel::NOTICE,
+            E_RECOVERABLE_ERROR => LogLevel::ERROR,
+            E_DEPRECATED => LogLevel::NOTICE,
+            E_USER_DEPRECATED => LogLevel::NOTICE,
+        );
     }
 }

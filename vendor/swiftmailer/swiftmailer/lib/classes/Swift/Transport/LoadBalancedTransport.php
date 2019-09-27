@@ -114,20 +114,6 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
     }
 
     /**
-     * Tag the currently used (top of stack) transport as dead/useless.
-     */
-    protected function killCurrentTransport()
-    {
-        if ($transport = array_pop($this->transports)) {
-            try {
-                $transport->stop();
-            } catch (Exception $e) {
-            }
-            $this->deadTransports[] = $transport;
-        }
-    }
-
-    /**
      * Send the given Message.
      *
      * Recipient/sender data will be retrieved from the Message API.
@@ -168,6 +154,30 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
     }
 
     /**
+     * Register a plugin.
+     */
+    public function registerPlugin(Swift_Events_EventListener $plugin)
+    {
+        foreach ($this->transports as $transport) {
+            $transport->registerPlugin($plugin);
+        }
+    }
+
+    /**
+     * Tag the currently used (top of stack) transport as dead/useless.
+     */
+    protected function killCurrentTransport()
+    {
+        if ($transport = array_pop($this->transports)) {
+            try {
+                $transport->stop();
+            } catch (Exception $e) {
+            }
+            $this->deadTransports[] = $transport;
+        }
+    }
+
+    /**
      * Rotates the transport list around and returns the first instance.
      *
      * @return Swift_Transport
@@ -179,15 +189,5 @@ class Swift_Transport_LoadBalancedTransport implements Swift_Transport
         }
 
         return $next;
-    }
-
-    /**
-     * Register a plugin.
-     */
-    public function registerPlugin(Swift_Events_EventListener $plugin)
-    {
-        foreach ($this->transports as $transport) {
-            $transport->registerPlugin($plugin);
-        }
     }
 }

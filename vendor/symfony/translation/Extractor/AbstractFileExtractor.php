@@ -11,7 +11,10 @@
 
 namespace Symfony\Component\Translation\Extractor;
 
+use SplFileInfo;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Traversable;
+use function is_array;
 
 /**
  * Base class used by classes that extract translation messages from files.
@@ -27,7 +30,7 @@ abstract class AbstractFileExtractor
      */
     protected function extractFiles($resource)
     {
-        if (\is_array($resource) || $resource instanceof \Traversable) {
+        if (is_array($resource) || $resource instanceof Traversable) {
             $files = [];
             foreach ($resource as $file) {
                 if ($this->canBeExtracted($file)) {
@@ -50,11 +53,6 @@ abstract class AbstractFileExtractor
      */
     abstract protected function canBeExtracted($file);
 
-    private function toSplFileInfo(string $file): \SplFileInfo
-    {
-        return new \SplFileInfo($file);
-    }
-
     /**
      * @param string|array $resource Files, a file or a directory
      *
@@ -76,5 +74,10 @@ abstract class AbstractFileExtractor
         }
 
         return true;
+    }
+
+    private function toSplFileInfo(string $file): SplFileInfo
+    {
+        return new SplFileInfo($file);
     }
 }

@@ -12,6 +12,8 @@
 namespace Symfony\Component\Mime\Header;
 
 use Symfony\Component\Mime\Encoder\Rfc2231Encoder;
+use function count;
+use function strlen;
 
 /**
  * @author Chris Corbyn
@@ -82,6 +84,28 @@ final class ParameterizedHeader extends UnstructuredHeader
     }
 
     /**
+     * Generate a list of all tokens in the final header.
+     *
+     * This doesn't need to be overridden in theory, but it is for implementation
+     * reasons to prevent potential breakage of attributes.
+     */
+    protected function toTokens(string $string = null): array
+    {
+        $tokens = parent::toTokens(parent::getBodyAsString());
+
+        // Try creating any parameters
+        foreach ($this->parameters as $name => $value) {
+            if (null !== $value) {
+                // Add the semi-colon separator
+                $tokens[count($tokens) - 1] .= ';';
+                $tokens = array_merge($tokens, $this->generateTokenLines(' ' . $this->createParameter($name, $value)));
+            }
+        }
+
+        return $tokens;
+    }
+
+    /**
      * Render a RFC 2047 compliant header parameter from the $name and $value.
      */
     private function createParameter(string $name, string $value): string
@@ -90,7 +114,7 @@ final class ParameterizedHeader extends UnstructuredHeader
 
         $encoded = false;
         // Allow room for parameter name, indices, "=" and DQUOTEs
-        $maxValueLength = $this->getMaxLineLength() - \strlen($name . '=*N"";') - 1;
+        $maxValueLength = $this->getMaxLineLength() - strlen($name . '=*N"";') - 1;
         $firstLineOffset = 0;
 
         // If it's not already a valid parameter value...
@@ -100,13 +124,13 @@ final class ParameterizedHeader extends UnstructuredHeader
             if (!preg_match('/^[\x00-\x08\x0B\x0C\x0E-\x7F]*$/D', $value)) {
                 $encoded = true;
                 // Allow space for the indices, charset and language
-                $maxValueLength = $this->getMaxLineLength() - \strlen($name . '*N*="";') - 1;
-                $firstLineOffset = \strlen($this->getCharset() . "'" . $this->getLanguage() . "'");
+                $maxValueLength = $this->getMaxLineLength() - strlen($name . '*N*="";') - 1;
+                $firstLineOffset = strlen($this->getCharset() . "'" . $this->getLanguage() . "'");
             }
         }
 
         // Encode if we need to
-        if ($encoded || \strlen($value) > $maxValueLength) {
+        if ($encoded || strlen($value) > $maxValueLength) {
             if (null !== $this->encoder) {
                 $value = $this->encoder->encodeString($origValue, $this->getCharset(), $firstLineOffset, $maxValueLength);
             } else {
@@ -119,7 +143,7 @@ final class ParameterizedHeader extends UnstructuredHeader
         $valueLines = $this->encoder ? explode("\r\n", $value) : [$value];
 
         // Need to add indices
-        if (\count($valueLines) > 1) {
+        if (count($valueLines) > 1) {
             $paramLines = [];
             foreach ($valueLines as $i => $line) {
                 $paramLines[] = $name . '*' . $i . $this->getEndOfParameterValue($line, true, 0 === $i);
@@ -150,27 +174,5 @@ final class ParameterizedHeader extends UnstructuredHeader
         }
 
         return $prepend . $value;
-    }
-
-    /**
-     * Generate a list of all tokens in the final header.
-     *
-     * This doesn't need to be overridden in theory, but it is for implementation
-     * reasons to prevent potential breakage of attributes.
-     */
-    protected function toTokens(string $string = null): array
-    {
-        $tokens = parent::toTokens(parent::getBodyAsString());
-
-        // Try creating any parameters
-        foreach ($this->parameters as $name => $value) {
-            if (null !== $value) {
-                // Add the semi-colon separator
-                $tokens[\count($tokens) - 1] .= ';';
-                $tokens = array_merge($tokens, $this->generateTokenLines(' ' . $this->createParameter($name, $value)));
-            }
-        }
-
-        return $tokens;
     }
 }

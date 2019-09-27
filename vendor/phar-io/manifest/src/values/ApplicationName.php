@@ -31,6 +31,19 @@ class ApplicationName
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->name;
+    }
+
+    public function isEqual(ApplicationName $name)
+    {
+        return $this->name === $name->name;
+    }
+
     private function ensureIsString($name)
     {
         if (!is_string($name)) {
@@ -54,18 +67,5 @@ class ApplicationName
                 InvalidApplicationNameException::InvalidFormat
             );
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->name;
-    }
-
-    public function isEqual(ApplicationName $name)
-    {
-        return $this->name === $name->name;
     }
 }

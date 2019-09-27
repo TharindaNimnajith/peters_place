@@ -14,6 +14,24 @@ namespace SebastianBergmann\GlobalState;
 
 use ReflectionClass;
 use Serializable;
+use stdClass;
+use function array_keys;
+use function array_merge;
+use function array_reverse;
+use function get_declared_classes;
+use function get_declared_interfaces;
+use function get_declared_traits;
+use function get_defined_constants;
+use function get_defined_functions;
+use function get_included_files;
+use function in_array;
+use function ini_get;
+use function ini_get_all;
+use function is_array;
+use function is_object;
+use function is_resource;
+use function serialize;
+use function unserialize;
 
 /**
  * A snapshot of global state.
@@ -117,198 +135,19 @@ class Snapshot
         }
 
         if ($includeIniSettings) {
-            $this->iniSettings = \ini_get_all(null, false);
+            $this->iniSettings = ini_get_all(null, false);
         }
 
         if ($includeIncludedFiles) {
-            $this->includedFiles = \get_included_files();
+            $this->includedFiles = get_included_files();
         }
 
-        $this->traits = \get_declared_traits();
-    }
-
-    /**
-     * Creates a snapshot user-defined constants.
-     */
-    private function snapshotConstants()
-    {
-        $constants = \get_defined_constants(true);
-
-        if (isset($constants['user'])) {
-            $this->constants = $constants['user'];
-        }
-    }
-
-    /**
-     * Creates a snapshot user-defined functions.
-     */
-    private function snapshotFunctions()
-    {
-        $functions = \get_defined_functions();
-
-        $this->functions = $functions['user'];
-    }
-
-    /**
-     * Creates a snapshot user-defined classes.
-     */
-    private function snapshotClasses()
-    {
-        foreach (\array_reverse(\get_declared_classes()) as $className) {
-            $class = new ReflectionClass($className);
-
-            if (!$class->isUserDefined()) {
-                break;
-            }
-
-            $this->classes[] = $className;
-        }
-
-        $this->classes = \array_reverse($this->classes);
-    }
-
-    /**
-     * Creates a snapshot user-defined interfaces.
-     */
-    private function snapshotInterfaces()
-    {
-        foreach (\array_reverse(\get_declared_interfaces()) as $interfaceName) {
-            $class = new ReflectionClass($interfaceName);
-
-            if (!$class->isUserDefined()) {
-                break;
-            }
-
-            $this->interfaces[] = $interfaceName;
-        }
-
-        $this->interfaces = \array_reverse($this->interfaces);
-    }
-
-    /**
-     * Returns a list of all super-global variable arrays.
-     */
-    private function setupSuperGlobalArrays()
-    {
-        $this->superGlobalArrays = [
-            '_ENV',
-            '_POST',
-            '_GET',
-            '_COOKIE',
-            '_SERVER',
-            '_FILES',
-            '_REQUEST'
-        ];
-
-        if (\ini_get('register_long_arrays') == '1') {
-            $this->superGlobalArrays = \array_merge(
-                $this->superGlobalArrays,
-                [
-                    'HTTP_ENV_VARS',
-                    'HTTP_POST_VARS',
-                    'HTTP_GET_VARS',
-                    'HTTP_COOKIE_VARS',
-                    'HTTP_SERVER_VARS',
-                    'HTTP_POST_FILES'
-                ]
-            );
-        }
-    }
-
-    /**
-     * Creates a snapshot of all global and super-global variables.
-     */
-    private function snapshotGlobals()
-    {
-        $superGlobalArrays = $this->superGlobalArrays();
-
-        foreach ($superGlobalArrays as $superGlobalArray) {
-            $this->snapshotSuperGlobalArray($superGlobalArray);
-        }
-
-        foreach (\array_keys($GLOBALS) as $key) {
-            if ($key != 'GLOBALS' &&
-                !\in_array($key, $superGlobalArrays) &&
-                $this->canBeSerialized($GLOBALS[$key]) &&
-                !$this->blacklist->isGlobalVariableBlacklisted($key)) {
-                $this->globalVariables[$key] = \unserialize(\serialize($GLOBALS[$key]));
-            }
-        }
+        $this->traits = get_declared_traits();
     }
 
     public function superGlobalArrays(): array
     {
         return $this->superGlobalArrays;
-    }
-
-    /**
-     * Creates a snapshot a super-global variable array.
-     */
-    private function snapshotSuperGlobalArray(string $superGlobalArray)
-    {
-        $this->superGlobalVariables[$superGlobalArray] = [];
-
-        if (isset($GLOBALS[$superGlobalArray]) && \is_array($GLOBALS[$superGlobalArray])) {
-            foreach ($GLOBALS[$superGlobalArray] as $key => $value) {
-                $this->superGlobalVariables[$superGlobalArray][$key] = \unserialize(\serialize($value));
-            }
-        }
-    }
-
-    /**
-     * @todo Implement this properly
-     */
-    private function canBeSerialized($variable): bool
-    {
-        if (!\is_object($variable)) {
-            return !\is_resource($variable);
-        }
-
-        if ($variable instanceof \stdClass) {
-            return true;
-        }
-
-        $class = new ReflectionClass($variable);
-
-        do {
-            if ($class->isInternal()) {
-                return $variable instanceof Serializable;
-            }
-        } while ($class = $class->getParentClass());
-
-        return true;
-    }
-
-    /**
-     * Creates a snapshot of all static attributes in user-defined classes.
-     */
-    private function snapshotStaticAttributes()
-    {
-        foreach ($this->classes as $className) {
-            $class = new ReflectionClass($className);
-            $snapshot = [];
-
-            foreach ($class->getProperties() as $attribute) {
-                if ($attribute->isStatic()) {
-                    $name = $attribute->getName();
-
-                    if ($this->blacklist->isStaticAttributeBlacklisted($className, $name)) {
-                        continue;
-                    }
-
-                    $attribute->setAccessible(true);
-                    $value = $attribute->getValue();
-
-                    if ($this->canBeSerialized($value)) {
-                        $snapshot[$name] = \unserialize(\serialize($value));
-                    }
-                }
-            }
-
-            if (!empty($snapshot)) {
-                $this->staticAttributes[$className] = $snapshot;
-            }
-        }
     }
 
     public function blacklist(): Blacklist
@@ -364,5 +203,184 @@ class Snapshot
     public function traits(): array
     {
         return $this->traits;
+    }
+
+    /**
+     * Creates a snapshot user-defined constants.
+     */
+    private function snapshotConstants()
+    {
+        $constants = get_defined_constants(true);
+
+        if (isset($constants['user'])) {
+            $this->constants = $constants['user'];
+        }
+    }
+
+    /**
+     * Creates a snapshot user-defined functions.
+     */
+    private function snapshotFunctions()
+    {
+        $functions = get_defined_functions();
+
+        $this->functions = $functions['user'];
+    }
+
+    /**
+     * Creates a snapshot user-defined classes.
+     */
+    private function snapshotClasses()
+    {
+        foreach (array_reverse(get_declared_classes()) as $className) {
+            $class = new ReflectionClass($className);
+
+            if (!$class->isUserDefined()) {
+                break;
+            }
+
+            $this->classes[] = $className;
+        }
+
+        $this->classes = array_reverse($this->classes);
+    }
+
+    /**
+     * Creates a snapshot user-defined interfaces.
+     */
+    private function snapshotInterfaces()
+    {
+        foreach (array_reverse(get_declared_interfaces()) as $interfaceName) {
+            $class = new ReflectionClass($interfaceName);
+
+            if (!$class->isUserDefined()) {
+                break;
+            }
+
+            $this->interfaces[] = $interfaceName;
+        }
+
+        $this->interfaces = array_reverse($this->interfaces);
+    }
+
+    /**
+     * Returns a list of all super-global variable arrays.
+     */
+    private function setupSuperGlobalArrays()
+    {
+        $this->superGlobalArrays = [
+            '_ENV',
+            '_POST',
+            '_GET',
+            '_COOKIE',
+            '_SERVER',
+            '_FILES',
+            '_REQUEST'
+        ];
+
+        if (ini_get('register_long_arrays') == '1') {
+            $this->superGlobalArrays = array_merge(
+                $this->superGlobalArrays,
+                [
+                    'HTTP_ENV_VARS',
+                    'HTTP_POST_VARS',
+                    'HTTP_GET_VARS',
+                    'HTTP_COOKIE_VARS',
+                    'HTTP_SERVER_VARS',
+                    'HTTP_POST_FILES'
+                ]
+            );
+        }
+    }
+
+    /**
+     * Creates a snapshot of all global and super-global variables.
+     */
+    private function snapshotGlobals()
+    {
+        $superGlobalArrays = $this->superGlobalArrays();
+
+        foreach ($superGlobalArrays as $superGlobalArray) {
+            $this->snapshotSuperGlobalArray($superGlobalArray);
+        }
+
+        foreach (array_keys($GLOBALS) as $key) {
+            if ($key != 'GLOBALS' &&
+                !in_array($key, $superGlobalArrays) &&
+                $this->canBeSerialized($GLOBALS[$key]) &&
+                !$this->blacklist->isGlobalVariableBlacklisted($key)) {
+                $this->globalVariables[$key] = unserialize(serialize($GLOBALS[$key]));
+            }
+        }
+    }
+
+    /**
+     * Creates a snapshot a super-global variable array.
+     */
+    private function snapshotSuperGlobalArray(string $superGlobalArray)
+    {
+        $this->superGlobalVariables[$superGlobalArray] = [];
+
+        if (isset($GLOBALS[$superGlobalArray]) && is_array($GLOBALS[$superGlobalArray])) {
+            foreach ($GLOBALS[$superGlobalArray] as $key => $value) {
+                $this->superGlobalVariables[$superGlobalArray][$key] = unserialize(serialize($value));
+            }
+        }
+    }
+
+    /**
+     * @todo Implement this properly
+     */
+    private function canBeSerialized($variable): bool
+    {
+        if (!is_object($variable)) {
+            return !is_resource($variable);
+        }
+
+        if ($variable instanceof stdClass) {
+            return true;
+        }
+
+        $class = new ReflectionClass($variable);
+
+        do {
+            if ($class->isInternal()) {
+                return $variable instanceof Serializable;
+            }
+        } while ($class = $class->getParentClass());
+
+        return true;
+    }
+
+    /**
+     * Creates a snapshot of all static attributes in user-defined classes.
+     */
+    private function snapshotStaticAttributes()
+    {
+        foreach ($this->classes as $className) {
+            $class = new ReflectionClass($className);
+            $snapshot = [];
+
+            foreach ($class->getProperties() as $attribute) {
+                if ($attribute->isStatic()) {
+                    $name = $attribute->getName();
+
+                    if ($this->blacklist->isStaticAttributeBlacklisted($className, $name)) {
+                        continue;
+                    }
+
+                    $attribute->setAccessible(true);
+                    $value = $attribute->getValue();
+
+                    if ($this->canBeSerialized($value)) {
+                        $snapshot[$name] = unserialize(serialize($value));
+                    }
+                }
+            }
+
+            if (!empty($snapshot)) {
+                $this->staticAttributes[$className] = $snapshot;
+            }
+        }
     }
 }

@@ -79,17 +79,6 @@ class RedisStore extends TaggableStore implements LockProvider
     }
 
     /**
-     * Unserialize the value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function unserialize($value)
-    {
-        return is_numeric($value) ? $value : unserialize($value);
-    }
-
-    /**
      * Retrieve multiple items from the cache by key.
      *
      * Items not found in the cache will have a null value.
@@ -149,17 +138,6 @@ class RedisStore extends TaggableStore implements LockProvider
         return (bool)$this->connection()->setex(
             $this->prefix . $key, (int)max(1, $seconds), $this->serialize($value)
         );
-    }
-
-    /**
-     * Serialize the value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function serialize($value)
-    {
-        return is_numeric($value) ? $value : serialize($value);
     }
 
     /**
@@ -305,5 +283,27 @@ class RedisStore extends TaggableStore implements LockProvider
     public function setPrefix($prefix)
     {
         $this->prefix = !empty($prefix) ? $prefix . ':' : '';
+    }
+
+    /**
+     * Unserialize the value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function unserialize($value)
+    {
+        return is_numeric($value) ? $value : unserialize($value);
+    }
+
+    /**
+     * Serialize the value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function serialize($value)
+    {
+        return is_numeric($value) ? $value : serialize($value);
     }
 }

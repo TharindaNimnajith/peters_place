@@ -143,11 +143,6 @@ abstract class ParserAbstract implements Parser
     }
 
     /**
-     * Initialize $reduceCallbacks map.
-     */
-    abstract protected function initReduceCallbacks();
-
-    /**
      * Parses PHP code into a node tree.
      *
      * If a non-throwing error handler is used, the parser will continue parsing after an error
@@ -176,6 +171,11 @@ abstract class ParserAbstract implements Parser
 
         return $result;
     }
+
+    /**
+     * Initialize $reduceCallbacks map.
+     */
+    abstract protected function initReduceCallbacks();
 
     protected function doParse()
     {
@@ -536,76 +536,6 @@ abstract class ParserAbstract implements Parser
                 $this->fixupNamespaceAttributes($lastNs);
             }
             return $resultStmts;
-        }
-    }
-
-    /**
-     * Determine namespacing style (semicolon or brace)
-     *
-     * @param Node[] $stmts Top-level statements.
-     *
-     * @return null|string One of "semicolon", "brace" or null (no namespaces)
-     */
-    private function getNamespacingStyle(array $stmts)
-    {
-        $style = null;
-        $hasNotAllowedStmts = false;
-        foreach ($stmts as $i => $stmt) {
-            if ($stmt instanceof Node\Stmt\Namespace_) {
-                $currentStyle = null === $stmt->stmts ? 'semicolon' : 'brace';
-                if (null === $style) {
-                    $style = $currentStyle;
-                    if ($hasNotAllowedStmts) {
-                        $this->emitError(new Error(
-                            'Namespace declaration statement has to be the very first statement in the script',
-                            $stmt->getLine() // Avoid marking the entire namespace as an error
-                        ));
-                    }
-                } elseif ($style !== $currentStyle) {
-                    $this->emitError(new Error(
-                        'Cannot mix bracketed namespace declarations with unbracketed namespace declarations',
-                        $stmt->getLine() // Avoid marking the entire namespace as an error
-                    ));
-                    // Treat like semicolon style for namespace normalization
-                    return 'semicolon';
-                }
-                continue;
-            }
-
-            /* declare(), __halt_compiler() and nops can be used before a namespace declaration */
-            if ($stmt instanceof Node\Stmt\Declare_
-                || $stmt instanceof Node\Stmt\HaltCompiler
-                || $stmt instanceof Node\Stmt\Nop) {
-                continue;
-            }
-
-            /* There may be a hashbang line at the very start of the file */
-            if ($i === 0 && $stmt instanceof Node\Stmt\InlineHTML && preg_match('/\A#!.*\r?\n\z/', $stmt->value)) {
-                continue;
-            }
-
-            /* Everything else if forbidden before namespace declarations */
-            $hasNotAllowedStmts = true;
-        }
-        return $style;
-    }
-
-    private function fixupNamespaceAttributes(Node\Stmt\Namespace_ $stmt)
-    {
-        // We moved the statements into the namespace node, as such the end of the namespace node
-        // needs to be extended to the end of the statements.
-        if (empty($stmt->stmts)) {
-            return;
-        }
-
-        // We only move the builtin end attributes here. This is the best we can do with the
-        // knowledge we have.
-        $endAttributes = ['endLine', 'endFilePos', 'endTokenPos'];
-        $lastStmt = $stmt->stmts[count($stmt->stmts) - 1];
-        foreach ($endAttributes as $endAttribute) {
-            if ($lastStmt->hasAttribute($endAttribute)) {
-                $stmt->setAttribute($endAttribute, $lastStmt->getAttribute($endAttribute));
-            }
         }
     }
 
@@ -1045,6 +975,76 @@ abstract class ParserAbstract implements Parser
                 ),
                 $this->getAttributesAt($namePos)
             ));
+        }
+    }
+
+    /**
+     * Determine namespacing style (semicolon or brace)
+     *
+     * @param Node[] $stmts Top-level statements.
+     *
+     * @return null|string One of "semicolon", "brace" or null (no namespaces)
+     */
+    private function getNamespacingStyle(array $stmts)
+    {
+        $style = null;
+        $hasNotAllowedStmts = false;
+        foreach ($stmts as $i => $stmt) {
+            if ($stmt instanceof Node\Stmt\Namespace_) {
+                $currentStyle = null === $stmt->stmts ? 'semicolon' : 'brace';
+                if (null === $style) {
+                    $style = $currentStyle;
+                    if ($hasNotAllowedStmts) {
+                        $this->emitError(new Error(
+                            'Namespace declaration statement has to be the very first statement in the script',
+                            $stmt->getLine() // Avoid marking the entire namespace as an error
+                        ));
+                    }
+                } elseif ($style !== $currentStyle) {
+                    $this->emitError(new Error(
+                        'Cannot mix bracketed namespace declarations with unbracketed namespace declarations',
+                        $stmt->getLine() // Avoid marking the entire namespace as an error
+                    ));
+                    // Treat like semicolon style for namespace normalization
+                    return 'semicolon';
+                }
+                continue;
+            }
+
+            /* declare(), __halt_compiler() and nops can be used before a namespace declaration */
+            if ($stmt instanceof Node\Stmt\Declare_
+                || $stmt instanceof Node\Stmt\HaltCompiler
+                || $stmt instanceof Node\Stmt\Nop) {
+                continue;
+            }
+
+            /* There may be a hashbang line at the very start of the file */
+            if ($i === 0 && $stmt instanceof Node\Stmt\InlineHTML && preg_match('/\A#!.*\r?\n\z/', $stmt->value)) {
+                continue;
+            }
+
+            /* Everything else if forbidden before namespace declarations */
+            $hasNotAllowedStmts = true;
+        }
+        return $style;
+    }
+
+    private function fixupNamespaceAttributes(Node\Stmt\Namespace_ $stmt)
+    {
+        // We moved the statements into the namespace node, as such the end of the namespace node
+        // needs to be extended to the end of the statements.
+        if (empty($stmt->stmts)) {
+            return;
+        }
+
+        // We only move the builtin end attributes here. This is the best we can do with the
+        // knowledge we have.
+        $endAttributes = ['endLine', 'endFilePos', 'endTokenPos'];
+        $lastStmt = $stmt->stmts[count($stmt->stmts) - 1];
+        foreach ($endAttributes as $endAttribute) {
+            if ($lastStmt->hasAttribute($endAttribute)) {
+                $stmt->setAttribute($endAttribute, $lastStmt->getAttribute($endAttribute));
+            }
         }
     }
 }

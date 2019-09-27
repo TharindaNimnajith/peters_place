@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\HttpFoundation\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -117,11 +118,6 @@ class ResponseHeaderBagTest extends TestCase
         $bag->clearCookie('foo');
 
         $this->assertSetCookieHeader('foo=deleted; expires=' . gmdate('D, d-M-Y H:i:s T', time() - 31536001) . '; Max-Age=0; path=/; httponly', $bag);
-    }
-
-    private function assertSetCookieHeader($expected, ResponseHeaderBag $actual)
-    {
-        $this->assertRegExp('#^Set-Cookie:\s+' . preg_quote($expected, '#') . '$#m', str_replace("\r\n", "\n", (string)$actual));
     }
 
     public function testClearCookieSecureNotHttpOnly()
@@ -246,7 +242,7 @@ class ResponseHeaderBagTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testGetCookiesWithInvalidArgument()
     {
@@ -304,5 +300,10 @@ class ResponseHeaderBagTest extends TestCase
         $bag->replace([]);
 
         $this->assertTrue($bag->has('Date'));
+    }
+
+    private function assertSetCookieHeader($expected, ResponseHeaderBag $actual)
+    {
+        $this->assertRegExp('#^Set-Cookie:\s+' . preg_quote($expected, '#') . '$#m', str_replace("\r\n", "\n", (string)$actual));
     }
 }

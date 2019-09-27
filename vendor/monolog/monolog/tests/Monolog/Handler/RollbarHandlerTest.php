@@ -46,6 +46,13 @@ class RollbarHandlerTest extends TestCase
         $this->assertEquals('debug', $this->reportedExceptionArguments['payload']['level']);
     }
 
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->setupRollbarNotifierMock();
+    }
+
     private function createHandler()
     {
         return new RollbarHandler($this->rollbarNotifier, Logger::DEBUG);
@@ -56,13 +63,6 @@ class RollbarHandlerTest extends TestCase
         return $this->getRecord($level, $message, array(
             'exception' => $exception ?: new Exception()
         ));
-    }
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->setupRollbarNotifierMock();
     }
 
     private function setupRollbarNotifierMock()

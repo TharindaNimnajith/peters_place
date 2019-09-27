@@ -36,18 +36,6 @@ class ListCommand extends Command
     /**
      * {@inheritdoc}
      */
-    private function createDefinition()
-    {
-        return new InputDefinition([
-            new InputArgument('namespace', InputArgument::OPTIONAL, 'The namespace name'),
-            new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command list'),
-            new InputOption('format', null, InputOption::VALUE_REQUIRED, 'The output format (txt, xml, json, or md)', 'txt'),
-        ]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function configure()
     {
         $this
@@ -84,6 +72,18 @@ EOF
             'format' => $input->getOption('format'),
             'raw_text' => $input->getOption('raw'),
             'namespace' => $input->getArgument('namespace'),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function createDefinition()
+    {
+        return new InputDefinition([
+            new InputArgument('namespace', InputArgument::OPTIONAL, 'The namespace name'),
+            new InputOption('raw', null, InputOption::VALUE_NONE, 'To output raw command list'),
+            new InputOption('format', null, InputOption::VALUE_REQUIRED, 'The output format (txt, xml, json, or md)', 'txt'),
         ]);
     }
 }

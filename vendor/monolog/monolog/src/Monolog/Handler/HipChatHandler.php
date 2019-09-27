@@ -115,30 +115,6 @@ class HipChatHandler extends SocketHandler
     }
 
     /**
-     * Validates the length of a string.
-     *
-     * If the `mb_strlen()` function is available, it will use that, as HipChat
-     * allows UTF-8 characters. Otherwise, it will fall back to `strlen()`.
-     *
-     * Note that this might cause false failures in the specific case of using
-     * a valid name with less than 16 characters, but 16 or more bytes, on a
-     * system where `mb_strlen()` is unavailable.
-     *
-     * @param string $str
-     * @param int $length
-     *
-     * @return bool
-     */
-    private function validateStringLength($str, $length)
-    {
-        if (function_exists('mb_strlen')) {
-            return (mb_strlen($str) <= $length);
-        }
-
-        return (strlen($str) <= $length);
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function handleBatch(array $records)
@@ -162,6 +138,91 @@ class HipChatHandler extends SocketHandler
         }
 
         return false === $this->bubble;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array $record
+     */
+    protected function write(array $record)
+    {
+        parent::write($record);
+        $this->finalizeWrite();
+    }
+
+    /**
+     * Finalizes the request by reading some bytes and then closing the socket
+     *
+     * If we do not read some but close the socket too early, hipchat sometimes
+     * drops the request entirely.
+     */
+    protected function finalizeWrite()
+    {
+        $res = $this->getResource();
+        if (is_resource($res)) {
+            @fread($res, 2048);
+        }
+        $this->closeSocket();
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param array $record
+     * @return string
+     */
+    protected function generateDataStream($record)
+    {
+        $content = $this->buildContent($record);
+
+        return $this->buildHeader($content) . $content;
+    }
+
+    /**
+     * Assigns a color to each level of log records.
+     *
+     * @param int $level
+     * @return string
+     */
+    protected function getAlertColor($level)
+    {
+        switch (true) {
+            case $level >= Logger::ERROR:
+                return 'red';
+            case $level >= Logger::WARNING:
+                return 'yellow';
+            case $level >= Logger::INFO:
+                return 'green';
+            case $level == Logger::DEBUG:
+                return 'gray';
+            default:
+                return 'yellow';
+        }
+    }
+
+    /**
+     * Validates the length of a string.
+     *
+     * If the `mb_strlen()` function is available, it will use that, as HipChat
+     * allows UTF-8 characters. Otherwise, it will fall back to `strlen()`.
+     *
+     * Note that this might cause false failures in the specific case of using
+     * a valid name with less than 16 characters, but 16 or more bytes, on a
+     * system where `mb_strlen()` is unavailable.
+     *
+     * @param string $str
+     * @param int $length
+     *
+     * @return bool
+     */
+    private function validateStringLength($str, $length)
+    {
+        if (function_exists('mb_strlen')) {
+            return (mb_strlen($str) <= $length);
+        }
+
+        return (strlen($str) <= $length);
     }
 
     /**
@@ -241,45 +302,6 @@ class HipChatHandler extends SocketHandler
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array $record
-     */
-    protected function write(array $record)
-    {
-        parent::write($record);
-        $this->finalizeWrite();
-    }
-
-    /**
-     * Finalizes the request by reading some bytes and then closing the socket
-     *
-     * If we do not read some but close the socket too early, hipchat sometimes
-     * drops the request entirely.
-     */
-    protected function finalizeWrite()
-    {
-        $res = $this->getResource();
-        if (is_resource($res)) {
-            @fread($res, 2048);
-        }
-        $this->closeSocket();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @param array $record
-     * @return string
-     */
-    protected function generateDataStream($record)
-    {
-        $content = $this->buildContent($record);
-
-        return $this->buildHeader($content) . $content;
-    }
-
-    /**
      * Builds the body of API call
      *
      * @param array $record
@@ -316,28 +338,6 @@ class HipChatHandler extends SocketHandler
         }
 
         return http_build_query($dataArray);
-    }
-
-    /**
-     * Assigns a color to each level of log records.
-     *
-     * @param int $level
-     * @return string
-     */
-    protected function getAlertColor($level)
-    {
-        switch (true) {
-            case $level >= Logger::ERROR:
-                return 'red';
-            case $level >= Logger::WARNING:
-                return 'yellow';
-            case $level >= Logger::INFO:
-                return 'green';
-            case $level == Logger::DEBUG:
-                return 'gray';
-            default:
-                return 'yellow';
-        }
     }
 
     /**

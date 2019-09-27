@@ -11,8 +11,12 @@
 
 namespace Symfony\Component\VarDumper\Dumper;
 
+use InvalidArgumentException;
 use Symfony\Component\VarDumper\Cloner\Cursor;
 use Symfony\Component\VarDumper\Cloner\Data;
+use function is_string;
+use function ord;
+use function strlen;
 
 /**
  * HtmlDumper dumps variables as HTML.
@@ -88,7 +92,7 @@ class HtmlDumper extends CliDumper
     public function setTheme(string $themeName)
     {
         if (!isset(static::$themes[$themeName])) {
-            throw new \InvalidArgumentException(sprintf('Theme "%s" does not exist in class "%s".', $themeName, static::class));
+            throw new InvalidArgumentException(sprintf('Theme "%s" does not exist in class "%s".', $themeName, static::class));
         }
 
         $this->setStyles(static::$themes[$themeName]);
@@ -166,6 +170,18 @@ class HtmlDumper extends CliDumper
             $this->line .= $eol;
             $this->dumpLine($cursor->depth);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function leaveHash(Cursor $cursor, $type, $class, $hasChild, $cut)
+    {
+        $this->dumpEllipsis($cursor, $hasChild, $cut);
+        if ($hasChild) {
+            $this->line .= '</samp>';
+        }
+        parent::leaveHash($cursor, $type, $class, $hasChild, 0);
     }
 
     /**
@@ -846,18 +862,6 @@ EOHTML
     /**
      * {@inheritdoc}
      */
-    public function leaveHash(Cursor $cursor, $type, $class, $hasChild, $cut)
-    {
-        $this->dumpEllipsis($cursor, $hasChild, $cut);
-        if ($hasChild) {
-            $this->line .= '</samp>';
-        }
-        parent::leaveHash($cursor, $type, $class, $hasChild, 0);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function style($style, $value, $attr = [])
     {
         if ('' === $value) {
@@ -905,10 +909,10 @@ EOHTML
             }
             $label = esc(substr($value, -$attr['ellipsis']));
             $style = str_replace(' title="', " title=\"$v\n", $style);
-            $v = sprintf('<span class=%s>%s</span>', $class, substr($v, 0, -\strlen($label)));
+            $v = sprintf('<span class=%s>%s</span>', $class, substr($v, 0, -strlen($label)));
 
             if (!empty($attr['ellipsis-tail'])) {
-                $tail = \strlen(esc(substr($value, -$attr['ellipsis'], $attr['ellipsis-tail'])));
+                $tail = strlen(esc(substr($value, -$attr['ellipsis'], $attr['ellipsis-tail'])));
                 $v .= sprintf('<span class=sf-dump-ellipsis>%s</span>%s', substr($label, 0, $tail), substr($label, $tail));
             } else {
                 $v .= $label;
@@ -931,7 +935,7 @@ EOHTML
                         $s .= '">';
                     }
 
-                    $s .= isset($map[$c[$i]]) ? $map[$c[$i]] : sprintf('\x%02X', \ord($c[$i]));
+                    $s .= isset($map[$c[$i]]) ? $map[$c[$i]] : sprintf('\x%02X', ord($c[$i]));
                 } while (isset($c[++$i]));
 
                 return $s . '</span>';
@@ -956,7 +960,7 @@ EOHTML
         $options = $this->extraDisplayOptions + $this->displayOptions;
 
         if ($fmt = $options['fileLinkFormat']) {
-            return \is_string($fmt) ? strtr($fmt, ['%f' => $file, '%l' => $line]) : $fmt->format($file, $line);
+            return is_string($fmt) ? strtr($fmt, ['%f' => $file, '%l' => $line]) : $fmt->format($file, $line);
         }
 
         return false;

@@ -206,16 +206,6 @@ class Assert
         }
     }
 
-    protected static function reportInvalidArgument($message)
-    {
-        throw new InvalidArgumentException($message);
-    }
-
-    protected static function typeToString($value)
-    {
-        return is_object($value) ? get_class($value) : gettype($value);
-    }
-
     public static function notEq($value, $value2, $message = '')
     {
         if ($value2 == $value) {
@@ -224,43 +214,6 @@ class Assert
                 static::valueToString($value2)
             ));
         }
-    }
-
-    protected static function valueToString($value)
-    {
-        if (null === $value) {
-            return 'null';
-        }
-
-        if (true === $value) {
-            return 'true';
-        }
-
-        if (false === $value) {
-            return 'false';
-        }
-
-        if (is_array($value)) {
-            return 'array';
-        }
-
-        if (is_object($value)) {
-            if (method_exists($value, '__toString')) {
-                return get_class($value) . ': ' . self::valueToString($value->__toString());
-            }
-
-            return get_class($value);
-        }
-
-        if (is_resource($value)) {
-            return 'resource';
-        }
-
-        if (is_string($value)) {
-            return '"' . $value . '"';
-        }
-
-        return (string)$value;
     }
 
     public static function integer($value, $message = '')
@@ -704,19 +657,6 @@ class Assert
                 static::valueToString($suffix)
             ));
         }
-    }
-
-    protected static function strlen($value)
-    {
-        if (!function_exists('mb_detect_encoding')) {
-            return strlen($value);
-        }
-
-        if (false === $encoding = mb_detect_encoding($value)) {
-            return strlen($value);
-        }
-
-        return mb_strwidth($value, $encoding);
     }
 
     public static function regex($value, $pattern, $message = '')
@@ -1183,5 +1123,65 @@ class Assert
                 static::typeToString($value)
             ));
         }
+    }
+
+    protected static function reportInvalidArgument($message)
+    {
+        throw new InvalidArgumentException($message);
+    }
+
+    protected static function typeToString($value)
+    {
+        return is_object($value) ? get_class($value) : gettype($value);
+    }
+
+    protected static function valueToString($value)
+    {
+        if (null === $value) {
+            return 'null';
+        }
+
+        if (true === $value) {
+            return 'true';
+        }
+
+        if (false === $value) {
+            return 'false';
+        }
+
+        if (is_array($value)) {
+            return 'array';
+        }
+
+        if (is_object($value)) {
+            if (method_exists($value, '__toString')) {
+                return get_class($value) . ': ' . self::valueToString($value->__toString());
+            }
+
+            return get_class($value);
+        }
+
+        if (is_resource($value)) {
+            return 'resource';
+        }
+
+        if (is_string($value)) {
+            return '"' . $value . '"';
+        }
+
+        return (string)$value;
+    }
+
+    protected static function strlen($value)
+    {
+        if (!function_exists('mb_detect_encoding')) {
+            return strlen($value);
+        }
+
+        if (false === $encoding = mb_detect_encoding($value)) {
+            return strlen($value);
+        }
+
+        return mb_strwidth($value, $encoding);
     }
 }

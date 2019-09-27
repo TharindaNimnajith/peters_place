@@ -99,6 +99,11 @@ class WildfireFormatter extends NormalizerFormatter
         );
     }
 
+    public function formatBatch(array $records)
+    {
+        throw new BadMethodCallException('Batch formatting does not make sense for the WildfireFormatter');
+    }
+
     protected function normalize($data, $depth = 0)
     {
         if (is_object($data) && !$data instanceof DateTime) {
@@ -106,10 +111,5 @@ class WildfireFormatter extends NormalizerFormatter
         }
 
         return parent::normalize($data, $depth);
-    }
-
-    public function formatBatch(array $records)
-    {
-        throw new BadMethodCallException('Batch formatting does not make sense for the WildfireFormatter');
     }
 }

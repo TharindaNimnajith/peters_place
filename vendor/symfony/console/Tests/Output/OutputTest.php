@@ -88,12 +88,6 @@ class OutputTest extends TestCase
         $this->assertEquals("foo\nbar\n", $output->output, '->writeln() can take an iterable of messages to output');
     }
 
-    private function generateMessages(): iterable
-    {
-        yield 'foo';
-        yield 'bar';
-    }
-
     /**
      * @dataProvider provideWriteArguments
      */
@@ -170,6 +164,12 @@ class OutputTest extends TestCase
             [Output::VERBOSITY_VERY_VERBOSE, '12345', '->write() in VERY_VERBOSE mode outputs anything below an explicit DEBUG verbosity'],
             [Output::VERBOSITY_DEBUG, '123456', '->write() in DEBUG mode outputs everything'],
         ];
+    }
+
+    private function generateMessages(): iterable
+    {
+        yield 'foo';
+        yield 'bar';
     }
 }
 

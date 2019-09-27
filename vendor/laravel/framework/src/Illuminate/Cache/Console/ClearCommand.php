@@ -81,6 +81,24 @@ class ClearCommand extends Command
     }
 
     /**
+     * Flush the real-time facades stored in the cache directory.
+     *
+     * @return void
+     */
+    public function flushFacades()
+    {
+        if (!$this->files->exists($storagePath = storage_path('framework/cache'))) {
+            return;
+        }
+
+        foreach ($this->files->files($storagePath) as $file) {
+            if (preg_match('/facade-.*\.php$/', $file)) {
+                $this->files->delete($file);
+            }
+        }
+    }
+
+    /**
      * Get the tags passed to the command.
      *
      * @return array
@@ -100,24 +118,6 @@ class ClearCommand extends Command
         $cache = $this->cache->store($this->argument('store'));
 
         return empty($this->tags()) ? $cache : $cache->tags($this->tags());
-    }
-
-    /**
-     * Flush the real-time facades stored in the cache directory.
-     *
-     * @return void
-     */
-    public function flushFacades()
-    {
-        if (!$this->files->exists($storagePath = storage_path('framework/cache'))) {
-            return;
-        }
-
-        foreach ($this->files->files($storagePath) as $file) {
-            if (preg_match('/facade-.*\.php$/', $file)) {
-                $this->files->delete($file);
-            }
-        }
     }
 
     /**

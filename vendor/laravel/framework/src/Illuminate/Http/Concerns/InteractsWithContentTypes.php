@@ -7,6 +7,24 @@ use Illuminate\Support\Str;
 trait InteractsWithContentTypes
 {
     /**
+     * Determine if the given content types match.
+     *
+     * @param string $actual
+     * @param string $type
+     * @return bool
+     */
+    public static function matchesType($actual, $type)
+    {
+        if ($actual === $type) {
+            return true;
+        }
+
+        $split = explode('/', $actual);
+
+        return isset($split[1]) && preg_match('#' . preg_quote($split[0], '#') . '/.+\+' . preg_quote($split[1], '#') . '#', $type);
+    }
+
+    /**
      * Determine if the request is sending JSON.
      *
      * @return bool
@@ -81,24 +99,6 @@ trait InteractsWithContentTypes
                 }
             }
         }
-    }
-
-    /**
-     * Determine if the given content types match.
-     *
-     * @param string $actual
-     * @param string $type
-     * @return bool
-     */
-    public static function matchesType($actual, $type)
-    {
-        if ($actual === $type) {
-            return true;
-        }
-
-        $split = explode('/', $actual);
-
-        return isset($split[1]) && preg_match('#' . preg_quote($split[0], '#') . '/.+\+' . preg_quote($split[1], '#') . '#', $type);
     }
 
     /**

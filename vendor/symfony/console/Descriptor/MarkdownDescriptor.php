@@ -18,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use function count;
 
 /**
  * Markdown descriptor.
@@ -70,19 +71,6 @@ class MarkdownDescriptor extends Descriptor
         }
     }
 
-    private function getApplicationTitle(Application $application)
-    {
-        if ('UNKNOWN' !== $application->getName()) {
-            if ('UNKNOWN' !== $application->getVersion()) {
-                return sprintf('%s %s', $application->getName(), $application->getVersion());
-            }
-
-            return $application->getName();
-        }
-
-        return 'Console Tool';
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -125,7 +113,7 @@ class MarkdownDescriptor extends Descriptor
      */
     protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
-        if ($showArguments = \count($definition->getArguments()) > 0) {
+        if ($showArguments = count($definition->getArguments()) > 0) {
             $this->write('### Arguments');
             foreach ($definition->getArguments() as $argument) {
                 $this->write("\n\n");
@@ -133,7 +121,7 @@ class MarkdownDescriptor extends Descriptor
             }
         }
 
-        if (\count($definition->getOptions()) > 0) {
+        if (count($definition->getOptions()) > 0) {
             if ($showArguments) {
                 $this->write("\n\n");
             }
@@ -178,5 +166,18 @@ class MarkdownDescriptor extends Descriptor
             . '* Is multiple: ' . ($option->isArray() ? 'yes' : 'no') . "\n"
             . '* Default: `' . str_replace("\n", '', var_export($option->getDefault(), true)) . '`'
         );
+    }
+
+    private function getApplicationTitle(Application $application)
+    {
+        if ('UNKNOWN' !== $application->getName()) {
+            if ('UNKNOWN' !== $application->getVersion()) {
+                return sprintf('%s %s', $application->getName(), $application->getVersion());
+            }
+
+            return $application->getName();
+        }
+
+        return 'Console Tool';
     }
 }

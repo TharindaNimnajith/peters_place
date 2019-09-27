@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <style type="text/css">
         .center {
@@ -13,7 +14,9 @@
             border-radius: 50%;
         }
 
-        table, td, th {
+        table,
+        td,
+        th {
             border: 1px solid #ddd;
             text-align: center;
         }
@@ -23,11 +26,14 @@
             width: 100%;
         }
 
-        th, td {
+        th,
+        td {
             padding: 15px;
         }
+
     </style>
 </head>
+
 <body>
 <div class="center">
     <a href="{{ asset ('uploads/appsetting/'.$row->image) }}"> Profile Picture</a>

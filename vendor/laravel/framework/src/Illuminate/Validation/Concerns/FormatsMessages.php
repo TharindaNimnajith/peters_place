@@ -39,22 +39,6 @@ trait FormatsMessages
     }
 
     /**
-     * Replace the :attribute placeholder in the given message.
-     *
-     * @param string $message
-     * @param string $value
-     * @return string
-     */
-    protected function replaceAttributePlaceholder($message, $value)
-    {
-        return str_replace(
-            [':attribute', ':ATTRIBUTE', ':Attribute'],
-            [$value, Str::upper($value), Str::ucfirst($value)],
-            $message
-        );
-    }
-
-    /**
      * Get the displayable name of the attribute.
      *
      * @param string $attribute
@@ -91,6 +75,44 @@ trait FormatsMessages
         }
 
         return str_replace('_', ' ', Str::snake($attribute));
+    }
+
+    /**
+     * Get the displayable name of the value.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getDisplayableValue($attribute, $value)
+    {
+        if (isset($this->customValues[$attribute][$value])) {
+            return $this->customValues[$attribute][$value];
+        }
+
+        $key = "validation.values.{$attribute}.{$value}";
+
+        if (($line = $this->translator->trans($key)) !== $key) {
+            return $line;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Replace the :attribute placeholder in the given message.
+     *
+     * @param string $message
+     * @param string $value
+     * @return string
+     */
+    protected function replaceAttributePlaceholder($message, $value)
+    {
+        return str_replace(
+            [':attribute', ':ATTRIBUTE', ':Attribute'],
+            [$value, Str::upper($value), Str::ucfirst($value)],
+            $message
+        );
     }
 
     /**
@@ -159,28 +181,6 @@ trait FormatsMessages
         [$class, $method] = Str::parseCallback($callback, 'replace');
 
         return call_user_func_array([$this->container->make($class), $method], array_slice(func_get_args(), 1));
-    }
-
-    /**
-     * Get the displayable name of the value.
-     *
-     * @param string $attribute
-     * @param mixed $value
-     * @return string
-     */
-    public function getDisplayableValue($attribute, $value)
-    {
-        if (isset($this->customValues[$attribute][$value])) {
-            return $this->customValues[$attribute][$value];
-        }
-
-        $key = "validation.values.{$attribute}.{$value}";
-
-        if (($line = $this->translator->trans($key)) !== $key) {
-            return $line;
-        }
-
-        return $value;
     }
 
     /**

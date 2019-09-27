@@ -11,33 +11,18 @@
 
 namespace Symfony\Component\Console;
 
+use function function_exists;
+use function is_resource;
+use const DIRECTORY_SEPARATOR;
+
 class Terminal
 {
     private static $width;
     private static $height;
 
-    /**
-     * Gets the terminal width.
-     *
-     * @return int
-     */
-    public function getWidth()
-    {
-        $width = getenv('COLUMNS');
-        if (false !== $width) {
-            return (int)trim($width);
-        }
-
-        if (null === self::$width) {
-            self::initDimensions();
-        }
-
-        return self::$width ?: 80;
-    }
-
     private static function initDimensions()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             if (preg_match('/^(\d+)x(\d+)(?: \((\d+)x(\d+)\))?$/', trim(getenv('ANSICON')), $matches)) {
                 // extract [w, H] from "wxh (WxH)"
                 // or [w, h] from "wxh"
@@ -68,7 +53,7 @@ class Terminal
      */
     private static function getConsoleMode()
     {
-        if (!\function_exists('proc_open')) {
+        if (!function_exists('proc_open')) {
             return;
         }
 
@@ -77,7 +62,7 @@ class Terminal
             2 => ['pipe', 'w'],
         ];
         $process = proc_open('mode CON', $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
-        if (\is_resource($process)) {
+        if (is_resource($process)) {
             $info = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
             fclose($pipes[2]);
@@ -96,7 +81,7 @@ class Terminal
      */
     private static function getSttyColumns()
     {
-        if (!\function_exists('proc_open')) {
+        if (!function_exists('proc_open')) {
             return;
         }
 
@@ -106,7 +91,7 @@ class Terminal
         ];
 
         $process = proc_open('stty -a | grep columns', $descriptorspec, $pipes, null, null, ['suppress_errors' => true]);
-        if (\is_resource($process)) {
+        if (is_resource($process)) {
             $info = stream_get_contents($pipes[1]);
             fclose($pipes[1]);
             fclose($pipes[2]);
@@ -114,6 +99,25 @@ class Terminal
 
             return $info;
         }
+    }
+
+    /**
+     * Gets the terminal width.
+     *
+     * @return int
+     */
+    public function getWidth()
+    {
+        $width = getenv('COLUMNS');
+        if (false !== $width) {
+            return (int)trim($width);
+        }
+
+        if (null === self::$width) {
+            self::initDimensions();
+        }
+
+        return self::$width ?: 80;
     }
 
     /**

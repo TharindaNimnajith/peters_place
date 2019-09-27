@@ -29,18 +29,6 @@ class DirectoryLoaderTest extends AbstractAnnotationLoaderTest
         $this->verifyCollection($collection);
     }
 
-    private function verifyCollection(RouteCollection $collection)
-    {
-        $routes = $collection->all();
-
-        $this->assertCount(3, $routes, 'Three routes are loaded');
-        $this->assertContainsOnly('Symfony\Component\Routing\Route', $routes);
-
-        for ($i = 1; $i <= 3; ++$i) {
-            $this->assertSame('/route/' . $i, $routes['route' . $i]->getPath());
-        }
-    }
-
     public function testImportDirectory()
     {
         $collection = $this->loader->load(__DIR__ . '/../Fixtures/directory_import', 'directory');
@@ -70,5 +58,17 @@ class DirectoryLoaderTest extends AbstractAnnotationLoaderTest
             $this->loader,
         ]);
         $this->loader->setResolver($resolver);
+    }
+
+    private function verifyCollection(RouteCollection $collection)
+    {
+        $routes = $collection->all();
+
+        $this->assertCount(3, $routes, 'Three routes are loaded');
+        $this->assertContainsOnly('Symfony\Component\Routing\Route', $routes);
+
+        for ($i = 1; $i <= 3; ++$i) {
+            $this->assertSame('/route/' . $i, $routes['route' . $i]->getPath());
+        }
     }
 }

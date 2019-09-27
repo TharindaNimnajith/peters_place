@@ -53,6 +53,40 @@ class Connector
     }
 
     /**
+     * Get the PDO options based on the configuration.
+     *
+     * @param array $config
+     * @return array
+     */
+    public function getOptions(array $config)
+    {
+        $options = $config['options'] ?? [];
+
+        return array_diff_key($this->options, $options) + $options;
+    }
+
+    /**
+     * Get the default PDO connection options.
+     *
+     * @return array
+     */
+    public function getDefaultOptions()
+    {
+        return $this->options;
+    }
+
+    /**
+     * Set the default PDO connection options.
+     *
+     * @param array $options
+     * @return void
+     */
+    public function setDefaultOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    /**
      * Create a new PDO connection instance.
      *
      * @param string $dsn
@@ -101,39 +135,5 @@ class Connector
         }
 
         throw $e;
-    }
-
-    /**
-     * Get the PDO options based on the configuration.
-     *
-     * @param array $config
-     * @return array
-     */
-    public function getOptions(array $config)
-    {
-        $options = $config['options'] ?? [];
-
-        return array_diff_key($this->options, $options) + $options;
-    }
-
-    /**
-     * Get the default PDO connection options.
-     *
-     * @return array
-     */
-    public function getDefaultOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * Set the default PDO connection options.
-     *
-     * @param array $options
-     * @return void
-     */
-    public function setDefaultOptions(array $options)
-    {
-        $this->options = $options;
     }
 }

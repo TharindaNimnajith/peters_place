@@ -1,18 +1,14 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
+use PHPUnit\Framework\TestCase;
 
-class Swift_Mime_Headers_IdentificationHeaderTest extends \PHPUnit\Framework\TestCase
+class Swift_Mime_Headers_IdentificationHeaderTest extends TestCase
 {
     public function testTypeIsIdHeader()
     {
         $header = $this->getHeader('Message-ID');
         $this->assertEquals(Swift_Mime_Header::TYPE_ID, $header->getFieldType());
-    }
-
-    private function getHeader($name)
-    {
-        return new Swift_Mime_Headers_IdentificationHeader($name, new EmailValidator(), new Swift_AddressEncoder_IdnAddressEncoder());
     }
 
     public function testValueMatchesMsgIdSpec()
@@ -105,7 +101,7 @@ class Swift_Mime_Headers_IdentificationHeaderTest extends \PHPUnit\Framework\Tes
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedMessageException "a b c" is not valid id-left
      */
     public function testInvalidIdLeftThrowsException()
@@ -147,7 +143,7 @@ class Swift_Mime_Headers_IdentificationHeaderTest extends \PHPUnit\Framework\Tes
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedMessageException "b c d" is not valid id-right
      */
     public function testInvalidIdRightThrowsException()
@@ -157,7 +153,7 @@ class Swift_Mime_Headers_IdentificationHeaderTest extends \PHPUnit\Framework\Tes
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Exception
      * @expectedMessageException "abc" is does not contain @
      */
     public function testMissingAtSignThrowsException()
@@ -188,5 +184,10 @@ class Swift_Mime_Headers_IdentificationHeaderTest extends \PHPUnit\Framework\Tes
         $header = $this->getHeader('References');
         $header->setIds(['a@b', 'x@y']);
         $this->assertEquals('References: <a@b> <x@y>' . "\r\n", $header->toString());
+    }
+
+    private function getHeader($name)
+    {
+        return new Swift_Mime_Headers_IdentificationHeader($name, new EmailValidator(), new Swift_AddressEncoder_IdnAddressEncoder());
     }
 }

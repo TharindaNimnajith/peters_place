@@ -70,18 +70,6 @@ EOF
         $this->fail();
     }
 
-    /**
-     * Removes spaces in front of newlines
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    private function trimnl($string)
-    {
-        return preg_replace('/[ ]*\n/', "\n", $string);
-    }
-
     public function isEqualProvider(): array
     {
         $a = new stdClass;
@@ -325,5 +313,17 @@ Failed asserting that two objects are equal.
 EOF
             ],
         ];
+    }
+
+    /**
+     * Removes spaces in front of newlines
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    private function trimnl($string)
+    {
+        return preg_replace('/[ ]*\n/', "\n", $string);
     }
 }

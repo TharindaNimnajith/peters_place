@@ -136,6 +136,16 @@ class Person extends \Faker\Provider\Person
         return static::randomElement(static::$suffix);
     }
 
+    public static function lastNameMale()
+    {
+        return static::randomElement(static::$lastNameMale);
+    }
+
+    public static function lastNameFemale()
+    {
+        return static::randomElement(static::$lastNameFemale);
+    }
+
     public function title($gender = null)
     {
         return static::titleMale();
@@ -154,15 +164,5 @@ class Person extends \Faker\Provider\Person
         }
 
         return $this->generator->parse(static::randomElement(static::$lastNameFormat));
-    }
-
-    public static function lastNameMale()
-    {
-        return static::randomElement(static::$lastNameMale);
-    }
-
-    public static function lastNameFemale()
-    {
-        return static::randomElement(static::$lastNameFemale);
     }
 }

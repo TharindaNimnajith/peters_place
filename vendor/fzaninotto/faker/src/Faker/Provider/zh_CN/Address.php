@@ -122,6 +122,11 @@ class Address extends \Faker\Provider\Address
         return $prefix . mt_rand(10, 88) . $suffix;
     }
 
+    public static function area()
+    {
+        return static::randomElement(static::$areas);
+    }
+
     public function state()
     {
         return static::randomElement(static::$states);
@@ -140,10 +145,5 @@ class Address extends \Faker\Provider\Address
     public function city()
     {
         return static::randomElement(static::$cites);
-    }
-
-    public static function area()
-    {
-        return static::randomElement(static::$areas);
     }
 }

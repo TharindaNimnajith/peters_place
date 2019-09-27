@@ -78,16 +78,6 @@ class SignalHandlerTest extends TestCase
         $this->assertTrue($handler->hasInfoThatContains('SIGURG'));
     }
 
-    private function setSignalHandler($signo, $handler = SIG_DFL)
-    {
-        if (function_exists('pcntl_signal_get_handler')) {
-            $this->signalHandlers[$signo] = pcntl_signal_get_handler($signo);
-        } else {
-            $this->signalHandlers[$signo] = SIG_DFL;
-        }
-        $this->assertTrue(pcntl_signal($signo, $handler));
-    }
-
     /**
      * @dataProvider defaultPreviousProvider
      * @depends      testRegisterSignalHandler
@@ -283,6 +273,16 @@ class SignalHandlerTest extends TestCase
                 pcntl_signal($signo, $handler);
             }
         }
+    }
+
+    private function setSignalHandler($signo, $handler = SIG_DFL)
+    {
+        if (function_exists('pcntl_signal_get_handler')) {
+            $this->signalHandlers[$signo] = pcntl_signal_get_handler($signo);
+        } else {
+            $this->signalHandlers[$signo] = SIG_DFL;
+        }
+        $this->assertTrue(pcntl_signal($signo, $handler));
     }
 
 }

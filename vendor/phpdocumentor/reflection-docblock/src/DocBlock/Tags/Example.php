@@ -124,18 +124,6 @@ final class Example extends BaseTag
     }
 
     /**
-     * Returns true if the provided URI is relative or contains a complete scheme (and thus is absolute).
-     *
-     * @param string $uri
-     *
-     * @return bool
-     */
-    private function isUriRelative($uri)
-    {
-        return false === strpos($uri, ':');
-    }
-
-    /**
      * Returns the file path.
      *
      * @return string Path to a file to use as an example.
@@ -170,5 +158,17 @@ final class Example extends BaseTag
     public function getLineCount()
     {
         return $this->lineCount;
+    }
+
+    /**
+     * Returns true if the provided URI is relative or contains a complete scheme (and thus is absolute).
+     *
+     * @param string $uri
+     *
+     * @return bool
+     */
+    private function isUriRelative($uri)
+    {
+        return false === strpos($uri, ':');
     }
 }

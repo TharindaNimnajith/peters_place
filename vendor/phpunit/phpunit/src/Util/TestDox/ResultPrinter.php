@@ -117,13 +117,6 @@ abstract class ResultPrinter extends Printer implements TestListener
     }
 
     /**
-     * Handler for 'start run' event.
-     */
-    protected function startRun(): void
-    {
-    }
-
-    /**
      * Flush buffer and close output.
      */
     public function flush(): void
@@ -132,36 +125,6 @@ abstract class ResultPrinter extends Printer implements TestListener
         $this->endRun();
 
         parent::flush();
-    }
-
-    protected function doEndClass(): void
-    {
-        foreach ($this->tests as $test) {
-            $this->onTest($test[0], $test[1] === BaseTestRunner::STATUS_PASSED);
-        }
-
-        $this->endClass($this->testClass);
-    }
-
-    /**
-     * Handler for 'on test' event.
-     */
-    protected function onTest($name, bool $success = true): void
-    {
-    }
-
-    /**
-     * Handler for 'end class' event.
-     */
-    protected function endClass(string $name): void
-    {
-    }
-
-    /**
-     * Handler for 'end run' event.
-     */
-    protected function endRun(): void
-    {
     }
 
     /**
@@ -175,39 +138,6 @@ abstract class ResultPrinter extends Printer implements TestListener
 
         $this->testStatus = BaseTestRunner::STATUS_ERROR;
         $this->failed++;
-    }
-
-    private function isOfInterest(Test $test): bool
-    {
-        if (!$test instanceof TestCase) {
-            return false;
-        }
-
-        if ($test instanceof WarningTestCase) {
-            return false;
-        }
-
-        if (!empty($this->groups)) {
-            foreach ($test->getGroups() as $group) {
-                if (in_array($group, $this->groups)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        if (!empty($this->excludeGroups)) {
-            foreach ($test->getGroups() as $group) {
-                if (in_array($group, $this->excludeGroups)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        return true;
     }
 
     /**
@@ -322,13 +252,6 @@ abstract class ResultPrinter extends Printer implements TestListener
     }
 
     /**
-     * Handler for 'start class' event.
-     */
-    protected function startClass(string $name): void
-    {
-    }
-
-    /**
      * A test ended.
      */
     public function endTest(Test $test, float $time): void
@@ -341,5 +264,82 @@ abstract class ResultPrinter extends Printer implements TestListener
 
         $this->currentTestClassPrettified = null;
         $this->currentTestMethodPrettified = null;
+    }
+
+    /**
+     * Handler for 'start run' event.
+     */
+    protected function startRun(): void
+    {
+    }
+
+    protected function doEndClass(): void
+    {
+        foreach ($this->tests as $test) {
+            $this->onTest($test[0], $test[1] === BaseTestRunner::STATUS_PASSED);
+        }
+
+        $this->endClass($this->testClass);
+    }
+
+    /**
+     * Handler for 'on test' event.
+     */
+    protected function onTest($name, bool $success = true): void
+    {
+    }
+
+    /**
+     * Handler for 'end class' event.
+     */
+    protected function endClass(string $name): void
+    {
+    }
+
+    /**
+     * Handler for 'end run' event.
+     */
+    protected function endRun(): void
+    {
+    }
+
+    /**
+     * Handler for 'start class' event.
+     */
+    protected function startClass(string $name): void
+    {
+    }
+
+    private function isOfInterest(Test $test): bool
+    {
+        if (!$test instanceof TestCase) {
+            return false;
+        }
+
+        if ($test instanceof WarningTestCase) {
+            return false;
+        }
+
+        if (!empty($this->groups)) {
+            foreach ($test->getGroups() as $group) {
+                if (in_array($group, $this->groups)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (!empty($this->excludeGroups)) {
+            foreach ($test->getGroups() as $group) {
+                if (in_array($group, $this->excludeGroups)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return true;
     }
 }

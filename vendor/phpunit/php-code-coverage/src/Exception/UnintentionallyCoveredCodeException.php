@@ -27,6 +27,11 @@ final class UnintentionallyCoveredCodeException extends RuntimeException
         parent::__construct($this->toString());
     }
 
+    public function getUnintentionallyCoveredUnits(): array
+    {
+        return $this->unintentionallyCoveredUnits;
+    }
+
     private function toString(): string
     {
         $message = '';
@@ -36,10 +41,5 @@ final class UnintentionallyCoveredCodeException extends RuntimeException
         }
 
         return $message;
-    }
-
-    public function getUnintentionallyCoveredUnits(): array
-    {
-        return $this->unintentionallyCoveredUnits;
     }
 }

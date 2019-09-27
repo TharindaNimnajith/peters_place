@@ -100,6 +100,45 @@ abstract class AbstractMatcher
     }
 
     /**
+     * Check whether $token type is $which.
+     *
+     * @param string $which A PHP token type
+     * @param mixed $token A PHP token (see token_get_all)
+     *
+     * @return bool
+     */
+    public static function tokenIs($token, $which)
+    {
+        if (!is_array($token)) {
+            return false;
+        }
+
+        return token_name($token[0]) === $which;
+    }
+
+    /**
+     * Check whether $token type is present in $coll.
+     *
+     * @param array $coll A list of token types
+     * @param mixed $token A PHP token (see token_get_all)
+     *
+     * @return bool
+     */
+    public static function hasToken(array $coll, $token)
+    {
+        if (!is_array($token)) {
+            return false;
+        }
+
+        return in_array(token_name($token[0]), $coll);
+    }
+
+    public static function needCompleteClass($token)
+    {
+        return in_array($token[1], ['doc', 'ls', 'show']);
+    }
+
+    /**
      * Check whether this matcher can provide completions for $tokens.
      *
      * @param array $tokens Tokenized readline input
@@ -140,23 +179,6 @@ abstract class AbstractMatcher
     }
 
     /**
-     * Check whether $token type is $which.
-     *
-     * @param string $which A PHP token type
-     * @param mixed $token A PHP token (see token_get_all)
-     *
-     * @return bool
-     */
-    public static function tokenIs($token, $which)
-    {
-        if (!is_array($token)) {
-            return false;
-        }
-
-        return token_name($token[0]) === $which;
-    }
-
-    /**
      * Get current namespace and class (if any) from readline input.
      *
      * @param array $tokens Tokenized readline input (see token_get_all)
@@ -178,27 +200,5 @@ abstract class AbstractMatcher
         }
 
         return $class;
-    }
-
-    /**
-     * Check whether $token type is present in $coll.
-     *
-     * @param array $coll A list of token types
-     * @param mixed $token A PHP token (see token_get_all)
-     *
-     * @return bool
-     */
-    public static function hasToken(array $coll, $token)
-    {
-        if (!is_array($token)) {
-            return false;
-        }
-
-        return in_array(token_name($token[0]), $coll);
-    }
-
-    public static function needCompleteClass($token)
-    {
-        return in_array($token[1], ['doc', 'ls', 'show']);
     }
 }

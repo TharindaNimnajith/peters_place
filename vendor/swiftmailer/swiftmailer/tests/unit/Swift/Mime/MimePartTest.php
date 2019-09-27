@@ -13,13 +13,6 @@ class Swift_Mime_MimePartTest extends Swift_Mime_AbstractMimeEntityTest
         );
     }
 
-    protected function createMimePart($headers, $encoder, $cache)
-    {
-        $idGenerator = new Swift_Mime_IdGenerator('example.com');
-
-        return new Swift_Mime_MimePart($headers, $encoder, $cache, $idGenerator);
-    }
-
     public function testCharsetIsReturnedFromHeader()
     {
         /* -- RFC 2046, 4.1.2.
@@ -145,14 +138,9 @@ class Swift_Mime_MimePartTest extends Swift_Mime_AbstractMimeEntityTest
         // Initialize the expectation here because we only care about what happens in setCharset()
         $cache->shouldReceive('clearKey')
             ->once()
-            ->with(\Mockery::any(), 'body');
+            ->with(Mockery::any(), 'body');
 
         $entity->setCharset('iso-2022');
-    }
-
-    protected function createEntity($headers, $encoder, $cache)
-    {
-        return $this->createMimePart($headers, $encoder, $cache);
     }
 
     public function testFormatIsReturnedFromHeader()
@@ -197,8 +185,6 @@ class Swift_Mime_MimePartTest extends Swift_Mime_AbstractMimeEntityTest
         $this->assertFalse($part->getDelSp());
     }
 
-    //abstract
-
     public function testDelSpIsSetInHeader()
     {
         $cType = $this->createHeader('Content-Type', 'text/plain', [], false);
@@ -231,5 +217,19 @@ class Swift_Mime_MimePartTest extends Swift_Mime_AbstractMimeEntityTest
                 ->setFormat('flowed')
                 ->setDelSp(true)
         );
+    }
+
+    //abstract
+
+    protected function createMimePart($headers, $encoder, $cache)
+    {
+        $idGenerator = new Swift_Mime_IdGenerator('example.com');
+
+        return new Swift_Mime_MimePart($headers, $encoder, $cache, $idGenerator);
+    }
+
+    protected function createEntity($headers, $encoder, $cache)
+    {
+        return $this->createMimePart($headers, $encoder, $cache);
     }
 }

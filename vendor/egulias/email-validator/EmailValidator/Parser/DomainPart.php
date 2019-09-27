@@ -64,36 +64,52 @@ class DomainPart extends Parser
         $this->domainPart = $domain;
     }
 
-    private function performDomainStartChecks()
+    public function checkIPV6Tag($addressLiteral, $maxGroups = 8)
     {
-        $this->checkInvalidTokensAfterAT();
-        $this->checkEmptyDomain();
+        $prev = $this->lexer->getPrevious();
+        if ($prev['type'] === EmailLexer::S_COLON) {
+            $this->warnings[IPV6ColonEnd::CODE] = new IPV6ColonEnd();
+        }
 
-        if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
-            $this->warnings[DeprecatedComment::CODE] = new DeprecatedComment();
-            $this->parseDomainComments();
+        $IPv6 = substr($addressLiteral, 5);
+        //Daniel Marschall's new IPv6 testing strategy
+        $matchesIP = explode(':', $IPv6);
+        $groupCount = count($matchesIP);
+        $colons = strpos($IPv6, '::');
+
+        if (count(preg_grep('/^[0-9A-Fa-f]{0,4}$/', $matchesIP, PREG_GREP_INVERT)) !== 0) {
+            $this->warnings[IPV6BadChar::CODE] = new IPV6BadChar();
+        }
+
+        if ($colons === false) {
+            // We need exactly the right number of groups
+            if ($groupCount !== $maxGroups) {
+                $this->warnings[IPV6GroupCount::CODE] = new IPV6GroupCount();
+            }
+            return;
+        }
+
+        if ($colons !== strrpos($IPv6, '::')) {
+            $this->warnings[IPV6DoubleColon::CODE] = new IPV6DoubleColon();
+            return;
+        }
+
+        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
+            // RFC 4291 allows :: at the start or end of an address
+            //with 7 other groups in addition
+            ++$maxGroups;
+        }
+
+        if ($groupCount > $maxGroups) {
+            $this->warnings[IPV6MaxGroups::CODE] = new IPV6MaxGroups();
+        } elseif ($groupCount === $maxGroups) {
+            $this->warnings[IPV6Deprecated::CODE] = new IPV6Deprecated();
         }
     }
 
-    private function checkInvalidTokensAfterAT()
+    public function getDomainPart()
     {
-        if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
-            throw new DotAtStart();
-        }
-        if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN) {
-            throw new DomainHyphened();
-        }
-    }
-
-    private function checkEmptyDomain()
-    {
-        $thereIsNoDomain = $this->lexer->token['type'] === EmailLexer::S_EMPTY ||
-            ($this->lexer->token['type'] === EmailLexer::S_SP &&
-                !$this->lexer->isNextToken(EmailLexer::GENERIC));
-
-        if ($thereIsNoDomain) {
-            throw new NoDomainPart();
-        }
+        return $this->domainPart;
     }
 
     protected function parseDomainComments()
@@ -154,14 +170,6 @@ class DomainPart extends Parser
         } while (null !== $this->lexer->token['type']);
 
         return $domain;
-    }
-
-    private function checkNotAllowedChars($token)
-    {
-        $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH => true];
-        if (isset($notAllowed[$token['type']])) {
-            throw new CharNotAllowed();
-        }
     }
 
     protected function checkDomainPartExceptions($prev)
@@ -320,49 +328,6 @@ class DomainPart extends Parser
         return $addressLiteral;
     }
 
-    public function checkIPV6Tag($addressLiteral, $maxGroups = 8)
-    {
-        $prev = $this->lexer->getPrevious();
-        if ($prev['type'] === EmailLexer::S_COLON) {
-            $this->warnings[IPV6ColonEnd::CODE] = new IPV6ColonEnd();
-        }
-
-        $IPv6 = substr($addressLiteral, 5);
-        //Daniel Marschall's new IPv6 testing strategy
-        $matchesIP = explode(':', $IPv6);
-        $groupCount = count($matchesIP);
-        $colons = strpos($IPv6, '::');
-
-        if (count(preg_grep('/^[0-9A-Fa-f]{0,4}$/', $matchesIP, PREG_GREP_INVERT)) !== 0) {
-            $this->warnings[IPV6BadChar::CODE] = new IPV6BadChar();
-        }
-
-        if ($colons === false) {
-            // We need exactly the right number of groups
-            if ($groupCount !== $maxGroups) {
-                $this->warnings[IPV6GroupCount::CODE] = new IPV6GroupCount();
-            }
-            return;
-        }
-
-        if ($colons !== strrpos($IPv6, '::')) {
-            $this->warnings[IPV6DoubleColon::CODE] = new IPV6DoubleColon();
-            return;
-        }
-
-        if ($colons === 0 || $colons === (strlen($IPv6) - 2)) {
-            // RFC 4291 allows :: at the start or end of an address
-            //with 7 other groups in addition
-            ++$maxGroups;
-        }
-
-        if ($groupCount > $maxGroups) {
-            $this->warnings[IPV6MaxGroups::CODE] = new IPV6MaxGroups();
-        } elseif ($groupCount === $maxGroups) {
-            $this->warnings[IPV6Deprecated::CODE] = new IPV6Deprecated();
-        }
-    }
-
     protected function checkLabelLength($prev)
     {
         if ($this->lexer->token['type'] === EmailLexer::S_DOT &&
@@ -373,15 +338,50 @@ class DomainPart extends Parser
         }
     }
 
-    public function getDomainPart()
-    {
-        return $this->domainPart;
-    }
-
     protected function addTLDWarnings()
     {
         if ($this->warnings[DomainLiteral::CODE]) {
             $this->warnings[TLD::CODE] = new TLD();
+        }
+    }
+
+    private function performDomainStartChecks()
+    {
+        $this->checkInvalidTokensAfterAT();
+        $this->checkEmptyDomain();
+
+        if ($this->lexer->token['type'] === EmailLexer::S_OPENPARENTHESIS) {
+            $this->warnings[DeprecatedComment::CODE] = new DeprecatedComment();
+            $this->parseDomainComments();
+        }
+    }
+
+    private function checkInvalidTokensAfterAT()
+    {
+        if ($this->lexer->token['type'] === EmailLexer::S_DOT) {
+            throw new DotAtStart();
+        }
+        if ($this->lexer->token['type'] === EmailLexer::S_HYPHEN) {
+            throw new DomainHyphened();
+        }
+    }
+
+    private function checkEmptyDomain()
+    {
+        $thereIsNoDomain = $this->lexer->token['type'] === EmailLexer::S_EMPTY ||
+            ($this->lexer->token['type'] === EmailLexer::S_SP &&
+                !$this->lexer->isNextToken(EmailLexer::GENERIC));
+
+        if ($thereIsNoDomain) {
+            throw new NoDomainPart();
+        }
+    }
+
+    private function checkNotAllowedChars($token)
+    {
+        $notAllowed = [EmailLexer::S_BACKSLASH => true, EmailLexer::S_SLASH => true];
+        if (isset($notAllowed[$token['type']])) {
+            throw new CharNotAllowed();
         }
     }
 }

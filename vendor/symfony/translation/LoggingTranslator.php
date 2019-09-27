@@ -16,6 +16,10 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use TypeError;
+use function get_class;
+use function gettype;
+use function is_object;
 
 /**
  * @author Abdellatif Ait boudad <a.aitboudad@gmail.com>
@@ -36,10 +40,10 @@ class LoggingTranslator implements TranslatorInterface, LegacyTranslatorInterfac
     public function __construct($translator, LoggerInterface $logger)
     {
         if (!$translator instanceof LegacyTranslatorInterface && !$translator instanceof TranslatorInterface) {
-            throw new \TypeError(sprintf('Argument 1 passed to %s() must be an instance of %s, %s given.', __METHOD__, TranslatorInterface::class, \is_object($translator) ? \get_class($translator) : \gettype($translator)));
+            throw new TypeError(sprintf('Argument 1 passed to %s() must be an instance of %s, %s given.', __METHOD__, TranslatorInterface::class, is_object($translator) ? get_class($translator) : gettype($translator)));
         }
         if (!$translator instanceof TranslatorBagInterface || !$translator instanceof LocaleAwareInterface) {
-            throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface, TranslatorBagInterface and LocaleAwareInterface.', \get_class($translator)));
+            throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface, TranslatorBagInterface and LocaleAwareInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
@@ -55,32 +59,6 @@ class LoggingTranslator implements TranslatorInterface, LegacyTranslatorInterfac
         $this->log($id, $domain, $locale);
 
         return $trans;
-    }
-
-    /**
-     * Logs for missing translations.
-     *
-     * @param string $id
-     * @param string|null $domain
-     * @param string|null $locale
-     */
-    private function log($id, $domain, $locale)
-    {
-        if (null === $domain) {
-            $domain = 'messages';
-        }
-
-        $id = (string)$id;
-        $catalogue = $this->translator->getCatalogue($locale);
-        if ($catalogue->defines($id, $domain)) {
-            return;
-        }
-
-        if ($catalogue->has($id, $domain)) {
-            $this->logger->debug('Translation use fallback catalogue.', ['id' => $id, 'domain' => $domain, 'locale' => $catalogue->getLocale()]);
-        } else {
-            $this->logger->warning('Translation not found.', ['id' => $id, 'domain' => $domain, 'locale' => $catalogue->getLocale()]);
-        }
     }
 
     /**
@@ -153,5 +131,31 @@ class LoggingTranslator implements TranslatorInterface, LegacyTranslatorInterfac
     public function __call($method, $args)
     {
         return $this->translator->{$method}(...$args);
+    }
+
+    /**
+     * Logs for missing translations.
+     *
+     * @param string $id
+     * @param string|null $domain
+     * @param string|null $locale
+     */
+    private function log($id, $domain, $locale)
+    {
+        if (null === $domain) {
+            $domain = 'messages';
+        }
+
+        $id = (string)$id;
+        $catalogue = $this->translator->getCatalogue($locale);
+        if ($catalogue->defines($id, $domain)) {
+            return;
+        }
+
+        if ($catalogue->has($id, $domain)) {
+            $this->logger->debug('Translation use fallback catalogue.', ['id' => $id, 'domain' => $domain, 'locale' => $catalogue->getLocale()]);
+        } else {
+            $this->logger->warning('Translation not found.', ['id' => $id, 'domain' => $domain, 'locale' => $catalogue->getLocale()]);
+        }
     }
 }

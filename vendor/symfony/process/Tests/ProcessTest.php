@@ -11,14 +11,25 @@
 
 namespace Symfony\Component\Process\Tests;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
+use ReflectionProperty;
+use Symfony\Component\Process\Exception\InvalidArgumentException;
 use Symfony\Component\Process\Exception\LogicException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Exception\ProcessSignaledException;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\RuntimeException;
 use Symfony\Component\Process\InputStream;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Pipes\PipesInterface;
 use Symfony\Component\Process\Process;
+use function function_exists;
+use function is_string;
+use function strlen;
+use const DIRECTORY_SEPARATOR;
+use const PHP_SAPI;
 
 /**
  * @author Robert Schönthal <seroscho@googlemail.com>
@@ -32,7 +43,7 @@ class ProcessTest extends TestCase
     public static function setUpBeforeClass()
     {
         $phpBin = new PhpExecutableFinder();
-        self::$phpBin = getenv('SYMFONY_PROCESS_PHP_TEST_BINARY') ?: ('phpdbg' === \PHP_SAPI ? 'php' : $phpBin->find());
+        self::$phpBin = getenv('SYMFONY_PROCESS_PHP_TEST_BINARY') ?: ('phpdbg' === PHP_SAPI ? 'php' : $phpBin->find());
 
         ob_start();
         phpinfo(INFO_GENERAL);
@@ -40,7 +51,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage The provided cwd "
      * @expectedExceptionMessage "does not exist.
      */
@@ -50,7 +61,7 @@ class ProcessTest extends TestCase
             // Check that it works fine if the CWD exists
             $cmd = new Process(['echo', 'test'], __DIR__);
             $cmd->run();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->fail($e);
         }
 
@@ -60,7 +71,7 @@ class ProcessTest extends TestCase
 
     public function testThatProcessDoesNotThrowWarningDuringRun()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('This test is transient on Windows');
         }
         @trigger_error('Test Error', E_USER_NOTICE);
@@ -71,39 +82,8 @@ class ProcessTest extends TestCase
         $this->assertEquals(E_USER_NOTICE, $actualError['type']);
     }
 
-    private function getProcessForCode(string $code, string $cwd = null, array $env = null, $input = null, ?int $timeout = 60): Process
-    {
-        return $this->getProcess([self::$phpBin, '-r', $code], $cwd, $env, $input, $timeout);
-    }
-
     /**
-     * @param string $commandline
-     * @param string|null $cwd
-     * @param array|null $env
-     * @param string|null $input
-     * @param int $timeout
-     * @param array $options
-     *
-     * @return Process
-     */
-    private function getProcess($commandline, string $cwd = null, array $env = null, $input = null, ?int $timeout = 60): Process
-    {
-        if (\is_string($commandline)) {
-            $process = Process::fromShellCommandline($commandline, $cwd, $env, $input, $timeout);
-        } else {
-            $process = new Process($commandline, $cwd, $env, $input, $timeout);
-        }
-        $process->inheritEnvironmentVariables();
-
-        if (self::$process) {
-            self::$process->stop(0);
-        }
-
-        return self::$process = $process;
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Process\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testNegativeTimeoutFromConstructor()
     {
@@ -111,7 +91,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testNegativeTimeoutFromSetter()
     {
@@ -159,7 +139,7 @@ class ProcessTest extends TestCase
 
     public function testWaitUntilSpecificOutput()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestIncomplete('This test is too transient on Windows, help wanted to improve it');
         }
 
@@ -204,7 +184,7 @@ class ProcessTest extends TestCase
         $p->start();
 
         // Don't call Process::run nor Process::wait to avoid any read of pipes
-        $h = new \ReflectionProperty($p, 'process');
+        $h = new ReflectionProperty($p, 'process');
         $h->setAccessible(true);
         $h = $h->getValue($p);
         $s = @proc_get_status($h);
@@ -216,7 +196,7 @@ class ProcessTest extends TestCase
 
         $o = $p->getOutput();
 
-        $this->assertEquals($expectedOutputSize, \strlen($o));
+        $this->assertEquals($expectedOutputSize, strlen($o));
     }
 
     public function testCallbacksAreExecutedWithStart()
@@ -258,8 +238,8 @@ class ProcessTest extends TestCase
         $p->setInput($expected);
         $p->run();
 
-        $this->assertEquals($expectedLength, \strlen($p->getOutput()));
-        $this->assertEquals($expectedLength, \strlen($p->getErrorOutput()));
+        $this->assertEquals($expectedLength, strlen($p->getOutput()));
+        $this->assertEquals($expectedLength, strlen($p->getErrorOutput()));
     }
 
     /**
@@ -280,8 +260,8 @@ class ProcessTest extends TestCase
 
         fclose($stream);
 
-        $this->assertEquals($expectedLength, \strlen($p->getOutput()));
-        $this->assertEquals($expectedLength, \strlen($p->getErrorOutput()));
+        $this->assertEquals($expectedLength, strlen($p->getOutput()));
+        $this->assertEquals($expectedLength, strlen($p->getErrorOutput()));
     }
 
     public function testLiveStreamAsInput()
@@ -303,7 +283,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Input can not be set while the process is running.
      */
     public function testSetInputWhileRunningThrowsAnException()
@@ -323,7 +303,7 @@ class ProcessTest extends TestCase
 
     /**
      * @dataProvider provideInvalidInputValues
-     * @expectedException \Symfony\Component\Process\Exception\InvalidArgumentException
+     * @expectedException InvalidArgumentException
      * @expectedExceptionMessage Symfony\Component\Process\Process::setInput only accepts strings, Traversable objects or stream resources.
      */
     public function testInvalidInput($value)
@@ -361,7 +341,7 @@ class ProcessTest extends TestCase
 
     public function chainedCommandsOutputProvider()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             return [
                 ["2 \r\n2\r\n", '&&', '2'],
             ];
@@ -480,7 +460,7 @@ class ProcessTest extends TestCase
 
     public function testZeroAsOutput()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             // see http://stackoverflow.com/questions/7105433/windows-batch-echo-without-new-line
             $p = $this->getProcess('echo | set /p dummyName=0');
         } else {
@@ -493,7 +473,7 @@ class ProcessTest extends TestCase
 
     public function testExitCodeCommandFailed()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support POSIX exit code');
         }
 
@@ -506,7 +486,7 @@ class ProcessTest extends TestCase
 
     public function testTTYCommand()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not have /dev/tty support');
         }
 
@@ -521,7 +501,7 @@ class ProcessTest extends TestCase
 
     public function testTTYCommandExitCode()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does have /dev/tty support');
         }
 
@@ -533,12 +513,12 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage TTY mode is not supported on Windows platform.
      */
     public function testTTYInWindowsEnvironment()
     {
-        if ('\\' !== \DIRECTORY_SEPARATOR) {
+        if ('\\' !== DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('This test is for Windows platform only');
         }
 
@@ -582,7 +562,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessFailedException
+     * @expectedException ProcessFailedException
      */
     public function testMustRunThrowsException()
     {
@@ -593,7 +573,7 @@ class ProcessTest extends TestCase
     public function testExitCodeText()
     {
         $process = $this->getProcess('');
-        $r = new \ReflectionObject($process);
+        $r = new ReflectionObject($process);
         $p = $r->getProperty('exitcode');
         $p->setAccessible(true);
 
@@ -615,7 +595,7 @@ class ProcessTest extends TestCase
     {
         $process = $this->getProcess('echo foo');
         $process->run();
-        $this->assertGreaterThan(0, \strlen($process->getOutput()));
+        $this->assertGreaterThan(0, strlen($process->getOutput()));
     }
 
     public function testGetExitCodeIsNullOnStart()
@@ -702,7 +682,7 @@ class ProcessTest extends TestCase
 
     public function testProcessIsNotSignaled()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support POSIX signals');
         }
 
@@ -713,7 +693,7 @@ class ProcessTest extends TestCase
 
     public function testProcessWithoutTermSignal()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support POSIX signals');
         }
 
@@ -724,7 +704,7 @@ class ProcessTest extends TestCase
 
     public function testProcessIsSignaledIfStopped()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('Windows does not support POSIX signals');
         }
 
@@ -736,12 +716,12 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessSignaledException
+     * @expectedException ProcessSignaledException
      * @expectedExceptionMessage The process has been signaled with signal "9".
      */
     public function testProcessThrowsExceptionWhenExternallySignaled()
     {
-        if (!\function_exists('posix_kill')) {
+        if (!function_exists('posix_kill')) {
             $this->markTestSkipped('Function posix_kill is required.');
         }
 
@@ -775,7 +755,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @expectedException ProcessTimedOutException
      * @expectedExceptionMessage exceeded the timeout of 0.1 seconds.
      */
     public function testRunProcessWithTimeout()
@@ -795,7 +775,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @expectedException ProcessTimedOutException
      * @expectedExceptionMessage exceeded the timeout of 0.1 seconds.
      */
     public function testIterateOverProcessWithTimeout()
@@ -829,7 +809,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @expectedException ProcessTimedOutException
      * @expectedExceptionMessage exceeded the timeout of 0.1 seconds.
      */
     public function testCheckTimeoutOnStartedProcess()
@@ -894,7 +874,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\ProcessTimedOutException
+     * @expectedException ProcessTimedOutException
      * @expectedExceptionMessage exceeded the timeout of 0.1 seconds.
      */
     public function testStartAfterATimeout()
@@ -973,7 +953,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Can not send signal on a non running process.
      */
     public function testSignalProcessNotRunning()
@@ -1012,7 +992,7 @@ class ProcessTest extends TestCase
 
     /**
      * @dataProvider provideMethodsThatNeedATerminatedProcess
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Process must be terminated before calling
      */
     public function testMethodsThatNeedATerminatedProcess($method)
@@ -1023,7 +1003,7 @@ class ProcessTest extends TestCase
             $process->{$method}();
             $process->stop(0);
             $this->fail('A LogicException must have been thrown');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
         }
         $process->stop(0);
 
@@ -1041,11 +1021,11 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\RuntimeException
+     * @expectedException RuntimeException
      */
     public function testWrongSignal()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $this->markTestSkipped('POSIX signals do not work on Windows');
         }
 
@@ -1072,7 +1052,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Disabling output while the process is running is not possible.
      */
     public function testDisableOutputWhileRunningThrowsException()
@@ -1083,7 +1063,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Enabling output while the process is running is not possible.
      */
     public function testEnableOutputWhileRunningThrowsException()
@@ -1105,7 +1085,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Output can not be disabled while an idle timeout is set.
      */
     public function testDisableOutputWhileIdleTimeoutIsSet()
@@ -1116,7 +1096,7 @@ class ProcessTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage timeout can not be set while the output is disabled.
      */
     public function testSetIdleTimeoutWhileOutputIsDisabled()
@@ -1135,7 +1115,7 @@ class ProcessTest extends TestCase
 
     /**
      * @dataProvider provideOutputFetchingMethods
-     * @expectedException \Symfony\Component\Process\Exception\LogicException
+     * @expectedException LogicException
      * @expectedExceptionMessage Output has been disabled.
      */
     public function testGetOutputWhileDisabled($fetchMethod)
@@ -1200,7 +1180,7 @@ class ProcessTest extends TestCase
             'include \'' . __DIR__ . '/PipeStdinInStdoutStdErrStreamSelect.php\';',
         ];
 
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             // Avoid XL buffers on Windows because of https://bugs.php.net/bug.php?id=65650
             $sizes = [1, 2, 4, 8];
         } else {
@@ -1480,7 +1460,7 @@ class ProcessTest extends TestCase
     {
         $p = new Process(['/usr/bin/php']);
 
-        $expected = '\\' === \DIRECTORY_SEPARATOR ? '"/usr/bin/php"' : "'/usr/bin/php'";
+        $expected = '\\' === DIRECTORY_SEPARATOR ? '"/usr/bin/php"' : "'/usr/bin/php'";
         $this->assertSame($expected, $p->getCommandLine());
     }
 
@@ -1530,7 +1510,7 @@ EOTXT;
     public function testEnvArgument()
     {
         $env = ['FOO' => 'Foo', 'BAR' => 'Bar'];
-        $cmd = '\\' === \DIRECTORY_SEPARATOR ? 'echo !FOO! !BAR! !BAZ!' : 'echo $FOO $BAR $BAZ';
+        $cmd = '\\' === DIRECTORY_SEPARATOR ? 'echo !FOO! !BAR! !BAZ!' : 'echo $FOO $BAR $BAZ';
         $p = Process::fromShellCommandline($cmd, null, $env);
         $p->run(null, ['BAR' => 'baR', 'BAZ' => 'baZ']);
 
@@ -1553,6 +1533,37 @@ EOTXT;
             self::$process->stop(0);
             self::$process = null;
         }
+    }
+
+    private function getProcessForCode(string $code, string $cwd = null, array $env = null, $input = null, ?int $timeout = 60): Process
+    {
+        return $this->getProcess([self::$phpBin, '-r', $code], $cwd, $env, $input, $timeout);
+    }
+
+    /**
+     * @param string $commandline
+     * @param string|null $cwd
+     * @param array|null $env
+     * @param string|null $input
+     * @param int $timeout
+     * @param array $options
+     *
+     * @return Process
+     */
+    private function getProcess($commandline, string $cwd = null, array $env = null, $input = null, ?int $timeout = 60): Process
+    {
+        if (is_string($commandline)) {
+            $process = Process::fromShellCommandline($commandline, $cwd, $env, $input, $timeout);
+        } else {
+            $process = new Process($commandline, $cwd, $env, $input, $timeout);
+        }
+        $process->inheritEnvironmentVariables();
+
+        if (self::$process) {
+            self::$process->stop(0);
+        }
+
+        return self::$process = $process;
     }
 }
 

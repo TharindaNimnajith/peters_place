@@ -34,11 +34,6 @@ class GelfHandlerTest extends TestCase
         $this->assertInstanceOf('Monolog\Handler\GelfHandler', $handler);
     }
 
-    protected function getMessagePublisher()
-    {
-        return $this->getMock('Gelf\Publisher', array('publish'), array(), '', false);
-    }
-
     public function testDebug()
     {
         $record = $this->getRecord(Logger::DEBUG, "A test debug message");
@@ -57,13 +52,6 @@ class GelfHandlerTest extends TestCase
         $handler = $this->getHandler($messagePublisher);
 
         $handler->handle($record);
-    }
-
-    protected function getHandler($messagePublisher)
-    {
-        $handler = new GelfHandler($messagePublisher);
-
-        return $handler;
     }
 
     public function testWarning()
@@ -110,5 +98,17 @@ class GelfHandlerTest extends TestCase
         $handler = $this->getHandler($messagePublisher);
         $handler->setFormatter(new GelfMessageFormatter('mysystem', 'EXT', 'CTX'));
         $handler->handle($record);
+    }
+
+    protected function getMessagePublisher()
+    {
+        return $this->getMock('Gelf\Publisher', array('publish'), array(), '', false);
+    }
+
+    protected function getHandler($messagePublisher)
+    {
+        $handler = new GelfHandler($messagePublisher);
+
+        return $handler;
     }
 }

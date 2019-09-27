@@ -11,18 +11,22 @@
 
 namespace Symfony\Component\HttpFoundation\Session;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
+use function count;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Drak <drak@zikula.org>
  */
-class Session implements SessionInterface, \IteratorAggregate, \Countable
+class Session implements SessionInterface, IteratorAggregate, Countable
 {
     protected $storage;
 
@@ -71,18 +75,6 @@ class Session implements SessionInterface, \IteratorAggregate, \Countable
     public function has($name)
     {
         return $this->getAttributeBag()->has($name);
-    }
-
-    /**
-     * Gets the attributebag interface.
-     *
-     * Note that this method was added to help with IDE autocompletion.
-     *
-     * @return AttributeBagInterface
-     */
-    private function getAttributeBag()
-    {
-        return $this->getBag($this->attributeName);
     }
 
     /**
@@ -146,11 +138,11 @@ class Session implements SessionInterface, \IteratorAggregate, \Countable
     /**
      * Returns an iterator for attributes.
      *
-     * @return \ArrayIterator An \ArrayIterator instance
+     * @return ArrayIterator An \ArrayIterator instance
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->getAttributeBag()->all());
+        return new ArrayIterator($this->getAttributeBag()->all());
     }
 
     /**
@@ -160,7 +152,7 @@ class Session implements SessionInterface, \IteratorAggregate, \Countable
      */
     public function count()
     {
-        return \count($this->getAttributeBag()->all());
+        return count($this->getAttributeBag()->all());
     }
 
     /**
@@ -278,5 +270,17 @@ class Session implements SessionInterface, \IteratorAggregate, \Countable
     public function getFlashBag()
     {
         return $this->getBag($this->flashName);
+    }
+
+    /**
+     * Gets the attributebag interface.
+     *
+     * Note that this method was added to help with IDE autocompletion.
+     *
+     * @return AttributeBagInterface
+     */
+    private function getAttributeBag()
+    {
+        return $this->getBag($this->attributeName);
     }
 }

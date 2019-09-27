@@ -48,49 +48,6 @@ class Version
     }
 
     /**
-     * @param string $version
-     *
-     * @throws InvalidVersionException
-     */
-    private function ensureVersionStringIsValid($version)
-    {
-        $regex = '/^v?
-            (?<Major>(0|(?:[1-9][0-9]*)))
-            \\.
-            (?<Minor>(0|(?:[1-9][0-9]*)))
-            (\\.
-                (?<Patch>(0|(?:[1-9][0-9]*)))
-            )?
-            (?:
-                -
-                (?<PreReleaseSuffix>(?:(dev|beta|b|RC|alpha|a|patch|p)\.?\d*))
-            )?       
-        $/x';
-
-        if (preg_match($regex, $version, $matches) !== 1) {
-            throw new InvalidVersionException(
-                sprintf("Version string '%s' does not follow SemVer semantics", $version)
-            );
-        }
-
-        $this->parseVersion($matches);
-    }
-
-    /**
-     * @param array $matches
-     */
-    private function parseVersion(array $matches)
-    {
-        $this->major = new VersionNumber($matches['Major']);
-        $this->minor = new VersionNumber($matches['Minor']);
-        $this->patch = isset($matches['Patch']) ? new VersionNumber($matches['Patch']) : new VersionNumber(null);
-
-        if (isset($matches['PreReleaseSuffix'])) {
-            $this->preReleaseSuffix = new PreReleaseSuffix($matches['PreReleaseSuffix']);
-        }
-    }
-
-    /**
      * @return string
      */
     public function getVersionString()
@@ -182,5 +139,48 @@ class Version
     public function getPreReleaseSuffix()
     {
         return $this->preReleaseSuffix;
+    }
+
+    /**
+     * @param string $version
+     *
+     * @throws InvalidVersionException
+     */
+    private function ensureVersionStringIsValid($version)
+    {
+        $regex = '/^v?
+            (?<Major>(0|(?:[1-9][0-9]*)))
+            \\.
+            (?<Minor>(0|(?:[1-9][0-9]*)))
+            (\\.
+                (?<Patch>(0|(?:[1-9][0-9]*)))
+            )?
+            (?:
+                -
+                (?<PreReleaseSuffix>(?:(dev|beta|b|RC|alpha|a|patch|p)\.?\d*))
+            )?       
+        $/x';
+
+        if (preg_match($regex, $version, $matches) !== 1) {
+            throw new InvalidVersionException(
+                sprintf("Version string '%s' does not follow SemVer semantics", $version)
+            );
+        }
+
+        $this->parseVersion($matches);
+    }
+
+    /**
+     * @param array $matches
+     */
+    private function parseVersion(array $matches)
+    {
+        $this->major = new VersionNumber($matches['Major']);
+        $this->minor = new VersionNumber($matches['Minor']);
+        $this->patch = isset($matches['Patch']) ? new VersionNumber($matches['Patch']) : new VersionNumber(null);
+
+        if (isset($matches['PreReleaseSuffix'])) {
+            $this->preReleaseSuffix = new PreReleaseSuffix($matches['PreReleaseSuffix']);
+        }
     }
 }

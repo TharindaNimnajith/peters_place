@@ -427,22 +427,6 @@ class Arr
     }
 
     /**
-     * Explode the "value" and "key" arguments passed to "pluck".
-     *
-     * @param string|array $value
-     * @param string|array|null $key
-     * @return array
-     */
-    protected static function explodePluckParameters($value, $key)
-    {
-        $value = is_string($value) ? explode('.', $value) : $value;
-
-        $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
-
-        return [$value, $key];
-    }
-
-    /**
      * Push an item onto the beginning of an array.
      *
      * @param array $array
@@ -624,5 +608,21 @@ class Arr
         }
 
         return is_array($value) ? $value : [$value];
+    }
+
+    /**
+     * Explode the "value" and "key" arguments passed to "pluck".
+     *
+     * @param string|array $value
+     * @param string|array|null $key
+     * @return array
+     */
+    protected static function explodePluckParameters($value, $key)
+    {
+        $value = is_string($value) ? explode('.', $value) : $value;
+
+        $key = is_null($key) || is_array($key) ? $key : explode('.', $key);
+
+        return [$value, $key];
     }
 }

@@ -793,17 +793,6 @@ class MimeType
     }
 
     /**
-     * Get the MIME type for a given extension.
-     *
-     * @param string $extension
-     * @return string
-     */
-    protected static function getMimeTypeFromExtension($extension)
-    {
-        return self::$mimes[$extension] ?? 'application/octet-stream';
-    }
-
-    /**
      * Get the MIME type for a given extension or return all mimes.
      *
      * @param string|null $extension
@@ -823,5 +812,16 @@ class MimeType
     public static function search($mimeType)
     {
         return array_search($mimeType, self::$mimes) ?: null;
+    }
+
+    /**
+     * Get the MIME type for a given extension.
+     *
+     * @param string $extension
+     * @return string
+     */
+    protected static function getMimeTypeFromExtension($extension)
+    {
+        return self::$mimes[$extension] ?? 'application/octet-stream';
     }
 }

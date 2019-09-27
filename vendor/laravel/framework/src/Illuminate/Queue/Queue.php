@@ -99,6 +99,65 @@ abstract class Queue
     }
 
     /**
+     * Get the connection name for the queue.
+     *
+     * @return string
+     */
+    public function getConnectionName()
+    {
+        return $this->connectionName;
+    }
+
+    /**
+     * Set the connection name for the queue.
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setConnectionName($name)
+    {
+        $this->connectionName = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the retry delay for an object-based queue handler.
+     *
+     * @param mixed $job
+     * @return mixed
+     */
+    public function getJobRetryDelay($job)
+    {
+        if (!method_exists($job, 'retryAfter') && !isset($job->retryAfter)) {
+            return;
+        }
+
+        $delay = $job->retryAfter ?? $job->retryAfter();
+
+        return $delay instanceof DateTimeInterface
+            ? $this->secondsUntil($delay) : $delay;
+    }
+
+    /**
+     * Get the expiration timestamp for an object-based queue handler.
+     *
+     * @param mixed $job
+     * @return mixed
+     */
+    public function getJobExpiration($job)
+    {
+        if (!method_exists($job, 'retryUntil') && !isset($job->timeoutAt)) {
+            return;
+        }
+
+        $expiration = $job->timeoutAt ?? $job->retryUntil();
+
+        return $expiration instanceof DateTimeInterface
+            ? $expiration->getTimestamp() : $expiration;
+    }
+
+    /**
      * Create a payload string from the given job and data.
      *
      * @param string|object $job
@@ -187,29 +246,6 @@ abstract class Queue
     }
 
     /**
-     * Get the connection name for the queue.
-     *
-     * @return string
-     */
-    public function getConnectionName()
-    {
-        return $this->connectionName;
-    }
-
-    /**
-     * Set the connection name for the queue.
-     *
-     * @param string $name
-     * @return $this
-     */
-    public function setConnectionName($name)
-    {
-        $this->connectionName = $name;
-
-        return $this;
-    }
-
-    /**
      * Get the display name for the given job.
      *
      * @param object $job
@@ -219,42 +255,6 @@ abstract class Queue
     {
         return method_exists($job, 'displayName')
             ? $job->displayName() : get_class($job);
-    }
-
-    /**
-     * Get the retry delay for an object-based queue handler.
-     *
-     * @param mixed $job
-     * @return mixed
-     */
-    public function getJobRetryDelay($job)
-    {
-        if (!method_exists($job, 'retryAfter') && !isset($job->retryAfter)) {
-            return;
-        }
-
-        $delay = $job->retryAfter ?? $job->retryAfter();
-
-        return $delay instanceof DateTimeInterface
-            ? $this->secondsUntil($delay) : $delay;
-    }
-
-    /**
-     * Get the expiration timestamp for an object-based queue handler.
-     *
-     * @param mixed $job
-     * @return mixed
-     */
-    public function getJobExpiration($job)
-    {
-        if (!method_exists($job, 'retryUntil') && !isset($job->timeoutAt)) {
-            return;
-        }
-
-        $expiration = $job->timeoutAt ?? $job->retryUntil();
-
-        return $expiration instanceof DateTimeInterface
-            ? $expiration->getTimestamp() : $expiration;
     }
 
     /**

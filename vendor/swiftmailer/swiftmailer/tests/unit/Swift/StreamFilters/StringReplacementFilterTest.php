@@ -1,16 +1,13 @@
 <?php
 
-class Swift_StreamFilters_StringReplacementFilterTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_StreamFilters_StringReplacementFilterTest extends TestCase
 {
     public function testBasicReplacementsAreMade()
     {
         $filter = $this->createFilter('foo', 'bar');
         $this->assertEquals('XbarYbarZ', $filter->filter('XfooYfooZ'));
-    }
-
-    private function createFilter($search, $replace)
-    {
-        return new Swift_StreamFilters_StringReplacementFilter($search, $replace);
     }
 
     public function testShouldBufferReturnsTrueIfPartialMatchAtEndOfBuffer()
@@ -55,5 +52,10 @@ class Swift_StreamFilters_StringReplacementFilterTest extends \PHPUnit\Framework
     {
         $filter = $this->createFilter("\r\n", "\n");
         $this->assertFalse($filter->shouldBuffer(''));
+    }
+
+    private function createFilter($search, $replace)
+    {
+        return new Swift_StreamFilters_StringReplacementFilter($search, $replace);
     }
 }

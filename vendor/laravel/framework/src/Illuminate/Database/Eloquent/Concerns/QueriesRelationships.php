@@ -75,85 +75,6 @@ trait QueriesRelationships
     }
 
     /**
-     * Add nested relationship count / exists conditions to the query.
-     *
-     * Sets up recursive call to whereHas until we finish the nested relation.
-     *
-     * @param string $relations
-     * @param string $operator
-     * @param int $count
-     * @param string $boolean
-     * @param Closure|null $callback
-     * @return Builder|static
-     */
-    protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
-    {
-        $relations = explode('.', $relations);
-
-        $doesntHave = $operator === '<' && $count === 1;
-
-        if ($doesntHave) {
-            $operator = '>=';
-            $count = 1;
-        }
-
-        $closure = function ($q) use (&$closure, &$relations, $operator, $count, $callback) {
-            // In order to nest "has", we need to add count relation constraints on the
-            // callback Closure. We'll do this by simply passing the Closure its own
-            // reference to itself so it calls itself recursively on each segment.
-            count($relations) > 1
-                ? $q->whereHas(array_shift($relations), $closure)
-                : $q->has(array_shift($relations), $operator, $count, 'and', $callback);
-        };
-
-        return $this->has(array_shift($relations), $doesntHave ? '<' : '>=', 1, $boolean, $closure);
-    }
-
-    /**
-     * Get the "has relation" base query instance.
-     *
-     * @param string $relation
-     * @return Relation
-     */
-    protected function getRelationWithoutConstraints($relation)
-    {
-        return Relation::noConstraints(function () use ($relation) {
-            return $this->getModel()->{$relation}();
-        });
-    }
-
-    /**
-     * Check if we can run an "exists" query to optimize performance.
-     *
-     * @param string $operator
-     * @param int $count
-     * @return bool
-     */
-    protected function canUseExistsForExistenceCheck($operator, $count)
-    {
-        return ($operator === '>=' || $operator === '<') && $count === 1;
-    }
-
-    /**
-     * Add the "has" condition where clause to the query.
-     *
-     * @param Builder $hasQuery
-     * @param Relation $relation
-     * @param string $operator
-     * @param int $count
-     * @param string $boolean
-     * @return Builder|static
-     */
-    protected function addHasWhere(Builder $hasQuery, Relation $relation, $operator, $count, $boolean)
-    {
-        $hasQuery->mergeConstraintsFrom($relation->getQuery());
-
-        return $this->canUseExistsForExistenceCheck($operator, $count)
-            ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, $operator === '<' && $count === 1)
-            : $this->addWhereCountQuery($hasQuery->toBase(), $operator, $count, $boolean);
-    }
-
-    /**
      * Merge the where constraints from another query to the current query.
      *
      * @param Builder $from
@@ -170,27 +91,6 @@ trait QueriesRelationships
             $from->removedScopes()
         )->mergeWheres(
             $from->getQuery()->wheres, $whereBindings
-        );
-    }
-
-    /**
-     * Add a sub-query count clause to this query.
-     *
-     * @param QueryBuilder $query
-     * @param string $operator
-     * @param int $count
-     * @param string $boolean
-     * @return $this
-     */
-    protected function addWhereCountQuery(QueryBuilder $query, $operator = '>=', $count = 1, $boolean = 'and')
-    {
-        $this->query->addBinding($query->getBindings(), 'where');
-
-        return $this->where(
-            new Expression('(' . $query->toSql() . ')'),
-            $operator,
-            is_numeric($count) ? new Expression($count) : $count,
-            $boolean
         );
     }
 
@@ -325,28 +225,6 @@ trait QueriesRelationships
                 });
             }
         }, null, null, $boolean);
-    }
-
-    /**
-     * Get the BelongsTo relationship for a single polymorphic type.
-     *
-     * @param MorphTo $relation
-     * @param string $type
-     * @return BelongsTo
-     */
-    protected function getBelongsToRelation(MorphTo $relation, $type)
-    {
-        $belongsTo = Relation::noConstraints(function () use ($relation, $type) {
-            return $this->model->belongsTo(
-                $type,
-                $relation->getForeignKeyName(),
-                $relation->getOwnerKeyName()
-            );
-        });
-
-        $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
-
-        return $belongsTo;
     }
 
     /**
@@ -487,5 +365,127 @@ trait QueriesRelationships
         }
 
         return $this;
+    }
+
+    /**
+     * Add nested relationship count / exists conditions to the query.
+     *
+     * Sets up recursive call to whereHas until we finish the nested relation.
+     *
+     * @param string $relations
+     * @param string $operator
+     * @param int $count
+     * @param string $boolean
+     * @param Closure|null $callback
+     * @return Builder|static
+     */
+    protected function hasNested($relations, $operator = '>=', $count = 1, $boolean = 'and', $callback = null)
+    {
+        $relations = explode('.', $relations);
+
+        $doesntHave = $operator === '<' && $count === 1;
+
+        if ($doesntHave) {
+            $operator = '>=';
+            $count = 1;
+        }
+
+        $closure = function ($q) use (&$closure, &$relations, $operator, $count, $callback) {
+            // In order to nest "has", we need to add count relation constraints on the
+            // callback Closure. We'll do this by simply passing the Closure its own
+            // reference to itself so it calls itself recursively on each segment.
+            count($relations) > 1
+                ? $q->whereHas(array_shift($relations), $closure)
+                : $q->has(array_shift($relations), $operator, $count, 'and', $callback);
+        };
+
+        return $this->has(array_shift($relations), $doesntHave ? '<' : '>=', 1, $boolean, $closure);
+    }
+
+    /**
+     * Get the "has relation" base query instance.
+     *
+     * @param string $relation
+     * @return Relation
+     */
+    protected function getRelationWithoutConstraints($relation)
+    {
+        return Relation::noConstraints(function () use ($relation) {
+            return $this->getModel()->{$relation}();
+        });
+    }
+
+    /**
+     * Check if we can run an "exists" query to optimize performance.
+     *
+     * @param string $operator
+     * @param int $count
+     * @return bool
+     */
+    protected function canUseExistsForExistenceCheck($operator, $count)
+    {
+        return ($operator === '>=' || $operator === '<') && $count === 1;
+    }
+
+    /**
+     * Add the "has" condition where clause to the query.
+     *
+     * @param Builder $hasQuery
+     * @param Relation $relation
+     * @param string $operator
+     * @param int $count
+     * @param string $boolean
+     * @return Builder|static
+     */
+    protected function addHasWhere(Builder $hasQuery, Relation $relation, $operator, $count, $boolean)
+    {
+        $hasQuery->mergeConstraintsFrom($relation->getQuery());
+
+        return $this->canUseExistsForExistenceCheck($operator, $count)
+            ? $this->addWhereExistsQuery($hasQuery->toBase(), $boolean, $operator === '<' && $count === 1)
+            : $this->addWhereCountQuery($hasQuery->toBase(), $operator, $count, $boolean);
+    }
+
+    /**
+     * Add a sub-query count clause to this query.
+     *
+     * @param QueryBuilder $query
+     * @param string $operator
+     * @param int $count
+     * @param string $boolean
+     * @return $this
+     */
+    protected function addWhereCountQuery(QueryBuilder $query, $operator = '>=', $count = 1, $boolean = 'and')
+    {
+        $this->query->addBinding($query->getBindings(), 'where');
+
+        return $this->where(
+            new Expression('(' . $query->toSql() . ')'),
+            $operator,
+            is_numeric($count) ? new Expression($count) : $count,
+            $boolean
+        );
+    }
+
+    /**
+     * Get the BelongsTo relationship for a single polymorphic type.
+     *
+     * @param MorphTo $relation
+     * @param string $type
+     * @return BelongsTo
+     */
+    protected function getBelongsToRelation(MorphTo $relation, $type)
+    {
+        $belongsTo = Relation::noConstraints(function () use ($relation, $type) {
+            return $this->model->belongsTo(
+                $type,
+                $relation->getForeignKeyName(),
+                $relation->getOwnerKeyName()
+            );
+        });
+
+        $belongsTo->getQuery()->mergeConstraintsFrom($relation->getQuery());
+
+        return $belongsTo;
     }
 }

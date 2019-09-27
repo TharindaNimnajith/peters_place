@@ -112,26 +112,6 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
     }
 
     /**
-     * Returns a random string needed to generate a fileName for the queue.
-     *
-     * @param int $count
-     *
-     * @return string
-     */
-    protected function getRandomString($count)
-    {
-        // This string MUST stay FS safe, avoid special chars
-        $base = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
-        $ret = '';
-        $strlen = strlen($base);
-        for ($i = 0; $i < $count; ++$i) {
-            $ret .= $base[random_int(0, $strlen - 1)];
-        }
-
-        return $ret;
-    }
-
-    /**
      * Execute a recovery if for any reason a process is sending for too long.
      *
      * @param int $timeout in second Defaults is for very slow smtp responses
@@ -204,5 +184,25 @@ class Swift_FileSpool extends Swift_ConfigurableSpool
         }
 
         return $count;
+    }
+
+    /**
+     * Returns a random string needed to generate a fileName for the queue.
+     *
+     * @param int $count
+     *
+     * @return string
+     */
+    protected function getRandomString($count)
+    {
+        // This string MUST stay FS safe, avoid special chars
+        $base = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-';
+        $ret = '';
+        $strlen = strlen($base);
+        for ($i = 0; $i < $count; ++$i) {
+            $ret .= $base[random_int(0, $strlen - 1)];
+        }
+
+        return $ret;
     }
 }

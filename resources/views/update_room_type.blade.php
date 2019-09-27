@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
     <style>
         #form_body {
             margin-top: 6%;
-        }         
+        }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -32,6 +34,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -52,7 +55,7 @@
     </div>
 @endif
 
-<div class="model"  id="form_body">
+<div class="model" id="form_body">
     <div class="model-dialog">
         <div class="model-content">
             <form method="post" action="/edit_room_type" class="form-control-static" id="updateroomform">
@@ -62,6 +65,7 @@
                     <button type="button" class="close" data-dismiss="model" aria-hidden="true"
                             onclick="window.location='/room_type_management';">&times;
                     </button>
+
                     <h4 class="model-title">Update Room Type</h4>
                 </div>
 
@@ -91,6 +95,7 @@
                     <div class="model-footer">
                         <input type="button" class="btn btn-default" data-dismiss="model" value="Cancel"
                                onclick="window.location='/room_type_management';">
+
                         <input type="submit" class="btn btn-info" value="Save">
                     </div>
             </form>
@@ -98,4 +103,5 @@
     </div>
 </div>
 </body>
+
 </html>

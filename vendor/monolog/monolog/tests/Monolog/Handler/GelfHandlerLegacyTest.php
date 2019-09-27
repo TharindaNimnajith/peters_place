@@ -36,11 +36,6 @@ class GelfHandlerLegacyTest extends TestCase
         $this->assertInstanceOf('Monolog\Handler\GelfHandler', $handler);
     }
 
-    protected function getMessagePublisher()
-    {
-        return new GelfMockMessagePublisher('localhost');
-    }
-
     public function testDebug()
     {
         $messagePublisher = $this->getMessagePublisher();
@@ -53,13 +48,6 @@ class GelfHandlerLegacyTest extends TestCase
         $this->assertEquals('test', $messagePublisher->lastMessage->getFacility());
         $this->assertEquals($record['message'], $messagePublisher->lastMessage->getShortMessage());
         $this->assertEquals(null, $messagePublisher->lastMessage->getFullMessage());
-    }
-
-    protected function getHandler($messagePublisher)
-    {
-        $handler = new GelfHandler($messagePublisher);
-
-        return $handler;
     }
 
     public function testWarning()
@@ -91,5 +79,17 @@ class GelfHandlerLegacyTest extends TestCase
         $this->assertEquals('mysystem', $messagePublisher->lastMessage->getHost());
         $this->assertArrayHasKey('_EXTblarg', $messagePublisher->lastMessage->toArray());
         $this->assertArrayHasKey('_CTXfrom', $messagePublisher->lastMessage->toArray());
+    }
+
+    protected function getMessagePublisher()
+    {
+        return new GelfMockMessagePublisher('localhost');
+    }
+
+    protected function getHandler($messagePublisher)
+    {
+        $handler = new GelfHandler($messagePublisher);
+
+        return $handler;
     }
 }

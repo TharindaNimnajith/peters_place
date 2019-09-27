@@ -52,6 +52,53 @@ class UrlWindow
     }
 
     /**
+     * Determine if the underlying paginator being presented has pages to show.
+     *
+     * @return bool
+     */
+    public function hasPages()
+    {
+        return $this->paginator->lastPage() > 1;
+    }
+
+    /**
+     * Get the ending URLs of a pagination slider.
+     *
+     * @return array
+     */
+    public function getFinish()
+    {
+        return $this->paginator->getUrlRange(
+            $this->lastPage() - 1,
+            $this->lastPage()
+        );
+    }
+
+    /**
+     * Get the starting URLs of a pagination slider.
+     *
+     * @return array
+     */
+    public function getStart()
+    {
+        return $this->paginator->getUrlRange(1, 2);
+    }
+
+    /**
+     * Get the page range for the current page window.
+     *
+     * @param int $onEachSide
+     * @return array
+     */
+    public function getAdjacentUrlRange($onEachSide)
+    {
+        return $this->paginator->getUrlRange(
+            $this->currentPage() - $onEachSide,
+            $this->currentPage() + $onEachSide
+        );
+    }
+
+    /**
      * Get the slider of URLs there are not enough pages to slide.
      *
      * @return array
@@ -110,16 +157,6 @@ class UrlWindow
     }
 
     /**
-     * Determine if the underlying paginator being presented has pages to show.
-     *
-     * @return bool
-     */
-    public function hasPages()
-    {
-        return $this->paginator->lastPage() > 1;
-    }
-
-    /**
      * Get the current page from the paginator.
      *
      * @return int
@@ -145,19 +182,6 @@ class UrlWindow
     }
 
     /**
-     * Get the ending URLs of a pagination slider.
-     *
-     * @return array
-     */
-    public function getFinish()
-    {
-        return $this->paginator->getUrlRange(
-            $this->lastPage() - 1,
-            $this->lastPage()
-        );
-    }
-
-    /**
      * Get the slider of URLs when too close to ending of window.
      *
      * @param int $window
@@ -178,16 +202,6 @@ class UrlWindow
     }
 
     /**
-     * Get the starting URLs of a pagination slider.
-     *
-     * @return array
-     */
-    public function getStart()
-    {
-        return $this->paginator->getUrlRange(1, 2);
-    }
-
-    /**
      * Get the slider of URLs when a full slider can be made.
      *
      * @param int $onEachSide
@@ -200,19 +214,5 @@ class UrlWindow
             'slider' => $this->getAdjacentUrlRange($onEachSide),
             'last' => $this->getFinish(),
         ];
-    }
-
-    /**
-     * Get the page range for the current page window.
-     *
-     * @param int $onEachSide
-     * @return array
-     */
-    public function getAdjacentUrlRange($onEachSide)
-    {
-        return $this->paginator->getUrlRange(
-            $this->currentPage() - $onEachSide,
-            $this->currentPage() + $onEachSide
-        );
     }
 }

@@ -93,6 +93,69 @@ class JsonFormatterTest extends TestCase
         $this->assertContextContainsFormattedException($formattedException, $message);
     }
 
+    public function testDefFormatWithPreviousException()
+    {
+        $formatter = new JsonFormatter();
+        $exception = new RuntimeException('Foo', 0, new LogicException('Wut?'));
+        $formattedPrevException = $this->formatException($exception->getPrevious());
+        $formattedException = $this->formatException($exception, $formattedPrevException);
+
+        $message = $this->formatRecordWithExceptionInContext($formatter, $exception);
+
+        $this->assertContextContainsFormattedException($formattedException, $message);
+    }
+
+    public function testDefFormatWithThrowable()
+    {
+        if (!class_exists('Error') || !is_subclass_of('Error', 'Throwable')) {
+            $this->markTestSkipped('Requires PHP >=7');
+        }
+
+        $formatter = new JsonFormatter();
+        $throwable = new Error('Foo');
+        $formattedThrowable = $this->formatException($throwable);
+
+        $message = $this->formatRecordWithExceptionInContext($formatter, $throwable);
+
+        $this->assertContextContainsFormattedException($formattedThrowable, $message);
+    }
+
+    public function testNormalizeHandleLargeArraysWithExactly1000Items()
+    {
+        $formatter = new NormalizerFormatter();
+        $largeArray = range(1, 1000);
+
+        $res = $formatter->format(array(
+            'level_name' => 'CRITICAL',
+            'channel' => 'test',
+            'message' => 'bar',
+            'context' => array($largeArray),
+            'datetime' => new DateTime,
+            'extra' => array(),
+        ));
+
+        $this->assertCount(1000, $res['context'][0]);
+        $this->assertArrayNotHasKey('...', $res['context'][0]);
+    }
+
+    public function testNormalizeHandleLargeArrays()
+    {
+        $formatter = new NormalizerFormatter();
+        $largeArray = range(1, 2000);
+
+        $res = $formatter->format(array(
+            'level_name' => 'CRITICAL',
+            'channel' => 'test',
+            'message' => 'bar',
+            'context' => array($largeArray),
+            'datetime' => new DateTime,
+            'extra' => array(),
+        ));
+
+        $this->assertCount(1001, $res['context'][0]);
+        $this->assertEquals('Over 1000 items (2000 total), aborting normalization', $res['context'][0]['...']);
+    }
+
     /**
      * @param Exception|Throwable $exception
      *
@@ -158,68 +221,5 @@ class JsonFormatterTest extends TestCase
             '{"level_name":"CRITICAL","channel":"core","context":{"exception":' . $expected . '},"datetime":null,"extra":[],"message":"foobar"}' . "\n",
             $actual
         );
-    }
-
-    public function testDefFormatWithPreviousException()
-    {
-        $formatter = new JsonFormatter();
-        $exception = new RuntimeException('Foo', 0, new LogicException('Wut?'));
-        $formattedPrevException = $this->formatException($exception->getPrevious());
-        $formattedException = $this->formatException($exception, $formattedPrevException);
-
-        $message = $this->formatRecordWithExceptionInContext($formatter, $exception);
-
-        $this->assertContextContainsFormattedException($formattedException, $message);
-    }
-
-    public function testDefFormatWithThrowable()
-    {
-        if (!class_exists('Error') || !is_subclass_of('Error', 'Throwable')) {
-            $this->markTestSkipped('Requires PHP >=7');
-        }
-
-        $formatter = new JsonFormatter();
-        $throwable = new Error('Foo');
-        $formattedThrowable = $this->formatException($throwable);
-
-        $message = $this->formatRecordWithExceptionInContext($formatter, $throwable);
-
-        $this->assertContextContainsFormattedException($formattedThrowable, $message);
-    }
-
-    public function testNormalizeHandleLargeArraysWithExactly1000Items()
-    {
-        $formatter = new NormalizerFormatter();
-        $largeArray = range(1, 1000);
-
-        $res = $formatter->format(array(
-            'level_name' => 'CRITICAL',
-            'channel' => 'test',
-            'message' => 'bar',
-            'context' => array($largeArray),
-            'datetime' => new DateTime,
-            'extra' => array(),
-        ));
-
-        $this->assertCount(1000, $res['context'][0]);
-        $this->assertArrayNotHasKey('...', $res['context'][0]);
-    }
-
-    public function testNormalizeHandleLargeArrays()
-    {
-        $formatter = new NormalizerFormatter();
-        $largeArray = range(1, 2000);
-
-        $res = $formatter->format(array(
-            'level_name' => 'CRITICAL',
-            'channel' => 'test',
-            'message' => 'bar',
-            'context' => array($largeArray),
-            'datetime' => new DateTime,
-            'extra' => array(),
-        ));
-
-        $this->assertCount(1001, $res['context'][0]);
-        $this->assertEquals('Over 1000 items (2000 total), aborting normalization', $res['context'][0]['...']);
     }
 }

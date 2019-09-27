@@ -11,6 +11,21 @@
 
 namespace Symfony\Component\HttpFoundation;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
+use DateTimeZone;
+use InvalidArgumentException;
+use RuntimeException;
+use UnexpectedValueException;
+use function count;
+use function function_exists;
+use function gettype;
+use function in_array;
+use function is_callable;
+use function is_string;
+use const PHP_SAPI;
+
 /**
  * Response represents an HTTP response.
  *
@@ -162,7 +177,7 @@ class Response
         511 => 'Network Authentication Required',                             // RFC6585
     ];
     /**
-     * @var \Symfony\Component\HttpFoundation\ResponseHeaderBag
+     * @var ResponseHeaderBag
      */
     public $headers;
     /**
@@ -187,7 +202,7 @@ class Response
     protected $charset;
 
     /**
-     * @throws \InvalidArgumentException When the HTTP status code is not valid
+     * @throws InvalidArgumentException When the HTTP status code is not valid
      */
     public function __construct($content = '', int $status = 200, array $headers = [])
     {
@@ -195,20 +210,6 @@ class Response
         $this->setContent($content);
         $this->setStatusCode($status);
         $this->setProtocolVersion('1.0');
-    }
-
-    /**
-     * Sets the HTTP protocol version (1.0 or 1.1).
-     *
-     * @return $this
-     *
-     * @final
-     */
-    public function setProtocolVersion(string $version)
-    {
-        $this->version = $version;
-
-        return $this;
     }
 
     /**
@@ -228,6 +229,42 @@ class Response
     public static function create($content = '', $status = 200, $headers = [])
     {
         return new static($content, $status, $headers);
+    }
+
+    /**
+     * Cleans or flushes output buffers up to target level.
+     *
+     * Resulting level can be greater than target level if a non-removable buffer has been encountered.
+     *
+     * @final
+     */
+    public static function closeOutputBuffers(int $targetLevel, bool $flush)
+    {
+        $status = ob_get_status(true);
+        $level = count($status);
+        $flags = PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE);
+
+        while ($level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags : $s['del'])) {
+            if ($flush) {
+                ob_end_flush();
+            } else {
+                ob_end_clean();
+            }
+        }
+    }
+
+    /**
+     * Sets the HTTP protocol version (1.0 or 1.1).
+     *
+     * @return $this
+     *
+     * @final
+     */
+    public function setProtocolVersion(string $version)
+    {
+        $this->version = $version;
+
+        return $this;
     }
 
     /**
@@ -268,12 +305,12 @@ class Response
      *
      * @return $this
      *
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public function setContent($content)
     {
-        if (null !== $content && !\is_string($content) && !is_numeric($content) && !\is_callable([$content, '__toString'])) {
-            throw new \UnexpectedValueException(sprintf('The Response content must be a string or object implementing __toString(), "%s" given.', \gettype($content)));
+        if (null !== $content && !is_string($content) && !is_numeric($content) && !is_callable([$content, '__toString'])) {
+            throw new UnexpectedValueException(sprintf('The Response content must be a string or object implementing __toString(), "%s" given.', gettype($content)));
         }
 
         $this->content = (string)$content;
@@ -378,7 +415,7 @@ class Response
      */
     public function isEmpty(): bool
     {
-        return \in_array($this->statusCode, [204, 304]);
+        return in_array($this->statusCode, [204, 304]);
     }
 
     /**
@@ -392,22 +429,6 @@ class Response
     }
 
     /**
-     * Checks if we need to remove Cache-Control for SSL encrypted downloads when using IE < 9.
-     *
-     * @see http://support.microsoft.com/kb/323308
-     *
-     * @final
-     */
-    protected function ensureIEOverSSLCompatibility(Request $request)
-    {
-        if (false !== stripos($this->headers->get('Content-Disposition'), 'attachment') && 1 == preg_match('/MSIE (.*?);/i', $request->server->get('HTTP_USER_AGENT'), $match) && true === $request->isSecure()) {
-            if ((int)preg_replace('/(MSIE )(.*?);/', '$2', $match[0]) < 9) {
-                $this->headers->remove('Cache-Control');
-            }
-        }
-    }
-
-    /**
      * Sends HTTP headers and content.
      *
      * @return $this
@@ -417,9 +438,9 @@ class Response
         $this->sendHeaders();
         $this->sendContent();
 
-        if (\function_exists('fastcgi_finish_request')) {
+        if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
-        } elseif (!\in_array(\PHP_SAPI, ['cli', 'phpdbg'], true)) {
+        } elseif (!in_array(PHP_SAPI, ['cli', 'phpdbg'], true)) {
             static::closeOutputBuffers(0, true);
         }
 
@@ -470,28 +491,6 @@ class Response
     }
 
     /**
-     * Cleans or flushes output buffers up to target level.
-     *
-     * Resulting level can be greater than target level if a non-removable buffer has been encountered.
-     *
-     * @final
-     */
-    public static function closeOutputBuffers(int $targetLevel, bool $flush)
-    {
-        $status = ob_get_status(true);
-        $level = \count($status);
-        $flags = PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? PHP_OUTPUT_HANDLER_FLUSHABLE : PHP_OUTPUT_HANDLER_CLEANABLE);
-
-        while ($level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags : $s['del'])) {
-            if ($flush) {
-                ob_end_flush();
-            } else {
-                ob_end_clean();
-            }
-        }
-    }
-
-    /**
      * Retrieves the status code for the current web response.
      *
      * @final
@@ -509,7 +508,7 @@ class Response
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException When the HTTP status code is not valid
+     * @throws InvalidArgumentException When the HTTP status code is not valid
      *
      * @final
      */
@@ -517,7 +516,7 @@ class Response
     {
         $this->statusCode = $code;
         if ($this->isInvalid()) {
-            throw new \InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
+            throw new InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
         }
 
         if (null === $text) {
@@ -580,7 +579,7 @@ class Response
      */
     public function isCacheable(): bool
     {
-        if (!\in_array($this->statusCode, [200, 203, 300, 301, 302, 404, 410])) {
+        if (!in_array($this->statusCode, [200, 203, 300, 301, 302, 404, 410])) {
             return false;
         }
 
@@ -664,24 +663,24 @@ class Response
      *
      * @final
      */
-    public function getExpires(): ?\DateTimeInterface
+    public function getExpires(): ?DateTimeInterface
     {
         try {
             return $this->headers->getDate('Expires');
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             // according to RFC 2616 invalid date formats (e.g. "0" and "-1") must be treated as in the past
-            return \DateTime::createFromFormat('U', time() - 172800);
+            return DateTime::createFromFormat('U', time() - 172800);
         }
     }
 
     /**
      * Returns the Date header as a DateTime instance.
      *
-     * @throws \RuntimeException When the header is not parseable
+     * @throws RuntimeException When the header is not parseable
      *
      * @final
      */
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
         return $this->headers->getDate('Date');
     }
@@ -732,13 +731,13 @@ class Response
      *
      * @final
      */
-    public function setDate(\DateTimeInterface $date)
+    public function setDate(DateTimeInterface $date)
     {
-        if ($date instanceof \DateTime) {
-            $date = \DateTimeImmutable::createFromMutable($date);
+        if ($date instanceof DateTime) {
+            $date = DateTimeImmutable::createFromMutable($date);
         }
 
-        $date = $date->setTimezone(new \DateTimeZone('UTC'));
+        $date = $date->setTimezone(new DateTimeZone('UTC'));
         $this->headers->set('Date', $date->format('D, d M Y H:i:s') . ' GMT');
 
         return $this;
@@ -768,7 +767,7 @@ class Response
      *
      * @final
      */
-    public function setExpires(\DateTimeInterface $date = null)
+    public function setExpires(DateTimeInterface $date = null)
     {
         if (null === $date) {
             $this->headers->remove('Expires');
@@ -776,11 +775,11 @@ class Response
             return $this;
         }
 
-        if ($date instanceof \DateTime) {
-            $date = \DateTimeImmutable::createFromMutable($date);
+        if ($date instanceof DateTime) {
+            $date = DateTimeImmutable::createFromMutable($date);
         }
 
-        $date = $date->setTimezone(new \DateTimeZone('UTC'));
+        $date = $date->setTimezone(new DateTimeZone('UTC'));
         $this->headers->set('Expires', $date->format('D, d M Y H:i:s') . ' GMT');
 
         return $this;
@@ -871,11 +870,11 @@ class Response
     /**
      * Returns the Last-Modified HTTP header as a DateTime instance.
      *
-     * @throws \RuntimeException When the HTTP header is not parseable
+     * @throws RuntimeException When the HTTP header is not parseable
      *
      * @final
      */
-    public function getLastModified(): ?\DateTimeInterface
+    public function getLastModified(): ?DateTimeInterface
     {
         return $this->headers->getDate('Last-Modified');
     }
@@ -887,14 +886,14 @@ class Response
      *
      * @return $this
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *
      * @final
      */
     public function setCache(array $options)
     {
         if ($diff = array_diff(array_keys($options), ['etag', 'last_modified', 'max_age', 's_maxage', 'private', 'public', 'immutable'])) {
-            throw new \InvalidArgumentException(sprintf('Response does not support the following options: "%s".', implode('", "', $diff)));
+            throw new InvalidArgumentException(sprintf('Response does not support the following options: "%s".', implode('", "', $diff)));
         }
 
         if (isset($options['etag'])) {
@@ -970,7 +969,7 @@ class Response
      *
      * @final
      */
-    public function setLastModified(\DateTimeInterface $date = null)
+    public function setLastModified(DateTimeInterface $date = null)
     {
         if (null === $date) {
             $this->headers->remove('Last-Modified');
@@ -978,11 +977,11 @@ class Response
             return $this;
         }
 
-        if ($date instanceof \DateTime) {
-            $date = \DateTimeImmutable::createFromMutable($date);
+        if ($date instanceof DateTime) {
+            $date = DateTimeImmutable::createFromMutable($date);
         }
 
-        $date = $date->setTimezone(new \DateTimeZone('UTC'));
+        $date = $date->setTimezone(new DateTimeZone('UTC'));
         $this->headers->set('Last-Modified', $date->format('D, d M Y H:i:s') . ' GMT');
 
         return $this;
@@ -1091,7 +1090,7 @@ class Response
         $modifiedSince = $request->headers->get('If-Modified-Since');
 
         if ($etags = $request->getETags()) {
-            $notModified = \in_array($this->getEtag(), $etags) || \in_array('*', $etags);
+            $notModified = in_array($this->getEtag(), $etags) || in_array('*', $etags);
         }
 
         if ($modifiedSince && $lastModified) {
@@ -1229,6 +1228,22 @@ class Response
      */
     public function isRedirect(string $location = null): bool
     {
-        return \in_array($this->statusCode, [201, 301, 302, 303, 307, 308]) && (null === $location ?: $location == $this->headers->get('Location'));
+        return in_array($this->statusCode, [201, 301, 302, 303, 307, 308]) && (null === $location ?: $location == $this->headers->get('Location'));
+    }
+
+    /**
+     * Checks if we need to remove Cache-Control for SSL encrypted downloads when using IE < 9.
+     *
+     * @see http://support.microsoft.com/kb/323308
+     *
+     * @final
+     */
+    protected function ensureIEOverSSLCompatibility(Request $request)
+    {
+        if (false !== stripos($this->headers->get('Content-Disposition'), 'attachment') && 1 == preg_match('/MSIE (.*?);/i', $request->server->get('HTTP_USER_AGENT'), $match) && true === $request->isSecure()) {
+            if ((int)preg_replace('/(MSIE )(.*?);/', '$2', $match[0]) < 9) {
+                $this->headers->remove('Cache-Control');
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace Symfony\Component\Routing\Tests\Matcher;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\NoConfigurationException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
@@ -28,11 +29,6 @@ class UrlMatcherTest extends TestCase
 
         $matcher = $this->getUrlMatcher($coll);
         $this->assertInternalType('array', $matcher->match('/foo'));
-    }
-
-    protected function getUrlMatcher(RouteCollection $routes, RequestContext $context = null)
-    {
-        return new UrlMatcher($routes, $context ?: new RequestContext());
     }
 
     public function testMethodNotAllowed()
@@ -202,7 +198,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testShortPathDoesNotMatchImportantVariable()
     {
@@ -213,7 +209,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testTrailingEncodedNewlineIsNotOverlooked()
     {
@@ -364,7 +360,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testDefaultRequirementOfVariableDisallowsSlash()
     {
@@ -376,7 +372,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testDefaultRequirementOfVariableDisallowsNextSeparator()
     {
@@ -388,7 +384,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testMissingTrailingSlash()
     {
@@ -400,7 +396,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testExtraTrailingSlash()
     {
@@ -412,7 +408,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testMissingTrailingSlashForNonSafeMethod()
     {
@@ -426,7 +422,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testExtraTrailingSlashForNonSafeMethod()
     {
@@ -440,7 +436,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testSchemeRequirement()
     {
@@ -451,7 +447,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testSchemeRequirementForNonSafeMethod()
     {
@@ -474,7 +470,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testCondition()
     {
@@ -683,7 +679,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testWithOutHostHostDoesNotMatch()
     {
@@ -695,7 +691,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      */
     public function testPathIsCaseSensitive()
     {
@@ -716,7 +712,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\NoConfigurationException
+     * @expectedException NoConfigurationException
      */
     public function testNoConfiguration()
     {
@@ -751,7 +747,7 @@ class UrlMatcherTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException ResourceNotFoundException
      * @expectedExceptionMessage No routes found for "/".
      */
     public function testSchemeAndMethodMismatch()
@@ -961,5 +957,10 @@ class UrlMatcherTest extends TestCase
         $matcher = $this->getUrlMatcher($coll);
 
         $this->assertEquals(['_route' => 'b', 'b' => ''], $matcher->match('/en-en/'));
+    }
+
+    protected function getUrlMatcher(RouteCollection $routes, RequestContext $context = null)
+    {
+        return new UrlMatcher($routes, $context ?: new RequestContext());
     }
 }

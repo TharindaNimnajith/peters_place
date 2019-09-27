@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Routing\Matcher;
 
+use LogicException;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,9 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use function count;
+use function in_array;
+use function is_int;
 
 /**
  * UrlMatcher matches URL based on a set of routes.
@@ -107,9 +111,14 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             throw new NoConfigurationException();
         }
 
-        throw 0 < \count($this->allow)
+        throw 0 < count($this->allow)
             ? new MethodNotAllowedException(array_unique($this->allow))
             : new ResourceNotFoundException(sprintf('No routes found for "%s".', $pathinfo));
+    }
+
+    public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
+    {
+        $this->expressionLanguageProviders[] = $provider;
     }
 
     /**
@@ -154,7 +163,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
 
             $hasTrailingVar = $trimmedPathinfo !== $pathinfo && preg_match('#\{\w+\}/?$#', $route->getPath());
 
-            if ($hasTrailingVar && ($hasTrailingSlash || (null === $m = $matches[\count($compiledRoute->getPathVariables())] ?? null) || '/' !== ($m[-1] ?? '/')) && preg_match($regex, $trimmedPathinfo, $m)) {
+            if ($hasTrailingVar && ($hasTrailingSlash || (null === $m = $matches[count($compiledRoute->getPathVariables())] ?? null) || '/' !== ($m[-1] ?? '/')) && preg_match($regex, $trimmedPathinfo, $m)) {
                 if ($hasTrailingSlash) {
                     $matches = $m;
                 } else {
@@ -174,7 +183,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
             }
 
             if ('/' !== $pathinfo && !$hasTrailingVar && $hasTrailingSlash === ($trimmedPathinfo === $pathinfo)) {
-                if ($supportsTrailingSlash && (!$requiredMethods || \in_array('GET', $requiredMethods))) {
+                if ($supportsTrailingSlash && (!$requiredMethods || in_array('GET', $requiredMethods))) {
                     return $this->allow = $this->allowSchemes = [];
                 }
                 continue;
@@ -185,7 +194,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
                 continue;
             }
 
-            if ($requiredMethods && !\in_array($method, $requiredMethods)) {
+            if ($requiredMethods && !in_array($method, $requiredMethods)) {
                 $this->allow = array_merge($this->allow, $requiredMethods);
                 continue;
             }
@@ -219,7 +228,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
     {
         if (null === $this->expressionLanguage) {
             if (!class_exists('Symfony\Component\ExpressionLanguage\ExpressionLanguage')) {
-                throw new \LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
+                throw new LogicException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
             }
             $this->expressionLanguage = new ExpressionLanguage(null, $this->expressionLanguageProviders);
         }
@@ -278,16 +287,11 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
     protected function mergeDefaults($params, $defaults)
     {
         foreach ($params as $key => $value) {
-            if (!\is_int($key) && null !== $value) {
+            if (!is_int($key) && null !== $value) {
                 $defaults[$key] = $value;
             }
         }
 
         return $defaults;
-    }
-
-    public function addExpressionLanguageProvider(ExpressionFunctionProviderInterface $provider)
-    {
-        $this->expressionLanguageProviders[] = $provider;
     }
 }

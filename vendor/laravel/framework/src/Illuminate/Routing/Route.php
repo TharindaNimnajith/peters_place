@@ -140,16 +140,23 @@ class Route
     }
 
     /**
-     * Parse the route action into a standard array.
+     * Get the route validators for the instance.
      *
-     * @param callable|array|null $action
      * @return array
-     *
-     * @throws UnexpectedValueException
      */
-    protected function parseAction($action)
+    public static function getValidators()
     {
-        return RouteAction::parse($this->uri, $action);
+        if (isset(static::$validators)) {
+            return static::$validators;
+        }
+
+        // To match the route, we will use a chain of responsibility pattern with the
+        // validator implementations. We will spin through each one making sure it
+        // passes and then we will know if the route as a whole matches request.
+        return static::$validators = [
+            new UriValidator, new MethodValidator,
+            new SchemeValidator, new HostValidator,
+        ];
     }
 
     /**
@@ -188,30 +195,6 @@ class Route
     }
 
     /**
-     * Checks whether the route's action is a controller.
-     *
-     * @return bool
-     */
-    protected function isControllerAction()
-    {
-        return is_string($this->action['uses']);
-    }
-
-    /**
-     * Run the route action and return the response.
-     *
-     * @return mixed
-     *
-     * @throws NotFoundHttpException
-     */
-    protected function runController()
-    {
-        return $this->controllerDispatcher()->dispatch(
-            $this, $this->getController(), $this->getControllerMethod()
-        );
-    }
-
-    /**
      * Get the dispatcher for the route's controller.
      *
      * @return ControllerDispatcherContract
@@ -239,40 +222,6 @@ class Route
         }
 
         return $this->controller;
-    }
-
-    /**
-     * Parse the controller.
-     *
-     * @return array
-     */
-    protected function parseControllerCallback()
-    {
-        return Str::parseCallback($this->action['uses']);
-    }
-
-    /**
-     * Get the controller method used for the route.
-     *
-     * @return string
-     */
-    protected function getControllerMethod()
-    {
-        return $this->parseControllerCallback()[1];
-    }
-
-    /**
-     * Run the route action and return the response.
-     *
-     * @return mixed
-     */
-    protected function runCallable()
-    {
-        $callable = $this->action['uses'];
-
-        return $callable(...array_values($this->resolveMethodDependencies(
-            $this->parametersWithoutNulls(), new ReflectionFunction($this->action['uses'])
-        )));
     }
 
     /**
@@ -325,40 +274,6 @@ class Route
         }
 
         return true;
-    }
-
-    /**
-     * Compile the route into a Symfony CompiledRoute instance.
-     *
-     * @return CompiledRoute
-     */
-    protected function compileRoute()
-    {
-        if (!$this->compiled) {
-            $this->compiled = (new RouteCompiler($this))->compile();
-        }
-
-        return $this->compiled;
-    }
-
-    /**
-     * Get the route validators for the instance.
-     *
-     * @return array
-     */
-    public static function getValidators()
-    {
-        if (isset(static::$validators)) {
-            return static::$validators;
-        }
-
-        // To match the route, we will use a chain of responsibility pattern with the
-        // validator implementations. We will spin through each one making sure it
-        // passes and then we will know if the route as a whole matches request.
-        return static::$validators = [
-            new UriValidator, new MethodValidator,
-            new SchemeValidator, new HostValidator,
-        ];
     }
 
     /**
@@ -471,20 +386,6 @@ class Route
         }
 
         return $this->parameterNames = $this->compileParameterNames();
-    }
-
-    /**
-     * Get the parameter names for the route.
-     *
-     * @return array
-     */
-    protected function compileParameterNames()
-    {
-        preg_match_all('/\{(.*?)\}/', $this->getDomain() . $this->uri, $matches);
-
-        return array_map(function ($m) {
-            return trim($m, '?');
-        }, $matches[1]);
     }
 
     /**
@@ -686,23 +587,6 @@ class Route
     }
 
     /**
-     * Parse a string based action for the "uses" fluent method.
-     *
-     * @param string $action
-     * @return string
-     */
-    protected function addGroupNamespaceToStringUses($action)
-    {
-        $groupStack = last($this->router->getGroupStack());
-
-        if (isset($groupStack['namespace']) && strpos($action, '\\') !== 0) {
-            return $groupStack['namespace'] . '\\' . $action;
-        }
-
-        return $action;
-    }
-
-    /**
      * Get the method name of the route action.
      *
      * @return string
@@ -881,21 +765,6 @@ class Route
     }
 
     /**
-     * Set a list of regular expression requirements on the route.
-     *
-     * @param array $wheres
-     * @return $this
-     */
-    protected function whereArray(array $wheres)
-    {
-        foreach ($wheres as $name => $expression) {
-            $this->where($name, $expression);
-        }
-
-        return $this;
-    }
-
-    /**
      * Set a regular expression requirement on the route.
      *
      * @param array|string $name
@@ -906,6 +775,137 @@ class Route
     {
         foreach ($this->parseWhere($name, $expression) as $name => $expression) {
             $this->wheres[$name] = $expression;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Parse the route action into a standard array.
+     *
+     * @param callable|array|null $action
+     * @return array
+     *
+     * @throws UnexpectedValueException
+     */
+    protected function parseAction($action)
+    {
+        return RouteAction::parse($this->uri, $action);
+    }
+
+    /**
+     * Checks whether the route's action is a controller.
+     *
+     * @return bool
+     */
+    protected function isControllerAction()
+    {
+        return is_string($this->action['uses']);
+    }
+
+    /**
+     * Run the route action and return the response.
+     *
+     * @return mixed
+     *
+     * @throws NotFoundHttpException
+     */
+    protected function runController()
+    {
+        return $this->controllerDispatcher()->dispatch(
+            $this, $this->getController(), $this->getControllerMethod()
+        );
+    }
+
+    /**
+     * Parse the controller.
+     *
+     * @return array
+     */
+    protected function parseControllerCallback()
+    {
+        return Str::parseCallback($this->action['uses']);
+    }
+
+    /**
+     * Get the controller method used for the route.
+     *
+     * @return string
+     */
+    protected function getControllerMethod()
+    {
+        return $this->parseControllerCallback()[1];
+    }
+
+    /**
+     * Run the route action and return the response.
+     *
+     * @return mixed
+     */
+    protected function runCallable()
+    {
+        $callable = $this->action['uses'];
+
+        return $callable(...array_values($this->resolveMethodDependencies(
+            $this->parametersWithoutNulls(), new ReflectionFunction($this->action['uses'])
+        )));
+    }
+
+    /**
+     * Compile the route into a Symfony CompiledRoute instance.
+     *
+     * @return CompiledRoute
+     */
+    protected function compileRoute()
+    {
+        if (!$this->compiled) {
+            $this->compiled = (new RouteCompiler($this))->compile();
+        }
+
+        return $this->compiled;
+    }
+
+    /**
+     * Get the parameter names for the route.
+     *
+     * @return array
+     */
+    protected function compileParameterNames()
+    {
+        preg_match_all('/\{(.*?)\}/', $this->getDomain() . $this->uri, $matches);
+
+        return array_map(function ($m) {
+            return trim($m, '?');
+        }, $matches[1]);
+    }
+
+    /**
+     * Parse a string based action for the "uses" fluent method.
+     *
+     * @param string $action
+     * @return string
+     */
+    protected function addGroupNamespaceToStringUses($action)
+    {
+        $groupStack = last($this->router->getGroupStack());
+
+        if (isset($groupStack['namespace']) && strpos($action, '\\') !== 0) {
+            return $groupStack['namespace'] . '\\' . $action;
+        }
+
+        return $action;
+    }
+
+    /**
+     * Set a list of regular expression requirements on the route.
+     *
+     * @param array $wheres
+     * @return $this
+     */
+    protected function whereArray(array $wheres)
+    {
+        foreach ($wheres as $name => $expression) {
+            $this->where($name, $expression);
         }
 
         return $this;

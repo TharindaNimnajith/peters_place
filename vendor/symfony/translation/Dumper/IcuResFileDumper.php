@@ -12,6 +12,8 @@
 namespace Symfony\Component\Translation\Dumper;
 
 use Symfony\Component\Translation\MessageCatalogue;
+use function count;
+use function strlen;
 
 /**
  * IcuResDumper generates an ICU ResourceBundle formatted string representation of a message catalogue.
@@ -33,7 +35,7 @@ class IcuResFileDumper extends FileDumper
         $data = $indexes = $resources = '';
 
         foreach ($messages->all($domain) as $source => $target) {
-            $indexes .= pack('v', \strlen($data) + 28);
+            $indexes .= pack('v', strlen($data) + 28);
             $data .= $source . "\0";
         }
 
@@ -44,14 +46,14 @@ class IcuResFileDumper extends FileDumper
         foreach ($messages->all($domain) as $source => $target) {
             $resources .= pack('V', $this->getPosition($data));
 
-            $data .= pack('V', \strlen($target))
+            $data .= pack('V', strlen($target))
                 . mb_convert_encoding($target . "\0", 'UTF-16LE', 'UTF-8')
                 . $this->writePadding($data);
         }
 
         $resOffset = $this->getPosition($data);
 
-        $data .= pack('v', \count($messages->all($domain)))
+        $data .= pack('v', count($messages->all($domain)))
             . $indexes
             . $this->writePadding($data)
             . $resources;
@@ -64,7 +66,7 @@ class IcuResFileDumper extends FileDumper
             $keyTop,                        // Index keys top
             $bundleTop,                     // Index resources top
             $bundleTop,                     // Index bundle top
-            \count($messages->all($domain)), // Index max table length
+            count($messages->all($domain)), // Index max table length
             0                               // Index attributes
         );
 
@@ -80,9 +82,17 @@ class IcuResFileDumper extends FileDumper
         return $header . $root . $data;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtension()
+    {
+        return 'res';
+    }
+
     private function writePadding($data)
     {
-        $padding = \strlen($data) % 4;
+        $padding = strlen($data) % 4;
 
         if ($padding) {
             return str_repeat("\xAA", 4 - $padding);
@@ -91,14 +101,6 @@ class IcuResFileDumper extends FileDumper
 
     private function getPosition($data)
     {
-        return (\strlen($data) + 28) / 4;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtension()
-    {
-        return 'res';
+        return (strlen($data) + 28) / 4;
     }
 }

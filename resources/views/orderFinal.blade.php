@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>Orders</title>
     <meta charset="utf-8">
@@ -32,6 +33,7 @@
             background-color: #4CAF50;
             color: white;
         }
+
     </style>
 </head>
 <div class="topnav">
@@ -39,6 +41,7 @@
     <a class="active" href="/orderFinal">Orders</a>
     <a href="/expenditureFinal">Reports</a>
 </div>
+
 <body>
 <div class="jumbotron text-center" style="padding-top: 50px;padding-bottom: 45px;background-color: lightgray">
     <h1>Orders</h1>
@@ -46,7 +49,9 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-8">
-            <label for="suppNo" name="suppNo"><h4><b>Supplier Number:</b></h4></label>
+            <label for="suppNo" name="suppNo">
+                <h4><b>Supplier Number:</b></h4>
+            </label>
             <select class="select">
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -56,15 +61,21 @@
                 <option value="6">6</option>
                 <option value="7">7</option>
             </select></br></br></br>
-            <lable for="supName" name="supName"><h4><b>Supplier Name:</b></h4></lable>
+            <lable for="supName" name="supName">
+                <h4><b>Supplier Name:</b></h4>
+            </lable>
 
             <lable name="supname"></lable>
             </br></br>
 
-            <lable for="item" name="item"><h4><b>Item:</b></h4></lable>
+            <lable for="item" name="item">
+                <h4><b>Item:</b></h4>
+            </lable>
             <lable name="supitem"></lable>
             </br></br>
-            <lable for="amount" name="amount"><h4><b>Needed Amount:</b></h4></lable>
+            <lable for="amount" name="amount">
+                <h4><b>Needed Amount:</b></h4>
+            </lable>
             <input type="text" placeholder="Enter Amount" name="amount" required>
             </br></br></br>
 
@@ -88,4 +99,5 @@
 </div>
 
 </body>
+
 </html>

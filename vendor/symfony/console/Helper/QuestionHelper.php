@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\Console\Helper;
 
+use Exception;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -21,6 +22,11 @@ use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
+use function call_user_func;
+use function count;
+use function ord;
+use function strlen;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * The QuestionHelper class provides helpers to interact with the user.
@@ -62,7 +68,7 @@ class QuestionHelper extends Helper
             }
 
             if ($validator = $question->getValidator()) {
-                return \call_user_func($question->getValidator(), $default);
+                return call_user_func($question->getValidator(), $default);
             } elseif ($question instanceof ChoiceQuestion) {
                 $choices = $question->getChoices();
 
@@ -93,6 +99,52 @@ class QuestionHelper extends Helper
         };
 
         return $this->validateAttempts($interviewer, $output, $question);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'question';
+    }
+
+    /**
+     * Outputs the question prompt.
+     */
+    protected function writePrompt(OutputInterface $output, Question $question)
+    {
+        $message = $question->getQuestion();
+
+        if ($question instanceof ChoiceQuestion) {
+            $maxWidth = max(array_map([$this, 'strlen'], array_keys($question->getChoices())));
+
+            $messages = (array)$question->getQuestion();
+            foreach ($question->getChoices() as $key => $value) {
+                $width = $maxWidth - $this->strlen($key);
+                $messages[] = '  [<info>' . $key . str_repeat(' ', $width) . '</info>] ' . $value;
+            }
+
+            $output->writeln($messages);
+
+            $message = $question->getPrompt();
+        }
+
+        $output->write($message);
+    }
+
+    /**
+     * Outputs an error message.
+     */
+    protected function writeError(OutputInterface $output, Exception $error)
+    {
+        if (null !== $this->getHelperSet() && $this->getHelperSet()->has('formatter')) {
+            $message = $this->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error');
+        } else {
+            $message = '<error>' . $error->getMessage() . '</error>';
+        }
+
+        $output->writeln($message);
     }
 
     /**
@@ -136,37 +188,13 @@ class QuestionHelper extends Helper
             $output->addContent($ret);
         }
 
-        $ret = \strlen($ret) > 0 ? $ret : $question->getDefault();
+        $ret = strlen($ret) > 0 ? $ret : $question->getDefault();
 
         if ($normalizer = $question->getNormalizer()) {
             return $normalizer($ret);
         }
 
         return $ret;
-    }
-
-    /**
-     * Outputs the question prompt.
-     */
-    protected function writePrompt(OutputInterface $output, Question $question)
-    {
-        $message = $question->getQuestion();
-
-        if ($question instanceof ChoiceQuestion) {
-            $maxWidth = max(array_map([$this, 'strlen'], array_keys($question->getChoices())));
-
-            $messages = (array)$question->getQuestion();
-            foreach ($question->getChoices() as $key => $value) {
-                $width = $maxWidth - $this->strlen($key);
-                $messages[] = '  [<info>' . $key . str_repeat(' ', $width) . '</info>] ' . $value;
-            }
-
-            $output->writeln($messages);
-
-            $message = $question->getPrompt();
-        }
-
-        $output->write($message);
     }
 
     /**
@@ -193,7 +221,7 @@ class QuestionHelper extends Helper
      */
     private function getHiddenResponse(OutputInterface $output, $inputStream): string
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             $exe = __DIR__ . '/../Resources/bin/hiddeninput.exe';
 
             // handle code running from a phar
@@ -282,7 +310,7 @@ class QuestionHelper extends Helper
         $i = 0;
         $ofs = -1;
         $matches = $autocomplete($ret);
-        $numMatches = \count($matches);
+        $numMatches = count($matches);
 
         $sttyMode = shell_exec('stty -g');
 
@@ -311,7 +339,7 @@ class QuestionHelper extends Helper
                 if (0 === $i) {
                     $ofs = -1;
                     $matches = $autocomplete($ret);
-                    $numMatches = \count($matches);
+                    $numMatches = count($matches);
                 } else {
                     $numMatches = 0;
                 }
@@ -335,15 +363,15 @@ class QuestionHelper extends Helper
                     $ofs += ('A' === $c[2]) ? -1 : 1;
                     $ofs = ($numMatches + $ofs) % $numMatches;
                 }
-            } elseif (\ord($c) < 32) {
+            } elseif (ord($c) < 32) {
                 if ("\t" === $c || "\n" === $c) {
                     if ($numMatches > 0 && -1 !== $ofs) {
                         $ret = (string)$matches[$ofs];
                         // Echo out remaining chars for current match
-                        $remainingCharacters = substr($ret, \strlen(trim($this->mostRecentlyEnteredValue($fullChoice))));
+                        $remainingCharacters = substr($ret, strlen(trim($this->mostRecentlyEnteredValue($fullChoice))));
                         $output->write($remainingCharacters);
                         $fullChoice .= $remainingCharacters;
-                        $i = \strlen($fullChoice);
+                        $i = strlen($fullChoice);
 
                         $matches = array_filter(
                             $autocomplete($ret),
@@ -351,7 +379,7 @@ class QuestionHelper extends Helper
                                 return '' === $ret || 0 === strpos($match, $ret);
                             }
                         );
-                        $numMatches = \count($matches);
+                        $numMatches = count($matches);
                         $ofs = -1;
                     }
 
@@ -396,7 +424,7 @@ class QuestionHelper extends Helper
                 // Save cursor position
                 $output->write("\0337");
                 // Write highlighted text, complete the partially entered response
-                $charactersEntered = \strlen(trim($this->mostRecentlyEnteredValue($fullChoice)));
+                $charactersEntered = strlen(trim($this->mostRecentlyEnteredValue($fullChoice)));
                 $output->write('<hl>' . OutputFormatter::escapeTrailingBackslash(substr($matches[$ofs], $charactersEntered)) . '</hl>');
                 // Restore cursor position
                 $output->write("\0338");
@@ -417,7 +445,7 @@ class QuestionHelper extends Helper
         }
 
         $choices = explode(',', $entered);
-        if (\strlen($lastChoice = trim($choices[\count($choices) - 1])) > 0) {
+        if (strlen($lastChoice = trim($choices[count($choices) - 1])) > 0) {
             return $lastChoice;
         }
 
@@ -433,7 +461,7 @@ class QuestionHelper extends Helper
      *
      * @return mixed The validated response
      *
-     * @throws \Exception In case the max number of attempts has been reached and no valid response has been given
+     * @throws Exception In case the max number of attempts has been reached and no valid response has been given
      */
     private function validateAttempts(callable $interviewer, OutputInterface $output, Question $question)
     {
@@ -448,32 +476,10 @@ class QuestionHelper extends Helper
                 return $question->getValidator()($interviewer());
             } catch (RuntimeException $e) {
                 throw $e;
-            } catch (\Exception $error) {
+            } catch (Exception $error) {
             }
         }
 
         throw $error;
-    }
-
-    /**
-     * Outputs an error message.
-     */
-    protected function writeError(OutputInterface $output, \Exception $error)
-    {
-        if (null !== $this->getHelperSet() && $this->getHelperSet()->has('formatter')) {
-            $message = $this->getHelperSet()->get('formatter')->formatBlock($error->getMessage(), 'error');
-        } else {
-            $message = '<error>' . $error->getMessage() . '</error>';
-        }
-
-        $output->writeln($message);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'question';
     }
 }

@@ -151,37 +151,6 @@ class Builder
     }
 
     /**
-     * Execute the blueprint to build / modify the table.
-     *
-     * @param Blueprint $blueprint
-     * @return void
-     */
-    protected function build(Blueprint $blueprint)
-    {
-        $blueprint->build($this->connection, $this->grammar);
-    }
-
-    /**
-     * Create a new command set with a Closure.
-     *
-     * @param string $table
-     * @param Closure|null $callback
-     * @return Blueprint
-     */
-    protected function createBlueprint($table, Closure $callback = null)
-    {
-        $prefix = $this->connection->getConfig('prefix_indexes')
-            ? $this->connection->getConfig('prefix')
-            : '';
-
-        if (isset($this->resolver)) {
-            return call_user_func($this->resolver, $table, $callback, $prefix);
-        }
-
-        return new Blueprint($table, $callback, $prefix);
-    }
-
-    /**
      * Create a new table on the schema.
      *
      * @param string $table
@@ -357,5 +326,36 @@ class Builder
     public function blueprintResolver(Closure $resolver)
     {
         $this->resolver = $resolver;
+    }
+
+    /**
+     * Execute the blueprint to build / modify the table.
+     *
+     * @param Blueprint $blueprint
+     * @return void
+     */
+    protected function build(Blueprint $blueprint)
+    {
+        $blueprint->build($this->connection, $this->grammar);
+    }
+
+    /**
+     * Create a new command set with a Closure.
+     *
+     * @param string $table
+     * @param Closure|null $callback
+     * @return Blueprint
+     */
+    protected function createBlueprint($table, Closure $callback = null)
+    {
+        $prefix = $this->connection->getConfig('prefix_indexes')
+            ? $this->connection->getConfig('prefix')
+            : '';
+
+        if (isset($this->resolver)) {
+            return call_user_func($this->resolver, $table, $callback, $prefix);
+        }
+
+        return new Blueprint($table, $callback, $prefix);
     }
 }

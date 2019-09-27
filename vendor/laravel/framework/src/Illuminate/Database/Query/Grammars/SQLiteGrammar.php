@@ -98,24 +98,6 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
-     * Compile an update statement with joins or limit into SQL.
-     *
-     * @param Builder $query
-     * @param string $columns
-     * @return string
-     */
-    protected function compileUpdateWithJoinsOrLimit(Builder $query, $columns)
-    {
-        $segments = preg_split('/\s+as\s+/i', $query->from);
-
-        $alias = $segments[1] ?? $segments[0];
-
-        $selectSql = parent::compileSelect($query->select($alias . '.rowid'));
-
-        return "update {$this->wrapTable($query->from)} set {$columns} where {$this->wrap('rowid')} in ({$selectSql})";
-    }
-
-    /**
      * Prepare the bindings for an update statement.
      *
      * @param array $bindings
@@ -149,6 +131,38 @@ class SQLiteGrammar extends Grammar
     }
 
     /**
+     * Compile a truncate table statement into SQL.
+     *
+     * @param Builder $query
+     * @return array
+     */
+    public function compileTruncate(Builder $query)
+    {
+        return [
+            'delete from sqlite_sequence where name = ?' => [$query->from],
+            'delete from ' . $this->wrapTable($query->from) => [],
+        ];
+    }
+
+    /**
+     * Compile an update statement with joins or limit into SQL.
+     *
+     * @param Builder $query
+     * @param string $columns
+     * @return string
+     */
+    protected function compileUpdateWithJoinsOrLimit(Builder $query, $columns)
+    {
+        $segments = preg_split('/\s+as\s+/i', $query->from);
+
+        $alias = $segments[1] ?? $segments[0];
+
+        $selectSql = parent::compileSelect($query->select($alias . '.rowid'));
+
+        return "update {$this->wrapTable($query->from)} set {$columns} where {$this->wrap('rowid')} in ({$selectSql})";
+    }
+
+    /**
      * Compile a delete statement with joins or limit into SQL.
      *
      * @param Builder $query
@@ -163,20 +177,6 @@ class SQLiteGrammar extends Grammar
         $selectSql = parent::compileSelect($query->select($alias . '.rowid'));
 
         return "delete from {$this->wrapTable($query->from)} where {$this->wrap('rowid')} in ({$selectSql})";
-    }
-
-    /**
-     * Compile a truncate table statement into SQL.
-     *
-     * @param Builder $query
-     * @return array
-     */
-    public function compileTruncate(Builder $query)
-    {
-        return [
-            'delete from sqlite_sequence where name = ?' => [$query->from],
-            'delete from ' . $this->wrapTable($query->from) => [],
-        ];
     }
 
     /**

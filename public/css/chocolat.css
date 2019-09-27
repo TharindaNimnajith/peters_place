@@ -26,7 +26,8 @@ body {
     top: 50%;
     margin-left: -400px;
     margin-top: -300px;
-    border-top: 1px solid transparent; /*Yes, adjust image perfectly at the center of a box, don't know why.*/
+    border-top: 1px solid transparent;
+    /*Yes, adjust image perfectly at the center of a box, don't know why.*/
 }
 
 #Choco_left_arrow {

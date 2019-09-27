@@ -1,6 +1,8 @@
 <?php
 
-class Swift_StreamFilters_ByteArrayReplacementFilterTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_StreamFilters_ByteArrayReplacementFilterTest extends TestCase
 {
     public function testBasicReplacementsAreMade()
     {
@@ -9,11 +11,6 @@ class Swift_StreamFilters_ByteArrayReplacementFilterTest extends \PHPUnit\Framew
             [0x59, 0x60, 0x63, 0x64, 0x65],
             $filter->filter([0x59, 0x60, 0x61, 0x62, 0x65])
         );
-    }
-
-    private function createFilter($search, $replace)
-    {
-        return new Swift_StreamFilters_ByteArrayReplacementFilter($search, $replace);
     }
 
     public function testShouldBufferReturnsTrueIfPartialMatchAtEndOfBuffer()
@@ -125,5 +122,10 @@ class Swift_StreamFilters_ByteArrayReplacementFilterTest extends \PHPUnit\Framew
             [0x60, 0x0D, 0x0A, 0x0D, 0x0A, 0x61, 0x0D, 0x0A, 0x0D, 0x0A, 0x62, 0x0D, 0x0A, 0x0D, 0x0A, 0x63],
             $filter->filter([0x60, 0x0A, 0x0A, 0x61, 0x0A, 0x0A, 0x62, 0x0A, 0x0A, 0x63])
         );
+    }
+
+    private function createFilter($search, $replace)
+    {
+        return new Swift_StreamFilters_ByteArrayReplacementFilter($search, $replace);
     }
 }

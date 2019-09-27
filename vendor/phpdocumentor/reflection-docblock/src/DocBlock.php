@@ -76,18 +76,6 @@ final class DocBlock
     }
 
     /**
-     * Adds a tag to this DocBlock.
-     *
-     * @param Tag $tag The tag to add.
-     *
-     * @return void
-     */
-    private function addTag(Tag $tag)
-    {
-        $this->tags[] = $tag;
-    }
-
-    /**
      * @return string
      */
     public function getSummary()
@@ -233,5 +221,17 @@ final class DocBlock
                 break;
             }
         }
+    }
+
+    /**
+     * Adds a tag to this DocBlock.
+     *
+     * @param Tag $tag The tag to add.
+     *
+     * @return void
+     */
+    private function addTag(Tag $tag)
+    {
+        $this->tags[] = $tag;
     }
 }

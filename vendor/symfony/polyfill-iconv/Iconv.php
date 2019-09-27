@@ -11,6 +11,13 @@
 
 namespace Symfony\Polyfill\Iconv;
 
+use Normalizer;
+use function count;
+use function extension_loaded;
+use function is_array;
+use function ord;
+use function strlen;
+
 /**
  * iconv implementation in pure PHP, UTF-8 centric.
  *
@@ -146,9 +153,9 @@ final class Iconv
             }
             $str = explode(':', $str, 2);
 
-            if (2 === \count($str)) {
+            if (2 === count($str)) {
                 if (isset($headers[$str[0]])) {
-                    if (!\is_array($headers[$str[0]])) {
+                    if (!is_array($headers[$str[0]])) {
                         $headers[$str[0]] = array($headers[$str[0]]);
                     }
                     $headers[$str[0]][] = ltrim($str[1]);
@@ -183,7 +190,7 @@ final class Iconv
         }
 
         $i = 1;
-        $len = \count($str);
+        $len = count($str);
 
         while ($i < $len) {
             $c = strtolower($str[$i]);
@@ -325,153 +332,6 @@ final class Iconv
         return $str;
     }
 
-    private static function loadMap($type, $charset, &$map)
-    {
-        if (!isset(self::$convertMap[$type . $charset])) {
-            if (false === $map = self::getData($type . $charset)) {
-                if ('to.' === $type && self::loadMap('from.', $charset, $map)) {
-                    $map = array_flip($map);
-                } else {
-                    return false;
-                }
-            }
-
-            self::$convertMap[$type . $charset] = $map;
-        } else {
-            $map = self::$convertMap[$type . $charset];
-        }
-
-        return true;
-    }
-
-    private static function getData($file)
-    {
-        if (file_exists($file = __DIR__ . '/Resources/charset/' . $file . '.php')) {
-            return require $file;
-        }
-
-        return false;
-    }
-
-    private static function mapToUtf8(&$result, array $map, $str, $ignore)
-    {
-        $len = \strlen($str);
-        for ($i = 0; $i < $len; ++$i) {
-            if (isset($str[$i + 1], $map[$str[$i] . $str[$i + 1]])) {
-                $result .= $map[$str[$i] . $str[++$i]];
-            } elseif (isset($map[$str[$i]])) {
-                $result .= $map[$str[$i]];
-            } elseif (!$ignore) {
-                trigger_error(self::ERROR_ILLEGAL_CHARACTER);
-
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static function utf8ToUtf8($str, $ignore)
-    {
-        $ulenMask = self::$ulenMask;
-        $valid = self::$isValidUtf8;
-
-        $u = $str;
-        $i = $j = 0;
-        $len = \strlen($str);
-
-        while ($i < $len) {
-            if ($str[$i] < "\x80") {
-                $u[$j++] = $str[$i++];
-            } else {
-                $ulen = $str[$i] & "\xF0";
-                $ulen = isset($ulenMask[$ulen]) ? $ulenMask[$ulen] : 1;
-                $uchr = substr($str, $i, $ulen);
-
-                if (1 === $ulen || !($valid || preg_match('/^.$/us', $uchr))) {
-                    if ($ignore) {
-                        ++$i;
-                        continue;
-                    }
-
-                    trigger_error(self::ERROR_ILLEGAL_CHARACTER);
-
-                    return false;
-                } else {
-                    $i += $ulen;
-                }
-
-                $u[$j++] = $uchr[0];
-
-                isset($uchr[1]) && 0 !== ($u[$j++] = $uchr[1])
-                && isset($uchr[2]) && 0 !== ($u[$j++] = $uchr[2])
-                && isset($uchr[3]) && 0 !== ($u[$j++] = $uchr[3]);
-            }
-        }
-
-        return substr($u, 0, $j);
-    }
-
-    private static function mapFromUtf8(&$result, array $map, $str, $ignore, $translit)
-    {
-        $ulenMask = self::$ulenMask;
-        $valid = self::$isValidUtf8;
-
-        if ($translit && !self::$translitMap) {
-            self::$translitMap = self::getData('translit');
-        }
-
-        $i = 0;
-        $len = \strlen($str);
-
-        while ($i < $len) {
-            if ($str[$i] < "\x80") {
-                $uchr = $str[$i++];
-            } else {
-                $ulen = $str[$i] & "\xF0";
-                $ulen = isset($ulenMask[$ulen]) ? $ulenMask[$ulen] : 1;
-                $uchr = substr($str, $i, $ulen);
-
-                if ($ignore && (1 === $ulen || !($valid || preg_match('/^.$/us', $uchr)))) {
-                    ++$i;
-                    continue;
-                } else {
-                    $i += $ulen;
-                }
-            }
-
-            if (isset($map[$uchr])) {
-                $result .= $map[$uchr];
-            } elseif ($translit) {
-                if (isset(self::$translitMap[$uchr])) {
-                    $uchr = self::$translitMap[$uchr];
-                } elseif ($uchr >= "\xC3\x80") {
-                    $uchr = \Normalizer::normalize($uchr, \Normalizer::NFD);
-
-                    if ($uchr[0] < "\x80") {
-                        $uchr = $uchr[0];
-                    } elseif ($ignore) {
-                        continue;
-                    } else {
-                        return false;
-                    }
-                } elseif ($ignore) {
-                    continue;
-                } else {
-                    return false;
-                }
-
-                $str = $uchr . substr($str, $i);
-                $len = \strlen($str);
-                $i = 0;
-            } elseif (!$ignore) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public static function iconv_get_encoding($type = 'all')
     {
         switch ($type) {
@@ -512,7 +372,7 @@ final class Iconv
 
     public static function iconv_mime_encode($fieldName, $fieldValue, $pref = null)
     {
-        if (!\is_array($pref)) {
+        if (!is_array($pref)) {
             $pref = array();
         }
 
@@ -542,8 +402,8 @@ final class Iconv
 
         $lineBreak = (int)$pref['line-length'];
         $lineStart = "=?{$pref['output-charset']}?{$scheme}?";
-        $lineLength = \strlen($fieldName) + 2 + \strlen($lineStart) + 2;
-        $lineOffset = \strlen($lineStart) + 3;
+        $lineLength = strlen($fieldName) + 2 + strlen($lineStart) + 2;
+        $lineOffset = strlen($lineStart) + 3;
         $lineData = '';
 
         $fieldValue = array();
@@ -573,7 +433,7 @@ final class Iconv
             }
 
             $lineData .= $c;
-            $Q && $lineLength += \strlen($c);
+            $Q && $lineLength += strlen($c);
         }
 
         if ('' !== $lineData) {
@@ -665,7 +525,7 @@ final class Iconv
     {
         static $hasXml = null;
         if (null === $hasXml) {
-            $hasXml = \extension_loaded('xml');
+            $hasXml = extension_loaded('xml');
         }
 
         if ($hasXml) {
@@ -684,7 +544,7 @@ final class Iconv
             return false;
         }
 
-        return \strlen(utf8_decode($s));
+        return strlen(utf8_decode($s));
     }
 
     public static function strlen2($s, $encoding = null)
@@ -700,7 +560,7 @@ final class Iconv
 
         $i = 0;
         $j = 0;
-        $len = \strlen($s);
+        $len = strlen($s);
 
         while ($i < $len) {
             $u = $s[$i] & "\xF0";
@@ -709,19 +569,6 @@ final class Iconv
         }
 
         return $j;
-    }
-
-    private static function pregOffset($offset)
-    {
-        $rx = array();
-        $offset = (int)$offset;
-
-        while ($offset > 65535) {
-            $rx[] = '.{65535}';
-            $offset -= 65535;
-        }
-
-        return implode('', $rx) . '.{' . $offset . '}';
     }
 
     public static function iconv_strrpos($haystack, $needle, $encoding = null)
@@ -744,8 +591,168 @@ final class Iconv
         return false === $pos ? false : self::iconv_strlen($pos ? substr($haystack, 0, $pos) : $haystack, 'utf-8');
     }
 
+    private static function loadMap($type, $charset, &$map)
+    {
+        if (!isset(self::$convertMap[$type . $charset])) {
+            if (false === $map = self::getData($type . $charset)) {
+                if ('to.' === $type && self::loadMap('from.', $charset, $map)) {
+                    $map = array_flip($map);
+                } else {
+                    return false;
+                }
+            }
+
+            self::$convertMap[$type . $charset] = $map;
+        } else {
+            $map = self::$convertMap[$type . $charset];
+        }
+
+        return true;
+    }
+
+    private static function getData($file)
+    {
+        if (file_exists($file = __DIR__ . '/Resources/charset/' . $file . '.php')) {
+            return require $file;
+        }
+
+        return false;
+    }
+
+    private static function mapToUtf8(&$result, array $map, $str, $ignore)
+    {
+        $len = strlen($str);
+        for ($i = 0; $i < $len; ++$i) {
+            if (isset($str[$i + 1], $map[$str[$i] . $str[$i + 1]])) {
+                $result .= $map[$str[$i] . $str[++$i]];
+            } elseif (isset($map[$str[$i]])) {
+                $result .= $map[$str[$i]];
+            } elseif (!$ignore) {
+                trigger_error(self::ERROR_ILLEGAL_CHARACTER);
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function utf8ToUtf8($str, $ignore)
+    {
+        $ulenMask = self::$ulenMask;
+        $valid = self::$isValidUtf8;
+
+        $u = $str;
+        $i = $j = 0;
+        $len = strlen($str);
+
+        while ($i < $len) {
+            if ($str[$i] < "\x80") {
+                $u[$j++] = $str[$i++];
+            } else {
+                $ulen = $str[$i] & "\xF0";
+                $ulen = isset($ulenMask[$ulen]) ? $ulenMask[$ulen] : 1;
+                $uchr = substr($str, $i, $ulen);
+
+                if (1 === $ulen || !($valid || preg_match('/^.$/us', $uchr))) {
+                    if ($ignore) {
+                        ++$i;
+                        continue;
+                    }
+
+                    trigger_error(self::ERROR_ILLEGAL_CHARACTER);
+
+                    return false;
+                } else {
+                    $i += $ulen;
+                }
+
+                $u[$j++] = $uchr[0];
+
+                isset($uchr[1]) && 0 !== ($u[$j++] = $uchr[1])
+                && isset($uchr[2]) && 0 !== ($u[$j++] = $uchr[2])
+                && isset($uchr[3]) && 0 !== ($u[$j++] = $uchr[3]);
+            }
+        }
+
+        return substr($u, 0, $j);
+    }
+
+    private static function mapFromUtf8(&$result, array $map, $str, $ignore, $translit)
+    {
+        $ulenMask = self::$ulenMask;
+        $valid = self::$isValidUtf8;
+
+        if ($translit && !self::$translitMap) {
+            self::$translitMap = self::getData('translit');
+        }
+
+        $i = 0;
+        $len = strlen($str);
+
+        while ($i < $len) {
+            if ($str[$i] < "\x80") {
+                $uchr = $str[$i++];
+            } else {
+                $ulen = $str[$i] & "\xF0";
+                $ulen = isset($ulenMask[$ulen]) ? $ulenMask[$ulen] : 1;
+                $uchr = substr($str, $i, $ulen);
+
+                if ($ignore && (1 === $ulen || !($valid || preg_match('/^.$/us', $uchr)))) {
+                    ++$i;
+                    continue;
+                } else {
+                    $i += $ulen;
+                }
+            }
+
+            if (isset($map[$uchr])) {
+                $result .= $map[$uchr];
+            } elseif ($translit) {
+                if (isset(self::$translitMap[$uchr])) {
+                    $uchr = self::$translitMap[$uchr];
+                } elseif ($uchr >= "\xC3\x80") {
+                    $uchr = Normalizer::normalize($uchr, Normalizer::NFD);
+
+                    if ($uchr[0] < "\x80") {
+                        $uchr = $uchr[0];
+                    } elseif ($ignore) {
+                        continue;
+                    } else {
+                        return false;
+                    }
+                } elseif ($ignore) {
+                    continue;
+                } else {
+                    return false;
+                }
+
+                $str = $uchr . substr($str, $i);
+                $len = strlen($str);
+                $i = 0;
+            } elseif (!$ignore) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static function pregOffset($offset)
+    {
+        $rx = array();
+        $offset = (int)$offset;
+
+        while ($offset > 65535) {
+            $rx[] = '.{65535}';
+            $offset -= 65535;
+        }
+
+        return implode('', $rx) . '.{' . $offset . '}';
+    }
+
     private static function qpByteCallback(array $m)
     {
-        return '=' . strtoupper(dechex(\ord($m[0])));
+        return '=' . strtoupper(dechex(ord($m[0])));
     }
 }

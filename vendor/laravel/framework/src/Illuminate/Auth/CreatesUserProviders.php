@@ -47,6 +47,16 @@ trait CreatesUserProviders
     }
 
     /**
+     * Get the default user provider name.
+     *
+     * @return string
+     */
+    public function getDefaultUserProvider()
+    {
+        return $this->app['config']['auth.defaults.provider'];
+    }
+
+    /**
      * Get the user provider configuration.
      *
      * @param string|null $provider
@@ -57,16 +67,6 @@ trait CreatesUserProviders
         if ($provider = $provider ?: $this->getDefaultUserProvider()) {
             return $this->app['config']['auth.providers.' . $provider];
         }
-    }
-
-    /**
-     * Get the default user provider name.
-     *
-     * @return string
-     */
-    public function getDefaultUserProvider()
-    {
-        return $this->app['config']['auth.defaults.provider'];
     }
 
     /**

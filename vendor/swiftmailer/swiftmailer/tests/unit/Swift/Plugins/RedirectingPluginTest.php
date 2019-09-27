@@ -1,6 +1,8 @@
 <?php
 
-class Swift_Plugins_RedirectingPluginTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_Plugins_RedirectingPluginTest extends TestCase
 {
     public function testRecipientCanBeSetAndFetched()
     {
@@ -44,18 +46,6 @@ class Swift_Plugins_RedirectingPluginTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($message->getTo(), $to);
         $this->assertEquals($message->getCc(), $cc);
         $this->assertEquals($message->getBcc(), $bcc);
-    }
-
-    private function createSendEvent(Swift_Mime_SimpleMessage $message)
-    {
-        $evt = $this->getMockBuilder('Swift_Events_SendEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $evt->expects($this->any())
-            ->method('getMessage')
-            ->will($this->returnValue($message));
-
-        return $evt;
     }
 
     public function testPluginRespectsUnsetToList()
@@ -175,5 +165,17 @@ class Swift_Plugins_RedirectingPluginTest extends \PHPUnit\Framework\TestCase
             ['fabien@example.com' => 'Fabien', 'lars-cc@internal.org' => 'Lars (Cc)']
         );
         $this->assertEquals($message->getBcc(), ['fabien@example.com' => 'Fabien']);
+    }
+
+    private function createSendEvent(Swift_Mime_SimpleMessage $message)
+    {
+        $evt = $this->getMockBuilder('Swift_Events_SendEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $evt->expects($this->any())
+            ->method('getMessage')
+            ->will($this->returnValue($message));
+
+        return $evt;
     }
 }

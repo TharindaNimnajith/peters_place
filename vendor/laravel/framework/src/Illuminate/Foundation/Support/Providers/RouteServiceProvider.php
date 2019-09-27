@@ -43,6 +43,20 @@ class RouteServiceProvider extends ServiceProvider
     }
 
     /**
+     * Pass dynamic methods onto the router instance.
+     *
+     * @param string $method
+     * @param array $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->forwardCallTo(
+            $this->app->make(Router::class), $method, $parameters
+        );
+    }
+
+    /**
      * Set the root controller namespace for the application.
      *
      * @return void
@@ -86,19 +100,5 @@ class RouteServiceProvider extends ServiceProvider
         if (method_exists($this, 'map')) {
             $this->app->call([$this, 'map']);
         }
-    }
-
-    /**
-     * Pass dynamic methods onto the router instance.
-     *
-     * @param string $method
-     * @param array $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        return $this->forwardCallTo(
-            $this->app->make(Router::class), $method, $parameters
-        );
     }
 }

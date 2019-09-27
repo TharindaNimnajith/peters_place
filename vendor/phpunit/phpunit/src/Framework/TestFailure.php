@@ -58,28 +58,6 @@ class TestFailure
     }
 
     /**
-     * Returns a short description of the failure.
-     */
-    public function toString(): string
-    {
-        return sprintf(
-            '%s: %s',
-            $this->testName,
-            $this->thrownException->getMessage()
-        );
-    }
-
-    /**
-     * Returns a description for the thrown exception.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function getExceptionAsString(): string
-    {
-        return self::exceptionToString($this->thrownException);
-    }
-
-    /**
      * Returns a description for an exception.
      *
      * @throws InvalidArgumentException
@@ -109,6 +87,28 @@ class TestFailure
         }
 
         return get_class($e) . ': ' . $e->getMessage() . "\n";
+    }
+
+    /**
+     * Returns a short description of the failure.
+     */
+    public function toString(): string
+    {
+        return sprintf(
+            '%s: %s',
+            $this->testName,
+            $this->thrownException->getMessage()
+        );
+    }
+
+    /**
+     * Returns a description for the thrown exception.
+     *
+     * @throws InvalidArgumentException
+     */
+    public function getExceptionAsString(): string
+    {
+        return self::exceptionToString($this->thrownException);
     }
 
     /**

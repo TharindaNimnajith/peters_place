@@ -11,10 +11,13 @@
 
 namespace Symfony\Component\Console\Helper;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
+use function is_array;
+use function is_string;
 
 /**
  * The ProcessHelper class provides helpers to run external processes.
@@ -78,19 +81,19 @@ class ProcessHelper extends Helper
             $cmd = [$cmd];
         }
 
-        if (!\is_array($cmd)) {
+        if (!is_array($cmd)) {
             @trigger_error(sprintf('Passing a command as a string to "%s()" is deprecated since Symfony 4.2, pass it the command as an array of arguments instead.', __METHOD__), E_USER_DEPRECATED);
             $cmd = [method_exists(Process::class, 'fromShellCommandline') ? Process::fromShellCommandline($cmd) : new Process($cmd)];
         }
 
-        if (\is_string($cmd[0] ?? null)) {
+        if (is_string($cmd[0] ?? null)) {
             $process = new Process($cmd);
             $cmd = [];
         } elseif (($cmd[0] ?? null) instanceof Process) {
             $process = $cmd[0];
             unset($cmd[0]);
         } else {
-            throw new \InvalidArgumentException(sprintf('Invalid command provided to "%s()": the command should be an array whose first element is either the path to the binary to run or a "Process" object.', __METHOD__));
+            throw new InvalidArgumentException(sprintf('Invalid command provided to "%s()": the command should be an array whose first element is either the path to the binary to run or a "Process" object.', __METHOD__));
         }
 
         if ($verbosity <= $output->getVerbosity()) {
@@ -113,11 +116,6 @@ class ProcessHelper extends Helper
         }
 
         return $process;
-    }
-
-    private function escapeString($str)
-    {
-        return str_replace('<', '\\<', $str);
     }
 
     /**
@@ -152,5 +150,10 @@ class ProcessHelper extends Helper
     public function getName()
     {
         return 'process';
+    }
+
+    private function escapeString($str)
+    {
+        return str_replace('<', '\\<', $str);
     }
 }

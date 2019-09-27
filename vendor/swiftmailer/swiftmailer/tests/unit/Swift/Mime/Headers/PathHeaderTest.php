@@ -1,18 +1,14 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
+use PHPUnit\Framework\TestCase;
 
-class Swift_Mime_Headers_PathHeaderTest extends \PHPUnit\Framework\TestCase
+class Swift_Mime_Headers_PathHeaderTest extends TestCase
 {
     public function testTypeIsPathHeader()
     {
         $header = $this->getHeader('Return-Path');
         $this->assertEquals(Swift_Mime_Header::TYPE_PATH, $header->getFieldType());
-    }
-
-    private function getHeader($name)
-    {
-        return new Swift_Mime_Headers_PathHeader($name, new EmailValidator(), new Swift_AddressEncoder_IdnAddressEncoder());
     }
 
     public function testSingleAddressCanBeSetAndFetched()
@@ -23,7 +19,7 @@ class Swift_Mime_Headers_PathHeaderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException \Exception
+     * @expectedException Exception
      */
     public function testAddressMustComplyWithRfc2822()
     {
@@ -54,7 +50,7 @@ class Swift_Mime_Headers_PathHeaderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @expectedException \Swift_AddressEncoderException
+     * @expectedException Swift_AddressEncoderException
      */
     public function testAddressMustBeEncodable()
     {
@@ -91,5 +87,10 @@ class Swift_Mime_Headers_PathHeaderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('Return-Path: <chris@swiftmailer.org>' . "\r\n",
             $header->toString()
         );
+    }
+
+    private function getHeader($name)
+    {
+        return new Swift_Mime_Headers_PathHeader($name, new EmailValidator(), new Swift_AddressEncoder_IdnAddressEncoder());
     }
 }

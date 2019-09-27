@@ -145,6 +145,25 @@ class Parsedown
     #
     # Comment
 
+    protected static function striAtStart($string, $needle)
+    {
+        $len = strlen($needle);
+
+        if ($len > strlen($string)) {
+            return false;
+        } else {
+            return strtolower(substr($string, 0, $len)) === strtolower($needle);
+        }
+    }
+
+    protected static function escape($text, $allowQuotes = false)
+    {
+        return htmlspecialchars($text, $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES, 'UTF-8');
+    }
+
+    #
+    # Fenced Code
+
     function setBreaksEnabled($breaksEnabled)
     {
         $this->breaksEnabled = $breaksEnabled;
@@ -159,9 +178,6 @@ class Parsedown
         return $this;
     }
 
-    #
-    # Fenced Code
-
     function setUrlsLinked($urlsLinked)
     {
         $this->urlsLinked = $urlsLinked;
@@ -169,12 +185,18 @@ class Parsedown
         return $this;
     }
 
+    #
+    # Header
+
     function setSafeMode($safeMode)
     {
         $this->safeMode = (bool)$safeMode;
 
         return $this;
     }
+
+    #
+    # List
 
     public function line($text, $nonNestables = array())
     {
@@ -249,8 +271,38 @@ class Parsedown
         return $markup;
     }
 
+    function parse($text)
+    {
+        $markup = $this->text($text);
+
+        return $markup;
+    }
+
+    function text($text)
+    {
+        # make sure no definitions are set
+        $this->DefinitionData = array();
+
+        # standardize line breaks
+        $text = str_replace(array("\r\n", "\r"), "\n", $text);
+
+        # remove surrounding line breaks
+        $text = trim($text, "\n");
+
+        # split text into lines
+        $lines = explode("\n", $text);
+
+        # iterate through lines to identify blocks
+        $markup = $this->lines($lines);
+
+        # trim line breaks
+        $markup = trim($markup, "\n");
+
+        return $markup;
+    }
+
     #
-    # Header
+    # Quote
 
     protected function unmarkedText($text)
     {
@@ -263,9 +315,6 @@ class Parsedown
 
         return $text;
     }
-
-    #
-    # List
 
     protected function element(array $Element)
     {
@@ -306,6 +355,9 @@ class Parsedown
         return $markup;
     }
 
+    #
+    # Rule
+
     protected function sanitiseElement(array $Element)
     {
         static $goodAttribute = '/^[a-zA-Z0-9][a-zA-Z0-9-_]*+$/';
@@ -333,6 +385,9 @@ class Parsedown
         return $Element;
     }
 
+    #
+    # Setext
+
     protected function filterUnsafeUrlInAttribute(array $Element, $attribute)
     {
         foreach ($this->safeLinksWhitelist as $scheme) {
@@ -344,61 +399,6 @@ class Parsedown
         $Element['attributes'][$attribute] = str_replace(':', '%3A', $Element['attributes'][$attribute]);
 
         return $Element;
-    }
-
-    #
-    # Quote
-
-    protected static function striAtStart($string, $needle)
-    {
-        $len = strlen($needle);
-
-        if ($len > strlen($string)) {
-            return false;
-        } else {
-            return strtolower(substr($string, 0, $len)) === strtolower($needle);
-        }
-    }
-
-    protected static function escape($text, $allowQuotes = false)
-    {
-        return htmlspecialchars($text, $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES, 'UTF-8');
-    }
-
-    #
-    # Rule
-
-    function parse($text)
-    {
-        $markup = $this->text($text);
-
-        return $markup;
-    }
-
-    #
-    # Setext
-
-    function text($text)
-    {
-        # make sure no definitions are set
-        $this->DefinitionData = array();
-
-        # standardize line breaks
-        $text = str_replace(array("\r\n", "\r"), "\n", $text);
-
-        # remove surrounding line breaks
-        $text = trim($text, "\n");
-
-        # split text into lines
-        $lines = explode("\n", $text);
-
-        # iterate through lines to identify blocks
-        $markup = $this->lines($lines);
-
-        # trim line breaks
-        $markup = trim($markup, "\n");
-
-        return $markup;
     }
 
     #

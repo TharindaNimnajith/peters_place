@@ -120,28 +120,6 @@ class ArrayStore extends TaggableStore
     }
 
     /**
-     * Get the expiration time of the key.
-     *
-     * @param int $seconds
-     * @return int
-     */
-    protected function calculateExpiration($seconds)
-    {
-        return $this->toTimestamp($seconds);
-    }
-
-    /**
-     * Get the UNIX timestamp for the given number of seconds.
-     *
-     * @param int $seconds
-     * @return int
-     */
-    protected function toTimestamp($seconds)
-    {
-        return $seconds > 0 ? $this->availableAt($seconds) : 0;
-    }
-
-    /**
      * Remove all items from the cache.
      *
      * @return bool
@@ -161,5 +139,27 @@ class ArrayStore extends TaggableStore
     public function getPrefix()
     {
         return '';
+    }
+
+    /**
+     * Get the expiration time of the key.
+     *
+     * @param int $seconds
+     * @return int
+     */
+    protected function calculateExpiration($seconds)
+    {
+        return $this->toTimestamp($seconds);
+    }
+
+    /**
+     * Get the UNIX timestamp for the given number of seconds.
+     *
+     * @param int $seconds
+     * @return int
+     */
+    protected function toTimestamp($seconds)
+    {
+        return $seconds > 0 ? $this->availableAt($seconds) : 0;
     }
 }

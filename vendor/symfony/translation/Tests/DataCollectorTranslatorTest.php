@@ -79,17 +79,6 @@ class DataCollectorTranslatorTest extends TestCase
         $this->assertEquals($expectedMessages, $collector->getCollectedMessages());
     }
 
-    private function createCollector()
-    {
-        $translator = new Translator('en');
-        $translator->addLoader('array', new ArrayLoader());
-        $translator->addResource('array', ['foo' => 'foo (en)'], 'en');
-        $translator->addResource('array', ['bar' => 'bar (fr)'], 'fr');
-        $translator->addResource('array', ['bar_ru' => 'bar (ru)'], 'ru');
-
-        return new DataCollectorTranslator($translator);
-    }
-
     /**
      * @group legacy
      */
@@ -112,5 +101,16 @@ class DataCollectorTranslatorTest extends TestCase
         ];
 
         $this->assertEquals($expectedMessages, $collector->getCollectedMessages());
+    }
+
+    private function createCollector()
+    {
+        $translator = new Translator('en');
+        $translator->addLoader('array', new ArrayLoader());
+        $translator->addResource('array', ['foo' => 'foo (en)'], 'en');
+        $translator->addResource('array', ['bar' => 'bar (fr)'], 'fr');
+        $translator->addResource('array', ['bar_ru' => 'bar (ru)'], 'ru');
+
+        return new DataCollectorTranslator($translator);
     }
 }

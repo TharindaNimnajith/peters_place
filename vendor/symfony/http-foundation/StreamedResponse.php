@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\HttpFoundation;
 
+use LogicException;
+
 /**
  * StreamedResponse represents a streamed HTTP response.
  *
@@ -47,20 +49,6 @@ class StreamedResponse extends Response
     }
 
     /**
-     * Sets the PHP callback associated with this Response.
-     *
-     * @param callable $callback A valid PHP callback
-     *
-     * @return $this
-     */
-    public function setCallback(callable $callback)
-    {
-        $this->callback = $callback;
-
-        return $this;
-    }
-
-    /**
      * Factory method for chainability.
      *
      * @param callable|null $callback A valid PHP callback or null to set it later
@@ -72,6 +60,20 @@ class StreamedResponse extends Response
     public static function create($callback = null, $status = 200, $headers = [])
     {
         return new static($callback, $status, $headers);
+    }
+
+    /**
+     * Sets the PHP callback associated with this Response.
+     *
+     * @param callable $callback A valid PHP callback
+     *
+     * @return $this
+     */
+    public function setCallback(callable $callback)
+    {
+        $this->callback = $callback;
+
+        return $this;
     }
 
     /**
@@ -108,7 +110,7 @@ class StreamedResponse extends Response
         $this->streamed = true;
 
         if (null === $this->callback) {
-            throw new \LogicException('The Response callback must not be null.');
+            throw new LogicException('The Response callback must not be null.');
         }
 
         ($this->callback)();
@@ -120,13 +122,13 @@ class StreamedResponse extends Response
      * {@inheritdoc}
      *
      * @return $this
-     * @throws \LogicException when the content is not null
+     * @throws LogicException when the content is not null
      *
      */
     public function setContent($content)
     {
         if (null !== $content) {
-            throw new \LogicException('The content cannot be set on a StreamedResponse instance.');
+            throw new LogicException('The content cannot be set on a StreamedResponse instance.');
         }
 
         $this->streamed = true;

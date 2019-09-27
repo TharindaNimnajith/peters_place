@@ -71,27 +71,6 @@ class PackageManifest
     }
 
     /**
-     * Get the current package manifest.
-     *
-     * @return array
-     */
-    protected function getManifest()
-    {
-        if (!is_null($this->manifest)) {
-            return $this->manifest;
-        }
-
-        if (!file_exists($this->manifestPath)) {
-            $this->build();
-        }
-
-        $this->files->get($this->manifestPath);
-
-        return $this->manifest = file_exists($this->manifestPath) ?
-            $this->files->getRequire($this->manifestPath) : [];
-    }
-
-    /**
      * Build the manifest and write it to disk.
      *
      * @return void
@@ -113,6 +92,39 @@ class PackageManifest
         })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
             return $ignoreAll || in_array($package, $ignore);
         })->filter()->all());
+    }
+
+    /**
+     * Get all of the aliases for all packages.
+     *
+     * @return array
+     */
+    public function aliases()
+    {
+        return collect($this->getManifest())->flatMap(function ($configuration) {
+            return (array)($configuration['aliases'] ?? []);
+        })->filter()->all();
+    }
+
+    /**
+     * Get the current package manifest.
+     *
+     * @return array
+     */
+    protected function getManifest()
+    {
+        if (!is_null($this->manifest)) {
+            return $this->manifest;
+        }
+
+        if (!file_exists($this->manifestPath)) {
+            $this->build();
+        }
+
+        $this->files->get($this->manifestPath);
+
+        return $this->manifest = file_exists($this->manifestPath) ?
+            $this->files->getRequire($this->manifestPath) : [];
     }
 
     /**
@@ -159,17 +171,5 @@ class PackageManifest
     protected function format($package)
     {
         return str_replace($this->vendorPath . '/', '', $package);
-    }
-
-    /**
-     * Get all of the aliases for all packages.
-     *
-     * @return array
-     */
-    public function aliases()
-    {
-        return collect($this->getManifest())->flatMap(function ($configuration) {
-            return (array)($configuration['aliases'] ?? []);
-        })->filter()->all();
     }
 }

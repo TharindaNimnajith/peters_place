@@ -10,10 +10,14 @@
                 closed: false,
                 activate: function () {
                 }
-            }
+            };
             //Variables
             var options = $.extend(defaults, options);
-            var opt = options, jtype = opt.type, jfit = opt.fit, jwidth = opt.width, vtabs = 'vertical',
+            var opt = options,
+                jtype = opt.type,
+                jfit = opt.fit,
+                jwidth = opt.width,
+                vtabs = 'vertical',
                 accord = 'accordion';
 
             //Events
@@ -42,7 +46,10 @@
                         $respTabs.addClass('resp-vtabs');
                     }
                     if (jfit == true) {
-                        $respTabs.css({width: '100%', margin: '0px'});
+                        $respTabs.css({
+                            width: '100%',
+                            margin: '0px'
+                        });
                     }
                     if (jtype == accord) {
                         $respTabs.addClass('resp-easy-accordion');

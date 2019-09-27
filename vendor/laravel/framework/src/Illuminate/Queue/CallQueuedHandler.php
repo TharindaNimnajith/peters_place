@@ -59,6 +59,24 @@ class CallQueuedHandler
     }
 
     /**
+     * Call the failed method on the job instance.
+     *
+     * The exception that caused the failure will be passed.
+     *
+     * @param array $data
+     * @param Exception $e
+     * @return void
+     */
+    public function failed(array $data, $e)
+    {
+        $command = unserialize($data['command']);
+
+        if (method_exists($command, 'failed')) {
+            $command->failed($e);
+        }
+    }
+
+    /**
      * Set the job instance of the given class if necessary.
      *
      * @param Job $job
@@ -127,24 +145,6 @@ class CallQueuedHandler
     {
         if (method_exists($command, 'dispatchNextJobInChain')) {
             $command->dispatchNextJobInChain();
-        }
-    }
-
-    /**
-     * Call the failed method on the job instance.
-     *
-     * The exception that caused the failure will be passed.
-     *
-     * @param array $data
-     * @param Exception $e
-     * @return void
-     */
-    public function failed(array $data, $e)
-    {
-        $command = unserialize($data['command']);
-
-        if (method_exists($command, 'failed')) {
-            $command->failed($e);
         }
     }
 }

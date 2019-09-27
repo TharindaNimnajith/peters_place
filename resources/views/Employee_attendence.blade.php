@@ -116,6 +116,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -125,12 +126,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -145,7 +146,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -157,7 +159,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -177,7 +180,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -191,12 +196,14 @@
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
+                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    </li>
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="#contact"><img src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                    <li class="my"><a href="#contact"><img
+                                src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                     </li>
                 </ul>
             </div>
@@ -220,7 +227,9 @@
             <div class="row">
                 <div class="col-5">
                     <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                        <b><h4 id="date" style="margin-top: 20px;"></h4></b>
+                        <b>
+                            <h4 id="date" style="margin-top: 20px;"></h4>
+                        </b>
 
                         <table class="table table-bordered">
 
@@ -260,12 +269,14 @@
                     <h3 style="margin-top:20px;margin-left: 20px;color: #c51f1a">Total Attendance = {{$count}} </h3>
                     <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-left: -2ch>
                         <div class=" container-fluid
-                    " style="margin-top: 20px">
+                    " style=" margin-top: 20px">
 
                     <table class="table table-bordered" style="margin-left: 0ch">
                         <thead>
                         <tr>
-                            <td colspan="4"><h6><b>Daily Attendance List </b></h6></td>
+                            <td colspan="4">
+                                <h6><b>Daily Attendance List </b></h6>
+                            </td>
                         </tr>
                         <tr>
                             <th><b>Date</b></th>
@@ -323,10 +334,13 @@
         var date = d.getDate();
         var year = d.getFullYear();
         var month = d.getMonth();
-        var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+            "October", "November", "December"
+        ];
         month = monthArr[month];
         document.getElementById("date").innerHTML = date + " " + month + ", " + year;
     }
+
 </script>
 
 </body>

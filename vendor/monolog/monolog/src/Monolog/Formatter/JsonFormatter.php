@@ -87,6 +87,22 @@ class JsonFormatter extends NormalizerFormatter
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function format(array $record)
+    {
+        return $this->toJson($this->normalize($record), true) . ($this->appendNewline ? "\n" : '');
+    }
+
+    /**
+     * @param bool $include
+     */
+    public function includeStacktraces($include = true)
+    {
+        $this->includeStacktraces = $include;
+    }
+
+    /**
      * Use new lines to separate records instead of a
      * JSON-encoded array.
      *
@@ -105,14 +121,6 @@ class JsonFormatter extends NormalizerFormatter
         $this->appendNewline = $oldNewline;
 
         return implode("\n", $records);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function format(array $record)
-    {
-        return $this->toJson($this->normalize($record), true) . ($this->appendNewline ? "\n" : '');
     }
 
     /**
@@ -204,13 +212,5 @@ class JsonFormatter extends NormalizerFormatter
     protected function formatBatchJson(array $records)
     {
         return $this->toJson($this->normalize($records), true);
-    }
-
-    /**
-     * @param bool $include
-     */
-    public function includeStacktraces($include = true)
-    {
-        $this->includeStacktraces = $include;
     }
 }

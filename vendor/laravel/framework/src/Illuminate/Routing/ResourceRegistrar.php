@@ -146,6 +146,47 @@ class ResourceRegistrar
     }
 
     /**
+     * Format a resource parameter for usage.
+     *
+     * @param string $value
+     * @return string
+     */
+    public function getResourceWildcard($value)
+    {
+        if (isset($this->parameters[$value])) {
+            $value = $this->parameters[$value];
+        } elseif (isset(static::$parameterMap[$value])) {
+            $value = static::$parameterMap[$value];
+        } elseif ($this->parameters === 'singular' || static::$singularParameters) {
+            $value = Str::singular($value);
+        }
+
+        return str_replace('-', '_', $value);
+    }
+
+    /**
+     * Get the base resource URI for a given resource.
+     *
+     * @param string $resource
+     * @return string
+     */
+    public function getResourceUri($resource)
+    {
+        if (!Str::contains($resource, '.')) {
+            return $resource;
+        }
+
+        // Once we have built the base URI, we'll remove the parameter holder for this
+        // base resource name so that the individual route adders can suffix these
+        // paths however they need to, as some do not have any parameters at all.
+        $segments = explode('.', $resource);
+
+        $uri = $this->getNestedResourceUri($segments);
+
+        return str_replace('/{' . $this->getResourceWildcard(end($segments)) . '}', '', $uri);
+    }
+
+    /**
      * Build a set of prefixed resource routes.
      *
      * @param string $name
@@ -186,25 +227,6 @@ class ResourceRegistrar
     }
 
     /**
-     * Format a resource parameter for usage.
-     *
-     * @param string $value
-     * @return string
-     */
-    public function getResourceWildcard($value)
-    {
-        if (isset($this->parameters[$value])) {
-            $value = $this->parameters[$value];
-        } elseif (isset(static::$parameterMap[$value])) {
-            $value = static::$parameterMap[$value];
-        } elseif ($this->parameters === 'singular' || static::$singularParameters) {
-            $value = Str::singular($value);
-        }
-
-        return str_replace('-', '_', $value);
-    }
-
-    /**
      * Get the applicable resource methods.
      *
      * @param array $defaults
@@ -242,28 +264,6 @@ class ResourceRegistrar
         $action = $this->getResourceAction($name, $controller, 'index', $options);
 
         return $this->router->get($uri, $action);
-    }
-
-    /**
-     * Get the base resource URI for a given resource.
-     *
-     * @param string $resource
-     * @return string
-     */
-    public function getResourceUri($resource)
-    {
-        if (!Str::contains($resource, '.')) {
-            return $resource;
-        }
-
-        // Once we have built the base URI, we'll remove the parameter holder for this
-        // base resource name so that the individual route adders can suffix these
-        // paths however they need to, as some do not have any parameters at all.
-        $segments = explode('.', $resource);
-
-        $uri = $this->getNestedResourceUri($segments);
-
-        return str_replace('/{' . $this->getResourceWildcard(end($segments)) . '}', '', $uri);
     }
 
     /**

@@ -120,38 +120,6 @@ class Handler implements ExceptionHandlerContract
     }
 
     /**
-     * Determine if the exception is in the "do not report" list.
-     *
-     * @param Exception $e
-     * @return bool
-     */
-    protected function shouldntReport(Exception $e)
-    {
-        $dontReport = array_merge($this->dontReport, $this->internalDontReport);
-
-        return !is_null(Arr::first($dontReport, function ($type) use ($e) {
-            return $e instanceof $type;
-        }));
-    }
-
-    /**
-     * Get the default context variables for logging.
-     *
-     * @return array
-     */
-    protected function context()
-    {
-        try {
-            return array_filter([
-                'userId' => Auth::id(),
-                // 'email' => optional(Auth::user())->email,
-            ]);
-        } catch (Throwable $e) {
-            return [];
-        }
-    }
-
-    /**
      * Determine if the exception should be reported.
      *
      * @param Exception $e
@@ -190,6 +158,50 @@ class Handler implements ExceptionHandlerContract
         return $request->expectsJson()
             ? $this->prepareJsonResponse($request, $e)
             : $this->prepareResponse($request, $e);
+    }
+
+    /**
+     * Render an exception to the console.
+     *
+     * @param OutputInterface $output
+     * @param Exception $e
+     * @return void
+     */
+    public function renderForConsole($output, Exception $e)
+    {
+        (new ConsoleApplication)->renderException($e, $output);
+    }
+
+    /**
+     * Determine if the exception is in the "do not report" list.
+     *
+     * @param Exception $e
+     * @return bool
+     */
+    protected function shouldntReport(Exception $e)
+    {
+        $dontReport = array_merge($this->dontReport, $this->internalDontReport);
+
+        return !is_null(Arr::first($dontReport, function ($type) use ($e) {
+            return $e instanceof $type;
+        }));
+    }
+
+    /**
+     * Get the default context variables for logging.
+     *
+     * @return array
+     */
+    protected function context()
+    {
+        try {
+            return array_filter([
+                'userId' => Auth::id(),
+                // 'email' => optional(Auth::user())->email,
+            ]);
+        } catch (Throwable $e) {
+            return [];
+        }
     }
 
     /**
@@ -472,17 +484,5 @@ class Handler implements ExceptionHandlerContract
         View::replaceNamespace('errors', $paths->map(function ($path) {
             return "{$path}/errors";
         })->push(__DIR__ . '/views')->all());
-    }
-
-    /**
-     * Render an exception to the console.
-     *
-     * @param OutputInterface $output
-     * @param Exception $e
-     * @return void
-     */
-    public function renderForConsole($output, Exception $e)
-    {
-        (new ConsoleApplication)->renderException($e, $output);
     }
 }

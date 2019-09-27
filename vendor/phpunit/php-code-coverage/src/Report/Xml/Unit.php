@@ -10,23 +10,20 @@
 
 namespace SebastianBergmann\CodeCoverage\Report\Xml;
 
+use DOMElement;
+
 final class Unit
 {
     /**
-     * @var \DOMElement
+     * @var DOMElement
      */
     private $contextNode;
 
-    public function __construct(\DOMElement $context, string $name)
+    public function __construct(DOMElement $context, string $name)
     {
         $this->contextNode = $context;
 
         $this->setName($name);
-    }
-
-    private function setName(string $name): void
-    {
-        $this->contextNode->setAttribute('name', $name);
     }
 
     public function setLines(int $start, int $executable, int $executed): void
@@ -92,5 +89,10 @@ final class Unit
         );
 
         return new Method($node, $name);
+    }
+
+    private function setName(string $name): void
+    {
+        $this->contextNode->setAttribute('name', $name);
     }
 }

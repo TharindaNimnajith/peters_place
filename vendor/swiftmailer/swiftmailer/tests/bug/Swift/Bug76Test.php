@@ -1,6 +1,8 @@
 <?php
 
-class Swift_Bug76Test extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_Bug76Test extends TestCase
 {
     private $inputFile;
     private $outputFile;
@@ -18,25 +20,6 @@ class Swift_Bug76Test extends \PHPUnit\Framework\TestCase
         $this->assertMaxLineLength(76, $this->outputFile,
             '%s: Line length should not exceed 76 characters'
         );
-    }
-
-    private function fillFileWithRandomBytes($byteCount, $file)
-    {
-        // I was going to use dd with if=/dev/random but this way seems more
-        // cross platform even if a hella expensive!!
-
-        file_put_contents($file, '');
-        $fp = fopen($file, 'wb');
-        for ($i = 0; $i < $byteCount; ++$i) {
-            $byteVal = random_int(0, 255);
-            fwrite($fp, pack('i', $byteVal));
-        }
-        fclose($fp);
-    }
-
-    private function createStream($file)
-    {
-        return new Swift_ByteStream_FileByteStream($file, true);
     }
 
     public function assertMaxLineLength($length, $filePath, $message = '%s')
@@ -58,14 +41,33 @@ class Swift_Bug76Test extends \PHPUnit\Framework\TestCase
         $this->encoder = $this->createEncoder();
     }
 
-    private function createEncoder()
-    {
-        return new Swift_Mime_ContentEncoder_Base64ContentEncoder();
-    }
-
     protected function tearDown()
     {
         unlink($this->inputFile);
         unlink($this->outputFile);
+    }
+
+    private function fillFileWithRandomBytes($byteCount, $file)
+    {
+        // I was going to use dd with if=/dev/random but this way seems more
+        // cross platform even if a hella expensive!!
+
+        file_put_contents($file, '');
+        $fp = fopen($file, 'wb');
+        for ($i = 0; $i < $byteCount; ++$i) {
+            $byteVal = random_int(0, 255);
+            fwrite($fp, pack('i', $byteVal));
+        }
+        fclose($fp);
+    }
+
+    private function createStream($file)
+    {
+        return new Swift_ByteStream_FileByteStream($file, true);
+    }
+
+    private function createEncoder()
+    {
+        return new Swift_Mime_ContentEncoder_Base64ContentEncoder();
     }
 }

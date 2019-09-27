@@ -71,6 +71,28 @@ class TimeitCommand extends Command
     }
 
     /**
+     * Internal method for marking the end of timeit execution.
+     *
+     * A static call to this method is injected by TimeitVisitor at the end
+     * of the timeit input code to instrument the call.
+     *
+     * Note that this accepts an optional $ret parameter, which is used to pass
+     * the return value of the last statement back out of timeit. This saves us
+     * a bunch of code rewriting shenanigans.
+     *
+     * @param mixed $ret
+     *
+     * @return mixed it just passes $ret right back
+     */
+    public static function markEnd($ret = null)
+    {
+        self::$times[] = microtime(true) - self::$start;
+        self::$start = null;
+
+        return $ret;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function configure()
@@ -176,27 +198,5 @@ HELP
         if (self::$start !== null) {
             self::markEnd();
         }
-    }
-
-    /**
-     * Internal method for marking the end of timeit execution.
-     *
-     * A static call to this method is injected by TimeitVisitor at the end
-     * of the timeit input code to instrument the call.
-     *
-     * Note that this accepts an optional $ret parameter, which is used to pass
-     * the return value of the last statement back out of timeit. This saves us
-     * a bunch of code rewriting shenanigans.
-     *
-     * @param mixed $ret
-     *
-     * @return mixed it just passes $ret right back
-     */
-    public static function markEnd($ret = null)
-    {
-        self::$times[] = microtime(true) - self::$start;
-        self::$start = null;
-
-        return $ret;
     }
 }

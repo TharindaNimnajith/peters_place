@@ -1,6 +1,8 @@
 <?php
 
-class Swift_Mime_ContentEncoder_QpContentEncoderAcceptanceTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_Mime_ContentEncoder_QpContentEncoderAcceptanceTest extends TestCase
 {
     private $samplesDir;
     private $factory;
@@ -56,12 +58,6 @@ class Swift_Mime_ContentEncoder_QpContentEncoderAcceptanceTest extends \PHPUnit\
     {
         $encoder = $this->createEncoderFromContainer();
         $this->assertEquals("a\r\nb\r\nc", $encoder->encodeString("a\nb\nc"));
-    }
-
-    private function createEncoderFromContainer()
-    {
-        return Swift_DependencyContainer::getInstance()
-            ->lookup('mime.qpcontentencoder');
     }
 
     public function testEncodingCRTextWithDiConfiguredInstance()
@@ -155,5 +151,11 @@ class Swift_Mime_ContentEncoder_QpContentEncoderAcceptanceTest extends \PHPUnit\
     protected function tearDown()
     {
         Swift_Preferences::getInstance()->setQPDotEscape(false);
+    }
+
+    private function createEncoderFromContainer()
+    {
+        return Swift_DependencyContainer::getInstance()
+            ->lookup('mime.qpcontentencoder');
     }
 }

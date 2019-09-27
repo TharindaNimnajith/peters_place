@@ -11,9 +11,11 @@
 
 namespace Symfony\Component\Routing;
 
+use BadMethodCallException;
 use Symfony\Component\Config\Exception\LoaderLoadException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\ResourceInterface;
+use function is_array;
 
 /**
  * Helps add and import routes into a RouteCollection.
@@ -85,41 +87,6 @@ class RouteCollectionBuilder
     }
 
     /**
-     * Finds a loader able to load an imported resource and loads it.
-     *
-     * @param mixed $resource A resource
-     * @param string|null $type The resource type or null if unknown
-     *
-     * @return RouteCollection[]
-     *
-     * @throws LoaderLoadException If no loader is found
-     */
-    private function load($resource, string $type = null): array
-    {
-        if (null === $this->loader) {
-            throw new \BadMethodCallException('Cannot import other routing resources: you must pass a LoaderInterface when constructing RouteCollectionBuilder.');
-        }
-
-        if ($this->loader->supports($resource, $type)) {
-            $collections = $this->loader->load($resource, $type);
-
-            return \is_array($collections) ? $collections : [$collections];
-        }
-
-        if (null === $resolver = $this->loader->getResolver()) {
-            throw new LoaderLoadException($resource, null, null, null, $type);
-        }
-
-        if (false === $loader = $resolver->resolve($resource, $type)) {
-            throw new LoaderLoadException($resource, null, null, null, $type);
-        }
-
-        $collections = $loader->load($resource, $type);
-
-        return \is_array($collections) ? $collections : [$collections];
-    }
-
-    /**
      * Returns a RouteCollectionBuilder that can be configured and then added with mount().
      *
      * @return self
@@ -145,18 +112,6 @@ class RouteCollectionBuilder
         }
 
         $this->routes[$name] = $route;
-
-        return $this;
-    }
-
-    /**
-     * Adds a resource for this collection.
-     *
-     * @return $this
-     */
-    private function addResource(ResourceInterface $resource): self
-    {
-        $this->resources[] = $resource;
 
         return $this;
     }
@@ -355,6 +310,53 @@ class RouteCollectionBuilder
         }
 
         return $routeCollection;
+    }
+
+    /**
+     * Finds a loader able to load an imported resource and loads it.
+     *
+     * @param mixed $resource A resource
+     * @param string|null $type The resource type or null if unknown
+     *
+     * @return RouteCollection[]
+     *
+     * @throws LoaderLoadException If no loader is found
+     */
+    private function load($resource, string $type = null): array
+    {
+        if (null === $this->loader) {
+            throw new BadMethodCallException('Cannot import other routing resources: you must pass a LoaderInterface when constructing RouteCollectionBuilder.');
+        }
+
+        if ($this->loader->supports($resource, $type)) {
+            $collections = $this->loader->load($resource, $type);
+
+            return is_array($collections) ? $collections : [$collections];
+        }
+
+        if (null === $resolver = $this->loader->getResolver()) {
+            throw new LoaderLoadException($resource, null, null, null, $type);
+        }
+
+        if (false === $loader = $resolver->resolve($resource, $type)) {
+            throw new LoaderLoadException($resource, null, null, null, $type);
+        }
+
+        $collections = $loader->load($resource, $type);
+
+        return is_array($collections) ? $collections : [$collections];
+    }
+
+    /**
+     * Adds a resource for this collection.
+     *
+     * @return $this
+     */
+    private function addResource(ResourceInterface $resource): self
+    {
+        $this->resources[] = $resource;
+
+        return $this;
     }
 
     /**

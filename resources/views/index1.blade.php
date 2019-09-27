@@ -1,6 +1,8 @@
 <!doctype html>
 <html>
-<head><title>PetersPlace</title>
+
+<head>
+    <title>PetersPlace</title>
     <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all'/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +56,7 @@
                 font-size: 18px;
             }
         }
+
     </style>
 </head>
 
@@ -90,6 +93,7 @@
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
     }
+
 </script>
 
 @extends('layout1')
@@ -113,8 +117,8 @@
                 <div class="input-group">
                     <input type="search" name="search2" class="form-control">
                     <span class="input-group-prepend">
-					<button type="submit" class="btn btn-primary">Search</button>
-				</span>
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </span>
                 </div>
             </form>
         </div>
@@ -195,6 +199,7 @@
                 $('.selectall2').prop('checked', false);
             }
         })
+
     </script>
 
 @endsection

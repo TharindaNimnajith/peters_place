@@ -89,27 +89,6 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     }
 
     /**
-     * Delete all existing reset tokens from the database.
-     *
-     * @param CanResetPasswordContract $user
-     * @return int
-     */
-    protected function deleteExisting(CanResetPasswordContract $user)
-    {
-        return $this->getTable()->where('email', $user->getEmailForPasswordReset())->delete();
-    }
-
-    /**
-     * Begin a new database query against the table.
-     *
-     * @return Builder
-     */
-    protected function getTable()
-    {
-        return $this->connection->table($this->table);
-    }
-
-    /**
      * Create a new token for the user.
      *
      * @return string
@@ -117,18 +96,6 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     public function createNewToken()
     {
         return hash_hmac('sha256', Str::random(40), $this->hashKey);
-    }
-
-    /**
-     * Build the record payload for the table.
-     *
-     * @param string $email
-     * @param string $token
-     * @return array
-     */
-    protected function getPayload($email, $token)
-    {
-        return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon];
     }
 
     /**
@@ -147,17 +114,6 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
         return $record &&
             !$this->tokenExpired($record['created_at']) &&
             $this->hasher->check($token, $record['token']);
-    }
-
-    /**
-     * Determine if the token has expired.
-     *
-     * @param string $createdAt
-     * @return bool
-     */
-    protected function tokenExpired($createdAt)
-    {
-        return Carbon::parse($createdAt)->addSeconds($this->expires)->isPast();
     }
 
     /**
@@ -201,5 +157,49 @@ class DatabaseTokenRepository implements TokenRepositoryInterface
     public function getHasher()
     {
         return $this->hasher;
+    }
+
+    /**
+     * Delete all existing reset tokens from the database.
+     *
+     * @param CanResetPasswordContract $user
+     * @return int
+     */
+    protected function deleteExisting(CanResetPasswordContract $user)
+    {
+        return $this->getTable()->where('email', $user->getEmailForPasswordReset())->delete();
+    }
+
+    /**
+     * Begin a new database query against the table.
+     *
+     * @return Builder
+     */
+    protected function getTable()
+    {
+        return $this->connection->table($this->table);
+    }
+
+    /**
+     * Build the record payload for the table.
+     *
+     * @param string $email
+     * @param string $token
+     * @return array
+     */
+    protected function getPayload($email, $token)
+    {
+        return ['email' => $email, 'token' => $this->hasher->make($token), 'created_at' => new Carbon];
+    }
+
+    /**
+     * Determine if the token has expired.
+     *
+     * @param string $createdAt
+     * @return bool
+     */
+    protected function tokenExpired($createdAt)
+    {
+        return Carbon::parse($createdAt)->addSeconds($this->expires)->isPast();
     }
 }

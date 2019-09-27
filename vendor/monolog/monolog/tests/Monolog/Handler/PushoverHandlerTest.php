@@ -39,33 +39,6 @@ class PushoverHandlerTest extends TestCase
         return $content;
     }
 
-    private function createHandler($token = 'myToken', $user = 'myUser', $title = 'Monolog')
-    {
-        $constructorArgs = array($token, $user, $title);
-        $this->res = fopen('php://memory', 'a');
-        $this->handler = $this->getMock(
-            '\Monolog\Handler\PushoverHandler',
-            array('fsockopen', 'streamSetTimeout', 'closeSocket'),
-            $constructorArgs
-        );
-
-        $reflectionProperty = new ReflectionProperty('\Monolog\Handler\SocketHandler', 'connectionString');
-        $reflectionProperty->setAccessible(true);
-        $reflectionProperty->setValue($this->handler, 'localhost:1234');
-
-        $this->handler->expects($this->any())
-            ->method('fsockopen')
-            ->will($this->returnValue($this->res));
-        $this->handler->expects($this->any())
-            ->method('streamSetTimeout')
-            ->will($this->returnValue(true));
-        $this->handler->expects($this->any())
-            ->method('closeSocket')
-            ->will($this->returnValue(true));
-
-        $this->handler->setFormatter($this->getIdentityFormatter());
-    }
-
     /**
      * @depends testWriteHeader
      */
@@ -138,5 +111,32 @@ class PushoverHandlerTest extends TestCase
 
         $this->assertRegexp('/token=myToken&user=userA&message=test1&title=Monolog&timestamp=\d{10}&priority=2&retry=30&expire=25200POST/', $content);
         $this->assertRegexp('/token=myToken&user=userB&message=test1&title=Monolog&timestamp=\d{10}&priority=2&retry=30&expire=25200$/', $content);
+    }
+
+    private function createHandler($token = 'myToken', $user = 'myUser', $title = 'Monolog')
+    {
+        $constructorArgs = array($token, $user, $title);
+        $this->res = fopen('php://memory', 'a');
+        $this->handler = $this->getMock(
+            '\Monolog\Handler\PushoverHandler',
+            array('fsockopen', 'streamSetTimeout', 'closeSocket'),
+            $constructorArgs
+        );
+
+        $reflectionProperty = new ReflectionProperty('\Monolog\Handler\SocketHandler', 'connectionString');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($this->handler, 'localhost:1234');
+
+        $this->handler->expects($this->any())
+            ->method('fsockopen')
+            ->will($this->returnValue($this->res));
+        $this->handler->expects($this->any())
+            ->method('streamSetTimeout')
+            ->will($this->returnValue(true));
+        $this->handler->expects($this->any())
+            ->method('closeSocket')
+            ->will($this->returnValue(true));
+
+        $this->handler->setFormatter($this->getIdentityFormatter());
     }
 }

@@ -84,18 +84,6 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
     }
 
     /**
-     * Clear the cached value if $condition is met.
-     *
-     * @param bool $condition
-     */
-    protected function clearCachedValueIf($condition)
-    {
-        if ($condition) {
-            $this->setCachedValue(null);
-        }
-    }
-
-    /**
      * Set the language used in this Header.
      *
      * For example, for US English, 'en-us'.
@@ -183,38 +171,26 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
     }
 
     /**
-     * Takes an array of tokens which appear in the header and turns them into
-     * an RFC 2822 compliant string, adding FWSP where needed.
+     * Set the maximum length of lines in the header (excluding EOL).
      *
-     * @param string[] $tokens
-     *
-     * @return string
+     * @param int $lineLength
      */
-    private function tokensToString(array $tokens)
+    public function setMaxLineLength($lineLength)
     {
-        $lineCount = 0;
-        $headerLines = [];
-        $headerLines[] = $this->name . ': ';
-        $currentLine = &$headerLines[$lineCount++];
+        $this->clearCachedValueIf($this->lineLength != $lineLength);
+        $this->lineLength = $lineLength;
+    }
 
-        // Build all tokens back into compliant header
-        foreach ($tokens as $i => $token) {
-            // Line longer than specified maximum or token was just a new line
-            if (("\r\n" == $token) ||
-                ($i > 0 && strlen($currentLine . $token) > $this->lineLength)
-                && 0 < strlen($currentLine)) {
-                $headerLines[] = '';
-                $currentLine = &$headerLines[$lineCount++];
-            }
-
-            // Append token to the line
-            if ("\r\n" != $token) {
-                $currentLine .= $token;
-            }
+    /**
+     * Clear the cached value if $condition is met.
+     *
+     * @param bool $condition
+     */
+    protected function clearCachedValueIf($condition)
+    {
+        if ($condition) {
+            $this->setCachedValue(null);
         }
-
-        // Implode with FWS (RFC 2822, 2.2.3)
-        return implode("\r\n", $headerLines) . "\r\n";
     }
 
     /**
@@ -299,23 +275,6 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
         }
 
         return $phraseStr;
-    }
-
-    /**
-     * Escape special characters in a string (convert to quoted-pairs).
-     *
-     * @param string $token
-     * @param string[] $include additional chars to escape
-     *
-     * @return string
-     */
-    private function escapeSpecials($token, $include = [])
-    {
-        foreach (array_merge(['\\'], $include) as $char) {
-            $token = str_replace($char, '\\' . $char, $token);
-        }
-
-        return $token;
     }
 
     /**
@@ -444,17 +403,6 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
     }
 
     /**
-     * Set the maximum length of lines in the header (excluding EOL).
-     *
-     * @param int $lineLength
-     */
-    public function setMaxLineLength($lineLength)
-    {
-        $this->clearCachedValueIf($this->lineLength != $lineLength);
-        $this->lineLength = $lineLength;
-    }
-
-    /**
      * Get the value in the cache.
      *
      * @return string
@@ -472,5 +420,57 @@ abstract class Swift_Mime_Headers_AbstractHeader implements Swift_Mime_Header
     protected function setCachedValue($value)
     {
         $this->cachedValue = $value;
+    }
+
+    /**
+     * Takes an array of tokens which appear in the header and turns them into
+     * an RFC 2822 compliant string, adding FWSP where needed.
+     *
+     * @param string[] $tokens
+     *
+     * @return string
+     */
+    private function tokensToString(array $tokens)
+    {
+        $lineCount = 0;
+        $headerLines = [];
+        $headerLines[] = $this->name . ': ';
+        $currentLine = &$headerLines[$lineCount++];
+
+        // Build all tokens back into compliant header
+        foreach ($tokens as $i => $token) {
+            // Line longer than specified maximum or token was just a new line
+            if (("\r\n" == $token) ||
+                ($i > 0 && strlen($currentLine . $token) > $this->lineLength)
+                && 0 < strlen($currentLine)) {
+                $headerLines[] = '';
+                $currentLine = &$headerLines[$lineCount++];
+            }
+
+            // Append token to the line
+            if ("\r\n" != $token) {
+                $currentLine .= $token;
+            }
+        }
+
+        // Implode with FWS (RFC 2822, 2.2.3)
+        return implode("\r\n", $headerLines) . "\r\n";
+    }
+
+    /**
+     * Escape special characters in a string (convert to quoted-pairs).
+     *
+     * @param string $token
+     * @param string[] $include additional chars to escape
+     *
+     * @return string
+     */
+    private function escapeSpecials($token, $include = [])
+    {
+        foreach (array_merge(['\\'], $include) as $char) {
+            $token = str_replace($char, '\\' . $char, $token);
+        }
+
+        return $token;
     }
 }

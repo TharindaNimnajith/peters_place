@@ -34,6 +34,11 @@ use function version_compare;
 
 class CodeFormatterTest extends TestCase
 {
+    private static function trimLines($code)
+    {
+        return rtrim(implode("\n", array_map('rtrim', explode("\n", $code))));
+    }
+
     /**
      * @dataProvider reflectors
      */
@@ -44,11 +49,6 @@ class CodeFormatterTest extends TestCase
 
         $this->assertEquals($expected, self::trimLines($formattedWithoutColors));
         $this->assertNotEquals($expected, self::trimLines($formatted));
-    }
-
-    private static function trimLines($code)
-    {
-        return rtrim(implode("\n", array_map('rtrim', explode("\n", $code))));
     }
 
     public function reflectors()

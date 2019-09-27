@@ -42,6 +42,17 @@ class EncryptCookies
     }
 
     /**
+     * Determine if the cookie contents should be serialized.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public static function serialized($name)
+    {
+        return static::$serialize;
+    }
+
+    /**
      * Disable encryption for the given cookie name(s).
      *
      * @param string|array $name
@@ -62,6 +73,17 @@ class EncryptCookies
     public function handle($request, Closure $next)
     {
         return $this->encrypt($next($this->decrypt($request)));
+    }
+
+    /**
+     * Determine whether encryption has been disabled for the given cookie.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function isDisabled($name)
+    {
+        return in_array($name, $this->except);
     }
 
     /**
@@ -86,17 +108,6 @@ class EncryptCookies
     }
 
     /**
-     * Determine whether encryption has been disabled for the given cookie.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public function isDisabled($name)
-    {
-        return in_array($name, $this->except);
-    }
-
-    /**
      * Duplicate a cookie with a new value.
      *
      * @param Cookie $cookie
@@ -110,17 +121,6 @@ class EncryptCookies
             $cookie->getPath(), $cookie->getDomain(), $cookie->isSecure(),
             $cookie->isHttpOnly(), $cookie->isRaw(), $cookie->getSameSite()
         );
-    }
-
-    /**
-     * Determine if the cookie contents should be serialized.
-     *
-     * @param string $name
-     * @return bool
-     */
-    public static function serialized($name)
-    {
-        return static::$serialize;
     }
 
     /**

@@ -46,26 +46,6 @@ trait ManagesStacks
     }
 
     /**
-     * Append content to a given push section.
-     *
-     * @param string $section
-     * @param string $content
-     * @return void
-     */
-    protected function extendPush($section, $content)
-    {
-        if (!isset($this->pushes[$section])) {
-            $this->pushes[$section] = [];
-        }
-
-        if (!isset($this->pushes[$section][$this->renderCount])) {
-            $this->pushes[$section][$this->renderCount] = $content;
-        } else {
-            $this->pushes[$section][$this->renderCount] .= $content;
-        }
-    }
-
-    /**
      * Stop injecting content into a push section.
      *
      * @return string
@@ -98,26 +78,6 @@ trait ManagesStacks
             }
         } else {
             $this->extendPrepend($section, $content);
-        }
-    }
-
-    /**
-     * Prepend content to a given stack.
-     *
-     * @param string $section
-     * @param string $content
-     * @return void
-     */
-    protected function extendPrepend($section, $content)
-    {
-        if (!isset($this->prepends[$section])) {
-            $this->prepends[$section] = [];
-        }
-
-        if (!isset($this->prepends[$section][$this->renderCount])) {
-            $this->prepends[$section][$this->renderCount] = $content;
-        } else {
-            $this->prepends[$section][$this->renderCount] = $content . $this->prepends[$section][$this->renderCount];
         }
     }
 
@@ -175,5 +135,45 @@ trait ManagesStacks
         $this->pushes = [];
         $this->prepends = [];
         $this->pushStack = [];
+    }
+
+    /**
+     * Append content to a given push section.
+     *
+     * @param string $section
+     * @param string $content
+     * @return void
+     */
+    protected function extendPush($section, $content)
+    {
+        if (!isset($this->pushes[$section])) {
+            $this->pushes[$section] = [];
+        }
+
+        if (!isset($this->pushes[$section][$this->renderCount])) {
+            $this->pushes[$section][$this->renderCount] = $content;
+        } else {
+            $this->pushes[$section][$this->renderCount] .= $content;
+        }
+    }
+
+    /**
+     * Prepend content to a given stack.
+     *
+     * @param string $section
+     * @param string $content
+     * @return void
+     */
+    protected function extendPrepend($section, $content)
+    {
+        if (!isset($this->prepends[$section])) {
+            $this->prepends[$section] = [];
+        }
+
+        if (!isset($this->prepends[$section][$this->renderCount])) {
+            $this->prepends[$section][$this->renderCount] = $content;
+        } else {
+            $this->prepends[$section][$this->renderCount] = $content . $this->prepends[$section][$this->renderCount];
+        }
     }
 }

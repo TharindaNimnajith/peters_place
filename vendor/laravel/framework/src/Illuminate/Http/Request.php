@@ -89,73 +89,6 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
-    {
-        return parent::duplicate($query, $request, $attributes, $cookies, $this->filterFiles($files), $server);
-    }
-
-    /**
-     * Filter the given array of files, removing any empty values.
-     *
-     * @param mixed $files
-     * @return mixed
-     */
-    protected function filterFiles($files)
-    {
-        if (!$files) {
-            return;
-        }
-
-        foreach ($files as $key => $file) {
-            if (is_array($file)) {
-                $files[$key] = $this->filterFiles($files[$key]);
-            }
-
-            if (empty($files[$key])) {
-                unset($files[$key]);
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * Get the input source for the request.
-     *
-     * @return ParameterBag
-     */
-    protected function getInputSource()
-    {
-        if ($this->isJson()) {
-            return $this->json();
-        }
-
-        return in_array($this->getRealMethod(), ['GET', 'HEAD']) ? $this->query : $this->request;
-    }
-
-    /**
-     * Get the JSON payload for the request.
-     *
-     * @param string|null $key
-     * @param mixed $default
-     * @return ParameterBag|mixed
-     */
-    public function json($key = null, $default = null)
-    {
-        if (!isset($this->json)) {
-            $this->json = new ParameterBag((array)json_decode($this->getContent(), true));
-        }
-
-        if (is_null($key)) {
-            return $this->json;
-        }
-
-        return data_get($this->json->all(), $key, $default);
-    }
-
-    /**
      * Create a new request instance from the given Laravel request.
      *
      * @param Request $from
@@ -193,6 +126,34 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
         $request->setRouteResolver($from->getRouteResolver());
 
         return $request;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function duplicate(array $query = null, array $request = null, array $attributes = null, array $cookies = null, array $files = null, array $server = null)
+    {
+        return parent::duplicate($query, $request, $attributes, $cookies, $this->filterFiles($files), $server);
+    }
+
+    /**
+     * Get the JSON payload for the request.
+     *
+     * @param string|null $key
+     * @param mixed $default
+     * @return ParameterBag|mixed
+     */
+    public function json($key = null, $default = null)
+    {
+        if (!isset($this->json)) {
+            $this->json = new ParameterBag((array)json_decode($this->getContent(), true));
+        }
+
+        if (is_null($key)) {
+            return $this->json;
+        }
+
+        return data_get($this->json->all(), $key, $default);
     }
 
     /**
@@ -700,5 +661,44 @@ class Request extends SymfonyRequest implements Arrayable, ArrayAccess
     public function __isset($key)
     {
         return !is_null($this->__get($key));
+    }
+
+    /**
+     * Filter the given array of files, removing any empty values.
+     *
+     * @param mixed $files
+     * @return mixed
+     */
+    protected function filterFiles($files)
+    {
+        if (!$files) {
+            return;
+        }
+
+        foreach ($files as $key => $file) {
+            if (is_array($file)) {
+                $files[$key] = $this->filterFiles($files[$key]);
+            }
+
+            if (empty($files[$key])) {
+                unset($files[$key]);
+            }
+        }
+
+        return $files;
+    }
+
+    /**
+     * Get the input source for the request.
+     *
+     * @return ParameterBag
+     */
+    protected function getInputSource()
+    {
+        if ($this->isJson()) {
+            return $this->json();
+        }
+
+        return in_array($this->getRealMethod(), ['GET', 'HEAD']) ? $this->query : $this->request;
     }
 }

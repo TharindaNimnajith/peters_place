@@ -54,16 +54,6 @@ class TagSet
     }
 
     /**
-     * Get an array of tag identifiers for all of the tags in the set.
-     *
-     * @return array
-     */
-    protected function tagIds()
-    {
-        return array_map([$this, 'tagId'], $this->names);
-    }
-
-    /**
      * Get the unique tag identifier for a given tag.
      *
      * @param string $name
@@ -106,5 +96,15 @@ class TagSet
     public function getNames()
     {
         return $this->names;
+    }
+
+    /**
+     * Get an array of tag identifiers for all of the tags in the set.
+     *
+     * @return array
+     */
+    protected function tagIds()
+    {
+        return array_map([$this, 'tagId'], $this->names);
     }
 }

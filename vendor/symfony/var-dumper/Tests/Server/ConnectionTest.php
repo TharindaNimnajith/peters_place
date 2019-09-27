@@ -66,6 +66,16 @@ DUMP
             , $dumped);
     }
 
+    public function testNoServer()
+    {
+        $cloner = new VarCloner();
+        $data = $cloner->cloneVar('foo');
+        $connection = new Connection(self::VAR_DUMPER_SERVER);
+        $start = microtime(true);
+        $this->assertFalse($connection->write($data));
+        $this->assertLessThan(1, microtime(true) - $start);
+    }
+
     private function getServerProcess(): Process
     {
         $process = new PhpProcess(file_get_contents(__DIR__ . '/../Fixtures/dump_server.php'), null, [
@@ -75,15 +85,5 @@ DUMP
         $process->inheritEnvironmentVariables(true);
 
         return $process->setTimeout(9);
-    }
-
-    public function testNoServer()
-    {
-        $cloner = new VarCloner();
-        $data = $cloner->cloneVar('foo');
-        $connection = new Connection(self::VAR_DUMPER_SERVER);
-        $start = microtime(true);
-        $this->assertFalse($connection->write($data));
-        $this->assertLessThan(1, microtime(true) - $start);
     }
 }

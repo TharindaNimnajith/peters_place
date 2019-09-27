@@ -11,8 +11,17 @@
 
 namespace Symfony\Component\Translation\Extractor;
 
+use ArrayIterator;
+use InvalidArgumentException;
+use Iterator;
+use PHPUnit\Framework\MockObject\MockObject;
+use Prophecy\Prophecy\ProphecySubjectInterface;
+use ReflectionMethod;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Translation\MessageCatalogue;
+use function count;
+use function func_num_args;
+use function get_class;
 
 /**
  * PhpExtractor extracts translation messages from a PHP template.
@@ -86,6 +95,14 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
+    }
+
+    /**
      * Extracts trans message from PHP tokens.
      *
      * @param array $tokens
@@ -94,12 +111,12 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
      */
     protected function parseTokens($tokens, MessageCatalogue $catalog/*, string $filename*/)
     {
-        if (\func_num_args() < 3 && __CLASS__ !== \get_class($this) && __CLASS__ !== (new \ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof \PHPUnit\Framework\MockObject\MockObject && !$this instanceof \Prophecy\Prophecy\ProphecySubjectInterface) {
+        if (func_num_args() < 3 && __CLASS__ !== get_class($this) && __CLASS__ !== (new ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof MockObject && !$this instanceof ProphecySubjectInterface) {
             @trigger_error(sprintf('The "%s()" method will have a new "string $filename" argument in version 5.0, not defining it is deprecated since Symfony 4.3.', __METHOD__), E_USER_DEPRECATED);
         }
-        $filename = 2 < \func_num_args() ? func_get_arg(2) : '';
+        $filename = 2 < func_num_args() ? func_get_arg(2) : '';
 
-        $tokenIterator = new \ArrayIterator($tokens);
+        $tokenIterator = new ArrayIterator($tokens);
 
         for ($key = 0; $key < $tokenIterator->count(); ++$key) {
             foreach ($this->sequences as $sequence) {
@@ -116,7 +133,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
                     } elseif (self::MESSAGE_TOKEN === $item) {
                         $message = $this->getValue($tokenIterator);
 
-                        if (\count($sequence) === ($sequenceKey + 1)) {
+                        if (count($sequence) === ($sequenceKey + 1)) {
                             break;
                         }
                     } elseif (self::METHOD_ARGUMENTS_TOKEN === $item) {
@@ -146,19 +163,6 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     }
 
     /**
-     * Seeks to a non-whitespace token.
-     */
-    private function seekToNextRelevantToken(\Iterator $tokenIterator)
-    {
-        for (; $tokenIterator->valid(); $tokenIterator->next()) {
-            $t = $tokenIterator->current();
-            if (T_WHITESPACE !== $t[0]) {
-                break;
-            }
-        }
-    }
-
-    /**
      * Normalizes a token.
      *
      * @param mixed $token
@@ -175,10 +179,47 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
     }
 
     /**
+     * @param string $file
+     *
+     * @return bool
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function canBeExtracted($file)
+    {
+        return $this->isFile($file) && 'php' === pathinfo($file, PATHINFO_EXTENSION);
+    }
+
+    /**
+     * @param string|array $directory
+     *
+     * @return array
+     */
+    protected function extractFromDirectory($directory)
+    {
+        $finder = new Finder();
+
+        return $finder->files()->name('*.php')->in($directory);
+    }
+
+    /**
+     * Seeks to a non-whitespace token.
+     */
+    private function seekToNextRelevantToken(Iterator $tokenIterator)
+    {
+        for (; $tokenIterator->valid(); $tokenIterator->next()) {
+            $t = $tokenIterator->current();
+            if (T_WHITESPACE !== $t[0]) {
+                break;
+            }
+        }
+    }
+
+    /**
      * Extracts the message from the iterator while the tokens
      * match allowed message tokens.
      */
-    private function getValue(\Iterator $tokenIterator)
+    private function getValue(Iterator $tokenIterator)
     {
         $message = '';
         $docToken = '';
@@ -221,7 +262,7 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
         return $message;
     }
 
-    private function skipMethodArgument(\Iterator $tokenIterator)
+    private function skipMethodArgument(Iterator $tokenIterator)
     {
         $openBraces = 0;
 
@@ -240,37 +281,5 @@ class PhpExtractor extends AbstractFileExtractor implements ExtractorInterface
                 break;
             }
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setPrefix($prefix)
-    {
-        $this->prefix = $prefix;
-    }
-
-    /**
-     * @param string $file
-     *
-     * @return bool
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function canBeExtracted($file)
-    {
-        return $this->isFile($file) && 'php' === pathinfo($file, PATHINFO_EXTENSION);
-    }
-
-    /**
-     * @param string|array $directory
-     *
-     * @return array
-     */
-    protected function extractFromDirectory($directory)
-    {
-        $finder = new Finder();
-
-        return $finder->files()->name('*.php')->in($directory);
     }
 }

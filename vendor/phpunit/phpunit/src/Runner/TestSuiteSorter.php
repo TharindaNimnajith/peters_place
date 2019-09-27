@@ -94,6 +94,25 @@ final class TestSuiteSorter
         $this->cache = $cache ?? new NullTestResultCache;
     }
 
+    public static function getTestSorterUID(Test $test): string
+    {
+        if ($test instanceof PhptTestCase) {
+            return $test->getName();
+        }
+
+        if ($test instanceof TestCase) {
+            $testName = $test->getName(true);
+
+            if (strpos($testName, '::') === false) {
+                $testName = get_class($test) . '::' . $testName;
+            }
+
+            return $testName;
+        }
+
+        return $test->getName();
+    }
+
     /**
      * @throws Exception
      */
@@ -144,6 +163,16 @@ final class TestSuiteSorter
         }
     }
 
+    public function getOriginalExecutionOrder(): array
+    {
+        return $this->originalExecutionOrder;
+    }
+
+    public function getExecutionOrder(): array
+    {
+        return $this->executionOrder;
+    }
+
     private function calculateTestExecutionOrder(Test $suite): array
     {
         $tests = [];
@@ -159,25 +188,6 @@ final class TestSuiteSorter
         }
 
         return $tests;
-    }
-
-    public static function getTestSorterUID(Test $test): string
-    {
-        if ($test instanceof PhptTestCase) {
-            return $test->getName();
-        }
-
-        if ($test instanceof TestCase) {
-            $testName = $test->getName(true);
-
-            if (strpos($testName, '::') === false) {
-                $testName = get_class($test) . '::' . $testName;
-            }
-
-            return $testName;
-        }
-
-        return $test->getName();
     }
 
     private function addSuiteToDefectSortOrder(TestSuite $suite): void
@@ -358,15 +368,5 @@ final class TestSuiteSorter
         );
 
         return $names;
-    }
-
-    public function getOriginalExecutionOrder(): array
-    {
-        return $this->originalExecutionOrder;
-    }
-
-    public function getExecutionOrder(): array
-    {
-        return $this->executionOrder;
     }
 }

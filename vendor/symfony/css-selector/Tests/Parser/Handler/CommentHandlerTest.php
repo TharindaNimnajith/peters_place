@@ -30,11 +30,6 @@ class CommentHandlerTest extends AbstractHandlerTest
         $this->assertRemainingContent($reader, $remainingContent);
     }
 
-    protected function generateHandler()
-    {
-        return new CommentHandler();
-    }
-
     public function getHandleValueTestData()
     {
         return [
@@ -51,5 +46,10 @@ class CommentHandlerTest extends AbstractHandlerTest
             ['+'],
             [' '],
         ];
+    }
+
+    protected function generateHandler()
+    {
+        return new CommentHandler();
     }
 }

@@ -80,21 +80,6 @@ class AmqpHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @param string $data
-     * @return AMQPMessage
-     */
-    private function createAmqpMessage($data)
-    {
-        return new AMQPMessage(
-            (string)$data,
-            array(
-                'delivery_mode' => 2,
-                'content_type' => 'application/json',
-            )
-        );
-    }
-
-    /**
      * Gets the routing key for the AMQP exchange
      *
      * @param array $record
@@ -145,5 +130,20 @@ class AmqpHandler extends AbstractProcessingHandler
     protected function getDefaultFormatter()
     {
         return new JsonFormatter(JsonFormatter::BATCH_MODE_JSON, false);
+    }
+
+    /**
+     * @param string $data
+     * @return AMQPMessage
+     */
+    private function createAmqpMessage($data)
+    {
+        return new AMQPMessage(
+            (string)$data,
+            array(
+                'delivery_mode' => 2,
+                'content_type' => 'application/json',
+            )
+        );
     }
 }

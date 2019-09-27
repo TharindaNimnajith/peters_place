@@ -22,21 +22,6 @@ class CarbonTimeZone extends DateTimeZone
         parent::__construct(static::getDateTimeZoneNameFromMixed($timezone));
     }
 
-    protected static function getDateTimeZoneNameFromMixed($timezone)
-    {
-        if (is_null($timezone)) {
-            $timezone = date_default_timezone_get();
-        } elseif (is_numeric($timezone)) {
-            if ($timezone <= -100 || $timezone >= 100) {
-                throw new InvalidArgumentException('Absolute timezone offset cannot be greater than 100.');
-            }
-
-            $timezone = ($timezone >= 0 ? '+' : '') . $timezone . ':00';
-        }
-
-        return $timezone;
-    }
-
     /**
      * Create a CarbonTimeZone from mixed input.
      *
@@ -82,6 +67,21 @@ class CarbonTimeZone extends DateTimeZone
         }
 
         return new static($tz->getName());
+    }
+
+    protected static function getDateTimeZoneNameFromMixed($timezone)
+    {
+        if (is_null($timezone)) {
+            $timezone = date_default_timezone_get();
+        } elseif (is_numeric($timezone)) {
+            if ($timezone <= -100 || $timezone >= 100) {
+                throw new InvalidArgumentException('Absolute timezone offset cannot be greater than 100.');
+            }
+
+            $timezone = ($timezone >= 0 ? '+' : '') . $timezone . ':00';
+        }
+
+        return $timezone;
     }
 
     protected static function getDateTimeZoneFromName(&$name)

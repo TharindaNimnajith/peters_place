@@ -115,37 +115,6 @@ class MySqlGrammar extends Grammar
     }
 
     /**
-     * Compile all of the columns for an update statement.
-     *
-     * @param array $values
-     * @return string
-     */
-    protected function compileUpdateColumns($values)
-    {
-        return collect($values)->map(function ($value, $key) {
-            if ($this->isJsonSelector($key)) {
-                return $this->compileJsonUpdateColumn($key, new JsonExpression($value));
-            }
-
-            return $this->wrap($key) . ' = ' . $this->parameter($value);
-        })->implode(', ');
-    }
-
-    /**
-     * Prepares a JSON column being updated using the JSON_SET function.
-     *
-     * @param string $key
-     * @param JsonExpression $value
-     * @return string
-     */
-    protected function compileJsonUpdateColumn($key, JsonExpression $value)
-    {
-        [$field, $path] = $this->wrapJsonFieldAndPath($key);
-
-        return "{$field} = json_set({$field}{$path}, {$value->getValue()})";
-    }
-
-    /**
      * Prepare the bindings for an update statement.
      *
      * Booleans, integers, and doubles are inserted into JSON updates as raw values.
@@ -178,6 +147,37 @@ class MySqlGrammar extends Grammar
         return isset($query->joins)
             ? $this->compileDeleteWithJoins($query, $table, $where)
             : $this->compileDeleteWithoutJoins($query, $table, $where);
+    }
+
+    /**
+     * Compile all of the columns for an update statement.
+     *
+     * @param array $values
+     * @return string
+     */
+    protected function compileUpdateColumns($values)
+    {
+        return collect($values)->map(function ($value, $key) {
+            if ($this->isJsonSelector($key)) {
+                return $this->compileJsonUpdateColumn($key, new JsonExpression($value));
+            }
+
+            return $this->wrap($key) . ' = ' . $this->parameter($value);
+        })->implode(', ');
+    }
+
+    /**
+     * Prepares a JSON column being updated using the JSON_SET function.
+     *
+     * @param string $key
+     * @param JsonExpression $value
+     * @return string
+     */
+    protected function compileJsonUpdateColumn($key, JsonExpression $value)
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($key);
+
+        return "{$field} = json_set({$field}{$path}, {$value->getValue()})";
     }
 
     /**

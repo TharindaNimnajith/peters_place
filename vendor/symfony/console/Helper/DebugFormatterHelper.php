@@ -11,6 +11,8 @@
 
 namespace Symfony\Component\Console\Helper;
 
+use function count;
+
 /**
  * Helps outputting debug information when running an external program from a command.
  *
@@ -35,19 +37,9 @@ class DebugFormatterHelper extends Helper
      */
     public function start($id, $message, $prefix = 'RUN')
     {
-        $this->started[$id] = ['border' => ++$this->count % \count($this->colors)];
+        $this->started[$id] = ['border' => ++$this->count % count($this->colors)];
 
         return sprintf("%s<bg=blue;fg=white> %s </> <fg=blue>%s</>\n", $this->getBorder($id), $prefix, $message);
-    }
-
-    /**
-     * @param string $id The id of the formatting session
-     *
-     * @return string
-     */
-    private function getBorder($id)
-    {
-        return sprintf('<bg=%s> </>', $this->colors[$this->started[$id]['border']]);
     }
 
     /**
@@ -123,5 +115,15 @@ class DebugFormatterHelper extends Helper
     public function getName()
     {
         return 'debug_formatter';
+    }
+
+    /**
+     * @param string $id The id of the formatting session
+     *
+     * @return string
+     */
+    private function getBorder($id)
+    {
+        return sprintf('<bg=%s> </>', $this->colors[$this->started[$id]['border']]);
     }
 }

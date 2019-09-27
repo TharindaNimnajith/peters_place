@@ -54,6 +54,47 @@ class RedisTaggedCache extends TaggedCache
     }
 
     /**
+     * Increment the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function increment($key, $value = 1)
+    {
+        $this->pushStandardKeys($this->tags->getNamespace(), $key);
+
+        parent::increment($key, $value);
+    }
+
+    /**
+     * Decrement the value of an item in the cache.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return void
+     */
+    public function decrement($key, $value = 1)
+    {
+        $this->pushStandardKeys($this->tags->getNamespace(), $key);
+
+        parent::decrement($key, $value);
+    }
+
+    /**
+     * Remove all items from the cache.
+     *
+     * @return bool
+     */
+    public function flush()
+    {
+        $this->deleteForeverKeys();
+        $this->deleteStandardKeys();
+
+        return parent::flush();
+    }
+
+    /**
      * Store forever key references into store.
      *
      * @param string $namespace
@@ -104,47 +145,6 @@ class RedisTaggedCache extends TaggedCache
     protected function pushStandardKeys($namespace, $key)
     {
         $this->pushKeys($namespace, $key, self::REFERENCE_KEY_STANDARD);
-    }
-
-    /**
-     * Increment the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function increment($key, $value = 1)
-    {
-        $this->pushStandardKeys($this->tags->getNamespace(), $key);
-
-        parent::increment($key, $value);
-    }
-
-    /**
-     * Decrement the value of an item in the cache.
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return void
-     */
-    public function decrement($key, $value = 1)
-    {
-        $this->pushStandardKeys($this->tags->getNamespace(), $key);
-
-        parent::decrement($key, $value);
-    }
-
-    /**
-     * Remove all items from the cache.
-     *
-     * @return bool
-     */
-    public function flush()
-    {
-        $this->deleteForeverKeys();
-        $this->deleteStandardKeys();
-
-        return parent::flush();
     }
 
     /**

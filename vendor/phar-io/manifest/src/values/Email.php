@@ -32,6 +32,14 @@ class Email
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->email;
+    }
+
+    /**
      * @param string $url
      *
      * @throws InvalidEmailException
@@ -41,13 +49,5 @@ class Email
         if (filter_var($url, FILTER_VALIDATE_EMAIL) === false) {
             throw new InvalidEmailException;
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->email;
     }
 }

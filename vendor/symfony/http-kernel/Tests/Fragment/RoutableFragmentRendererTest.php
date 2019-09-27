@@ -11,7 +11,9 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Fragment;
 
+use LogicException;
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
@@ -23,16 +25,6 @@ class RoutableFragmentRendererTest extends TestCase
     public function testGenerateFragmentUri($uri, $controller)
     {
         $this->assertEquals($uri, $this->callGenerateFragmentUriMethod($controller, Request::create('/')));
-    }
-
-    private function callGenerateFragmentUriMethod(ControllerReference $reference, Request $request, $absolute = false)
-    {
-        $renderer = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Fragment\RoutableFragmentRenderer');
-        $r = new \ReflectionObject($renderer);
-        $m = $r->getMethod('generateFragmentUri');
-        $m->setAccessible(true);
-
-        return $m->invoke($renderer, $reference, $request, $absolute);
     }
 
     /**
@@ -66,7 +58,7 @@ class RoutableFragmentRendererTest extends TestCase
     }
 
     /**
-     * @expectedException \LogicException
+     * @expectedException LogicException
      * @dataProvider      getGenerateFragmentUriDataWithNonScalar
      */
     public function testGenerateFragmentUriWithNonScalar($controller)
@@ -80,6 +72,16 @@ class RoutableFragmentRendererTest extends TestCase
             [new ControllerReference('controller', ['foo' => new Foo(), 'bar' => 'bar'], [])],
             [new ControllerReference('controller', ['foo' => ['foo' => 'foo'], 'bar' => ['bar' => new Foo()]], [])],
         ];
+    }
+
+    private function callGenerateFragmentUriMethod(ControllerReference $reference, Request $request, $absolute = false)
+    {
+        $renderer = $this->getMockForAbstractClass('Symfony\Component\HttpKernel\Fragment\RoutableFragmentRenderer');
+        $r = new ReflectionObject($renderer);
+        $m = $r->getMethod('generateFragmentUri');
+        $m->setAccessible(true);
+
+        return $m->invoke($renderer, $reference, $request, $absolute);
     }
 }
 

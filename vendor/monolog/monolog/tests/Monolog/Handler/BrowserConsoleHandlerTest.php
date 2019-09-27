@@ -36,14 +36,6 @@ EOF;
         $this->assertEquals($expected, $this->generateScript());
     }
 
-    protected function generateScript()
-    {
-        $reflMethod = new ReflectionMethod('Monolog\Handler\BrowserConsoleHandler', 'generateScript');
-        $reflMethod->setAccessible(true);
-
-        return $reflMethod->invoke(null);
-    }
-
     public function testEscaping()
     {
         $handler = new BrowserConsoleHandler();
@@ -122,6 +114,14 @@ c.log("%ctest4", "font-weight: normal");
 EOF;
 
         $this->assertEquals($expected, $this->generateScript());
+    }
+
+    protected function generateScript()
+    {
+        $reflMethod = new ReflectionMethod('Monolog\Handler\BrowserConsoleHandler', 'generateScript');
+        $reflMethod->setAccessible(true);
+
+        return $reflMethod->invoke(null);
     }
 
     protected function setUp()

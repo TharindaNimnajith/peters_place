@@ -11,8 +11,10 @@
 
 namespace Symfony\Component\HttpKernel\Tests\Controller\ArgumentResolver;
 
+use Generator;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver;
@@ -28,17 +30,6 @@ class ServiceValueResolverTest extends TestCase
         $request = $this->requestWithAttributes(['_controller' => 'my_controller']);
 
         $this->assertFalse($resolver->supports($request, $argument));
-    }
-
-    private function requestWithAttributes(array $attributes)
-    {
-        $request = Request::create('/');
-
-        foreach ($attributes as $name => $value) {
-            $request->attributes->set($name, $value);
-        }
-
-        return $request;
     }
 
     public function testExistingController()
@@ -58,16 +49,6 @@ class ServiceValueResolverTest extends TestCase
 
         $this->assertTrue($resolver->supports($request, $argument));
         $this->assertYieldEquals([new DummyService()], $resolver->resolve($request, $argument));
-    }
-
-    private function assertYieldEquals(array $expected, \Generator $generator)
-    {
-        $args = [];
-        foreach ($generator as $arg) {
-            $args[] = $arg;
-        }
-
-        $this->assertEquals($expected, $args);
     }
 
     public function testExistingControllerWithATrailingBackSlash()
@@ -127,7 +108,7 @@ class ServiceValueResolverTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\DependencyInjection\Exception\RuntimeException
+     * @expectedException RuntimeException
      * @expectedExceptionMessage Cannot autowire argument $dummy of "Symfony\Component\HttpKernel\Tests\Controller\ArgumentResolver\DummyController::index()": it references class "Symfony\Component\HttpKernel\Tests\Controller\ArgumentResolver\DummyService" but no such service exists.
      */
     public function testErrorIsTruncated()
@@ -143,6 +124,27 @@ class ServiceValueResolverTest extends TestCase
         $request = $this->requestWithAttributes(['_controller' => [DummyController::class, 'index']]);
         $argument = new ArgumentMetadata('dummy', DummyService::class, false, false, null);
         $container->get('argument_resolver.service')->resolve($request, $argument)->current();
+    }
+
+    private function requestWithAttributes(array $attributes)
+    {
+        $request = Request::create('/');
+
+        foreach ($attributes as $name => $value) {
+            $request->attributes->set($name, $value);
+        }
+
+        return $request;
+    }
+
+    private function assertYieldEquals(array $expected, Generator $generator)
+    {
+        $args = [];
+        foreach ($generator as $arg) {
+            $args[] = $arg;
+        }
+
+        $this->assertEquals($expected, $args);
     }
 }
 

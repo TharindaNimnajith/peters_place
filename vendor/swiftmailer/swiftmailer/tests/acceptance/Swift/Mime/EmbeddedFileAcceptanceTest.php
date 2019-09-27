@@ -1,8 +1,9 @@
 <?php
 
 use Egulias\EmailValidator\EmailValidator;
+use PHPUnit\Framework\TestCase;
 
-class Swift_Mime_EmbeddedFileAcceptanceTest extends \PHPUnit\Framework\TestCase
+class Swift_Mime_EmbeddedFileAcceptanceTest extends TestCase
 {
     private $contentEncoder;
     private $cache;
@@ -21,18 +22,6 @@ class Swift_Mime_EmbeddedFileAcceptanceTest extends \PHPUnit\Framework\TestCase
             'Content-Disposition: inline' . "\r\n",
             $file->toString()
         );
-    }
-
-    protected function createEmbeddedFile()
-    {
-        $entity = new Swift_Mime_EmbeddedFile(
-            $this->headers,
-            $this->contentEncoder,
-            $this->cache,
-            $this->idGenerator
-        );
-
-        return $entity;
     }
 
     public function testDispositionIsSetInHeader()
@@ -114,6 +103,18 @@ class Swift_Mime_EmbeddedFileAcceptanceTest extends \PHPUnit\Framework\TestCase
             base64_encode('abcd'),
             $file->toString()
         );
+    }
+
+    protected function createEmbeddedFile()
+    {
+        $entity = new Swift_Mime_EmbeddedFile(
+            $this->headers,
+            $this->contentEncoder,
+            $this->cache,
+            $this->idGenerator
+        );
+
+        return $entity;
     }
 
     protected function setUp()

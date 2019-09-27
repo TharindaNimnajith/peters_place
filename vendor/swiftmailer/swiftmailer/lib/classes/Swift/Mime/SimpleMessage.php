@@ -581,35 +581,6 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart
         return $string;
     }
 
-    /** Turn the body of this message into a child of itself if needed */
-    protected function becomeMimePart()
-    {
-        $part = new parent($this->getHeaders()->newInstance(), $this->getEncoder(),
-            $this->getCache(), $this->getIdGenerator(), $this->userCharset
-        );
-        $part->setContentType($this->userContentType);
-        $part->setBody($this->getBody());
-        $part->setFormat($this->userFormat);
-        $part->setDelSp($this->userDelSp);
-        $part->setNestingLevel($this->getTopNestingLevel());
-
-        return $part;
-    }
-
-    /** Get the highest nesting level nested inside this message */
-    private function getTopNestingLevel()
-    {
-        $highestLevel = $this->getNestingLevel();
-        foreach ($this->getChildren() as $child) {
-            $childLevel = $child->getNestingLevel();
-            if ($highestLevel < $childLevel) {
-                $highestLevel = $childLevel;
-            }
-        }
-
-        return $highestLevel;
-    }
-
     /**
      * Always returns {@link LEVEL_TOP} for a message instance.
      *
@@ -634,9 +605,38 @@ class Swift_Mime_SimpleMessage extends Swift_Mime_MimePart
         }
     }
 
+    /** Turn the body of this message into a child of itself if needed */
+    protected function becomeMimePart()
+    {
+        $part = new parent($this->getHeaders()->newInstance(), $this->getEncoder(),
+            $this->getCache(), $this->getIdGenerator(), $this->userCharset
+        );
+        $part->setContentType($this->userContentType);
+        $part->setBody($this->getBody());
+        $part->setFormat($this->userFormat);
+        $part->setDelSp($this->userDelSp);
+        $part->setNestingLevel($this->getTopNestingLevel());
+
+        return $part;
+    }
+
     /** @see Swift_Mime_SimpleMimeEntity::getIdField() */
     protected function getIdField()
     {
         return 'Message-ID';
+    }
+
+    /** Get the highest nesting level nested inside this message */
+    private function getTopNestingLevel()
+    {
+        $highestLevel = $this->getNestingLevel();
+        foreach ($this->getChildren() as $child) {
+            $childLevel = $child->getNestingLevel();
+            if ($highestLevel < $childLevel) {
+                $highestLevel = $childLevel;
+            }
+        }
+
+        return $highestLevel;
     }
 }

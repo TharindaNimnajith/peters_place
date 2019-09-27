@@ -146,21 +146,6 @@ class Person extends \Faker\Provider\Person
     protected static $titleFemale = array('δις.', 'δνις.', 'κα.');
 
     /**
-     * @param string|null $gender 'male', 'female' or null for any
-     * @example 'Αγγελόπουλος'
-     */
-    public function lastName($gender = null)
-    {
-        if ($gender === static::GENDER_MALE) {
-            return static::lastNameMale();
-        } elseif ($gender === static::GENDER_FEMALE) {
-            return static::lastNameFemale();
-        }
-
-        return $this->generator->parse(static::randomElement(static::$lastNameFormat));
-    }
-
-    /**
      * @example 'Θεωδωρόπουλος'
      */
     public static function lastNameMale()
@@ -174,5 +159,20 @@ class Person extends \Faker\Provider\Person
     public static function lastNameFemale()
     {
         return static::randomElement(static::$lastNameFemale);
+    }
+
+    /**
+     * @param string|null $gender 'male', 'female' or null for any
+     * @example 'Αγγελόπουλος'
+     */
+    public function lastName($gender = null)
+    {
+        if ($gender === static::GENDER_MALE) {
+            return static::lastNameMale();
+        } elseif ($gender === static::GENDER_FEMALE) {
+            return static::lastNameFemale();
+        }
+
+        return $this->generator->parse(static::randomElement(static::$lastNameFormat));
     }
 }

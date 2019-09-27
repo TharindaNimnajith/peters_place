@@ -1,4 +1,5 @@
 <html>
+
 <head>
 
 
@@ -14,6 +15,7 @@
 
     </style>
 </head>
+
 <body>
 
 @foreach($errors->all() as $error)
@@ -70,7 +72,5 @@
             </div>
         </div>
 </body>
+
 </html>
-
-
-

@@ -18,6 +18,10 @@ use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+use function count;
+use function is_array;
+use function is_string;
+use function strlen;
 
 /**
  * Text descriptor.
@@ -71,17 +75,6 @@ class TextDescriptor extends Descriptor
     /**
      * {@inheritdoc}
      */
-    private function writeText($content, array $options = [])
-    {
-        $this->write(
-            isset($options['raw_text']) && $options['raw_text'] ? strip_tags($content) : $content,
-            isset($options['raw_output']) ? !$options['raw_output'] : true
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function describeInputDefinition(InputDefinition $definition, array $options = [])
     {
         $totalWidth = $this->calculateTotalWidthForOptions($definition->getOptions());
@@ -107,7 +100,7 @@ class TextDescriptor extends Descriptor
 
             $this->writeText('<comment>Options:</comment>', $options);
             foreach ($definition->getOptions() as $option) {
-                if (\strlen($option->getShortcut()) > 1) {
+                if (strlen($option->getShortcut()) > 1) {
                     $laterOptions[] = $option;
                     continue;
                 }
@@ -122,40 +115,18 @@ class TextDescriptor extends Descriptor
     }
 
     /**
-     * @param InputOption[] $options
-     */
-    private function calculateTotalWidthForOptions(array $options): int
-    {
-        $totalWidth = 0;
-        foreach ($options as $option) {
-            // "-" + shortcut + ", --" + name
-            $nameLength = 1 + max(Helper::strlen($option->getShortcut()), 1) + 4 + Helper::strlen($option->getName());
-
-            if ($option->acceptValue()) {
-                $valueLength = 1 + Helper::strlen($option->getName()); // = + value
-                $valueLength += $option->isValueOptional() ? 2 : 0; // [ + ]
-
-                $nameLength += $valueLength;
-            }
-            $totalWidth = max($totalWidth, $nameLength);
-        }
-
-        return $totalWidth;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function describeInputArgument(InputArgument $argument, array $options = [])
     {
-        if (null !== $argument->getDefault() && (!\is_array($argument->getDefault()) || \count($argument->getDefault()))) {
+        if (null !== $argument->getDefault() && (!is_array($argument->getDefault()) || count($argument->getDefault()))) {
             $default = sprintf('<comment> [default: %s]</comment>', $this->formatDefaultValue($argument->getDefault()));
         } else {
             $default = '';
         }
 
         $totalWidth = isset($options['total_width']) ? $options['total_width'] : Helper::strlen($argument->getName());
-        $spacingWidth = $totalWidth - \strlen($argument->getName());
+        $spacingWidth = $totalWidth - strlen($argument->getName());
 
         $this->writeText(sprintf('  <info>%s</info>  %s%s%s',
             $argument->getName(),
@@ -167,35 +138,11 @@ class TextDescriptor extends Descriptor
     }
 
     /**
-     * Formats input option/argument default value.
-     *
-     * @param mixed $default
-     */
-    private function formatDefaultValue($default): string
-    {
-        if (INF === $default) {
-            return 'INF';
-        }
-
-        if (\is_string($default)) {
-            $default = OutputFormatter::escape($default);
-        } elseif (\is_array($default)) {
-            foreach ($default as $key => $value) {
-                if (\is_string($value)) {
-                    $default[$key] = OutputFormatter::escape($value);
-                }
-            }
-        }
-
-        return str_replace('\\\\', '\\', json_encode($default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function describeInputOption(InputOption $option, array $options = [])
     {
-        if ($option->acceptValue() && null !== $option->getDefault() && (!\is_array($option->getDefault()) || \count($option->getDefault()))) {
+        if ($option->acceptValue() && null !== $option->getDefault() && (!is_array($option->getDefault()) || count($option->getDefault()))) {
             $default = sprintf('<comment> [default: %s]</comment>', $this->formatDefaultValue($option->getDefault()));
         } else {
             $default = '';
@@ -302,6 +249,63 @@ class TextDescriptor extends Descriptor
 
             $this->writeText("\n");
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    private function writeText($content, array $options = [])
+    {
+        $this->write(
+            isset($options['raw_text']) && $options['raw_text'] ? strip_tags($content) : $content,
+            isset($options['raw_output']) ? !$options['raw_output'] : true
+        );
+    }
+
+    /**
+     * @param InputOption[] $options
+     */
+    private function calculateTotalWidthForOptions(array $options): int
+    {
+        $totalWidth = 0;
+        foreach ($options as $option) {
+            // "-" + shortcut + ", --" + name
+            $nameLength = 1 + max(Helper::strlen($option->getShortcut()), 1) + 4 + Helper::strlen($option->getName());
+
+            if ($option->acceptValue()) {
+                $valueLength = 1 + Helper::strlen($option->getName()); // = + value
+                $valueLength += $option->isValueOptional() ? 2 : 0; // [ + ]
+
+                $nameLength += $valueLength;
+            }
+            $totalWidth = max($totalWidth, $nameLength);
+        }
+
+        return $totalWidth;
+    }
+
+    /**
+     * Formats input option/argument default value.
+     *
+     * @param mixed $default
+     */
+    private function formatDefaultValue($default): string
+    {
+        if (INF === $default) {
+            return 'INF';
+        }
+
+        if (is_string($default)) {
+            $default = OutputFormatter::escape($default);
+        } elseif (is_array($default)) {
+            foreach ($default as $key => $value) {
+                if (is_string($value)) {
+                    $default[$key] = OutputFormatter::escape($value);
+                }
+            }
+        }
+
+        return str_replace('\\\\', '\\', json_encode($default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
     /**

@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link href="{{URL::asset('css/indexs.css')}}" rel="stylesheet " media="all">
     <script src="{{URL::asset('js/Reports.js')}}"></script>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+
 <body>
 <!--header start-->
 <div class="header">
@@ -28,22 +30,5 @@
     </div>
 </div>
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -138,30 +138,6 @@ class Factory implements FactoryContract
     }
 
     /**
-     * Parse the given data into a raw array.
-     *
-     * @param mixed $data
-     * @return array
-     */
-    protected function parseData($data)
-    {
-        return $data instanceof Arrayable ? $data->toArray() : $data;
-    }
-
-    /**
-     * Create a new view instance from the given arguments.
-     *
-     * @param string $view
-     * @param string $path
-     * @param Arrayable|array $data
-     * @return \Illuminate\Contracts\View\View
-     */
-    protected function viewInstance($view, $path, $data)
-    {
-        return new View($this, $this->getEngineFromPath($path), $view, $path, $data);
-    }
-
-    /**
      * Get the appropriate view engine for the given path.
      *
      * @param string $path
@@ -178,21 +154,6 @@ class Factory implements FactoryContract
         $engine = $this->extensions[$extension];
 
         return $this->engines->resolve($engine);
-    }
-
-    /**
-     * Get the extension used by the view file.
-     *
-     * @param string $path
-     * @return string
-     */
-    protected function getExtension($path)
-    {
-        $extensions = array_keys($this->extensions);
-
-        return Arr::first($extensions, function ($value) use ($path) {
-            return Str::endsWith($path, '.' . $value);
-        });
     }
 
     /**
@@ -257,17 +218,6 @@ class Factory implements FactoryContract
         return tap($this->viewInstance($view, $path, $data), function ($view) {
             $this->callCreator($view);
         });
-    }
-
-    /**
-     * Normalize a view name.
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function normalizeName($name)
-    {
-        return ViewName::normalize($name);
     }
 
     /**
@@ -566,5 +516,55 @@ class Factory implements FactoryContract
     public function getShared()
     {
         return $this->shared;
+    }
+
+    /**
+     * Parse the given data into a raw array.
+     *
+     * @param mixed $data
+     * @return array
+     */
+    protected function parseData($data)
+    {
+        return $data instanceof Arrayable ? $data->toArray() : $data;
+    }
+
+    /**
+     * Create a new view instance from the given arguments.
+     *
+     * @param string $view
+     * @param string $path
+     * @param Arrayable|array $data
+     * @return \Illuminate\Contracts\View\View
+     */
+    protected function viewInstance($view, $path, $data)
+    {
+        return new View($this, $this->getEngineFromPath($path), $view, $path, $data);
+    }
+
+    /**
+     * Get the extension used by the view file.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function getExtension($path)
+    {
+        $extensions = array_keys($this->extensions);
+
+        return Arr::first($extensions, function ($value) use ($path) {
+            return Str::endsWith($path, '.' . $value);
+        });
+    }
+
+    /**
+     * Normalize a view name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function normalizeName($name)
+    {
+        return ViewName::normalize($name);
     }
 }

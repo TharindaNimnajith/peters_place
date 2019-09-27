@@ -74,21 +74,6 @@ class UploadedFile extends SymfonyUploadedFile
     }
 
     /**
-     * Parse and format the given options.
-     *
-     * @param array|string $options
-     * @return array
-     */
-    protected function parseOptions($options)
-    {
-        if (is_string($options)) {
-            $options = ['disk' => $options];
-        }
-
-        return $options;
-    }
-
-    /**
      * Store the uploaded file on a filesystem disk with public visibility.
      *
      * @param string $path
@@ -145,5 +130,20 @@ class UploadedFile extends SymfonyUploadedFile
     public function clientExtension()
     {
         return $this->guessClientExtension();
+    }
+
+    /**
+     * Parse and format the given options.
+     *
+     * @param array|string $options
+     * @return array
+     */
+    protected function parseOptions($options)
+    {
+        if (is_string($options)) {
+            $options = ['disk' => $options];
+        }
+
+        return $options;
     }
 }

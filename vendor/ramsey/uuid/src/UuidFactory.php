@@ -221,6 +221,52 @@ class UuidFactory implements UuidFactoryInterface
     }
 
     /**
+     * Returns a `Uuid`
+     *
+     * Uses the configured builder and codec and the provided array of hexadecimal
+     * value UUID fields to construct a `Uuid` object.
+     *
+     * @param array $fields An array of fields from which to construct a UUID;
+     *     see {@see \Ramsey\Uuid\UuidInterface::getFieldsHex()} for array structure.
+     * @return UuidInterface
+     */
+    public function uuid(array $fields)
+    {
+        return $this->uuidBuilder->build($this->codec, $fields);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function uuid3($ns, $name)
+    {
+        return $this->uuidFromNsAndName($ns, $name, 3, 'md5');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function uuid4()
+    {
+        $bytes = $this->randomGenerator->generate(16);
+
+        // When converting the bytes to hex, it turns into a 32-character
+        // hexadecimal string that looks a lot like an MD5 hash, so at this
+        // point, we can just pass it to uuidFromHashedName.
+        $hex = bin2hex($bytes);
+
+        return $this->uuidFromHashedName($hex, 4);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function uuid5($ns, $name)
+    {
+        return $this->uuidFromNsAndName($ns, $name, 5, 'sha1');
+    }
+
+    /**
      * Returns a `Uuid` created from `$hash` with the version field set to `$version`
      * and the variant field set for RFC 4122
      *
@@ -246,29 +292,6 @@ class UuidFactory implements UuidFactoryInterface
     }
 
     /**
-     * Returns a `Uuid`
-     *
-     * Uses the configured builder and codec and the provided array of hexadecimal
-     * value UUID fields to construct a `Uuid` object.
-     *
-     * @param array $fields An array of fields from which to construct a UUID;
-     *     see {@see \Ramsey\Uuid\UuidInterface::getFieldsHex()} for array structure.
-     * @return UuidInterface
-     */
-    public function uuid(array $fields)
-    {
-        return $this->uuidBuilder->build($this->codec, $fields);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function uuid3($ns, $name)
-    {
-        return $this->uuidFromNsAndName($ns, $name, 3, 'md5');
-    }
-
-    /**
      * Returns a version 3 or 5 namespaced `Uuid`
      *
      * @param string|UuidInterface $ns The UUID namespace to use
@@ -288,28 +311,5 @@ class UuidFactory implements UuidFactoryInterface
         $hash = call_user_func($hashFunction, ($ns->getBytes() . $name));
 
         return $this->uuidFromHashedName($hash, $version);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function uuid4()
-    {
-        $bytes = $this->randomGenerator->generate(16);
-
-        // When converting the bytes to hex, it turns into a 32-character
-        // hexadecimal string that looks a lot like an MD5 hash, so at this
-        // point, we can just pass it to uuidFromHashedName.
-        $hex = bin2hex($bytes);
-
-        return $this->uuidFromHashedName($hex, 4);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function uuid5($ns, $name)
-    {
-        return $this->uuidFromNsAndName($ns, $name, 5, 'sha1');
     }
 }

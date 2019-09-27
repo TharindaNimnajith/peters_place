@@ -158,17 +158,6 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     }
 
     /**
-     * Convert the string to ASCII characters that are equivalent to the given name.
-     *
-     * @param string $name
-     * @return string
-     */
-    protected function fallbackName($name)
-    {
-        return str_replace('%', '', Str::ascii($name));
-    }
-
-    /**
      * Get the mime-type of a given file.
      *
      * @param string $path
@@ -227,30 +216,6 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     public function setVisibility($path, $visibility)
     {
         return $this->driver->setVisibility($path, $this->parseVisibility($visibility));
-    }
-
-    /**
-     * Parse the given visibility value.
-     *
-     * @param string|null $visibility
-     * @return string|null
-     *
-     * @throws InvalidArgumentException
-     */
-    protected function parseVisibility($visibility)
-    {
-        if (is_null($visibility)) {
-            return;
-        }
-
-        switch ($visibility) {
-            case FilesystemContract::VISIBILITY_PUBLIC:
-                return AdapterInterface::VISIBILITY_PUBLIC;
-            case FilesystemContract::VISIBILITY_PRIVATE:
-                return AdapterInterface::VISIBILITY_PRIVATE;
-        }
-
-        throw new InvalidArgumentException("Unknown visibility: {$visibility}");
     }
 
     /**
@@ -463,80 +428,6 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     }
 
     /**
-     * Get the URL for the file at the given path.
-     *
-     * @param AwsS3Adapter $adapter
-     * @param string $path
-     * @return string
-     */
-    protected function getAwsUrl($adapter, $path)
-    {
-        // If an explicit base URL has been set on the disk configuration then we will use
-        // it as the base URL instead of the default path. This allows the developer to
-        // have full control over the base path for this filesystem's generated URLs.
-        if (!is_null($url = $this->driver->getConfig()->get('url'))) {
-            return $this->concatPathToUrl($url, $adapter->getPathPrefix() . $path);
-        }
-
-        return $adapter->getClient()->getObjectUrl(
-            $adapter->getBucket(), $adapter->getPathPrefix() . $path
-        );
-    }
-
-    /**
-     * Concatenate a path to a URL.
-     *
-     * @param string $url
-     * @param string $path
-     * @return string
-     */
-    protected function concatPathToUrl($url, $path)
-    {
-        return rtrim($url, '/') . '/' . ltrim($path, '/');
-    }
-
-    /**
-     * Get the URL for the file at the given path.
-     *
-     * @param RackspaceAdapter $adapter
-     * @param string $path
-     * @return string
-     */
-    protected function getRackspaceUrl($adapter, $path)
-    {
-        return (string)$adapter->getContainer()->getObject($path)->getPublicUrl();
-    }
-
-    /**
-     * Get the URL for the file at the given path.
-     *
-     * @param string $path
-     * @return string
-     */
-    protected function getLocalUrl($path)
-    {
-        $config = $this->driver->getConfig();
-
-        // If an explicit base URL has been set on the disk configuration then we will use
-        // it as the base URL instead of the default path. This allows the developer to
-        // have full control over the base path for this filesystem's generated URLs.
-        if ($config->has('url')) {
-            return $this->concatPathToUrl($config->get('url'), $path);
-        }
-
-        $path = '/storage/' . $path;
-
-        // If the path contains "storage/public", it probably means the developer is using
-        // the default disk to generate the path instead of the "public" disk like they
-        // are really supposed to use. We will remove the public from this path here.
-        if (Str::contains($path, '/storage/public/')) {
-            return Str::replaceFirst('/public/', '/', $path);
-        }
-
-        return $path;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function writeStream($path, $resource, array $options = [])
@@ -644,22 +535,6 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     }
 
     /**
-     * Filter directory contents by type.
-     *
-     * @param array $contents
-     * @param string $type
-     * @return array
-     */
-    protected function filterContentsByType($contents, $type)
-    {
-        return Collection::make($contents)
-            ->where('type', $type)
-            ->pluck('path')
-            ->values()
-            ->all();
-    }
-
-    /**
      * Get all (recursive) of the directories within a given directory.
      *
      * @param string|null $directory
@@ -742,5 +617,130 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
     public function __call($method, array $parameters)
     {
         return call_user_func_array([$this->driver, $method], $parameters);
+    }
+
+    /**
+     * Convert the string to ASCII characters that are equivalent to the given name.
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function fallbackName($name)
+    {
+        return str_replace('%', '', Str::ascii($name));
+    }
+
+    /**
+     * Parse the given visibility value.
+     *
+     * @param string|null $visibility
+     * @return string|null
+     *
+     * @throws InvalidArgumentException
+     */
+    protected function parseVisibility($visibility)
+    {
+        if (is_null($visibility)) {
+            return;
+        }
+
+        switch ($visibility) {
+            case FilesystemContract::VISIBILITY_PUBLIC:
+                return AdapterInterface::VISIBILITY_PUBLIC;
+            case FilesystemContract::VISIBILITY_PRIVATE:
+                return AdapterInterface::VISIBILITY_PRIVATE;
+        }
+
+        throw new InvalidArgumentException("Unknown visibility: {$visibility}");
+    }
+
+    /**
+     * Get the URL for the file at the given path.
+     *
+     * @param AwsS3Adapter $adapter
+     * @param string $path
+     * @return string
+     */
+    protected function getAwsUrl($adapter, $path)
+    {
+        // If an explicit base URL has been set on the disk configuration then we will use
+        // it as the base URL instead of the default path. This allows the developer to
+        // have full control over the base path for this filesystem's generated URLs.
+        if (!is_null($url = $this->driver->getConfig()->get('url'))) {
+            return $this->concatPathToUrl($url, $adapter->getPathPrefix() . $path);
+        }
+
+        return $adapter->getClient()->getObjectUrl(
+            $adapter->getBucket(), $adapter->getPathPrefix() . $path
+        );
+    }
+
+    /**
+     * Concatenate a path to a URL.
+     *
+     * @param string $url
+     * @param string $path
+     * @return string
+     */
+    protected function concatPathToUrl($url, $path)
+    {
+        return rtrim($url, '/') . '/' . ltrim($path, '/');
+    }
+
+    /**
+     * Get the URL for the file at the given path.
+     *
+     * @param RackspaceAdapter $adapter
+     * @param string $path
+     * @return string
+     */
+    protected function getRackspaceUrl($adapter, $path)
+    {
+        return (string)$adapter->getContainer()->getObject($path)->getPublicUrl();
+    }
+
+    /**
+     * Get the URL for the file at the given path.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function getLocalUrl($path)
+    {
+        $config = $this->driver->getConfig();
+
+        // If an explicit base URL has been set on the disk configuration then we will use
+        // it as the base URL instead of the default path. This allows the developer to
+        // have full control over the base path for this filesystem's generated URLs.
+        if ($config->has('url')) {
+            return $this->concatPathToUrl($config->get('url'), $path);
+        }
+
+        $path = '/storage/' . $path;
+
+        // If the path contains "storage/public", it probably means the developer is using
+        // the default disk to generate the path instead of the "public" disk like they
+        // are really supposed to use. We will remove the public from this path here.
+        if (Str::contains($path, '/storage/public/')) {
+            return Str::replaceFirst('/public/', '/', $path);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Filter directory contents by type.
+     *
+     * @param array $contents
+     * @param string $type
+     * @return array
+     */
+    protected function filterContentsByType($contents, $type)
+    {
+        return Collection::make($contents)
+            ->where('type', $type)
+            ->pluck('path')
+            ->values()
+            ->all();
     }
 }

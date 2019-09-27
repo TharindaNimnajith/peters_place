@@ -74,6 +74,11 @@ class CodeParsingTest extends CodeTestAbstract
         return [$stmts, canonicalize($output)];
     }
 
+    public function provideTestParse()
+    {
+        return $this->getTests(__DIR__ . '/../code/parser', 'test');
+    }
+
     private function formatErrorMessage(Error $e, $code)
     {
         if ($e->hasColumnInfo()) {
@@ -119,10 +124,5 @@ class CodeParsingTest extends CodeTestAbstract
             }
         });
         $traverser->traverse($stmts);
-    }
-
-    public function provideTestParse()
-    {
-        return $this->getTests(__DIR__ . '/../code/parser', 'test');
     }
 }

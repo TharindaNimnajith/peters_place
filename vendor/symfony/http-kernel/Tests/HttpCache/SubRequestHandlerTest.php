@@ -11,6 +11,7 @@
 
 namespace Symfony\Component\HttpKernel\Tests\HttpCache;
 
+use Closure;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,14 +45,6 @@ class SubRequestHandlerTest extends TestCase
         SubRequestHandler::handle($kernel, $request, HttpKernelInterface::MASTER_REQUEST, true);
 
         $this->assertSame($globalState, $this->getGlobalState());
-    }
-
-    private function getGlobalState()
-    {
-        return [
-            Request::getTrustedProxies(),
-            Request::getTrustedHeaderSet(),
-        ];
     }
 
     public function testUntrustedHeadersAreRemoved()
@@ -132,13 +125,21 @@ class SubRequestHandlerTest extends TestCase
     {
         Request::setTrustedProxies(self::$globalState[0], self::$globalState[1]);
     }
+
+    private function getGlobalState()
+    {
+        return [
+            Request::getTrustedProxies(),
+            Request::getTrustedHeaderSet(),
+        ];
+    }
 }
 
 class TestSubRequestHandlerKernel implements HttpKernelInterface
 {
     private $assertCallback;
 
-    public function __construct(\Closure $assertCallback)
+    public function __construct(Closure $assertCallback)
     {
         $this->assertCallback = $assertCallback;
     }

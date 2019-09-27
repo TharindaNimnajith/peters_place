@@ -27,15 +27,6 @@ abstract class AbstractDescriptorTest extends TestCase
         $this->assertDescription($expectedDescription, $argument);
     }
 
-    protected function assertDescription($expectedDescription, $describedObject, array $options = [])
-    {
-        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true);
-        $this->getDescriptor()->describe($output, $describedObject, $options + ['raw_output' => true]);
-        $this->assertEquals(trim($expectedDescription), trim(str_replace(PHP_EOL, "\n", $output->fetch())));
-    }
-
-    abstract protected function getDescriptor();
-
     /** @dataProvider getDescribeInputOptionTestData */
     public function testDescribeInputOption(InputOption $option, $expectedDescription)
     {
@@ -72,19 +63,6 @@ abstract class AbstractDescriptorTest extends TestCase
         return $this->getDescriptionTestData(ObjectsProvider::getInputArguments());
     }
 
-    protected function getDescriptionTestData(array $objects)
-    {
-        $data = [];
-        foreach ($objects as $name => $object) {
-            $description = file_get_contents(sprintf('%s/../Fixtures/%s.%s', __DIR__, $name, $this->getFormat()));
-            $data[] = [$object, $description];
-        }
-
-        return $data;
-    }
-
-    abstract protected function getFormat();
-
     public function getDescribeInputOptionTestData()
     {
         return $this->getDescriptionTestData(ObjectsProvider::getInputOptions());
@@ -104,4 +82,26 @@ abstract class AbstractDescriptorTest extends TestCase
     {
         return $this->getDescriptionTestData(ObjectsProvider::getApplications());
     }
+
+    protected function assertDescription($expectedDescription, $describedObject, array $options = [])
+    {
+        $output = new BufferedOutput(BufferedOutput::VERBOSITY_NORMAL, true);
+        $this->getDescriptor()->describe($output, $describedObject, $options + ['raw_output' => true]);
+        $this->assertEquals(trim($expectedDescription), trim(str_replace(PHP_EOL, "\n", $output->fetch())));
+    }
+
+    abstract protected function getDescriptor();
+
+    protected function getDescriptionTestData(array $objects)
+    {
+        $data = [];
+        foreach ($objects as $name => $object) {
+            $description = file_get_contents(sprintf('%s/../Fixtures/%s.%s', __DIR__, $name, $this->getFormat()));
+            $data[] = [$object, $description];
+        }
+
+        return $data;
+    }
+
+    abstract protected function getFormat();
 }

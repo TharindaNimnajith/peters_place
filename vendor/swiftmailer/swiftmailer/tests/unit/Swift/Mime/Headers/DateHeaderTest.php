@@ -1,6 +1,8 @@
 <?php
 
-class Swift_Mime_Headers_DateHeaderTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class Swift_Mime_Headers_DateHeaderTest extends TestCase
 {
     /* --
     The following tests refer to RFC 2822, section 3.6.1 and 3.3.
@@ -10,11 +12,6 @@ class Swift_Mime_Headers_DateHeaderTest extends \PHPUnit\Framework\TestCase
     {
         $header = $this->getHeader('Date');
         $this->assertEquals(Swift_Mime_Header::TYPE_DATE, $header->getFieldType());
-    }
-
-    private function getHeader($name)
-    {
-        return new Swift_Mime_Headers_DateHeader($name);
     }
 
     public function testGetDateTime()
@@ -86,5 +83,10 @@ class Swift_Mime_Headers_DateHeaderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("Date: Sat, 01 Jan 2000 12:00:00 +0100\r\n",
             $header->toString()
         );
+    }
+
+    private function getHeader($name)
+    {
+        return new Swift_Mime_Headers_DateHeader($name);
     }
 }

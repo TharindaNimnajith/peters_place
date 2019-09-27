@@ -11,9 +11,11 @@
 
 namespace Symfony\Component\HttpFoundation\File\MimeType;
 
+use finfo;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\Mime\FileinfoMimeTypeGuesser as NewFileinfoMimeTypeGuesser;
+use function function_exists;
 
 @trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.3, use "%s" instead.', FileinfoMimeTypeGuesser::class, NewFileinfoMimeTypeGuesser::class), E_USER_DEPRECATED);
 
@@ -39,6 +41,16 @@ class FileinfoMimeTypeGuesser implements MimeTypeGuesserInterface
     }
 
     /**
+     * Returns whether this guesser is supported on the current OS/PHP setup.
+     *
+     * @return bool
+     */
+    public static function isSupported()
+    {
+        return function_exists('finfo_open');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function guess($path)
@@ -55,20 +67,10 @@ class FileinfoMimeTypeGuesser implements MimeTypeGuesserInterface
             return;
         }
 
-        if (!$finfo = new \finfo(FILEINFO_MIME_TYPE, $this->magicFile)) {
+        if (!$finfo = new finfo(FILEINFO_MIME_TYPE, $this->magicFile)) {
             return;
         }
 
         return $finfo->file($path);
-    }
-
-    /**
-     * Returns whether this guesser is supported on the current OS/PHP setup.
-     *
-     * @return bool
-     */
-    public static function isSupported()
-    {
-        return \function_exists('finfo_open');
     }
 }

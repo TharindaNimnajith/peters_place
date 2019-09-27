@@ -137,36 +137,6 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
         }
     }
 
-    /** Restore a changed message back to its original state */
-    private function restoreMessage(Swift_Mime_SimpleMessage $message)
-    {
-        if ($this->lastMessage === $message) {
-            if (isset($this->originalBody)) {
-                $message->setBody($this->originalBody);
-                $this->originalBody = null;
-            }
-            if (!empty($this->originalHeaders)) {
-                foreach ($message->getHeaders()->getAll() as $header) {
-                    if (array_key_exists($header->getFieldName(), $this->originalHeaders)) {
-                        $header->setFieldBodyModel($this->originalHeaders[$header->getFieldName()]);
-                    }
-                }
-                $this->originalHeaders = [];
-            }
-            if (!empty($this->originalChildBodies)) {
-                $children = (array)$message->getChildren();
-                foreach ($children as $child) {
-                    $id = $child->getId();
-                    if (array_key_exists($id, $this->originalChildBodies)) {
-                        $child->setBody($this->originalChildBodies[$id]);
-                    }
-                }
-                $this->originalChildBodies = [];
-            }
-            $this->lastMessage = null;
-        }
-    }
-
     /**
      * Find a map of replacements for the address.
      *
@@ -196,5 +166,35 @@ class Swift_Plugins_DecoratorPlugin implements Swift_Events_SendListener, Swift_
     public function sendPerformed(Swift_Events_SendEvent $evt)
     {
         $this->restoreMessage($evt->getMessage());
+    }
+
+    /** Restore a changed message back to its original state */
+    private function restoreMessage(Swift_Mime_SimpleMessage $message)
+    {
+        if ($this->lastMessage === $message) {
+            if (isset($this->originalBody)) {
+                $message->setBody($this->originalBody);
+                $this->originalBody = null;
+            }
+            if (!empty($this->originalHeaders)) {
+                foreach ($message->getHeaders()->getAll() as $header) {
+                    if (array_key_exists($header->getFieldName(), $this->originalHeaders)) {
+                        $header->setFieldBodyModel($this->originalHeaders[$header->getFieldName()]);
+                    }
+                }
+                $this->originalHeaders = [];
+            }
+            if (!empty($this->originalChildBodies)) {
+                $children = (array)$message->getChildren();
+                foreach ($children as $child) {
+                    $id = $child->getId();
+                    if (array_key_exists($id, $this->originalChildBodies)) {
+                        $child->setBody($this->originalChildBodies[$id]);
+                    }
+                }
+                $this->originalChildBodies = [];
+            }
+            $this->lastMessage = null;
+        }
     }
 }

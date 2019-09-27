@@ -2,6 +2,8 @@
 
 namespace Faker\Provider;
 
+use InvalidArgumentException;
+
 abstract class Text extends Base
 {
     protected static $baseText = '';
@@ -10,6 +12,35 @@ abstract class Text extends Base
     protected static $textStartsWithUppercase = true;
     protected $explodedText;
     protected $consecutiveWords = array();
+
+    protected static function explode($text)
+    {
+        return explode(static::$separator, $text);
+    }
+
+    protected static function implode($words)
+    {
+        return implode(static::$separator, $words);
+    }
+
+    protected static function validStart($word)
+    {
+        $isValid = true;
+        if (static::$textStartsWithUppercase) {
+            $isValid = preg_match('/^\p{Lu}/u', $word);
+        }
+        return $isValid;
+    }
+
+    protected static function strlen($text)
+    {
+        return function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : strlen($text);
+    }
+
+    protected static function appendEnd($text)
+    {
+        return preg_replace("/([ ,-:;\x{2013}\x{2014}]+$)/us", '', $text) . '.';
+    }
 
     /**
      * Generate a text string by the Markov chain algorithm.
@@ -29,15 +60,15 @@ abstract class Text extends Base
     public function realText($maxNbChars = 200, $indexSize = 2)
     {
         if ($maxNbChars < 10) {
-            throw new \InvalidArgumentException('maxNbChars must be at least 10');
+            throw new InvalidArgumentException('maxNbChars must be at least 10');
         }
 
         if ($indexSize < 1) {
-            throw new \InvalidArgumentException('indexSize must be at least 1');
+            throw new InvalidArgumentException('indexSize must be at least 1');
         }
 
         if ($indexSize > 5) {
-            throw new \InvalidArgumentException('indexSize must be at most 5');
+            throw new InvalidArgumentException('indexSize must be at most 5');
         }
 
         $words = $this->getConsecutiveWords($indexSize);
@@ -108,34 +139,5 @@ abstract class Text extends Base
         }
 
         return $this->explodedText;
-    }
-
-    protected static function explode($text)
-    {
-        return explode(static::$separator, $text);
-    }
-
-    protected static function implode($words)
-    {
-        return implode(static::$separator, $words);
-    }
-
-    protected static function validStart($word)
-    {
-        $isValid = true;
-        if (static::$textStartsWithUppercase) {
-            $isValid = preg_match('/^\p{Lu}/u', $word);
-        }
-        return $isValid;
-    }
-
-    protected static function strlen($text)
-    {
-        return function_exists('mb_strlen') ? mb_strlen($text, 'UTF-8') : strlen($text);
-    }
-
-    protected static function appendEnd($text)
-    {
-        return preg_replace("/([ ,-:;\x{2013}\x{2014}]+$)/us", '', $text) . '.';
     }
 }

@@ -14,6 +14,19 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 trait SerializesAndRestoresModelIdentifiers
 {
     /**
+     * Restore the model from the model identifier instance.
+     *
+     * @param ModelIdentifier $value
+     * @return Model
+     */
+    public function restoreModel($value)
+    {
+        return $this->getQueryForModelRestoration(
+            (new $value->class)->setConnection($value->connection), $value->id
+        )->useWritePdo()->firstOrFail()->load($value->relations ?? []);
+    }
+
+    /**
      * Get the property value prepared for serialization.
      *
      * @param mixed $value
@@ -101,18 +114,5 @@ trait SerializesAndRestoresModelIdentifiers
     protected function getQueryForModelRestoration($model, $ids)
     {
         return $model->newQueryForRestoration($ids);
-    }
-
-    /**
-     * Restore the model from the model identifier instance.
-     *
-     * @param ModelIdentifier $value
-     * @return Model
-     */
-    public function restoreModel($value)
-    {
-        return $this->getQueryForModelRestoration(
-            (new $value->class)->setConnection($value->connection), $value->id
-        )->useWritePdo()->firstOrFail()->load($value->relations ?? []);
     }
 }

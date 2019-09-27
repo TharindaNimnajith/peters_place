@@ -5,7 +5,8 @@ body {
     font-weight: 500;
 }
 
-ul.resp-tabs-list, p {
+ul.resp-tabs-list,
+p {
     margin: 0;
     padding: 0;
 }

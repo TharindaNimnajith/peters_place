@@ -2,28 +2,32 @@
 
 namespace Hamcrest;
 
-class UtilTest extends \PhpUnit_Framework_TestCase
+use Hamcrest\Core\IsEqual;
+use Hamcrest\Text\MatchesPattern;
+use PhpUnit_Framework_TestCase;
+
+class UtilTest extends PhpUnit_Framework_TestCase
 {
 
     public function testWrapValueWithIsEqualLeavesMatchersUntouched()
     {
-        $matcher = new \Hamcrest\Text\MatchesPattern('/fo+/');
-        $newMatcher = \Hamcrest\Util::wrapValueWithIsEqual($matcher);
+        $matcher = new MatchesPattern('/fo+/');
+        $newMatcher = Util::wrapValueWithIsEqual($matcher);
         $this->assertSame($matcher, $newMatcher);
     }
 
     public function testWrapValueWithIsEqualWrapsPrimitive()
     {
-        $matcher = \Hamcrest\Util::wrapValueWithIsEqual('foo');
+        $matcher = Util::wrapValueWithIsEqual('foo');
         $this->assertInstanceOf('Hamcrest\Core\IsEqual', $matcher);
         $this->assertTrue($matcher->matches('foo'));
     }
 
     public function testCheckAllAreMatchersAcceptsMatchers()
     {
-        \Hamcrest\Util::checkAllAreMatchers(array(
-            new \Hamcrest\Text\MatchesPattern('/fo+/'),
-            new \Hamcrest\Core\IsEqual('foo'),
+        Util::checkAllAreMatchers(array(
+            new MatchesPattern('/fo+/'),
+            new IsEqual('foo'),
         ));
     }
 
@@ -32,30 +36,18 @@ class UtilTest extends \PhpUnit_Framework_TestCase
      */
     public function testCheckAllAreMatchersFailsForPrimitive()
     {
-        \Hamcrest\Util::checkAllAreMatchers(array(
-            new \Hamcrest\Text\MatchesPattern('/fo+/'),
+        Util::checkAllAreMatchers(array(
+            new MatchesPattern('/fo+/'),
             'foo',
         ));
     }
 
     public function testCreateMatcherArrayLeavesMatchersUntouched()
     {
-        $matcher = new \Hamcrest\Text\MatchesPattern('/fo+/');
+        $matcher = new MatchesPattern('/fo+/');
         $items = array($matcher);
         $matchers = $this->callAndAssertCreateMatcherArray($items);
         $this->assertSame($matcher, $matchers[0]);
-    }
-
-    private function callAndAssertCreateMatcherArray($items)
-    {
-        $matchers = \Hamcrest\Util::createMatcherArray($items);
-        $this->assertInternalType('array', $matchers);
-        $this->assertSameSize($items, $matchers);
-        foreach ($matchers as $matcher) {
-            $this->assertInstanceOf('\Hamcrest\Matcher', $matcher);
-        }
-
-        return $matchers;
     }
 
     public function testCreateMatcherArrayWrapsPrimitiveWithIsEqualMatcher()
@@ -77,5 +69,17 @@ class UtilTest extends \PhpUnit_Framework_TestCase
         $matchers = $this->callAndAssertCreateMatcherArray(array(array('foo')));
         $this->assertInstanceOf('Hamcrest\Core\IsEqual', $matchers[0]);
         $this->assertTrue($matchers[0]->matches('foo'));
+    }
+
+    private function callAndAssertCreateMatcherArray($items)
+    {
+        $matchers = Util::createMatcherArray($items);
+        $this->assertInternalType('array', $matchers);
+        $this->assertSameSize($items, $matchers);
+        foreach ($matchers as $matcher) {
+            $this->assertInstanceOf('\Hamcrest\Matcher', $matcher);
+        }
+
+        return $matchers;
     }
 }

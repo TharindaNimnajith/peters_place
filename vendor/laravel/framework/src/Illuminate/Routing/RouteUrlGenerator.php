@@ -108,6 +108,19 @@ class RouteUrlGenerator
     }
 
     /**
+     * Set the default named parameters used by the URL generator.
+     *
+     * @param array $defaults
+     * @return void
+     */
+    public function defaults(array $defaults)
+    {
+        $this->defaultParameters = array_merge(
+            $this->defaultParameters, $defaults
+        );
+    }
+
+    /**
      * Get the formatted domain for a given route.
      *
      * @param Route $route
@@ -295,18 +308,5 @@ class RouteUrlGenerator
 
             return $m[0];
         }, $path);
-    }
-
-    /**
-     * Set the default named parameters used by the URL generator.
-     *
-     * @param array $defaults
-     * @return void
-     */
-    public function defaults(array $defaults)
-    {
-        $this->defaultParameters = array_merge(
-            $this->defaultParameters, $defaults
-        );
     }
 }

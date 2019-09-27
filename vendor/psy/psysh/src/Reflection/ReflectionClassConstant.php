@@ -79,26 +79,6 @@ class ReflectionClassConstant implements Reflector
     }
 
     /**
-     * Gets the value of the constant.
-     *
-     * @return mixed
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * Gets the constant name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Get a ReflectionClassConstant instance.
      *
      * In PHP >= 7.1, this will return a \ReflectionClassConstant from the
@@ -116,6 +96,26 @@ class ReflectionClassConstant implements Reflector
         }
 
         return new self($class, $name);
+    }
+
+    /**
+     * Gets the value of the constant.
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Gets the constant name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

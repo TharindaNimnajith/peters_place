@@ -264,27 +264,6 @@ class Container
         return empty($invalidNames);
     }
 
-    protected function checkForNamedMockClashes($config)
-    {
-        $name = $config->getName();
-
-        if (!$name) {
-            return;
-        }
-
-        $hash = $config->getHash();
-
-        if (isset($this->_namedMocks[$name])) {
-            if ($hash !== $this->_namedMocks[$name]) {
-                throw new Exception(
-                    "The mock named '$name' has been already defined with a different mock configuration"
-                );
-            }
-        }
-
-        $this->_namedMocks[$name] = $hash;
-    }
-
     public function getGenerator()
     {
         return $this->_generator;
@@ -293,31 +272,6 @@ class Container
     public function getLoader()
     {
         return $this->_loader;
-    }
-
-    protected function _getInstance($mockName, $constructorArgs = null)
-    {
-        if ($constructorArgs !== null) {
-            $r = new ReflectionClass($mockName);
-            return $r->newInstanceArgs($constructorArgs);
-        }
-
-        try {
-            $instantiator = new Instantiator;
-            $instance = $instantiator->instantiate($mockName);
-        } catch (\Exception $ex) {
-            $internalMockName = $mockName . '_Internal';
-
-            if (!class_exists($internalMockName)) {
-                eval("class $internalMockName extends $mockName {" .
-                    'public function __construct() {}' .
-                    '}');
-            }
-
-            $instance = new $internalMockName();
-        }
-
-        return $instance;
     }
 
     /**
@@ -545,5 +499,51 @@ class Container
         if (isset($this->_mocks[$reference])) {
             return $this->_mocks[$reference];
         }
+    }
+
+    protected function checkForNamedMockClashes($config)
+    {
+        $name = $config->getName();
+
+        if (!$name) {
+            return;
+        }
+
+        $hash = $config->getHash();
+
+        if (isset($this->_namedMocks[$name])) {
+            if ($hash !== $this->_namedMocks[$name]) {
+                throw new Exception(
+                    "The mock named '$name' has been already defined with a different mock configuration"
+                );
+            }
+        }
+
+        $this->_namedMocks[$name] = $hash;
+    }
+
+    protected function _getInstance($mockName, $constructorArgs = null)
+    {
+        if ($constructorArgs !== null) {
+            $r = new ReflectionClass($mockName);
+            return $r->newInstanceArgs($constructorArgs);
+        }
+
+        try {
+            $instantiator = new Instantiator;
+            $instance = $instantiator->instantiate($mockName);
+        } catch (\Exception $ex) {
+            $internalMockName = $mockName . '_Internal';
+
+            if (!class_exists($internalMockName)) {
+                eval("class $internalMockName extends $mockName {" .
+                    'public function __construct() {}' .
+                    '}');
+            }
+
+            $instance = new $internalMockName();
+        }
+
+        return $instance;
     }
 }

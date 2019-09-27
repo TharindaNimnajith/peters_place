@@ -37,33 +37,6 @@ class TokenStream
     }
 
     /**
-     * Precalculate the indentation at every token position.
-     *
-     * @return int[] Token position to indentation map
-     */
-    private function calcIndentMap()
-    {
-        $indentMap = [];
-        $indent = 0;
-        foreach ($this->tokens as $token) {
-            $indentMap[] = $indent;
-
-            if ($token[0] === T_WHITESPACE) {
-                $content = $token[1];
-                $newlinePos = strrpos($content, "\n");
-                if (false !== $newlinePos) {
-                    $indent = strlen($content) - $newlinePos - 1;
-                }
-            }
-        }
-
-        // Add a sentinel for one past end of the file
-        $indentMap[] = $indent;
-
-        return $indentMap;
-    }
-
-    /**
      * Whether the given position is immediately surrounded by parenthesis.
      *
      * @param int $startPos Start position
@@ -276,5 +249,32 @@ class TokenStream
             }
         }
         return $result;
+    }
+
+    /**
+     * Precalculate the indentation at every token position.
+     *
+     * @return int[] Token position to indentation map
+     */
+    private function calcIndentMap()
+    {
+        $indentMap = [];
+        $indent = 0;
+        foreach ($this->tokens as $token) {
+            $indentMap[] = $indent;
+
+            if ($token[0] === T_WHITESPACE) {
+                $content = $token[1];
+                $newlinePos = strrpos($content, "\n");
+                if (false !== $newlinePos) {
+                    $indent = strlen($content) - $newlinePos - 1;
+                }
+            }
+        }
+
+        // Add a sentinel for one past end of the file
+        $indentMap[] = $indent;
+
+        return $indentMap;
     }
 }

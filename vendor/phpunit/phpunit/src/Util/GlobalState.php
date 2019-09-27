@@ -101,35 +101,6 @@ final class GlobalState
         return $result;
     }
 
-    private static function exportVariable($variable): string
-    {
-        if (is_scalar($variable) || $variable === null ||
-            (is_array($variable) && self::arrayOnlyContainsScalars($variable))) {
-            return var_export($variable, true);
-        }
-
-        return 'unserialize(' . var_export(serialize($variable), true) . ')';
-    }
-
-    private static function arrayOnlyContainsScalars(array $array): bool
-    {
-        $result = true;
-
-        foreach ($array as $element) {
-            if (is_array($element)) {
-                $result = self::arrayOnlyContainsScalars($element);
-            } elseif (!is_scalar($element) && $element !== null) {
-                $result = false;
-            }
-
-            if ($result === false) {
-                break;
-            }
-        }
-
-        return $result;
-    }
-
     public static function getConstantsAsString(): string
     {
         $constants = get_defined_constants(true);
@@ -180,6 +151,35 @@ final class GlobalState
                     $key,
                     self::exportVariable($GLOBALS[$key])
                 );
+            }
+        }
+
+        return $result;
+    }
+
+    private static function exportVariable($variable): string
+    {
+        if (is_scalar($variable) || $variable === null ||
+            (is_array($variable) && self::arrayOnlyContainsScalars($variable))) {
+            return var_export($variable, true);
+        }
+
+        return 'unserialize(' . var_export(serialize($variable), true) . ')';
+    }
+
+    private static function arrayOnlyContainsScalars(array $array): bool
+    {
+        $result = true;
+
+        foreach ($array as $element) {
+            if (is_array($element)) {
+                $result = self::arrayOnlyContainsScalars($element);
+            } elseif (!is_scalar($element) && $element !== null) {
+                $result = false;
+            }
+
+            if ($result === false) {
+                break;
             }
         }
 

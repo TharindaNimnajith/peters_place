@@ -60,19 +60,6 @@ class Translator implements TranslatorInterface
             ->registerExtension(new Extension\AttributeMatchingExtension());
     }
 
-    public function registerExtension(Extension\ExtensionInterface $extension): self
-    {
-        $this->extensions[$extension->getName()] = $extension;
-
-        $this->nodeTranslators = array_merge($this->nodeTranslators, $extension->getNodeTranslators());
-        $this->combinationTranslators = array_merge($this->combinationTranslators, $extension->getCombinationTranslators());
-        $this->functionTranslators = array_merge($this->functionTranslators, $extension->getFunctionTranslators());
-        $this->pseudoClassTranslators = array_merge($this->pseudoClassTranslators, $extension->getPseudoClassTranslators());
-        $this->attributeMatchingTranslators = array_merge($this->attributeMatchingTranslators, $extension->getAttributeMatchingTranslators());
-
-        return $this;
-    }
-
     public static function getXpathLiteral(string $element): string
     {
         if (false === strpos($element, "'")) {
@@ -99,6 +86,19 @@ class Translator implements TranslatorInterface
         return sprintf('concat(%s)', implode(', ', $parts));
     }
 
+    public function registerExtension(Extension\ExtensionInterface $extension): self
+    {
+        $this->extensions[$extension->getName()] = $extension;
+
+        $this->nodeTranslators = array_merge($this->nodeTranslators, $extension->getNodeTranslators());
+        $this->combinationTranslators = array_merge($this->combinationTranslators, $extension->getCombinationTranslators());
+        $this->functionTranslators = array_merge($this->functionTranslators, $extension->getFunctionTranslators());
+        $this->pseudoClassTranslators = array_merge($this->pseudoClassTranslators, $extension->getPseudoClassTranslators());
+        $this->attributeMatchingTranslators = array_merge($this->attributeMatchingTranslators, $extension->getAttributeMatchingTranslators());
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -116,22 +116,6 @@ class Translator implements TranslatorInterface
         }
 
         return implode(' | ', $selectors);
-    }
-
-    /**
-     * @return SelectorNode[]
-     */
-    private function parseSelectors(string $css)
-    {
-        foreach ($this->shortcutParsers as $shortcut) {
-            $tokens = $shortcut->parse($css);
-
-            if (!empty($tokens)) {
-                return $tokens;
-            }
-        }
-
-        return $this->mainParser->parse($css);
     }
 
     /**
@@ -219,5 +203,21 @@ class Translator implements TranslatorInterface
         }
 
         return $this->attributeMatchingTranslators[$operator]($xpath, $attribute, $value);
+    }
+
+    /**
+     * @return SelectorNode[]
+     */
+    private function parseSelectors(string $css)
+    {
+        foreach ($this->shortcutParsers as $shortcut) {
+            $tokens = $shortcut->parse($css);
+
+            if (!empty($tokens)) {
+                return $tokens;
+            }
+        }
+
+        return $this->mainParser->parse($css);
     }
 }

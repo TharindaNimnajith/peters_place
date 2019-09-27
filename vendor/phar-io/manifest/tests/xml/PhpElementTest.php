@@ -33,13 +33,6 @@ class PhpElementTest extends TestCase
         $this->assertTrue($this->php->hasExtElements());
     }
 
-    private function addExtElement()
-    {
-        $this->dom->documentElement->appendChild(
-            $this->dom->createElementNS('https://phar.io/xml/manifest/1.0', 'ext')
-        );
-    }
-
     public function testGetExtElementsReturnsExtElementCollection()
     {
         $this->addExtElement();
@@ -51,6 +44,13 @@ class PhpElementTest extends TestCase
         $this->dom = new DOMDocument();
         $this->dom->loadXML('<?xml version="1.0" ?><php xmlns="https://phar.io/xml/manifest/1.0" version="^5.6 || ^7.0" />');
         $this->php = new PhpElement($this->dom->documentElement);
+    }
+
+    private function addExtElement()
+    {
+        $this->dom->documentElement->appendChild(
+            $this->dom->createElementNS('https://phar.io/xml/manifest/1.0', 'ext')
+        );
     }
 
 }

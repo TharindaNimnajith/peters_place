@@ -155,6 +155,20 @@ class PendingCommand
     }
 
     /**
+     * Handle the object's destruction.
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        if ($this->hasExecuted) {
+            return;
+        }
+
+        $this->run();
+    }
+
+    /**
      * Mock the application's console output.
      *
      * @return void
@@ -204,19 +218,5 @@ class PendingCommand
         }
 
         return $mock;
-    }
-
-    /**
-     * Handle the object's destruction.
-     *
-     * @return void
-     */
-    public function __destruct()
-    {
-        if ($this->hasExecuted) {
-            return;
-        }
-
-        $this->run();
     }
 }

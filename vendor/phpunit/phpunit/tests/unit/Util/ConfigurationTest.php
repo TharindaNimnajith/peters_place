@@ -525,51 +525,6 @@ class ConfigurationTest extends TestCase
     }
 
     /**
-     * Asserts that the values in $actualConfiguration equal $expectedConfiguration.
-     *
-     * @throws Exception
-     * @throws ExpectationFailedException
-     * @throws InvalidArgumentException
-     */
-    protected function assertConfigurationEquals(Configuration $expectedConfiguration, Configuration $actualConfiguration): void
-    {
-        $this->assertEquals(
-            $expectedConfiguration->getFilterConfiguration(),
-            $actualConfiguration->getFilterConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getGroupConfiguration(),
-            $actualConfiguration->getGroupConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getListenerConfiguration(),
-            $actualConfiguration->getListenerConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getLoggingConfiguration(),
-            $actualConfiguration->getLoggingConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getPHPConfiguration(),
-            $actualConfiguration->getPHPConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getPHPUnitConfiguration(),
-            $actualConfiguration->getPHPUnitConfiguration()
-        );
-
-        $this->assertEquals(
-            $expectedConfiguration->getTestSuiteConfiguration()->tests(),
-            $actualConfiguration->getTestSuiteConfiguration()->tests()
-        );
-    }
-
-    /**
      * @ticket 1311
      */
     public function testWithEmptyConfigurations(): void
@@ -620,6 +575,51 @@ class ConfigurationTest extends TestCase
         $tests = $config->tests();
 
         $this->assertCount(1, $tests);
+    }
+
+    /**
+     * Asserts that the values in $actualConfiguration equal $expectedConfiguration.
+     *
+     * @throws Exception
+     * @throws ExpectationFailedException
+     * @throws InvalidArgumentException
+     */
+    protected function assertConfigurationEquals(Configuration $expectedConfiguration, Configuration $actualConfiguration): void
+    {
+        $this->assertEquals(
+            $expectedConfiguration->getFilterConfiguration(),
+            $actualConfiguration->getFilterConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getGroupConfiguration(),
+            $actualConfiguration->getGroupConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getListenerConfiguration(),
+            $actualConfiguration->getListenerConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getLoggingConfiguration(),
+            $actualConfiguration->getLoggingConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getPHPConfiguration(),
+            $actualConfiguration->getPHPConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getPHPUnitConfiguration(),
+            $actualConfiguration->getPHPUnitConfiguration()
+        );
+
+        $this->assertEquals(
+            $expectedConfiguration->getTestSuiteConfiguration()->tests(),
+            $actualConfiguration->getTestSuiteConfiguration()->tests()
+        );
     }
 
     protected function setUp(): void

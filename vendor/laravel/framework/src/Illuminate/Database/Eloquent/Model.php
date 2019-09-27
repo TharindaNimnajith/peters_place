@@ -158,120 +158,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Check if the model needs to be booted and if so, do it.
-     *
-     * @return void
-     */
-    protected function bootIfNotBooted()
-    {
-        if (!isset(static::$booted[static::class])) {
-            static::$booted[static::class] = true;
-
-            $this->fireModelEvent('booting', false);
-
-            static::boot();
-
-            $this->fireModelEvent('booted', false);
-        }
-    }
-
-    /**
-     * The "booting" method of the model.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        static::bootTraits();
-    }
-
-    /**
-     * Boot all of the bootable traits on the model.
-     *
-     * @return void
-     */
-    protected static function bootTraits()
-    {
-        $class = static::class;
-
-        $booted = [];
-
-        static::$traitInitializers[$class] = [];
-
-        foreach (class_uses_recursive($class) as $trait) {
-            $method = 'boot' . class_basename($trait);
-
-            if (method_exists($class, $method) && !in_array($method, $booted)) {
-                forward_static_call([$class, $method]);
-
-                $booted[] = $method;
-            }
-
-            if (method_exists($class, $method = 'initialize' . class_basename($trait))) {
-                static::$traitInitializers[$class][] = $method;
-
-                static::$traitInitializers[$class] = array_unique(
-                    static::$traitInitializers[$class]
-                );
-            }
-        }
-    }
-
-    /**
-     * Initialize any initializable traits on the model.
-     *
-     * @return void
-     */
-    protected function initializeTraits()
-    {
-        foreach (static::$traitInitializers[static::class] as $method) {
-            $this->{$method}();
-        }
-    }
-
-    /**
-     * Fill the model with an array of attributes.
-     *
-     * @param array $attributes
-     * @return $this
-     *
-     * @throws MassAssignmentException
-     */
-    public function fill(array $attributes)
-    {
-        $totallyGuarded = $this->totallyGuarded();
-
-        foreach ($this->fillableFromArray($attributes) as $key => $value) {
-            $key = $this->removeTableFromKey($key);
-
-            // The developers may choose to place some attributes in the "fillable" array
-            // which means only those attributes may be set through mass assignment to
-            // the model, and all others will just get ignored for security reasons.
-            if ($this->isFillable($key)) {
-                $this->setAttribute($key, $value);
-            } elseif ($totallyGuarded) {
-                throw new MassAssignmentException(sprintf(
-                    'Add [%s] to fillable property to allow mass assignment on [%s].',
-                    $key, get_class($this)
-                ));
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove the table name from a given key.
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function removeTableFromKey($key)
-    {
-        return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
-    }
-
-    /**
      * Clear the list of booted models so they will be re-booted.
      *
      * @return void
@@ -354,99 +240,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Get a new query builder for the model's table.
-     *
-     * @return Builder
-     */
-    public function newQuery()
-    {
-        return $this->registerGlobalScopes($this->newQueryWithoutScopes());
-    }
-
-    /**
-     * Register the global scopes for this builder instance.
-     *
-     * @param Builder $builder
-     * @return Builder
-     */
-    public function registerGlobalScopes($builder)
-    {
-        foreach ($this->getGlobalScopes() as $identifier => $scope) {
-            $builder->withGlobalScope($identifier, $scope);
-        }
-
-        return $builder;
-    }
-
-    /**
-     * Get a new query builder that doesn't have any global scopes.
-     *
-     * @return Builder|static
-     */
-    public function newQueryWithoutScopes()
-    {
-        return $this->newModelQuery()
-            ->with($this->with)
-            ->withCount($this->withCount);
-    }
-
-    /**
-     * Get a new query builder that doesn't have any global scopes or eager loading.
-     *
-     * @return Builder|static
-     */
-    public function newModelQuery()
-    {
-        return $this->newEloquentBuilder(
-            $this->newBaseQueryBuilder()
-        )->setModel($this);
-    }
-
-    /**
-     * Create a new Eloquent query builder for the model.
-     *
-     * @param \Illuminate\Database\Query\Builder $query
-     * @return Builder|static
-     */
-    public function newEloquentBuilder($query)
-    {
-        return new Builder($query);
-    }
-
-    /**
-     * Get a new query builder instance for the connection.
-     *
-     * @return \Illuminate\Database\Query\Builder
-     */
-    protected function newBaseQueryBuilder()
-    {
-        return $this->getConnection()->query();
-    }
-
-    /**
-     * Get the database connection for the model.
-     *
-     * @return Connection
-     */
-    public function getConnection()
-    {
-        return static::resolveConnection($this->getConnectionName());
-    }
-
-    /**
-     * Set the connection associated with the model.
-     *
-     * @param string|null $name
-     * @return $this
-     */
-    public function setConnection($name)
-    {
-        $this->connection = $name;
-
-        return $this;
-    }
-
-    /**
      * Resolve a connection instance.
      *
      * @param string|null $connection
@@ -455,16 +248,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public static function resolveConnection($connection = null)
     {
         return static::$resolver->connection($connection);
-    }
-
-    /**
-     * Get the current connection name for the model.
-     *
-     * @return string|null
-     */
-    public function getConnectionName()
-    {
-        return $this->connection;
     }
 
     /**
@@ -547,16 +330,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Get the primary key for the model.
-     *
-     * @return string
-     */
-    public function getKeyName()
-    {
-        return $this->primaryKey;
-    }
-
-    /**
      * Get the connection resolver instance.
      *
      * @return Resolver
@@ -597,6 +370,182 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public static function __callStatic($method, $parameters)
     {
         return (new static)->$method(...$parameters);
+    }
+
+    /**
+     * The "booting" method of the model.
+     *
+     * @return void
+     */
+    protected static function boot()
+    {
+        static::bootTraits();
+    }
+
+    /**
+     * Boot all of the bootable traits on the model.
+     *
+     * @return void
+     */
+    protected static function bootTraits()
+    {
+        $class = static::class;
+
+        $booted = [];
+
+        static::$traitInitializers[$class] = [];
+
+        foreach (class_uses_recursive($class) as $trait) {
+            $method = 'boot' . class_basename($trait);
+
+            if (method_exists($class, $method) && !in_array($method, $booted)) {
+                forward_static_call([$class, $method]);
+
+                $booted[] = $method;
+            }
+
+            if (method_exists($class, $method = 'initialize' . class_basename($trait))) {
+                static::$traitInitializers[$class][] = $method;
+
+                static::$traitInitializers[$class] = array_unique(
+                    static::$traitInitializers[$class]
+                );
+            }
+        }
+    }
+
+    /**
+     * Fill the model with an array of attributes.
+     *
+     * @param array $attributes
+     * @return $this
+     *
+     * @throws MassAssignmentException
+     */
+    public function fill(array $attributes)
+    {
+        $totallyGuarded = $this->totallyGuarded();
+
+        foreach ($this->fillableFromArray($attributes) as $key => $value) {
+            $key = $this->removeTableFromKey($key);
+
+            // The developers may choose to place some attributes in the "fillable" array
+            // which means only those attributes may be set through mass assignment to
+            // the model, and all others will just get ignored for security reasons.
+            if ($this->isFillable($key)) {
+                $this->setAttribute($key, $value);
+            } elseif ($totallyGuarded) {
+                throw new MassAssignmentException(sprintf(
+                    'Add [%s] to fillable property to allow mass assignment on [%s].',
+                    $key, get_class($this)
+                ));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get a new query builder for the model's table.
+     *
+     * @return Builder
+     */
+    public function newQuery()
+    {
+        return $this->registerGlobalScopes($this->newQueryWithoutScopes());
+    }
+
+    /**
+     * Register the global scopes for this builder instance.
+     *
+     * @param Builder $builder
+     * @return Builder
+     */
+    public function registerGlobalScopes($builder)
+    {
+        foreach ($this->getGlobalScopes() as $identifier => $scope) {
+            $builder->withGlobalScope($identifier, $scope);
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Get a new query builder that doesn't have any global scopes.
+     *
+     * @return Builder|static
+     */
+    public function newQueryWithoutScopes()
+    {
+        return $this->newModelQuery()
+            ->with($this->with)
+            ->withCount($this->withCount);
+    }
+
+    /**
+     * Get a new query builder that doesn't have any global scopes or eager loading.
+     *
+     * @return Builder|static
+     */
+    public function newModelQuery()
+    {
+        return $this->newEloquentBuilder(
+            $this->newBaseQueryBuilder()
+        )->setModel($this);
+    }
+
+    /**
+     * Create a new Eloquent query builder for the model.
+     *
+     * @param \Illuminate\Database\Query\Builder $query
+     * @return Builder|static
+     */
+    public function newEloquentBuilder($query)
+    {
+        return new Builder($query);
+    }
+
+    /**
+     * Get the database connection for the model.
+     *
+     * @return Connection
+     */
+    public function getConnection()
+    {
+        return static::resolveConnection($this->getConnectionName());
+    }
+
+    /**
+     * Set the connection associated with the model.
+     *
+     * @param string|null $name
+     * @return $this
+     */
+    public function setConnection($name)
+    {
+        $this->connection = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the current connection name for the model.
+     *
+     * @return string|null
+     */
+    public function getConnectionName()
+    {
+        return $this->connection;
+    }
+
+    /**
+     * Get the primary key for the model.
+     *
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return $this->primaryKey;
     }
 
     /**
@@ -772,68 +721,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
-     * Perform a model update operation.
-     *
-     * @param Builder $query
-     * @return bool
-     */
-    protected function performUpdate(Builder $query)
-    {
-        // If the updating event returns false, we will cancel the update operation so
-        // developers can hook Validation systems into their models and cancel this
-        // operation if the model does not pass validation. Otherwise, we update.
-        if ($this->fireModelEvent('updating') === false) {
-            return false;
-        }
-
-        // First we need to create a fresh query instance and touch the creation and
-        // update timestamp on the model which are maintained by us for developer
-        // convenience. Then we will just continue saving the model instances.
-        if ($this->usesTimestamps()) {
-            $this->updateTimestamps();
-        }
-
-        // Once we have run the update operation, we will fire the "updated" event for
-        // this model instance. This will allow developers to hook into these after
-        // models are updated, giving them a chance to do any special processing.
-        $dirty = $this->getDirty();
-
-        if (count($dirty) > 0) {
-            $this->setKeysForSaveQuery($query)->update($dirty);
-
-            $this->syncChanges();
-
-            $this->fireModelEvent('updated', false);
-        }
-
-        return true;
-    }
-
-    /**
-     * Set the keys for a save update query.
-     *
-     * @param Builder $query
-     * @return Builder
-     */
-    protected function setKeysForSaveQuery(Builder $query)
-    {
-        $query->where($this->getKeyName(), '=', $this->getKeyForSaveQuery());
-
-        return $query;
-    }
-
-    /**
-     * Get the primary key value for a save query.
-     *
-     * @return mixed
-     */
-    protected function getKeyForSaveQuery()
-    {
-        return $this->original[$this->getKeyName()]
-            ?? $this->getKey();
-    }
-
-    /**
      * Get the value of the model's primary key.
      *
      * @return mixed
@@ -841,57 +728,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     public function getKey()
     {
         return $this->getAttribute($this->getKeyName());
-    }
-
-    /**
-     * Perform a model insert operation.
-     *
-     * @param Builder $query
-     * @return bool
-     */
-    protected function performInsert(Builder $query)
-    {
-        if ($this->fireModelEvent('creating') === false) {
-            return false;
-        }
-
-        // First we'll need to create a fresh query instance and touch the creation and
-        // update timestamps on this model, which are maintained by us for developer
-        // convenience. After, we will just continue saving these model instances.
-        if ($this->usesTimestamps()) {
-            $this->updateTimestamps();
-        }
-
-        // If the model has an incrementing key, we can use the "insertGetId" method on
-        // the query builder, which will give us back the final inserted ID for this
-        // table from the database. Not all tables have to be incrementing though.
-        $attributes = $this->getAttributes();
-
-        if ($this->getIncrementing()) {
-            $this->insertAndSetId($query, $attributes);
-        }
-
-        // If the table isn't incrementing we'll simply insert these attributes as they
-        // are. These attribute arrays must contain an "id" column previously placed
-        // there by the developer as the manually determined key for these models.
-        else {
-            if (empty($attributes)) {
-                return true;
-            }
-
-            $query->insert($attributes);
-        }
-
-        // We will go ahead and set the exists property to true, so that it is set when
-        // the created event is fired, just in case the developer tries to update it
-        // during the event. This will allow them to do so and run an update here.
-        $this->exists = true;
-
-        $this->wasRecentlyCreated = true;
-
-        $this->fireModelEvent('created', false);
-
-        return true;
     }
 
     /**
@@ -915,37 +751,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->incrementing = $value;
 
         return $this;
-    }
-
-    /**
-     * Insert the given attributes and set the ID on the model.
-     *
-     * @param Builder $query
-     * @param array $attributes
-     * @return void
-     */
-    protected function insertAndSetId(Builder $query, $attributes)
-    {
-        $id = $query->insertGetId($attributes, $keyName = $this->getKeyName());
-
-        $this->setAttribute($keyName, $id);
-    }
-
-    /**
-     * Perform any actions that are necessary after the model is saved.
-     *
-     * @param array $options
-     * @return void
-     */
-    protected function finishSave(array $options)
-    {
-        $this->fireModelEvent('saved', false);
-
-        if ($this->isDirty() && ($options['touch'] ?? true)) {
-            $this->touchOwners();
-        }
-
-        $this->syncOriginal();
     }
 
     /**
@@ -1040,18 +845,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->fireModelEvent('deleted', false);
 
         return true;
-    }
-
-    /**
-     * Perform the actual delete query on this model instance.
-     *
-     * @return void
-     */
-    protected function performDeleteOnModel()
-    {
-        $this->setKeysForSaveQuery($this->newModelQuery())->delete();
-
-        $this->exists = false;
     }
 
     /**
@@ -1556,6 +1349,226 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
     }
 
     /**
+     * Fill the model with an array of attributes. Force mass assignment.
+     *
+     * @param array $attributes
+     * @return $this
+     */
+    public function forceFill(array $attributes)
+    {
+        return static::unguarded(function () use ($attributes) {
+            return $this->fill($attributes);
+        });
+    }
+
+    /**
+     * Check if the model needs to be booted and if so, do it.
+     *
+     * @return void
+     */
+    protected function bootIfNotBooted()
+    {
+        if (!isset(static::$booted[static::class])) {
+            static::$booted[static::class] = true;
+
+            $this->fireModelEvent('booting', false);
+
+            static::boot();
+
+            $this->fireModelEvent('booted', false);
+        }
+    }
+
+    /**
+     * Initialize any initializable traits on the model.
+     *
+     * @return void
+     */
+    protected function initializeTraits()
+    {
+        foreach (static::$traitInitializers[static::class] as $method) {
+            $this->{$method}();
+        }
+    }
+
+    /**
+     * Remove the table name from a given key.
+     *
+     * @param string $key
+     * @return string
+     */
+    protected function removeTableFromKey($key)
+    {
+        return Str::contains($key, '.') ? last(explode('.', $key)) : $key;
+    }
+
+    /**
+     * Get a new query builder instance for the connection.
+     *
+     * @return \Illuminate\Database\Query\Builder
+     */
+    protected function newBaseQueryBuilder()
+    {
+        return $this->getConnection()->query();
+    }
+
+    /**
+     * Perform a model update operation.
+     *
+     * @param Builder $query
+     * @return bool
+     */
+    protected function performUpdate(Builder $query)
+    {
+        // If the updating event returns false, we will cancel the update operation so
+        // developers can hook Validation systems into their models and cancel this
+        // operation if the model does not pass validation. Otherwise, we update.
+        if ($this->fireModelEvent('updating') === false) {
+            return false;
+        }
+
+        // First we need to create a fresh query instance and touch the creation and
+        // update timestamp on the model which are maintained by us for developer
+        // convenience. Then we will just continue saving the model instances.
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
+
+        // Once we have run the update operation, we will fire the "updated" event for
+        // this model instance. This will allow developers to hook into these after
+        // models are updated, giving them a chance to do any special processing.
+        $dirty = $this->getDirty();
+
+        if (count($dirty) > 0) {
+            $this->setKeysForSaveQuery($query)->update($dirty);
+
+            $this->syncChanges();
+
+            $this->fireModelEvent('updated', false);
+        }
+
+        return true;
+    }
+
+    /**
+     * Set the keys for a save update query.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    protected function setKeysForSaveQuery(Builder $query)
+    {
+        $query->where($this->getKeyName(), '=', $this->getKeyForSaveQuery());
+
+        return $query;
+    }
+
+    /**
+     * Get the primary key value for a save query.
+     *
+     * @return mixed
+     */
+    protected function getKeyForSaveQuery()
+    {
+        return $this->original[$this->getKeyName()]
+            ?? $this->getKey();
+    }
+
+    /**
+     * Perform a model insert operation.
+     *
+     * @param Builder $query
+     * @return bool
+     */
+    protected function performInsert(Builder $query)
+    {
+        if ($this->fireModelEvent('creating') === false) {
+            return false;
+        }
+
+        // First we'll need to create a fresh query instance and touch the creation and
+        // update timestamps on this model, which are maintained by us for developer
+        // convenience. After, we will just continue saving these model instances.
+        if ($this->usesTimestamps()) {
+            $this->updateTimestamps();
+        }
+
+        // If the model has an incrementing key, we can use the "insertGetId" method on
+        // the query builder, which will give us back the final inserted ID for this
+        // table from the database. Not all tables have to be incrementing though.
+        $attributes = $this->getAttributes();
+
+        if ($this->getIncrementing()) {
+            $this->insertAndSetId($query, $attributes);
+        }
+
+        // If the table isn't incrementing we'll simply insert these attributes as they
+        // are. These attribute arrays must contain an "id" column previously placed
+        // there by the developer as the manually determined key for these models.
+        else {
+            if (empty($attributes)) {
+                return true;
+            }
+
+            $query->insert($attributes);
+        }
+
+        // We will go ahead and set the exists property to true, so that it is set when
+        // the created event is fired, just in case the developer tries to update it
+        // during the event. This will allow them to do so and run an update here.
+        $this->exists = true;
+
+        $this->wasRecentlyCreated = true;
+
+        $this->fireModelEvent('created', false);
+
+        return true;
+    }
+
+    /**
+     * Insert the given attributes and set the ID on the model.
+     *
+     * @param Builder $query
+     * @param array $attributes
+     * @return void
+     */
+    protected function insertAndSetId(Builder $query, $attributes)
+    {
+        $id = $query->insertGetId($attributes, $keyName = $this->getKeyName());
+
+        $this->setAttribute($keyName, $id);
+    }
+
+    /**
+     * Perform any actions that are necessary after the model is saved.
+     *
+     * @param array $options
+     * @return void
+     */
+    protected function finishSave(array $options)
+    {
+        $this->fireModelEvent('saved', false);
+
+        if ($this->isDirty() && ($options['touch'] ?? true)) {
+            $this->touchOwners();
+        }
+
+        $this->syncOriginal();
+    }
+
+    /**
+     * Perform the actual delete query on this model instance.
+     *
+     * @return void
+     */
+    protected function performDeleteOnModel()
+    {
+        $this->setKeysForSaveQuery($this->newModelQuery())->delete();
+
+        $this->exists = false;
+    }
+
+    /**
      * Increment a column's value by a given amount.
      *
      * @param string $column
@@ -1608,19 +1621,6 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
         $this->forceFill($extra);
 
         $this->syncOriginalAttribute($column);
-    }
-
-    /**
-     * Fill the model with an array of attributes. Force mass assignment.
-     *
-     * @param array $attributes
-     * @return $this
-     */
-    public function forceFill(array $attributes)
-    {
-        return static::unguarded(function () use ($attributes) {
-            return $this->fill($attributes);
-        });
     }
 
     /**

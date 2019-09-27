@@ -25,6 +25,18 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
     }
 
     /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'migrator', 'migration.repository', 'migration.creator',
+        ];
+    }
+
+    /**
      * Register the migration repository service.
      *
      * @return void
@@ -65,17 +77,5 @@ class MigrationServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->singleton('migration.creator', function ($app) {
             return new MigrationCreator($app['files']);
         });
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'migrator', 'migration.repository', 'migration.creator',
-        ];
     }
 }

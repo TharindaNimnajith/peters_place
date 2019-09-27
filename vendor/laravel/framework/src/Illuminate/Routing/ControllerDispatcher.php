@@ -28,6 +28,19 @@ class ControllerDispatcher implements ControllerDispatcherContract
     }
 
     /**
+     * Determine if the given options exclude a particular method.
+     *
+     * @param string $method
+     * @param array $options
+     * @return bool
+     */
+    protected static function methodExcludedByOptions($method, array $options)
+    {
+        return (isset($options['only']) && !in_array($method, (array)$options['only'])) ||
+            (!empty($options['except']) && in_array($method, (array)$options['except']));
+    }
+
+    /**
      * Dispatch a request to a given controller and method.
      *
      * @param Route $route
@@ -64,18 +77,5 @@ class ControllerDispatcher implements ControllerDispatcherContract
         return collect($controller->getMiddleware())->reject(function ($data) use ($method) {
             return static::methodExcludedByOptions($method, $data['options']);
         })->pluck('middleware')->all();
-    }
-
-    /**
-     * Determine if the given options exclude a particular method.
-     *
-     * @param string $method
-     * @param array $options
-     * @return bool
-     */
-    protected static function methodExcludedByOptions($method, array $options)
-    {
-        return (isset($options['only']) && !in_array($method, (array)$options['only'])) ||
-            (!empty($options['except']) && in_array($method, (array)$options['except']));
     }
 }

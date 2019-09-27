@@ -55,7 +55,8 @@ html.swipebox-html.swipebox-touch {
     margin-right: -1px;
 }
 
-#swipebox-slider .slide img, #swipebox-slider .slide .swipebox-video-container {
+#swipebox-slider .slide img,
+#swipebox-slider .slide .swipebox-video-container {
     display: inline-block;
     max-height: 100%;
     max-width: 100%;
@@ -192,7 +193,8 @@ html.swipebox-html.swipebox-touch {
     -moz-animation: leftSpring 0.3s;
 }
 
-.swipebox-touch #swipebox-container:before, .swipebox-touch #swipebox-container:after {
+.swipebox-touch #swipebox-container:before,
+.swipebox-touch #swipebox-container:after {
     -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
     -webkit-transition: all .3s ease;
@@ -339,7 +341,9 @@ html.swipebox-html.swipebox-touch {
 }
 
 @media (max-width: 667px) {
-    #swipebox-slider .slide img, #swipebox-slider .slide .swipebox-video-container {
+
+    #swipebox-slider .slide img,
+    #swipebox-slider .slide .swipebox-video-container {
         max-width: 80%;
     }
 
@@ -370,7 +374,8 @@ html.swipebox-html.swipebox-touch {
         right: 30px;
     }
 
-    #swipebox-slider .slide img, #swipebox-slider .slide .swipebox-video-container {
+    #swipebox-slider .slide img,
+    #swipebox-slider .slide .swipebox-video-container {
         max-width: 100%;
     }
 

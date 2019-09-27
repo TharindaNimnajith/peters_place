@@ -832,6 +832,23 @@ class TestRunner extends BaseTestRunner
         return $result;
     }
 
+    public function setPrinter(ResultPrinter $resultPrinter): void
+    {
+        $this->printer = $resultPrinter;
+    }
+
+    /**
+     * Returns the loader to be used.
+     */
+    public function getLoader(): TestSuiteLoader
+    {
+        if ($this->loader === null) {
+            $this->loader = new StandardTestSuiteLoader;
+        }
+
+        return $this->loader;
+    }
+
     /**
      * @throws Exception
      */
@@ -1253,6 +1270,30 @@ class TestRunner extends BaseTestRunner
         return new TestResult;
     }
 
+    protected function write(string $buffer): void
+    {
+        if (PHP_SAPI != 'cli' && PHP_SAPI != 'phpdbg') {
+            $buffer = htmlspecialchars($buffer);
+        }
+
+        if ($this->printer !== null) {
+            $this->printer->write($buffer);
+        } else {
+            print $buffer;
+        }
+    }
+
+    /**
+     * Override to define how to handle a failed loading of
+     * a test suite.
+     */
+    protected function runFailed(string $message): void
+    {
+        $this->write($message . PHP_EOL);
+
+        exit(self::FAILURE_EXIT);
+    }
+
     private function writeMessage(string $type, string $message): void
     {
         if (!$this->messagePrinted) {
@@ -1268,19 +1309,6 @@ class TestRunner extends BaseTestRunner
         );
 
         $this->messagePrinted = true;
-    }
-
-    protected function write(string $buffer): void
-    {
-        if (PHP_SAPI != 'cli' && PHP_SAPI != 'phpdbg') {
-            $buffer = htmlspecialchars($buffer);
-        }
-
-        if ($this->printer !== null) {
-            $this->printer->write($buffer);
-        } else {
-            print $buffer;
-        }
     }
 
     /**
@@ -1319,33 +1347,5 @@ class TestRunner extends BaseTestRunner
         }
 
         $suite->injectFilter($filterFactory);
-    }
-
-    public function setPrinter(ResultPrinter $resultPrinter): void
-    {
-        $this->printer = $resultPrinter;
-    }
-
-    /**
-     * Returns the loader to be used.
-     */
-    public function getLoader(): TestSuiteLoader
-    {
-        if ($this->loader === null) {
-            $this->loader = new StandardTestSuiteLoader;
-        }
-
-        return $this->loader;
-    }
-
-    /**
-     * Override to define how to handle a failed loading of
-     * a test suite.
-     */
-    protected function runFailed(string $message): void
-    {
-        $this->write($message . PHP_EOL);
-
-        exit(self::FAILURE_EXIT);
     }
 }

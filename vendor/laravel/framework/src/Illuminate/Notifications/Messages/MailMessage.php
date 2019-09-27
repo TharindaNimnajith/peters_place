@@ -187,32 +187,6 @@ class MailMessage extends SimpleMessage implements Renderable
     }
 
     /**
-     * Determine if the given "address" is actually an array of addresses.
-     *
-     * @param mixed $address
-     * @return bool
-     */
-    protected function arrayOfAddresses($address)
-    {
-        return is_array($address) ||
-            $address instanceof Arrayable ||
-            $address instanceof Traversable;
-    }
-
-    /**
-     * Parse the multi-address array into the necessary format.
-     *
-     * @param array $value
-     * @return array
-     */
-    protected function parseAddresses($value)
-    {
-        return collect($value)->map(function ($address, $name) {
-            return [$address, is_numeric($name) ? null : $name];
-        })->values()->all();
-    }
-
-    /**
      * Set the cc address for the mail message.
      *
      * @param array|string $address
@@ -325,5 +299,31 @@ class MailMessage extends SimpleMessage implements Renderable
         $this->callbacks[] = $callback;
 
         return $this;
+    }
+
+    /**
+     * Determine if the given "address" is actually an array of addresses.
+     *
+     * @param mixed $address
+     * @return bool
+     */
+    protected function arrayOfAddresses($address)
+    {
+        return is_array($address) ||
+            $address instanceof Arrayable ||
+            $address instanceof Traversable;
+    }
+
+    /**
+     * Parse the multi-address array into the necessary format.
+     *
+     * @param array $value
+     * @return array
+     */
+    protected function parseAddresses($value)
+    {
+        return collect($value)->map(function ($address, $name) {
+            return [$address, is_numeric($name) ? null : $name];
+        })->values()->all();
     }
 }

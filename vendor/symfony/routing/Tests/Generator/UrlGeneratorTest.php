@@ -12,6 +12,9 @@
 namespace Symfony\Component\Routing\Tests\Generator;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
+use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -26,25 +29,6 @@ class UrlGeneratorTest extends TestCase
         $url = $this->getGenerator($routes)->generate('test', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $this->assertEquals('http://localhost/app.php/testing', $url);
-    }
-
-    protected function getRoutes($name, Route $route)
-    {
-        $routes = new RouteCollection();
-        $routes->add($name, $route);
-
-        return $routes;
-    }
-
-    protected function getGenerator(RouteCollection $routes, array $parameters = [], $logger = null, string $defaultLocale = null)
-    {
-        $context = new RequestContext('/app.php');
-        foreach ($parameters as $key => $value) {
-            $method = 'set' . $key;
-            $context->$method($value);
-        }
-
-        return new UrlGenerator($routes, $context, $logger, $defaultLocale);
     }
 
     public function testAbsoluteSecureUrlWithPort443()
@@ -96,7 +80,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testRelativeUrlWithNullParameterButNotOptional()
     {
@@ -258,7 +242,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException RouteNotFoundException
      */
     public function testGenerateWithoutRoutes()
     {
@@ -267,7 +251,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException RouteNotFoundException
      */
     public function testGenerateWithInvalidLocale()
     {
@@ -290,7 +274,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @expectedException MissingMandatoryParametersException
      */
     public function testGenerateForRouteWithoutMandatoryParameter()
     {
@@ -299,7 +283,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testGenerateForRouteWithInvalidOptionalParameter()
     {
@@ -308,7 +292,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testGenerateForRouteWithInvalidParameter()
     {
@@ -344,7 +328,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testGenerateForRouteWithInvalidMandatoryParameter()
     {
@@ -353,7 +337,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testGenerateForRouteWithInvalidUtf8Parameter()
     {
@@ -362,7 +346,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testRequiredParamAndEmptyPassed()
     {
@@ -526,7 +510,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @expectedException MissingMandatoryParametersException
      */
     public function testImportantVariableWithNoDefault()
     {
@@ -537,7 +521,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testDefaultRequirementOfVariableDisallowsSlash()
     {
@@ -546,7 +530,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testDefaultRequirementOfVariableDisallowsNextSeparator()
     {
@@ -576,7 +560,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testUrlWithInvalidParameterInHost()
     {
@@ -585,7 +569,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testUrlWithInvalidParameterInHostWhenParamHasADefaultValue()
     {
@@ -594,7 +578,7 @@ class UrlGeneratorTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     * @expectedException InvalidParameterException
      */
     public function testUrlWithInvalidParameterEqualsDefaultValueInHost()
     {
@@ -889,5 +873,24 @@ class UrlGeneratorTest extends TestCase
         yield ['/app.php/a/b/bar/c/d/e', '/{foo}/bar/{baz}', '.+(?!$)'];
         yield ['/app.php/bar/a/b/bam/c/d/e', '/bar/{foo}/bam/{baz}', '(?<=/bar/).+'];
         yield ['/app.php/bar/a/b/bam/c/d/e', '/bar/{foo}/bam/{baz}', '(?<!^).+'];
+    }
+
+    protected function getRoutes($name, Route $route)
+    {
+        $routes = new RouteCollection();
+        $routes->add($name, $route);
+
+        return $routes;
+    }
+
+    protected function getGenerator(RouteCollection $routes, array $parameters = [], $logger = null, string $defaultLocale = null)
+    {
+        $context = new RequestContext('/app.php');
+        foreach ($parameters as $key => $value) {
+            $method = 'set' . $key;
+            $context->$method($value);
+        }
+
+        return new UrlGenerator($routes, $context, $logger, $defaultLocale);
     }
 }

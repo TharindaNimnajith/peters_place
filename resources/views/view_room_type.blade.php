@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,7 +20,8 @@
     <style>
         #form_body {
             margin-top: 3.5%;
-        }        
+        }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -32,6 +34,7 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
+
     </script>
 </head>
 
@@ -46,6 +49,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
                             onclick="window.location='/room_type_management';">&times;
                     </button>
+
                     <h4 class="modal-title">View Room Type</h4>
                 </div>
 
@@ -92,4 +96,5 @@
     </div>
 </div>
 </body>
+
 </html>

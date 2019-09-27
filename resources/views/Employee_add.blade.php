@@ -116,6 +116,7 @@
             text-align: center;
 
         }
+
     </style>
 </head>
 
@@ -125,12 +126,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -145,7 +146,8 @@
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:10px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                                MANAGEMENT
                             </th>
                         </tr>
 
@@ -157,7 +159,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -166,7 +169,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -176,7 +180,9 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -226,26 +232,26 @@
                         <label for="Employee_type" class="col-4 col-form-label">Employee Type</label>
                         <div class="col-5">
                             <input type="radio" onkeypress="return tabE(this,event)" name="type"
-                                   value="Room Service" @if(old('type') ==  "Room Service") checked="checked" @endif >Room
+                                   value="Room Service" @if(old('type')=="Room Service" ) checked="checked" @endif>Room
                             Service<br>
 
-                            <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Kitchen Staff"
-                                   @if(old('type') ==  "Kitchen Staff") checked="checked" @endif >Kitchen
+                            <input type="radio" onkeypress="return tabE(this,event)" name="type"
+                                   value="Kitchen Staff" @if(old('type')=="Kitchen Staff" ) checked="checked"
+                                @endif>Kitchen
                             Staff<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Waitress"
-                                   @if(old('type') ==  "Waitress") checked="checked" @endif >Waitress<br>
+                                   @if(old('type')=="Waitress" ) checked="checked" @endif>Waitress<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Cleaners"
-                                   @if(old('type') ==  "Cleaners") checked="checked" @endif >Cleaners<br>
+                                   @if(old('type')=="Cleaners" ) checked="checked" @endif>Cleaners<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Manager"
-                                   @if(old('type') ==  "Manager") checked="checked" @endif >Manager<br>
+                                   @if(old('type')=="Manager" ) checked="checked" @endif>Manager<br>
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="name" class="col-4 col-form-label">Full Name</label>
                         <div class="col-5">
-                            <input id="name" name="name" onkeypress="return tabE(this,event)" placeholder="Sman Kumara"
-                                   minlength="3"
-                                   type="text" class="form-control"
+                            <input id="name" name="name" onkeypress="return tabE(this,event)"
+                                   placeholder="Sman Kumara" minlength="3" type="text" class="form-control"
                                    required="required" value="{{ old('name') }}">
                         </div>
                     </div>
@@ -253,17 +259,16 @@
                         <label for="nic" class="col-4 col-form-label">National ID NO</label>
                         <div class="col-5">
                             <input id="NIC" name="NIC" onkeypress="return tabE(this,event)" placeholder="975200430V"
-                                   minlength="10"
-                                   type="text" class="form-control"
-                                   required="required" value="{{ old('NIC') }}">
+                                   minlength="10" type="text" class="form-control" required="required"
+                                   value="{{ old('NIC') }}">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-4 col-form-label" for="address">Address</label>
                         <div class="col-5">
                             <input id="Address" onkeypress="return tabE(this,event)" name="Address"
-                                   placeholder="214,Horana RD,Kesbawa." type="text"
-                                   class="form-control" required="required" value="{{ old('Address') }}">
+                                   placeholder="214,Horana RD,Kesbawa." type="text" class="form-control"
+                                   required="required" value="{{ old('Address') }}">
                         </div>
                     </div>
 
@@ -277,31 +282,31 @@
                     <div class="form-group row">
                         <label for="DOB" class="col-4 col-form-label">Gender</label>
                         <div class="col-5">
-                            <input type="radio" onkeypress="return tabE(this,event)" name="gender"
-                                   value="Male" @if(old('type') ==  "Male") checked="checked" @endif >
+                            <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Male"
+                                   @if(old('type')=="Male" ) checked="checked" @endif>
                             Male<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Female"
-                                   @if(old('type') ==  "Female") checked="checked" @endif >
+                                   @if(old('type')=="Female" ) checked="checked" @endif>
                             Female<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Other"
-                                   @if(old('type') ==  "Other") checked="checked" @endif > Other
+                                   @if(old('type')=="Other" ) checked="checked" @endif> Other
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="dop" class="col-4 col-form-label">Joined Date</label>
                         <div class="col-5">
                             <input id="joindate" onkeypress="return tabE(this,event)" name="joindate"
-                                   placeholder="2005.10.05" type="date"
-                                   class="form-control" value="{{ old('joindate') }}">
+                                   placeholder="2005.10.05" type="date" class="form-control"
+                                   value="{{ old('joindate') }}">
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="salary" class="col-4 col-form-label">Salary</label>
                         <div class="col-5">
-                            <input id="salary" name="salary" onkeypress="return tabE(this,event)" placeholder="20000"
-                                   type="text" class="form-control"
-                                   required="required" value="{{ old('salary') }}">
+                            <input id="salary" name="salary" onkeypress="return tabE(this,event)"
+                                   placeholder="20000" type="text" class="form-control" required="required"
+                                   value="{{ old('salary') }}">
                         </div>
                     </div>
 
@@ -311,8 +316,8 @@
                         <label for="email" class="col-4 col-form-label">Email</label>
                         <div class="col-5">
                             <input id="Email" name="Email" onkeypress="return tabE(this,event)"
-                                   placeholder="peaterplace@gmail.com" type="email"
-                                   class="form-control" required="required" value="{{ old('Email') }}">
+                                   placeholder="peaterplace@gmail.com" type="email" class="form-control"
+                                   required="required" value="{{ old('Email') }}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -352,12 +357,13 @@
 
 </html>
 
-<script>function tabE(obj, e) {
-        var e = (typeof event != 'undefined') ? window.event : e;// IE : Moz
+<script>
+    function tabE(obj, e) {
+        var e = (typeof event != 'undefined') ? window.event : e; // IE : Moz
         if (e.keyCode == 13) {
             var ele = document.forms[0].elements;
             for (var i = 0; i < ele.length; i++) {
-                var q = (i == ele.length - 1) ? 0 : i + 1;// if last element : if any other
+                var q = (i == ele.length - 1) ? 0 : i + 1; // if last element : if any other
                 if (obj == ele[i]) {
                     ele[q].focus();
                     break
@@ -365,4 +371,6 @@
             }
             return false;
         }
-    }</script>
+    }
+
+</script>

@@ -7,14 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
@@ -59,7 +59,6 @@
             border: 2px solid #51D2B7;
         }
 
-
     </style>
     <script language="javascript">
         document.onmousedown = disableclick;
@@ -72,6 +71,7 @@
                 return false;
             }
         }
+
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <script>
@@ -82,17 +82,19 @@
             var date = d.getDate();
             var year = d.getFullYear();
             var month = d.getMonth();
-            var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+                "October", "November", "December"
+            ];
             month = monthArr[month];
             document.getElementById("date").innerHTML = date + " " + month + ", " + year;
         }
 
         function tabE(obj, e) {
-            var e = (typeof event != 'undefined') ? window.event : e;// IE : Moz
+            var e = (typeof event != 'undefined') ? window.event : e; // IE : Moz
             if (e.keyCode == 13) {
                 var ele = document.forms[0].elements;
                 for (var i = 0; i < ele.length; i++) {
-                    var q = (i == ele.length - 1) ? 0 : i + 1;// if last element : if any other
+                    var q = (i == ele.length - 1) ? 0 : i + 1; // if last element : if any other
                     if (obj == ele[i]) {
                         ele[q].focus();
                         break
@@ -101,6 +103,7 @@
                 return false;
             }
         }
+
     </script>
 
 </head>
@@ -173,7 +176,8 @@
                     <div class="form-group row">
                         <label for="Employee_type" class="col-4 col-form-label">Type</label>
                         <div class="col-8">
-                            <input type="radio" name="type" onkeypress="return tabE(this,event)" value="normal" checked>
+                            <input type="radio" name="type" onkeypress="return tabE(this,event)" value="normal"
+                                   checked>
                             NORMAL<br>
                             <input type="radio" name="type" onkeypress="return tabE(this,event)" value="admin">
                             ADMIN<br>
@@ -182,15 +186,15 @@
                     <div class="form-group row">
                         <label for="today" class="col-4 col-form-label">Requesting Date</label>
                         <div class="col-8">
-                            <input id="today" name="today" onkeypress="return tabE(this,event)" placeholder="2002-10-02"
-                                   type="text" required="required" class="form-control">
+                            <input id="today" name="today" onkeypress="return tabE(this,event)"
+                                   placeholder="2002-10-02" type="text" required="required" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="text1" class="col-4 col-form-label">Leaving Date</label>
                         <div class="col-8">
-                            <input id="Date" name="Date" onkeypress="return tabE(this,event)" placeholder="2002-10-10"
-                                   type="text" class="form-control">
+                            <input id="Date" name="Date" onkeypress="return tabE(this,event)"
+                                   placeholder="2002-10-10" type="text" class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">

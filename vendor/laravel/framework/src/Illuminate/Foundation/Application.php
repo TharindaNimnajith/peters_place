@@ -208,24 +208,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     }
 
     /**
-     * Bind all of the application paths in the container.
-     *
-     * @return void
-     */
-    protected function bindPathsInContainer()
-    {
-        $this->instance('path', $this->path());
-        $this->instance('path.base', $this->basePath());
-        $this->instance('path.lang', $this->langPath());
-        $this->instance('path.config', $this->configPath());
-        $this->instance('path.public', $this->publicPath());
-        $this->instance('path.storage', $this->storagePath());
-        $this->instance('path.database', $this->databasePath());
-        $this->instance('path.resources', $this->resourcePath());
-        $this->instance('path.bootstrap', $this->bootstrapPath());
-    }
-
-    /**
      * Get the path to the application "app" directory.
      *
      * @param string $path
@@ -324,25 +306,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     }
 
     /**
-     * Register the basic bindings into the container.
-     *
-     * @return void
-     */
-    protected function registerBaseBindings()
-    {
-        static::setInstance($this);
-
-        $this->instance('app', $this);
-
-        $this->instance(Container::class, $this);
-        $this->singleton(Mix::class);
-
-        $this->instance(PackageManifest::class, new PackageManifest(
-            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
-        ));
-    }
-
-    /**
      * Get the path to the cached packages.php file.
      *
      * @return string
@@ -350,18 +313,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     public function getCachedPackagesPath()
     {
         return $_ENV['APP_PACKAGES_CACHE'] ?? $this->bootstrapPath() . '/cache/packages.php';
-    }
-
-    /**
-     * Register all of the base service providers.
-     *
-     * @return void
-     */
-    protected function registerBaseServiceProviders()
-    {
-        $this->register(new EventServiceProvider($this));
-        $this->register(new LogServiceProvider($this));
-        $this->register(new RoutingServiceProvider($this));
     }
 
     /**
@@ -451,19 +402,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     }
 
     /**
-     * Mark the given provider as registered.
-     *
-     * @param ServiceProvider $provider
-     * @return void
-     */
-    protected function markAsRegistered($provider)
-    {
-        $this->serviceProviders[] = $provider;
-
-        $this->loadedProviders[get_class($provider)] = true;
-    }
-
-    /**
      * Determine if the application has booted.
      *
      * @return bool
@@ -471,19 +409,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     public function isBooted()
     {
         return $this->booted;
-    }
-
-    /**
-     * Boot the given service provider.
-     *
-     * @param ServiceProvider $provider
-     * @return mixed
-     */
-    protected function bootProvider(ServiceProvider $provider)
-    {
-        if (method_exists($provider, 'boot')) {
-            return $this->call([$provider, 'boot']);
-        }
     }
 
     /**
@@ -947,19 +872,6 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
     }
 
     /**
-     * Call the booting callbacks for the application.
-     *
-     * @param callable[] $callbacks
-     * @return void
-     */
-    protected function fireAppCallbacks(array $callbacks)
-    {
-        foreach ($callbacks as $callback) {
-            call_user_func($callback, $this);
-        }
-    }
-
-    /**
      * Register a new "booted" listener.
      *
      * @param callable $callback
@@ -1254,5 +1166,93 @@ class Application extends Container implements ApplicationContract, HttpKernelIn
         }
 
         throw new RuntimeException('Unable to detect application namespace.');
+    }
+
+    /**
+     * Bind all of the application paths in the container.
+     *
+     * @return void
+     */
+    protected function bindPathsInContainer()
+    {
+        $this->instance('path', $this->path());
+        $this->instance('path.base', $this->basePath());
+        $this->instance('path.lang', $this->langPath());
+        $this->instance('path.config', $this->configPath());
+        $this->instance('path.public', $this->publicPath());
+        $this->instance('path.storage', $this->storagePath());
+        $this->instance('path.database', $this->databasePath());
+        $this->instance('path.resources', $this->resourcePath());
+        $this->instance('path.bootstrap', $this->bootstrapPath());
+    }
+
+    /**
+     * Register the basic bindings into the container.
+     *
+     * @return void
+     */
+    protected function registerBaseBindings()
+    {
+        static::setInstance($this);
+
+        $this->instance('app', $this);
+
+        $this->instance(Container::class, $this);
+        $this->singleton(Mix::class);
+
+        $this->instance(PackageManifest::class, new PackageManifest(
+            new Filesystem, $this->basePath(), $this->getCachedPackagesPath()
+        ));
+    }
+
+    /**
+     * Register all of the base service providers.
+     *
+     * @return void
+     */
+    protected function registerBaseServiceProviders()
+    {
+        $this->register(new EventServiceProvider($this));
+        $this->register(new LogServiceProvider($this));
+        $this->register(new RoutingServiceProvider($this));
+    }
+
+    /**
+     * Mark the given provider as registered.
+     *
+     * @param ServiceProvider $provider
+     * @return void
+     */
+    protected function markAsRegistered($provider)
+    {
+        $this->serviceProviders[] = $provider;
+
+        $this->loadedProviders[get_class($provider)] = true;
+    }
+
+    /**
+     * Boot the given service provider.
+     *
+     * @param ServiceProvider $provider
+     * @return mixed
+     */
+    protected function bootProvider(ServiceProvider $provider)
+    {
+        if (method_exists($provider, 'boot')) {
+            return $this->call([$provider, 'boot']);
+        }
+    }
+
+    /**
+     * Call the booting callbacks for the application.
+     *
+     * @param callable[] $callbacks
+     * @return void
+     */
+    protected function fireAppCallbacks(array $callbacks)
+    {
+        foreach ($callbacks as $callback) {
+            call_user_func($callback, $this);
+        }
     }
 }

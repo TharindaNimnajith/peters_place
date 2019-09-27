@@ -147,20 +147,6 @@ class PendingMail
     }
 
     /**
-     * Populate the mailable with the addresses.
-     *
-     * @param MailableContract $mailable ;
-     * @return Mailable
-     */
-    protected function fill(MailableContract $mailable)
-    {
-        return $mailable->to($this->to)
-            ->cc($this->cc)
-            ->bcc($this->bcc)
-            ->locale($this->locale);
-    }
-
-    /**
      * Send a mailable message immediately.
      *
      * @param MailableContract $mailable ;
@@ -181,5 +167,19 @@ class PendingMail
     public function later($delay, MailableContract $mailable)
     {
         return $this->mailer->later($delay, $this->fill($mailable));
+    }
+
+    /**
+     * Populate the mailable with the addresses.
+     *
+     * @param MailableContract $mailable ;
+     * @return Mailable
+     */
+    protected function fill(MailableContract $mailable)
+    {
+        return $mailable->to($this->to)
+            ->cc($this->cc)
+            ->bcc($this->bcc)
+            ->locale($this->locale);
     }
 }

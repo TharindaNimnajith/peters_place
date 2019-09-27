@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -100,7 +101,6 @@
     </script>
     <!-- Styles -->
     <style>
-
         body {
             margin: auto;
             font-family: Arial, Helvetica, sans-serif;
@@ -281,6 +281,7 @@
             margin-left: 16px;
 
         }
+
     </style>
 </head>
 <div class="topnav">
@@ -288,6 +289,7 @@
     <a href="/orderFinal">Orders</a>
     <a href="/expenditureFinal">Reports</a>
 </div>
+
 <body>
 <div class="container">
     <div class="row">
@@ -338,7 +340,8 @@
                         </tr>
                         <tr>
                             <td>Bank Account No</td>
-                            <td><input type="text" id="acc" placeholder="Enter Account No" name="accNo" required></td>
+                            <td><input type="text" id="acc" placeholder="Enter Account No" name="accNo" required>
+                            </td>
                             <p id="p4"></p>
                         </tr>
 
@@ -392,4 +395,5 @@
     </div>
 </div>
 </body>
+
 </html>

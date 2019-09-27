@@ -279,21 +279,6 @@ class TestResponse
     }
 
     /**
-     * Get the given cookie from the response.
-     *
-     * @param string $cookieName
-     * @return Cookie|null
-     */
-    protected function getCookie($cookieName)
-    {
-        foreach ($this->headers->getCookies() as $cookie) {
-            if ($cookie->getName() === $cookieName) {
-                return $cookie;
-            }
-        }
-    }
-
-    /**
      * Asserts that the response contains the given cookie and is expired.
      *
      * @param string $cookieName
@@ -471,24 +456,6 @@ class TestResponse
     }
 
     /**
-     * Get the assertion message for assertJson.
-     *
-     * @param array $data
-     * @return string
-     */
-    protected function assertJsonMessage(array $data)
-    {
-        $expected = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
-        $actual = json_encode($this->decodeResponseJson(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-
-        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL .
-            "[{$expected}]" . PHP_EOL . PHP_EOL .
-            'within response JSON:' . PHP_EOL . PHP_EOL .
-            "[{$actual}]." . PHP_EOL . PHP_EOL;
-    }
-
-    /**
      * Assert that the response contains the given JSON fragment.
      *
      * @param array $data
@@ -513,24 +480,6 @@ class TestResponse
         }
 
         return $this;
-    }
-
-    /**
-     * Get the strings we need to search for when examining the JSON.
-     *
-     * @param string $key
-     * @param string $value
-     * @return array
-     */
-    protected function jsonSearchStrings($key, $value)
-    {
-        $needle = substr(json_encode([$key => $value]), 1, -1);
-
-        return [
-            $needle . ']',
-            $needle . '}',
-            $needle . ',',
-        ];
     }
 
     /**
@@ -788,20 +737,6 @@ class TestResponse
     }
 
     /**
-     * Ensure that the response has a view as its original content.
-     *
-     * @return $this
-     */
-    protected function ensureResponseHasView()
-    {
-        if (!isset($this->original) || !$this->original instanceof View) {
-            return PHPUnit::fail('The response is not a view.');
-        }
-
-        return $this;
-    }
-
-    /**
      * Assert that the response view has a given piece of bound data.
      *
      * @param string|array $key
@@ -909,16 +844,6 @@ class TestResponse
         }
 
         return $this;
-    }
-
-    /**
-     * Get the current session store.
-     *
-     * @return Store
-     */
-    protected function session()
-    {
-        return app('session.store');
     }
 
     /**
@@ -1174,5 +1099,80 @@ class TestResponse
         }
 
         return $this->baseResponse->{$method}(...$args);
+    }
+
+    /**
+     * Get the given cookie from the response.
+     *
+     * @param string $cookieName
+     * @return Cookie|null
+     */
+    protected function getCookie($cookieName)
+    {
+        foreach ($this->headers->getCookies() as $cookie) {
+            if ($cookie->getName() === $cookieName) {
+                return $cookie;
+            }
+        }
+    }
+
+    /**
+     * Get the assertion message for assertJson.
+     *
+     * @param array $data
+     * @return string
+     */
+    protected function assertJsonMessage(array $data)
+    {
+        $expected = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        $actual = json_encode($this->decodeResponseJson(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        return 'Unable to find JSON: ' . PHP_EOL . PHP_EOL .
+            "[{$expected}]" . PHP_EOL . PHP_EOL .
+            'within response JSON:' . PHP_EOL . PHP_EOL .
+            "[{$actual}]." . PHP_EOL . PHP_EOL;
+    }
+
+    /**
+     * Get the strings we need to search for when examining the JSON.
+     *
+     * @param string $key
+     * @param string $value
+     * @return array
+     */
+    protected function jsonSearchStrings($key, $value)
+    {
+        $needle = substr(json_encode([$key => $value]), 1, -1);
+
+        return [
+            $needle . ']',
+            $needle . '}',
+            $needle . ',',
+        ];
+    }
+
+    /**
+     * Ensure that the response has a view as its original content.
+     *
+     * @return $this
+     */
+    protected function ensureResponseHasView()
+    {
+        if (!isset($this->original) || !$this->original instanceof View) {
+            return PHPUnit::fail('The response is not a view.');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the current session store.
+     *
+     * @return Store
+     */
+    protected function session()
+    {
+        return app('session.store');
     }
 }

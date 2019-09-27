@@ -67,6 +67,30 @@ trait MocksApplicationServices
     }
 
     /**
+     * Specify a list of events that should not be fired for the given operation.
+     *
+     * These events will be mocked, so that handlers will not actually be executed.
+     *
+     * @param array|string $events
+     * @return $this
+     */
+    public function doesntExpectEvents($events)
+    {
+        $events = is_array($events) ? $events : func_get_args();
+
+        $this->withoutEvents();
+
+        $this->beforeApplicationDestroyed(function () use ($events) {
+            $this->assertEmpty(
+                $fired = $this->getFiredEvents($events),
+                'These unexpected events were fired: [' . implode(', ', $fired) . ']'
+            );
+        });
+
+        return $this;
+    }
+
+    /**
      * Mock the event dispatcher so all events are silenced and collected.
      *
      * @return $this
@@ -126,30 +150,6 @@ trait MocksApplicationServices
         }
 
         return false;
-    }
-
-    /**
-     * Specify a list of events that should not be fired for the given operation.
-     *
-     * These events will be mocked, so that handlers will not actually be executed.
-     *
-     * @param array|string $events
-     * @return $this
-     */
-    public function doesntExpectEvents($events)
-    {
-        $events = is_array($events) ? $events : func_get_args();
-
-        $this->withoutEvents();
-
-        $this->beforeApplicationDestroyed(function () use ($events) {
-            $this->assertEmpty(
-                $fired = $this->getFiredEvents($events),
-                'These unexpected events were fired: [' . implode(', ', $fired) . ']'
-            );
-        });
-
-        return $this;
     }
 
     /**

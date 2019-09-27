@@ -15,6 +15,7 @@ use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\Exception\LogicException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
+use function in_array;
 
 /**
  * Base catalogues binary operation class.
@@ -76,7 +77,7 @@ abstract class AbstractOperation implements OperationInterface
      */
     public function getMessages($domain)
     {
-        if (!\in_array($domain, $this->getDomains())) {
+        if (!in_array($domain, $this->getDomains())) {
             throw new InvalidArgumentException(sprintf('Invalid domain: %s.', $domain));
         }
 
@@ -100,19 +101,11 @@ abstract class AbstractOperation implements OperationInterface
     }
 
     /**
-     * Performs operation on source and target catalogues for the given domain and
-     * stores the results.
-     *
-     * @param string $domain The domain which the operation will be performed for
-     */
-    abstract protected function processDomain($domain);
-
-    /**
      * {@inheritdoc}
      */
     public function getNewMessages($domain)
     {
-        if (!\in_array($domain, $this->getDomains())) {
+        if (!in_array($domain, $this->getDomains())) {
             throw new InvalidArgumentException(sprintf('Invalid domain: %s.', $domain));
         }
 
@@ -128,7 +121,7 @@ abstract class AbstractOperation implements OperationInterface
      */
     public function getObsoleteMessages($domain)
     {
-        if (!\in_array($domain, $this->getDomains())) {
+        if (!in_array($domain, $this->getDomains())) {
             throw new InvalidArgumentException(sprintf('Invalid domain: %s.', $domain));
         }
 
@@ -152,4 +145,12 @@ abstract class AbstractOperation implements OperationInterface
 
         return $this->result;
     }
+
+    /**
+     * Performs operation on source and target catalogues for the given domain and
+     * stores the results.
+     *
+     * @param string $domain The domain which the operation will be performed for
+     */
+    abstract protected function processDomain($domain);
 }

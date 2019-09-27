@@ -34,21 +34,21 @@ class Writer implements WriterContract
     /**
      * Holds an instance of the Output.
      *
-     * @var \Symfony\Component\Console\Output\OutputInterface
+     * @var OutputInterface
      */
     protected $output;
 
     /**
      * Holds an instance of the Argument Formatter.
      *
-     * @var \NunoMaduro\Collision\Contracts\ArgumentFormatter
+     * @var ArgumentFormatterContract
      */
     protected $argumentFormatter;
 
     /**
      * Holds an instance of the Highlighter.
      *
-     * @var \NunoMaduro\Collision\Contracts\Highlighter
+     * @var HighlighterContract
      */
     protected $highlighter;
 
@@ -77,9 +77,9 @@ class Writer implements WriterContract
     /**
      * Creates an instance of the writer.
      *
-     * @param \Symfony\Component\Console\Output\OutputInterface|null $output
-     * @param \NunoMaduro\Collision\Contracts\ArgumentFormatter|null $argumentFormatter
-     * @param \NunoMaduro\Collision\Contracts\Highlighter|null $highlighter
+     * @param OutputInterface|null $output
+     * @param ArgumentFormatterContract|null $argumentFormatter
+     * @param HighlighterContract|null $highlighter
      */
     public function __construct(
         OutputInterface $output = null,
@@ -111,116 +111,6 @@ class Writer implements WriterContract
         } else {
             $this->output->writeln('');
         }
-    }
-
-    /**
-     * Renders the title of the exception.
-     *
-     * @param \Whoops\Exception\Inspector $inspector
-     *
-     * @return \NunoMaduro\Collision\Contracts\Writer
-     */
-    protected function renderTitle(Inspector $inspector): WriterContract
-    {
-        $exception = $inspector->getException();
-        $message = $exception->getMessage();
-        $class = $inspector->getExceptionName();
-
-        $this->render("<bg=red;options=bold> $class </> : <comment>$message</>");
-
-        return $this;
-    }
-
-    /**
-     * Renders an message into the console.
-     *
-     * @param string $message
-     * @param bool $break
-     *
-     * @return $this
-     */
-    protected function render(string $message, bool $break = true): WriterContract
-    {
-        if ($break) {
-            $this->output->writeln('');
-        }
-
-        $this->output->writeln("  $message");
-
-        return $this;
-    }
-
-    /**
-     * Returns pertinent frames.
-     *
-     * @param \Whoops\Exception\Inspector $inspector
-     *
-     * @return array
-     */
-    protected function getFrames(Inspector $inspector): array
-    {
-        return $inspector->getFrames()
-            ->filter(
-                function ($frame) {
-                    foreach ($this->ignore as $ignore) {
-                        if (preg_match($ignore, $frame->getFile())) {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                }
-            )
-            ->getArray();
-    }
-
-    /**
-     * Renders the editor containing the code that was the
-     * origin of the exception.
-     *
-     * @param \Whoops\Exception\Frame $frame
-     *
-     * @return \NunoMaduro\Collision\Contracts\Writer
-     */
-    protected function renderEditor(Frame $frame): WriterContract
-    {
-        $this->render('at <fg=green>' . $frame->getFile() . '</>' . ':<fg=green>' . $frame->getLine() . '</>');
-
-        $content = $this->highlighter->highlight((string)$frame->getFileContents(), (int)$frame->getLine());
-
-        $this->output->writeln($content);
-
-        return $this;
-    }
-
-    /**
-     * Renders the trace of the exception.
-     *
-     * @param array $frames
-     *
-     * @return \NunoMaduro\Collision\Contracts\Writer
-     */
-    protected function renderTrace(array $frames): WriterContract
-    {
-        $this->render('<comment>Exception trace:</comment>');
-        foreach ($frames as $i => $frame) {
-            if ($i > static::VERBOSITY_NORMAL_FRAMES && $this->output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
-                $this->render('<info>Please use the argument <fg=red>-v</> to see more details.</info>');
-                break;
-            }
-
-            $file = $frame->getFile();
-            $line = $frame->getLine();
-            $class = empty($frame->getClass()) ? '' : $frame->getClass() . '::';
-            $function = $frame->getFunction();
-            $args = $this->argumentFormatter->format($frame->getArgs());
-            $pos = str_pad((int)$i + 1, 4, ' ');
-
-            $this->render("<comment><fg=cyan>$pos</>$class$function($args)</comment>");
-            $this->render("    <fg=green>$file</>:<fg=green>$line</>", false);
-        }
-
-        return $this;
     }
 
     /**
@@ -267,6 +157,116 @@ class Writer implements WriterContract
     public function setOutput(OutputInterface $output): WriterContract
     {
         $this->output = $output;
+
+        return $this;
+    }
+
+    /**
+     * Renders the title of the exception.
+     *
+     * @param Inspector $inspector
+     *
+     * @return WriterContract
+     */
+    protected function renderTitle(Inspector $inspector): WriterContract
+    {
+        $exception = $inspector->getException();
+        $message = $exception->getMessage();
+        $class = $inspector->getExceptionName();
+
+        $this->render("<bg=red;options=bold> $class </> : <comment>$message</>");
+
+        return $this;
+    }
+
+    /**
+     * Renders an message into the console.
+     *
+     * @param string $message
+     * @param bool $break
+     *
+     * @return $this
+     */
+    protected function render(string $message, bool $break = true): WriterContract
+    {
+        if ($break) {
+            $this->output->writeln('');
+        }
+
+        $this->output->writeln("  $message");
+
+        return $this;
+    }
+
+    /**
+     * Returns pertinent frames.
+     *
+     * @param Inspector $inspector
+     *
+     * @return array
+     */
+    protected function getFrames(Inspector $inspector): array
+    {
+        return $inspector->getFrames()
+            ->filter(
+                function ($frame) {
+                    foreach ($this->ignore as $ignore) {
+                        if (preg_match($ignore, $frame->getFile())) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            )
+            ->getArray();
+    }
+
+    /**
+     * Renders the editor containing the code that was the
+     * origin of the exception.
+     *
+     * @param Frame $frame
+     *
+     * @return WriterContract
+     */
+    protected function renderEditor(Frame $frame): WriterContract
+    {
+        $this->render('at <fg=green>' . $frame->getFile() . '</>' . ':<fg=green>' . $frame->getLine() . '</>');
+
+        $content = $this->highlighter->highlight((string)$frame->getFileContents(), (int)$frame->getLine());
+
+        $this->output->writeln($content);
+
+        return $this;
+    }
+
+    /**
+     * Renders the trace of the exception.
+     *
+     * @param array $frames
+     *
+     * @return WriterContract
+     */
+    protected function renderTrace(array $frames): WriterContract
+    {
+        $this->render('<comment>Exception trace:</comment>');
+        foreach ($frames as $i => $frame) {
+            if ($i > static::VERBOSITY_NORMAL_FRAMES && $this->output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+                $this->render('<info>Please use the argument <fg=red>-v</> to see more details.</info>');
+                break;
+            }
+
+            $file = $frame->getFile();
+            $line = $frame->getLine();
+            $class = empty($frame->getClass()) ? '' : $frame->getClass() . '::';
+            $function = $frame->getFunction();
+            $args = $this->argumentFormatter->format($frame->getArgs());
+            $pos = str_pad((int)$i + 1, 4, ' ');
+
+            $this->render("<comment><fg=cyan>$pos</>$class$function($args)</comment>");
+            $this->render("    <fg=green>$file</>:<fg=green>$line</>", false);
+        }
 
         return $this;
     }

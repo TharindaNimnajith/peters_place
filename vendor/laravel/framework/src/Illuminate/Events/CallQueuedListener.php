@@ -89,34 +89,6 @@ class CallQueuedListener implements ShouldQueue
     }
 
     /**
-     * Unserialize the data if needed.
-     *
-     * @return void
-     */
-    protected function prepareData()
-    {
-        if (is_string($this->data)) {
-            $this->data = unserialize($this->data);
-        }
-    }
-
-    /**
-     * Set the job instance of the given class if necessary.
-     *
-     * @param Job $job
-     * @param mixed $instance
-     * @return mixed
-     */
-    protected function setJobInstanceIfNecessary(Job $job, $instance)
-    {
-        if (in_array(InteractsWithQueue::class, class_uses_recursive($instance))) {
-            $instance->setJob($job);
-        }
-
-        return $instance;
-    }
-
-    /**
      * Call the failed method on the job instance.
      *
      * The event instance and the exception will be passed.
@@ -157,5 +129,33 @@ class CallQueuedListener implements ShouldQueue
         $this->data = array_map(function ($data) {
             return is_object($data) ? clone $data : $data;
         }, $this->data);
+    }
+
+    /**
+     * Unserialize the data if needed.
+     *
+     * @return void
+     */
+    protected function prepareData()
+    {
+        if (is_string($this->data)) {
+            $this->data = unserialize($this->data);
+        }
+    }
+
+    /**
+     * Set the job instance of the given class if necessary.
+     *
+     * @param Job $job
+     * @param mixed $instance
+     * @return mixed
+     */
+    protected function setJobInstanceIfNecessary(Job $job, $instance)
+    {
+        if (in_array(InteractsWithQueue::class, class_uses_recursive($instance))) {
+            $instance->setJob($job);
+        }
+
+        return $instance;
     }
 }

@@ -137,20 +137,6 @@ class NodeDumper
         return "[$start - $end]";
     }
 
-    private function toColumn($code, $pos)
-    {
-        if ($pos > strlen($code)) {
-            throw new RuntimeException('Invalid position information');
-        }
-
-        $lineStartPos = strrpos($code, "\n", $pos - strlen($code));
-        if (false === $lineStartPos) {
-            $lineStartPos = -1;
-        }
-
-        return $pos - $lineStartPos;
-    }
-
     protected function dumpFlags($flags)
     {
         $strs = [];
@@ -195,8 +181,6 @@ class NodeDumper
         return $map[$type] . ' (' . $type . ')';
     }
 
-    // Copied from Error class
-
     protected function dumpUseType($type)
     {
         $map = [
@@ -210,5 +194,21 @@ class NodeDumper
             return $type;
         }
         return $map[$type] . ' (' . $type . ')';
+    }
+
+    // Copied from Error class
+
+    private function toColumn($code, $pos)
+    {
+        if ($pos > strlen($code)) {
+            throw new RuntimeException('Invalid position information');
+        }
+
+        $lineStartPos = strrpos($code, "\n", $pos - strlen($code));
+        if (false === $lineStartPos) {
+            $lineStartPos = -1;
+        }
+
+        return $pos - $lineStartPos;
     }
 }

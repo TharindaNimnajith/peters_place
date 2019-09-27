@@ -61,25 +61,6 @@ class Redirector
     }
 
     /**
-     * Create a new redirect response.
-     *
-     * @param string $path
-     * @param int $status
-     * @param array $headers
-     * @return RedirectResponse
-     */
-    protected function createRedirect($path, $status, $headers)
-    {
-        return tap(new RedirectResponse($path, $status, $headers), function ($redirect) {
-            if (isset($this->session)) {
-                $redirect->setSession($this->session);
-            }
-
-            $redirect->setRequest($this->generator->getRequest());
-        });
-    }
-
-    /**
      * Create a new redirect response to the previous location.
      *
      * @param int $status
@@ -228,5 +209,24 @@ class Redirector
     public function setSession(SessionStore $session)
     {
         $this->session = $session;
+    }
+
+    /**
+     * Create a new redirect response.
+     *
+     * @param string $path
+     * @param int $status
+     * @param array $headers
+     * @return RedirectResponse
+     */
+    protected function createRedirect($path, $status, $headers)
+    {
+        return tap(new RedirectResponse($path, $status, $headers), function ($redirect) {
+            if (isset($this->session)) {
+                $redirect->setSession($this->session);
+            }
+
+            $redirect->setRequest($this->generator->getRequest());
+        });
     }
 }

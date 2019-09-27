@@ -11,7 +11,9 @@
 
 namespace Symfony\Component\Debug\Tests;
 
+use Exception;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\Debug\Exception\OutOfMemoryException;
 use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -26,7 +28,7 @@ class ExceptionHandlerTest extends TestCase
         $handler = new ExceptionHandler(false);
 
         ob_start();
-        $handler->sendPhpResponse(new \RuntimeException('Foo'));
+        $handler->sendPhpResponse(new RuntimeException('Foo'));
         $response = ob_get_clean();
 
         $this->assertContains('Whoops, looks like something went wrong.', $response);
@@ -35,7 +37,7 @@ class ExceptionHandlerTest extends TestCase
         $handler = new ExceptionHandler(true);
 
         ob_start();
-        $handler->sendPhpResponse(new \RuntimeException('Foo'));
+        $handler->sendPhpResponse(new RuntimeException('Foo'));
         $response = ob_get_clean();
 
         $this->assertContains('<h1 class="break-long-words exception-message">Foo</h1>', $response);
@@ -45,7 +47,7 @@ class ExceptionHandlerTest extends TestCase
         $htmlWithXss = '<body onload=alert(\'test1\')> <b onmouseover=alert(\'Wufff!\')>click me!</b> <img src="j&#X41vascript:alert(\'test2\')"> <meta http-equiv="refresh"
 content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg">';
         ob_start();
-        $handler->sendPhpResponse(new \RuntimeException($htmlWithXss));
+        $handler->sendPhpResponse(new RuntimeException($htmlWithXss));
         $response = ob_get_clean();
 
         $this->assertContains(sprintf('<h1 class="break-long-words exception-message">%s</h1>', htmlspecialchars($htmlWithXss, ENT_COMPAT | ENT_SUBSTITUTE, 'UTF-8')), $response);
@@ -90,7 +92,7 @@ content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"
     {
         $handler = new ExceptionHandler(true);
         ob_start();
-        $handler->sendPhpResponse(new \RuntimeException('Foo', 0, new \RuntimeException('Bar')));
+        $handler->sendPhpResponse(new RuntimeException('Foo', 0, new RuntimeException('Bar')));
         $response = ob_get_clean();
 
         $this->assertStringMatchesFormat('%A<p class="break-long-words trace-message">Foo</p>%A<p class="break-long-words trace-message">Bar</p>%A', $response);
@@ -101,15 +103,9 @@ content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"
         $handler = new ExceptionHandler(true);
         ob_start();
 
-        $handler->handle(new \Exception('foo'));
+        $handler->handle(new Exception('foo'));
 
-        $this->assertThatTheExceptionWasOutput(ob_get_clean(), \Exception::class, 'Exception', 'foo');
-    }
-
-    private function assertThatTheExceptionWasOutput($content, $expectedClass, $expectedTitle, $expectedMessage)
-    {
-        $this->assertContains(sprintf('<span class="exception_title"><abbr title="%s">%s</abbr></span>', $expectedClass, $expectedTitle), $content);
-        $this->assertContains(sprintf('<p class="break-long-words trace-message">%s</p>', $expectedMessage), $content);
+        $this->assertThatTheExceptionWasOutput(ob_get_clean(), Exception::class, 'Exception', 'foo');
     }
 
     public function testHandleWithACustomHandlerThatOutputsSomething()
@@ -120,7 +116,7 @@ content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"
             echo 'ccc';
         });
 
-        $handler->handle(new \Exception());
+        $handler->handle(new Exception());
         ob_end_flush(); // Necessary because of this PHP bug : https://bugs.php.net/bug.php?id=76563
         $this->assertSame('ccc', ob_get_clean());
     }
@@ -131,21 +127,21 @@ content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"
         $handler->setHandler(function () {
         });
 
-        $handler->handle(new \Exception('ccc'));
+        $handler->handle(new Exception('ccc'));
 
-        $this->assertThatTheExceptionWasOutput(ob_get_clean(), \Exception::class, 'Exception', 'ccc');
+        $this->assertThatTheExceptionWasOutput(ob_get_clean(), Exception::class, 'Exception', 'ccc');
     }
 
     public function testHandleWithACustomHandlerThatFails()
     {
         $handler = new ExceptionHandler(true);
         $handler->setHandler(function () {
-            throw new \RuntimeException();
+            throw new RuntimeException();
         });
 
-        $handler->handle(new \Exception('ccc'));
+        $handler->handle(new Exception('ccc'));
 
-        $this->assertThatTheExceptionWasOutput(ob_get_clean(), \Exception::class, 'Exception', 'ccc');
+        $this->assertThatTheExceptionWasOutput(ob_get_clean(), Exception::class, 'Exception', 'ccc');
     }
 
     public function testHandleOutOfMemoryException()
@@ -169,5 +165,11 @@ content="0;url=data:text/html;base64,PHNjcmlwdD5hbGVydCgndGVzdDMnKTwvc2NyaXB0Pg"
     protected function tearDown()
     {
         testHeader();
+    }
+
+    private function assertThatTheExceptionWasOutput($content, $expectedClass, $expectedTitle, $expectedMessage)
+    {
+        $this->assertContains(sprintf('<span class="exception_title"><abbr title="%s">%s</abbr></span>', $expectedClass, $expectedTitle), $content);
+        $this->assertContains(sprintf('<p class="break-long-words trace-message">%s</p>', $expectedMessage), $content);
     }
 }

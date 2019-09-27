@@ -106,6 +106,59 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function read($sessionId)
+    {
+        $session = (object)$this->getQuery()->find($sessionId);
+
+        if ($this->expired($session)) {
+            $this->exists = true;
+
+            return '';
+        }
+
+        if (isset($session->payload)) {
+            $this->exists = true;
+
+            return base64_decode($session->payload);
+        }
+
+        return '';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function destroy($sessionId)
+    {
+        $this->getQuery()->where('id', $sessionId)->delete();
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function gc($lifetime)
+    {
+        $this->getQuery()->where('last_activity', '<=', $this->currentTime() - $lifetime)->delete();
+    }
+
+    /**
+     * Set the existence state for the session.
+     *
+     * @param bool $value
+     * @return $this
+     */
+    public function setExists($value)
+    {
+        $this->exists = $value;
+
+        return $this;
+    }
+
+    /**
      * Get the default payload for the session.
      *
      * @param string $data
@@ -192,28 +245,6 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function read($sessionId)
-    {
-        $session = (object)$this->getQuery()->find($sessionId);
-
-        if ($this->expired($session)) {
-            $this->exists = true;
-
-            return '';
-        }
-
-        if (isset($session->payload)) {
-            $this->exists = true;
-
-            return base64_decode($session->payload);
-        }
-
-        return '';
-    }
-
-    /**
      * Get a fresh query builder instance for the table.
      *
      * @return Builder
@@ -261,36 +292,5 @@ class DatabaseSessionHandler implements SessionHandlerInterface, ExistenceAwareI
         } catch (QueryException $e) {
             $this->performUpdate($sessionId, $payload);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function destroy($sessionId)
-    {
-        $this->getQuery()->where('id', $sessionId)->delete();
-
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function gc($lifetime)
-    {
-        $this->getQuery()->where('last_activity', '<=', $this->currentTime() - $lifetime)->delete();
-    }
-
-    /**
-     * Set the existence state for the session.
-     *
-     * @param bool $value
-     * @return $this
-     */
-    public function setExists($value)
-    {
-        $this->exists = $value;
-
-        return $this;
     }
 }

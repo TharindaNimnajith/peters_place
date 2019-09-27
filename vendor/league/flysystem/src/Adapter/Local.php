@@ -88,34 +88,6 @@ class Local extends AbstractAdapter
     }
 
     /**
-     * Ensure the root directory exists.
-     *
-     * @param string $root root directory path
-     *
-     * @return void
-     *
-     * @throws Exception in case the root directory can not be created
-     */
-    protected function ensureDirectory($root)
-    {
-        if (!is_dir($root)) {
-            $umask = umask(0);
-
-            if (!@mkdir($root, $this->permissionMap['dir']['public'], true)) {
-                $mkdirError = error_get_last();
-            }
-
-            umask($umask);
-            clearstatcache(false, $root);
-
-            if (!is_dir($root)) {
-                $errorMessage = isset($mkdirError['message']) ? $mkdirError['message'] : '';
-                throw new Exception(sprintf('Impossible to create the root directory "%s". %s', $root, $errorMessage));
-            }
-        }
-    }
-
-    /**
      * @inheritdoc
      */
     public function has($path)
@@ -308,88 +280,6 @@ class Local extends AbstractAdapter
     }
 
     /**
-     * @param string $path
-     * @param int $mode
-     *
-     * @return RecursiveIteratorIterator
-     */
-    protected function getRecursiveDirectoryIterator($path, $mode = RecursiveIteratorIterator::SELF_FIRST)
-    {
-        return new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
-            $mode
-        );
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return DirectoryIterator
-     */
-    protected function getDirectoryIterator($path)
-    {
-        $iterator = new DirectoryIterator($path);
-
-        return $iterator;
-    }
-
-    /**
-     * Get the normalized path from a SplFileInfo object.
-     *
-     * @param SplFileInfo $file
-     *
-     * @return string
-     */
-    protected function getFilePath(SplFileInfo $file)
-    {
-        $location = $file->getPathname();
-        $path = $this->removePathPrefix($location);
-
-        return trim(str_replace('\\', '/', $path), '/');
-    }
-
-    /**
-     * Normalize the file info.
-     *
-     * @param SplFileInfo $file
-     *
-     * @return array|void
-     *
-     * @throws NotSupportedException
-     */
-    protected function normalizeFileInfo(SplFileInfo $file)
-    {
-        if (!$file->isLink()) {
-            return $this->mapFileInfo($file);
-        }
-
-        if ($this->linkHandling & self::DISALLOW_LINKS) {
-            throw NotSupportedException::forLink($file);
-        }
-    }
-
-    /**
-     * @param SplFileInfo $file
-     *
-     * @return array
-     */
-    protected function mapFileInfo(SplFileInfo $file)
-    {
-        $normalized = [
-            'type' => $file->getType(),
-            'path' => $this->getFilePath($file),
-        ];
-
-        $normalized['timestamp'] = $file->getMTime();
-
-        if ($normalized['type'] === 'file') {
-            $normalized['size'] = $file->getSize();
-        }
-
-        return $normalized;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getSize($path)
@@ -486,6 +376,116 @@ class Local extends AbstractAdapter
         }
 
         return rmdir($location);
+    }
+
+    /**
+     * Ensure the root directory exists.
+     *
+     * @param string $root root directory path
+     *
+     * @return void
+     *
+     * @throws Exception in case the root directory can not be created
+     */
+    protected function ensureDirectory($root)
+    {
+        if (!is_dir($root)) {
+            $umask = umask(0);
+
+            if (!@mkdir($root, $this->permissionMap['dir']['public'], true)) {
+                $mkdirError = error_get_last();
+            }
+
+            umask($umask);
+            clearstatcache(false, $root);
+
+            if (!is_dir($root)) {
+                $errorMessage = isset($mkdirError['message']) ? $mkdirError['message'] : '';
+                throw new Exception(sprintf('Impossible to create the root directory "%s". %s', $root, $errorMessage));
+            }
+        }
+    }
+
+    /**
+     * @param string $path
+     * @param int $mode
+     *
+     * @return RecursiveIteratorIterator
+     */
+    protected function getRecursiveDirectoryIterator($path, $mode = RecursiveIteratorIterator::SELF_FIRST)
+    {
+        return new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
+            $mode
+        );
+    }
+
+    /**
+     * @param string $path
+     *
+     * @return DirectoryIterator
+     */
+    protected function getDirectoryIterator($path)
+    {
+        $iterator = new DirectoryIterator($path);
+
+        return $iterator;
+    }
+
+    /**
+     * Get the normalized path from a SplFileInfo object.
+     *
+     * @param SplFileInfo $file
+     *
+     * @return string
+     */
+    protected function getFilePath(SplFileInfo $file)
+    {
+        $location = $file->getPathname();
+        $path = $this->removePathPrefix($location);
+
+        return trim(str_replace('\\', '/', $path), '/');
+    }
+
+    /**
+     * Normalize the file info.
+     *
+     * @param SplFileInfo $file
+     *
+     * @return array|void
+     *
+     * @throws NotSupportedException
+     */
+    protected function normalizeFileInfo(SplFileInfo $file)
+    {
+        if (!$file->isLink()) {
+            return $this->mapFileInfo($file);
+        }
+
+        if ($this->linkHandling & self::DISALLOW_LINKS) {
+            throw NotSupportedException::forLink($file);
+        }
+    }
+
+    /**
+     * @param SplFileInfo $file
+     *
+     * @return array
+     */
+    protected function mapFileInfo(SplFileInfo $file)
+    {
+        $normalized = [
+            'type' => $file->getType(),
+            'path' => $this->getFilePath($file),
+        ];
+
+        $normalized['timestamp'] = $file->getMTime();
+
+        if ($normalized['type'] === 'file') {
+            $normalized['size'] = $file->getSize();
+        }
+
+        return $normalized;
     }
 
     /**

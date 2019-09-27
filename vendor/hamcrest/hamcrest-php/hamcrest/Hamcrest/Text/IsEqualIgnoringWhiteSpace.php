@@ -48,6 +48,13 @@ class IsEqualIgnoringWhiteSpace extends TypeSafeMatcher
             === strtolower($this->_stripSpace($this->_string)));
     }
 
+    protected function describeMismatchSafely($item, Description $mismatchDescription)
+    {
+        $mismatchDescription->appendText('was ')->appendText($item);
+    }
+
+    // -- Private Methods
+
     private function _stripSpace($string)
     {
         $parts = preg_split("/[\r\n\t ]+/", $string);
@@ -56,12 +63,5 @@ class IsEqualIgnoringWhiteSpace extends TypeSafeMatcher
         }
 
         return trim(implode(' ', $parts), " \r\n\t");
-    }
-
-    // -- Private Methods
-
-    protected function describeMismatchSafely($item, Description $mismatchDescription)
-    {
-        $mismatchDescription->appendText('was ')->appendText($item);
     }
 }

@@ -122,14 +122,6 @@ class SocketHandler extends AbstractProcessingHandler
         $this->connectionTimeout = (float)$seconds;
     }
 
-    private function validateTimeout($value)
-    {
-        $ok = filter_var($value, FILTER_VALIDATE_FLOAT);
-        if ($ok === false || $value < 0) {
-            throw new InvalidArgumentException("Timeout must be 0 or a positive float (got $value)");
-        }
-    }
-
     /**
      * Get current in-transfer timeout
      *
@@ -195,6 +187,19 @@ class SocketHandler extends AbstractProcessingHandler
     }
 
     /**
+     * Check to see if the socket is currently available.
+     *
+     * UDP might appear to be connected but might fail when writing.  See http://php.net/fsockopen for details.
+     *
+     * @return bool
+     */
+    public function isConnected()
+    {
+        return is_resource($this->resource)
+            && !feof($this->resource);  // on TCP - other party can close connection.
+    }
+
+    /**
      * Connect (if necessary) and write to the socket
      *
      * @param array $record
@@ -209,25 +214,88 @@ class SocketHandler extends AbstractProcessingHandler
         $this->writeToSocket($data);
     }
 
+    /**
+     * Wrapper to allow mocking
+     */
+    protected function pfsockopen()
+    {
+        return @pfsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
+    }
+
+    /**
+     * Wrapper to allow mocking
+     */
+    protected function fsockopen()
+    {
+        return @fsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
+    }
+
+    /**
+     * Wrapper to allow mocking
+     *
+     * @see http://php.net/manual/en/function.stream-set-timeout.php
+     */
+    protected function streamSetTimeout()
+    {
+        $seconds = floor($this->timeout);
+        $microseconds = round(($this->timeout - $seconds) * 1e6);
+
+        return stream_set_timeout($this->resource, $seconds, $microseconds);
+    }
+
+    /**
+     * Wrapper to allow mocking
+     *
+     * @see http://php.net/manual/en/function.stream-set-chunk-size.php
+     */
+    protected function streamSetChunkSize()
+    {
+        return stream_set_chunk_size($this->resource, $this->chunkSize);
+    }
+
+    protected function generateDataStream($record)
+    {
+        return (string)$record['formatted'];
+    }
+
+    /**
+     * Wrapper to allow mocking
+     */
+    protected function fwrite($data)
+    {
+        return @fwrite($this->resource, $data);
+    }
+
+    /**
+     * Wrapper to allow mocking
+     */
+    protected function streamGetMetadata()
+    {
+        return stream_get_meta_data($this->resource);
+    }
+
+    /**
+     * @return resource|null
+     */
+    protected function getResource()
+    {
+        return $this->resource;
+    }
+
+    private function validateTimeout($value)
+    {
+        $ok = filter_var($value, FILTER_VALIDATE_FLOAT);
+        if ($ok === false || $value < 0) {
+            throw new InvalidArgumentException("Timeout must be 0 or a positive float (got $value)");
+        }
+    }
+
     private function connectIfNotConnected()
     {
         if ($this->isConnected()) {
             return;
         }
         $this->connect();
-    }
-
-    /**
-     * Check to see if the socket is currently available.
-     *
-     * UDP might appear to be connected but might fail when writing.  See http://php.net/fsockopen for details.
-     *
-     * @return bool
-     */
-    public function isConnected()
-    {
-        return is_resource($this->resource)
-            && !feof($this->resource);  // on TCP - other party can close connection.
     }
 
     private function connect()
@@ -250,22 +318,6 @@ class SocketHandler extends AbstractProcessingHandler
         $this->resource = $resource;
     }
 
-    /**
-     * Wrapper to allow mocking
-     */
-    protected function pfsockopen()
-    {
-        return @pfsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
-    }
-
-    /**
-     * Wrapper to allow mocking
-     */
-    protected function fsockopen()
-    {
-        return @fsockopen($this->connectionString, -1, $this->errno, $this->errstr, $this->connectionTimeout);
-    }
-
     private function setSocketTimeout()
     {
         if (!$this->streamSetTimeout()) {
@@ -273,39 +325,11 @@ class SocketHandler extends AbstractProcessingHandler
         }
     }
 
-    /**
-     * Wrapper to allow mocking
-     *
-     * @see http://php.net/manual/en/function.stream-set-timeout.php
-     */
-    protected function streamSetTimeout()
-    {
-        $seconds = floor($this->timeout);
-        $microseconds = round(($this->timeout - $seconds) * 1e6);
-
-        return stream_set_timeout($this->resource, $seconds, $microseconds);
-    }
-
     private function setStreamChunkSize()
     {
         if ($this->chunkSize && !$this->streamSetChunkSize()) {
             throw new UnexpectedValueException("Failed setting chunk size with stream_set_chunk_size()");
         }
-    }
-
-    /**
-     * Wrapper to allow mocking
-     *
-     * @see http://php.net/manual/en/function.stream-set-chunk-size.php
-     */
-    protected function streamSetChunkSize()
-    {
-        return stream_set_chunk_size($this->resource, $this->chunkSize);
-    }
-
-    protected function generateDataStream($record)
-    {
-        return (string)$record['formatted'];
     }
 
     private function writeToSocket($data)
@@ -337,22 +361,6 @@ class SocketHandler extends AbstractProcessingHandler
         }
     }
 
-    /**
-     * Wrapper to allow mocking
-     */
-    protected function fwrite($data)
-    {
-        return @fwrite($this->resource, $data);
-    }
-
-    /**
-     * Wrapper to allow mocking
-     */
-    protected function streamGetMetadata()
-    {
-        return stream_get_meta_data($this->resource);
-    }
-
     private function writingIsTimedOut($sent)
     {
         $writingTimeout = (int)floor($this->writingTimeout);
@@ -376,13 +384,5 @@ class SocketHandler extends AbstractProcessingHandler
         }
 
         return false;
-    }
-
-    /**
-     * @return resource|null
-     */
-    protected function getResource()
-    {
-        return $this->resource;
     }
 }

@@ -213,6 +213,31 @@ class TestResult implements Countable
      */
     private $registerMockObjectsFromTestArgumentsRecursively = false;
 
+    public static function isAnyCoverageRequired(TestCase $test)
+    {
+        $annotations = $test->getAnnotations();
+
+        // If there is a @coversNothing annotation on the test method then code
+        // coverage data does not need to be collected
+        if (isset($annotations['method']['coversNothing'])) {
+            return false;
+        }
+
+        // If any methods have covers, coverage must me generated
+        if (isset($annotations['method']['covers'])) {
+            return true;
+        }
+
+        // If there are no explicit covers, and the test class is
+        // marked as covers nothing, all coverage can be skipped
+        if (isset($annotations['class']['coversNothing'])) {
+            return false;
+        }
+
+        // Otherwise each test method can generate coverage
+        return true;
+    }
+
     /**
      * Registers a TestListener.
      */
@@ -749,31 +774,6 @@ class TestResult implements Countable
         }
 
         $this->endTest($test, $time);
-    }
-
-    public static function isAnyCoverageRequired(TestCase $test)
-    {
-        $annotations = $test->getAnnotations();
-
-        // If there is a @coversNothing annotation on the test method then code
-        // coverage data does not need to be collected
-        if (isset($annotations['method']['coversNothing'])) {
-            return false;
-        }
-
-        // If any methods have covers, coverage must me generated
-        if (isset($annotations['method']['covers'])) {
-            return true;
-        }
-
-        // If there are no explicit covers, and the test class is
-        // marked as covers nothing, all coverage can be skipped
-        if (isset($annotations['class']['coversNothing'])) {
-            return false;
-        }
-
-        // Otherwise each test method can generate coverage
-        return true;
     }
 
     /**

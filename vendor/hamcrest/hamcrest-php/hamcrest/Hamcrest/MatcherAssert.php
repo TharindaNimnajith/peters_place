@@ -6,6 +6,8 @@ namespace Hamcrest;
  Copyright (c) 2009 hamcrest.org
  */
 
+use InvalidArgumentException;
+
 class MatcherAssert
 {
 
@@ -66,36 +68,7 @@ class MatcherAssert
                 break;
 
             default:
-                throw new \InvalidArgumentException('assertThat() requires one to three arguments');
-        }
-    }
-
-    /**
-     * Performs the actual assertion logic.
-     *
-     * If <code>$matcher</code> doesn't match <code>$actual</code>,
-     * throws a {@link Hamcrest\AssertionError} with a description
-     * of the failure along with the optional <code>$identifier</code>.
-     *
-     * @param string $identifier added to the message upon failure
-     * @param mixed $actual value to compare against <code>$matcher</code>
-     * @param \Hamcrest\Matcher $matcher applied to <code>$actual</code>
-     * @throws AssertionError
-     */
-    private static function doAssert($identifier, $actual, Matcher $matcher)
-    {
-        if (!$matcher->matches($actual)) {
-            $description = new StringDescription();
-            if (!empty($identifier)) {
-                $description->appendText($identifier . PHP_EOL);
-            }
-            $description->appendText('Expected: ')
-                ->appendDescriptionOf($matcher)
-                ->appendText(PHP_EOL . '     but: ');
-
-            $matcher->describeMismatch($actual, $description);
-
-            throw new AssertionError((string)$description);
+                throw new InvalidArgumentException('assertThat() requires one to three arguments');
         }
     }
 
@@ -115,5 +88,34 @@ class MatcherAssert
     public static function resetCount()
     {
         self::$_count = 0;
+    }
+
+    /**
+     * Performs the actual assertion logic.
+     *
+     * If <code>$matcher</code> doesn't match <code>$actual</code>,
+     * throws a {@link Hamcrest\AssertionError} with a description
+     * of the failure along with the optional <code>$identifier</code>.
+     *
+     * @param string $identifier added to the message upon failure
+     * @param mixed $actual value to compare against <code>$matcher</code>
+     * @param Matcher $matcher applied to <code>$actual</code>
+     * @throws AssertionError
+     */
+    private static function doAssert($identifier, $actual, Matcher $matcher)
+    {
+        if (!$matcher->matches($actual)) {
+            $description = new StringDescription();
+            if (!empty($identifier)) {
+                $description->appendText($identifier . PHP_EOL);
+            }
+            $description->appendText('Expected: ')
+                ->appendDescriptionOf($matcher)
+                ->appendText(PHP_EOL . '     but: ');
+
+            $matcher->describeMismatch($actual, $description);
+
+            throw new AssertionError((string)$description);
+        }
     }
 }

@@ -28,22 +28,6 @@ class MercurialProcessor implements ProcessorInterface
         $this->level = Logger::toMonologLevel($level);
     }
 
-    /**
-     * @param array $record
-     * @return array
-     */
-    public function __invoke(array $record)
-    {
-        // return if the level is not high enough
-        if ($record['level'] < $this->level) {
-            return $record;
-        }
-
-        $record['extra']['hg'] = self::getMercurialInfo();
-
-        return $record;
-    }
-
     private static function getMercurialInfo()
     {
         if (self::$cache) {
@@ -59,5 +43,21 @@ class MercurialProcessor implements ProcessorInterface
         }
 
         return self::$cache = array();
+    }
+
+    /**
+     * @param array $record
+     * @return array
+     */
+    public function __invoke(array $record)
+    {
+        // return if the level is not high enough
+        if ($record['level'] < $this->level) {
+            return $record;
+        }
+
+        $record['extra']['hg'] = self::getMercurialInfo();
+
+        return $record;
     }
 }

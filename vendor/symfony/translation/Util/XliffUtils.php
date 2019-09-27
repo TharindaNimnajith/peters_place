@@ -11,8 +11,11 @@
 
 namespace Symfony\Component\Translation\Util;
 
+use DOMDocument;
+use DOMNode;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\Exception\InvalidResourceException;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * Provides some utility methods for XLIFF translation files, such as validating
@@ -27,7 +30,7 @@ class XliffUtils
      *
      * @throws InvalidResourceException
      */
-    public static function validateSchema(\DOMDocument $dom): array
+    public static function validateSchema(DOMDocument $dom): array
     {
         $xliffVersion = static::getVersionNumber($dom);
         $internalErrors = libxml_use_internal_errors(true);
@@ -57,9 +60,9 @@ class XliffUtils
      *
      * @throws InvalidArgumentException
      */
-    public static function getVersionNumber(\DOMDocument $dom): string
+    public static function getVersionNumber(DOMDocument $dom): string
     {
-        /** @var \DOMNode $xliff */
+        /** @var DOMNode $xliff */
         foreach ($dom->getElementsByTagName('xliff') as $xliff) {
             $version = $xliff->attributes->getNamedItem('version');
             if ($version) {
@@ -78,6 +81,24 @@ class XliffUtils
 
         // Falls back to v1.2
         return '1.2';
+    }
+
+    public static function getErrorsAsString(array $xmlErrors): string
+    {
+        $errorsAsString = '';
+
+        foreach ($xmlErrors as $error) {
+            $errorsAsString .= sprintf("[%s %s] %s (in %s - line %d, column %d)\n",
+                LIBXML_ERR_WARNING === $error['level'] ? 'WARNING' : 'ERROR',
+                $error['code'],
+                $error['message'],
+                $error['file'],
+                $error['line'],
+                $error['column']
+            );
+        }
+
+        return $errorsAsString;
     }
 
     private static function getSchema(string $xliffVersion): string
@@ -114,7 +135,7 @@ class XliffUtils
             }
         }
 
-        $drive = '\\' === \DIRECTORY_SEPARATOR ? array_shift($parts) . '/' : '';
+        $drive = '\\' === DIRECTORY_SEPARATOR ? array_shift($parts) . '/' : '';
         $newPath = $locationstart . $drive . implode('/', array_map('rawurlencode', $parts));
 
         return str_replace($xmlUri, $newPath, $schemaSource);
@@ -141,23 +162,5 @@ class XliffUtils
         libxml_use_internal_errors($internalErrors);
 
         return $errors;
-    }
-
-    public static function getErrorsAsString(array $xmlErrors): string
-    {
-        $errorsAsString = '';
-
-        foreach ($xmlErrors as $error) {
-            $errorsAsString .= sprintf("[%s %s] %s (in %s - line %d, column %d)\n",
-                LIBXML_ERR_WARNING === $error['level'] ? 'WARNING' : 'ERROR',
-                $error['code'],
-                $error['message'],
-                $error['file'],
-                $error['line'],
-                $error['column']
-            );
-        }
-
-        return $errorsAsString;
     }
 }

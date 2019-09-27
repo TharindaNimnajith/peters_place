@@ -12,6 +12,7 @@
 namespace Symfony\Component\HttpKernel\Tests\HttpCache;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\Store;
@@ -31,39 +32,12 @@ class StoreTest extends TestCase
         $this->assertEmpty($this->getStoreMetadata('/nothing'));
     }
 
-    protected function getStoreMetadata($key)
-    {
-        $r = new \ReflectionObject($this->store);
-        $m = $r->getMethod('getMetadata');
-        $m->setAccessible(true);
-
-        if ($key instanceof Request) {
-            $m1 = $r->getMethod('getCacheKey');
-            $m1->setAccessible(true);
-            $key = $m1->invoke($this->store, $key);
-        }
-
-        return $m->invoke($this->store, $key);
-    }
-
     public function testUnlockFileThatDoesExist()
     {
         $cacheKey = $this->storeSimpleEntry();
         $this->store->lock($this->request);
 
         $this->assertTrue($this->store->unlock($this->request));
-    }
-
-    protected function storeSimpleEntry($path = null, $headers = [])
-    {
-        if (null === $path) {
-            $path = '/test';
-        }
-
-        $this->request = Request::create($path, 'get', [], [], [], $headers);
-        $this->response = new Response('test', 200, ['Cache-Control' => 'max-age=420']);
-
-        return $this->store->write($this->request, $this->response);
     }
 
     public function testUnlockFileThatDoesNotExist()
@@ -138,15 +112,6 @@ class StoreTest extends TestCase
         $path = $this->getStorePath($this->response->headers->get('X-Content-Digest'));
         @unlink($path);
         $this->assertNull($this->store->lookup($this->request));
-    }
-
-    protected function getStorePath($key)
-    {
-        $r = new \ReflectionObject($this->store);
-        $m = $r->getMethod('getPath');
-        $m->setAccessible(true);
-
-        return $m->invoke($this->store, $key);
     }
 
     public function testRestoresResponseHeadersProperlyWithLookup()
@@ -278,6 +243,42 @@ class StoreTest extends TestCase
         $this->assertTrue($this->store->purge('http://example.com/foo'));
         $this->assertEmpty($this->getStoreMetadata($requestHttp));
         $this->assertEmpty($this->getStoreMetadata($requestHttps));
+    }
+
+    protected function getStoreMetadata($key)
+    {
+        $r = new ReflectionObject($this->store);
+        $m = $r->getMethod('getMetadata');
+        $m->setAccessible(true);
+
+        if ($key instanceof Request) {
+            $m1 = $r->getMethod('getCacheKey');
+            $m1->setAccessible(true);
+            $key = $m1->invoke($this->store, $key);
+        }
+
+        return $m->invoke($this->store, $key);
+    }
+
+    protected function storeSimpleEntry($path = null, $headers = [])
+    {
+        if (null === $path) {
+            $path = '/test';
+        }
+
+        $this->request = Request::create($path, 'get', [], [], [], $headers);
+        $this->response = new Response('test', 200, ['Cache-Control' => 'max-age=420']);
+
+        return $this->store->write($this->request, $this->response);
+    }
+
+    protected function getStorePath($key)
+    {
+        $r = new ReflectionObject($this->store);
+        $m = $r->getMethod('getPath');
+        $m->setAccessible(true);
+
+        return $m->invoke($this->store, $key);
     }
 
     protected function setUp()

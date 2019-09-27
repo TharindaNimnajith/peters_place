@@ -12,9 +12,11 @@
 namespace Symfony\Component\HttpKernel\Tests\HttpCache;
 
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpCache\Esi;
+use function is_array;
 
 class EsiTest extends TestCase
 {
@@ -154,7 +156,7 @@ class EsiTest extends TestCase
     }
 
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testProcessWhenNoSrcInAnEsi()
     {
@@ -193,27 +195,8 @@ class EsiTest extends TestCase
         $this->assertEquals('foo', $esi->handle($cache, '/', '/alt', true));
     }
 
-    protected function getCache($request, $response)
-    {
-        $cache = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpCache\HttpCache')->setMethods(['getRequest', 'handle'])->disableOriginalConstructor()->getMock();
-        $cache->expects($this->any())
-            ->method('getRequest')
-            ->willReturn($request);
-        if (\is_array($response)) {
-            $cache->expects($this->any())
-                ->method('handle')
-                ->will($this->onConsecutiveCalls(...$response));
-        } else {
-            $cache->expects($this->any())
-                ->method('handle')
-                ->willReturn($response);
-        }
-
-        return $cache;
-    }
-
     /**
-     * @expectedException \RuntimeException
+     * @expectedException RuntimeException
      */
     public function testHandleWhenResponseIsNot200()
     {
@@ -241,5 +224,24 @@ class EsiTest extends TestCase
         $response2 = new Response('bar');
         $cache = $this->getCache(Request::create('/'), [$response1, $response2]);
         $this->assertEquals('bar', $esi->handle($cache, '/', '/alt', false));
+    }
+
+    protected function getCache($request, $response)
+    {
+        $cache = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpCache\HttpCache')->setMethods(['getRequest', 'handle'])->disableOriginalConstructor()->getMock();
+        $cache->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($request);
+        if (is_array($response)) {
+            $cache->expects($this->any())
+                ->method('handle')
+                ->will($this->onConsecutiveCalls(...$response));
+        } else {
+            $cache->expects($this->any())
+                ->method('handle')
+                ->willReturn($response);
+        }
+
+        return $cache;
     }
 }

@@ -59,6 +59,20 @@ class ParserTestCase extends TestCase
         }
     }
 
+    protected function traverse(array $stmts)
+    {
+        if (!isset($this->traverser)) {
+            throw new RuntimeException('Test cases must provide a traverser');
+        }
+
+        return $this->traverser->traverse($stmts);
+    }
+
+    protected function prettyPrint(array $stmts)
+    {
+        return $this->getPrinter()->prettyPrint($stmts);
+    }
+
     private function getParser()
     {
         if (!isset($this->parser)) {
@@ -74,20 +88,6 @@ class ParserTestCase extends TestCase
         $msg = $e->getRawMessage();
 
         return ($msg === 'Unexpected token EOF') || (strpos($msg, 'Syntax error, unexpected EOF') !== false);
-    }
-
-    protected function traverse(array $stmts)
-    {
-        if (!isset($this->traverser)) {
-            throw new RuntimeException('Test cases must provide a traverser');
-        }
-
-        return $this->traverser->traverse($stmts);
-    }
-
-    protected function prettyPrint(array $stmts)
-    {
-        return $this->getPrinter()->prettyPrint($stmts);
     }
 
     private function getPrinter()
