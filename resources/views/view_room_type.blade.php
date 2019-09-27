@@ -16,6 +16,12 @@
 
     <link href="{{ URL::asset('css/admin.css') }}" rel="stylesheet"/>
 
+    <style>
+        #form_body {
+            margin-top: 3.5%;
+        }        
+    </style>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -30,7 +36,7 @@
 </head>
 
 <body id="viewbody">
-<div class="model">
+<div class="model" id="form_body">
     <div class="model-dialog">
         <div class="model-content">
             <form method="post" class="form-control-static" id="viewform">
