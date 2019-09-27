@@ -157,7 +157,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px;background-color:#264348"><b>LEAVE MANAGEMENT</b></th>
                         </tr>
                         </thead>
                     </table>
@@ -166,7 +167,7 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px"><b>ATTENDANCE</b></th>
                         </tr>
                         </thead>
                     </table>
@@ -254,7 +255,8 @@
                                     <input type="hidden" name="id" value="{{$row['id']}}"/>
                                 </form>
                                 <td><a href="/destroyl/{{$row->id}} " class="btn btn-danger btn-sm"
-                                       style="margin-top:4px" onclick="myFunction()">Delect</a>
+                                       style="margin-top:4px"
+                                       onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                                 </td>
                                 </td>
 
@@ -287,9 +289,7 @@
         document.getElementById("date").innerHTML = date + " " + month + ", " + year;
     }
 
-    function myFunction() {
-        alert("I am an alert box!");
-    }
+
 </script>
 </body>
 

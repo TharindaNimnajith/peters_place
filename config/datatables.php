@@ -1,5 +1,10 @@
 <?php
 
+use Yajra\DataTables\ApiResourceDataTable;
+use Yajra\DataTables\CollectionDataTable;
+use Yajra\DataTables\EloquentDataTable;
+use Yajra\DataTables\QueryDataTable;
+
 return [
     /*
      * DataTables search options.
@@ -10,6 +15,7 @@ return [
          * SQL: column LIKE "%keyword%"
          */
         'smart' => true,
+
 
         /*
          * Multi-term search will explode search keyword using spaces resulting into multiple term search.
@@ -45,10 +51,10 @@ return [
      * This is where you can register your custom dataTables builder.
      */
     'engines' => [
-        'eloquent' => \Yajra\DataTables\EloquentDataTable::class,
-        'query' => \Yajra\DataTables\QueryDataTable::class,
-        'collection' => \Yajra\DataTables\CollectionDataTable::class,
-        'resource' => \Yajra\DataTables\ApiResourceDataTable::class,
+        'eloquent' => EloquentDataTable::class,
+        'query' => QueryDataTable::class,
+        'collection' => CollectionDataTable::class,
+        'resource' => ApiResourceDataTable::class,
     ],
 
     /*

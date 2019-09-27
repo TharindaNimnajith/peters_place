@@ -143,16 +143,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
-                <div class="center">
-
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;" src="{{ asset ('uploads/home.png') }}">
-                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
-                        <thead class="thead-dark" style="">
+                        <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row"
-                                style="width:300px ; height:10px ; background-color:#264348"><b>EMPLOYEE MANAGEMENT</b>
+                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
                             </th>
                         </tr>
 
@@ -173,9 +168,7 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">
-                                ATTENDANCE
-                            </th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
                         </tr>
                         </thead>
                     </table>
@@ -195,80 +188,48 @@
         </div>
 
         <div class="col-9">
-            <div class="container-fluid" style="width: 2000px ;margin-left: -3ch">
-                <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
-                    <li class="my"><a href={{url('/Eadd')}}><img
-                                src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
-                            Employee</a>
-                    </li>
-                    <li class="my"><a href="{{url('/Edelete')}}"> <img
-                                src="https://img.icons8.com/metro/26/000000/file.png">REMOVED EMPLOYEE</a>
-                    </li>
-
-                </ul>
-            </div>
-            <p></p>
-            <div class="col-md-10">
-                <form action="/search" method="get">
-                    <div class="input-group input-group-sm mb-3">
-                        <input type="search" name="search" class="form-control">
-                        <span class="input-group-prepend" style="width: 510px">
-					<button type="submit" class="btn btn-primary"> Search</button>
-				</span>
-                    </div>
-                </form>
-            </div>
-
 
             <p></p>
-            <a href='pdfview'>Download PDF</a>
-            <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-bottom: 10px">
-                <!-- Search form -->
+            <b>
+                <h4><b><u>Removed Employee List</u></b></h4>
+            </b>
+            <p></p>
+            <!-- Table  -->
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
 
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th><b>Avatar</b></th>
-                        <th><b>Rrgistaion NO</b></th>
-                        <th><b>Type</b></th>
-                        <th><b>Name</b></th>
-                        <th><b>Email</b></th>
-                        <th><b>Telephone No</b></th>
+                        <th style="text-align:center">Employee ID</th>
+                        <th style="text-align:center">Name</th>
+                        <th style="text-align:center">Email</th>
+                        <th style="text-align:center">tp</th>
                     </tr>
                     </thead>
-
                     <tbody>
+                    @foreach($employeeD as $row)
+                        <tr>
 
-                    <tr>
-                        @foreach($employeeD as $row)
-                            <td><img src="{{ asset ('uploads/appsetting/'.$row->image) }}" class="avatar">
-                            </td>
-                            <th><b>{{$row['id']}}</b></th>
-                            <td>{{$row->type}}</td>
-                            <td>{{$row->name}}</td>
-                            <td>{{$row->Email}}</td>
-                            <td>{{$row->tp}}</td>
-                            <td><a href="/show/{{$row->id}} " class="btn btn-warning btn-sm"
-                                   style="margin-top:4px">View</a></td>
-                            <td><a href="/destroye/{{$row->id}} " class="btn btn-danger btn-sm" style="margin-top:4px"
-                                   onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
-                            </td>
-                        <!-- <td>  <a href="EmployeeDetailsPdf/{{$row->id}}">Print</a></td> -->
+                            <td style="text-align:center">{{$row['empid']}}</td>
+                            <td style="text-align:center">{{$row['name']}}</td>
+                            <td style="text-align:center">{{$row['email']}}</td>
+                            <td style="text-align:center">{{$row['tp']}}</td>
 
-                    </tr>
+                        </tr>
                     @endforeach
+
                     </tbody>
                 </table>
+
+
             </div>
         </div>
     </div>
 </div>
 
-<script>
-
-</script>
 </body>
 
 </html>
+
+
+

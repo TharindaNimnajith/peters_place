@@ -253,6 +253,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th style="text-align:center">Leave Type ID</th>
                                     <th style="text-align:center">Leave Type</th>
                                     <th style="text-align:center">Allow Days</th>
                                 </tr>
@@ -262,12 +263,14 @@
                                 @foreach($leaveType as $row)
                                     <tr>
 
+                                        <td style="text-align:center">{{$row['id']}}</td>
                                         <td style="text-align:center">{{$row['leve_type']}}</td>
                                         <td style="text-align:center">{{$row['allow_leaves']}}</td>
 
-                                        <td style="text-align:center"><a href="/des/{{$row['leve_type']}} "
+                                        <td style="text-align:center"><a href="/des/{{$row['id']}} "
                                                                          class="btn btn-danger btn-sm"
-                                                                         style="margin-top:4px">Delect</a>
+                                                                         style="margin-top:4px"
+                                                                         onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach

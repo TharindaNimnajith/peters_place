@@ -166,16 +166,18 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">ATTENDANCE</th>
                         </tr>
                         </thead>
                     </table>
                 </a>
                 <a href="{{url('/Esalary')}}">
                     <table class="table" style="width:300px;margin-left: 0px">
-                        <thead class="thead-dark">
+                        <thead class="thead-dark" style="">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px;background-color:#264348">SALARY MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -305,7 +307,8 @@
                                         <td>{{$row1['month']}}</td>
                                         <td><b style="color: #c51f1a">{{$row1['salary']}}</b></td>
                                         <td><a href="/destroy/{{$row1->id}} " class="btn btn-danger btn-sm"
-                                               style="margin-top:4px">Delect</a>
+                                               style="margin-top:4px"
+                                               onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
                                         </td>
                                     </tr>
                                 @endforeach
