@@ -251,6 +251,7 @@ Route::get('/hall', function () {
     return view('hall');
 });
 
+
 Route::post('/saveTask1', 'TaskController@store1');
 
 Route::get('/inventory', 'TaskController@index1');

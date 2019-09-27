@@ -242,76 +242,78 @@
                             </select>
                             <p></p>
 
-                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Name</b></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputEmail3" name="name"
-                                   value="{{$row->name}}">
-                        </div>
+                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Name</b></label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" id="inputEmail3" name="name"
+                                       value="{{$row->name}}">
+                            </div>
 
 
-                        <p></p>
-
-                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Date Of Birth</b></label>
-                        <div class="col-sm-8">
-                            <input type="date" class="form-control" id="inputEmail3" name="dob"
-                                   value="{{$row->DOB}}">
-                        </div>
-
-
-                        <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Gender</b></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="inputEmail3"
-                                   value="{{$row->gender}}" readonly>
-                            <select id="category" name="gender" required="required" class="custom-select">
-                                <option value="{{$row->gender}}">{{$row->gender}}</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
                             <p></p>
 
-                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Join Date</b></label>
+                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Date Of Birth</b></label>
                             <div class="col-sm-8">
-                                <input type="date" class="form-control" id="inputEmail3" name="joindate" required
-                                       value="{{$row->joindate}}">
-                            </div>
-                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Salary</b></label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="inputEmail3" name="salary" required
-                                       value="{{$row->salary}}">
-                            </div>
-
-                            <hr size="2" color="black">
-
-                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Telephone No:</b></label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="" name="tp"
-                                       required
-                                       value="{{$row->tp}}">
+                                <input type="date" class="form-control" id="inputEmail3" name="dob"
+                                       value="{{$row->DOB}}">
                             </div>
 
 
-                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Email</b></label>
+                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Gender</b></label>
                             <div class="col-sm-8">
-                                <input type="email" class="form-control" id="inputEmail3" placeholder="" name="email"
-                                       required
-                                       value="{{$row->Email}}">
+                                <input type="text" class="form-control" id="inputEmail3"
+                                       value="{{$row->gender}}" readonly>
+                                <select id="category" name="gender" required="required" class="custom-select">
+                                    <option value="{{$row->gender}}">{{$row->gender}}</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                                <p></p>
+
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Join Date</b></label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control" id="inputEmail3" name="joindate" required
+                                           value="{{$row->joindate}}">
+                                </div>
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Salary</b></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputEmail3" name="salary" required
+                                           value="{{$row->salary}}">
+                                </div>
+
+                                <hr size="2" color="black">
+
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Telephone No:</b></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputEmail3" placeholder="" name="tp"
+                                           required
+                                           value="{{$row->tp}}">
+                                </div>
+
+
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Email</b></label>
+                                <div class="col-sm-8">
+                                    <input type="email" class="form-control" id="inputEmail3" placeholder=""
+                                           name="email"
+                                           required
+                                           value="{{$row->Email}}">
+                                </div>
+
+                                <hr size="2" color="black">
+
+                                <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Remark</b></label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="inputEmail3" placeholder=""
+                                           name="remark"
+                                           value="{{$row->remark}}">
+                                </div>
+
+
+                                <div class="col-sm-8">
+                                    <input type="submit" class="btn btn-primary btn"
+                                           style="margin-top:4px;margin-left: 440px"
+                                           value="Update">
+                                </div>
                             </div>
-
-                            <hr size="2" color="black">
-
-                            <label for="inputEmail3" class="col-sm-2 col-form-label"><b>Remark</b></label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" id="inputEmail3" placeholder="" name="remark"
-                                       value="{{$row->remark}}">
-                            </div>
-
-
-                            <div class="col-sm-8">
-                                <input type="submit" class="btn btn-primary btn"
-                                       style="margin-top:4px;margin-left: 440px"
-                                       value="Update">
-                            </div>
-                        </div>
                         </div>
                     </form>
 
