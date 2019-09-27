@@ -18,12 +18,16 @@
 
         /*
         #f {
-            margin-top: 2.5%;
+            margin-top: 2%;
         }
         */
 
         #f label {
-            margin-top: 2%;
+            margin-top: 4%;
+        }
+
+        #s label {
+            margin-top: 3.5%;
         }
     </style>
 
@@ -106,15 +110,13 @@
 
                             <div class="panel-body">
                                 <div class="form-group">
-                                    <label id="label1">First Name</label>
+                                    <label>First Name</label>
                                     <input name="fname" type="text" class="form-control" value="{{ old('fname') }}"/>
-                                    <br/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
                                     <input name="lname" type="text" class="form-control" value="{{ old('lname') }}"/>
-                                    <br/>
                                 </div>
 
                                 <div class="form-group">
@@ -126,7 +128,7 @@
                     </div>
 
                     <div class="col-md-6 col-sm-6">
-                        <div class="panel panel-primary">
+                        <div class="panel panel-primary" id="s">
                             <div class="panel-heading">
                                 RESERVATION INFORMATION
                             </div>
@@ -156,14 +158,12 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <br/>
+                                <div class="form-group" >
                                     <label>Check In</label>
                                     <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"/>
                                 </div>
 
                                 <div class="form-group">
-                                    <br/>
                                     <label>Check Out</label>
                                     <input name="cout" type="date" class="form-control" value="{{ old('cout') }}"/>
                                 </div>
