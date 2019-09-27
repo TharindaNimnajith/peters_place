@@ -94,7 +94,7 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                @endforeach
+                    @endforeach
             </div>
         @endif
 
@@ -155,7 +155,7 @@
                                     <select name="rtype" class="form-control">
                                         @foreach ($rt as $item)
                                             @if (isset($item))
-                                                <option value="{{ $item->id }}" @if (old('rtype')=='{{ $item->id }}' )
+                                                <option value="{{ $item->id }}" @if (old('rtype') == '{{ $item->id }}')
                                                 selected @endif>{{ $item->name }}</option>
                                             @endif
                                         @endforeach

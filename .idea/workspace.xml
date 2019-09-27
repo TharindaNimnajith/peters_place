@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="TNR">
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/peters_place.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/peters_place.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_reports.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reports.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" afterDir="false" />
@@ -13,8 +12,6 @@
       <change beforePath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/update_room_reservation.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/update_room_type.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/update_room_type.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/view_room.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room_reservation.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/view_room_type.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/view_room_type.blade.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -219,7 +216,7 @@
       <workItem from="1569571067491" duration="97000" />
       <workItem from="1569588986534" duration="1408000" />
       <workItem from="1569592949934" duration="7000" />
-      <workItem from="1569595272801" duration="1815000" />
+      <workItem from="1569595272801" duration="3230000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -480,7 +477,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569595802017</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="TNR">
+      <created>1569597189647</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1569597189647</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

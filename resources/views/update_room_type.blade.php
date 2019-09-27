@@ -49,7 +49,7 @@
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
         </ul>
-        @endforeach
+            @endforeach
     </div>
 @endif
 

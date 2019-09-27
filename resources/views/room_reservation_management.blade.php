@@ -45,7 +45,7 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                @endforeach
+                    @endforeach
             </div>
         @endif
 
@@ -63,9 +63,9 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                <!--
+                    <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                -->
+                    -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -117,50 +117,50 @@
             </thead>
 
             <tbody>
-            @foreach ($reservations as $reservation)
-                <tr>
-                    <td>{{ $reservation->id }}</td>
-                    <td>{{ $reservation->cid }}</td>
+                @foreach ($reservations as $reservation)
+                    <tr>
+                        <td>{{ $reservation->id }}</td>
+                        <td>{{ $reservation->cid }}</td>
 
-                    @foreach ($dat as $customer_data)
-                        @if ($customer_data->id == $reservation->cid)
-                            <td>{{ $customer_data->fname }}</td>
-                            <td>{{ $customer_data->lname }}</td>
-                            <td>{{ $customer_data->phone }}</td>
-                        @endif
-                    @endforeach
+                        @foreach ($dat as $customer_data)
+                            @if ($customer_data->id == $reservation->cid)
+                                <td>{{ $customer_data->fname }}</td>
+                                <td>{{ $customer_data->lname }}</td>
+                                <td>{{ $customer_data->phone }}</td>
+                            @endif
+                        @endforeach
 
-                    @foreach ($rt as $rtype)
-                        @if ($rtype->id == $reservation->t_id)
-                            <td>{{ $rtype->name }}</td>
-                        @endif
-                    @endforeach
+                        @foreach ($rt as $rtype)
+                            @if ($rtype->id == $reservation->t_id)
+                                <td>{{ $rtype->name }}</td>
+                            @endif
+                        @endforeach
 
-                    <td>{{ $reservation->room_no }}</td>
-                    <td>{{ $reservation->resereved_date_time }}</td>
-                    <td>{{ $reservation->check_in }}</td>
-                    <td>{{ $reservation->check_out }}</td>
+                        <td>{{ $reservation->room_no }}</td>
+                        <td>{{ $reservation->resereved_date_time }}</td>
+                        <td>{{ $reservation->check_in }}</td>
+                        <td>{{ $reservation->check_out }}</td>
 
-                    <td>
-                        <a href="/view_reserves/{{ $reservation->id }}" class="view">
-                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                        </a>
+                        <td>
+                            <a href="/view_reserves/{{ $reservation->id }}" class="view">
+                                <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                            </a>
 
-                        <a href="/update_room_reservation/{{ $reservation->id }}" class="edit">
-                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                        </a>
+                            <a href="/update_room_reservation/{{ $reservation->id }}" class="edit">
+                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                            </a>
 
-                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteReservationModal"
-                           data-id="{{ $reservation->id }}" data-url="{{ url('reserves', $reservation->id) }}">
-                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
+                            <a class="delete" role="button" data-toggle="modal" data-target="#deleteReservationModal"
+                               data-id="{{ $reservation->id }}" data-url="{{ url('reserves', $reservation->id) }}">
+                                <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 
-        @if(!isset($reservation))
+        @if (!isset($reservation))
             <div class="alert alert-info" role="alert">
                 No Records!
             </div>
@@ -202,9 +202,9 @@
                         <label>Room Type</label>
 
                         <select name="rtype" class="form-control">
-                            <option value="1" @if (old('rtype')=='1' ) selected @endif>Single Bedroom</option>
-                            <option value="2" @if (old('rtype')=='2' ) selected @endif>Double Bedroom</option>
-                            <option value="3" @if (old('rtype')=='3' ) selected @endif>Family Bedroom</option>
+                            <option value="1" @if (old('rtype') == '1') selected @endif>Single Bedroom</option>
+                            <option value="2" @if (old('rtype') == '2') selected @endif>Double Bedroom</option>
+                            <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
                         </select>
                     </div>
 
@@ -316,7 +316,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                @if(isset($reservation))
+                @if (isset($reservation))
                     <input type="hidden" value="{{ $reservation->id }}" name="id">
                 @endif
 

@@ -45,7 +45,7 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                @endforeach
+                    @endforeach
             </div>
         @endif
 
@@ -63,8 +63,8 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                <!--
-                        <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    <!--
+                    <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
                     -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
@@ -112,61 +112,61 @@
             </thead>
 
             <tbody>
-            @foreach ($rooms as $room)
-                <tr>
-                    <td>{{ $room->id }}</td>
-                    <td>{{ $room->floor }}</td>
+                @foreach ($rooms as $room)
+                    <tr>
+                        <td>{{ $room->id }}</td>
+                        <td>{{ $room->floor }}</td>
 
-                    @foreach ($dat as $d)
-                        @if ($d->id == $room->t_id)
-                            <td>{{ $d->name }}</td>
-                        @endif
-                    @endforeach
+                        @foreach ($dat as $d)
+                            @if ($d->id == $room->t_id)
+                                <td>{{ $d->name }}</td>
+                            @endif
+                        @endforeach
 
-                    <td>
-                        @if ($room->availability)
-                            <label class="green">Available</label>
+                        <td>
+                            @if ($room->availability)
+                                <label class="green">Available</label>
 
-                        @else
-                            <label class="red">Not Available</label>
+                            @else
+                                <label class="red">Not Available</label>
 
-                        @endif
-                    </td>
+                            @endif
+                        </td>
 
-                    <td>
-                        @if ($room->status == 1)
-                            <label class="green">Clean</label>
-                        @endif
+                        <td>
+                            @if ($room->status == 1)
+                                <label class="green">Clean</label>
+                            @endif
 
-                        @if ($room->status == 2)
-                            <label class="red">Not Clean</label>
-                        @endif
+                            @if ($room->status == 2)
+                                <label class="red">Not Clean</label>
+                            @endif
 
-                        @if ($room->status == 3)
-                            <label>Out of Service</label>
-                        @endif
-                    </td>
+                            @if ($room->status == 3)
+                                <label>Out of Service</label>
+                            @endif
+                        </td>
 
-                    <td>
-                        <a href="/view_room/{{ $room->id }}" class="view">
-                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                        </a>
+                        <td>
+                            <a href="/view_room/{{ $room->id }}" class="view">
+                                <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                            </a>
 
-                        <a href="/update_room/{{ $room->id }}" class="edit">
-                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                        </a>
+                            <a href="/update_room/{{ $room->id }}" class="edit">
+                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                            </a>
 
-                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomModal"
-                           data-id="{{ $room->id }}" data-url="{{ url('rooms', $room->id) }}">
-                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
+                            <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomModal"
+                               data-id="{{ $room->id }}" data-url="{{ url('rooms', $room->id) }}">
+                                <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 
-        @if(!isset($room))
+        @if (!isset($room))
             <div class="alert alert-info" role="alert">
                 No Records!
             </div>
@@ -197,18 +197,18 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
-                    <!--
-                            <select name="roomtype" class="form-control">
-                                <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
-                                <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
-                                <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
-                            </select>
+                        <!--
+                        <select name="roomtype" class="form-control">
+                            <option value="1" @if (old('roomtype') == '1') selected @endif>Single Bedroom</option>
+                            <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
+                            <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
+                        </select>
                         -->
 
                         <select name="roomtype" class="form-control">
                             @foreach ($dat as $item)
                                 @if (isset($item))
-                                    <option value="{{ $item->id }}" @if (old('roomtype')=='{{ $item->id }}' ) selected
+                                    <option value="{{ $item->id }}" @if (old('roomtype') == '{{ $item->id }}') selected
                                         @endif>{{ $item->name }}</option>
                                 @endif
                             @endforeach
@@ -219,9 +219,9 @@
                         <label>Floor</label>
 
                         <select name="floor" class="form-control">
-                            <option value="1" @if (old('floor')=='1' ) selected @endif>1</option>
-                            <option value="2" @if (old('floor')=='2' ) selected @endif>2</option>
-                            <option value="3" @if (old('floor')=='3' ) selected @endif>3</option>
+                            <option value="1" @if (old('floor') == '1') selected @endif>1</option>
+                            <option value="2" @if (old('floor') == '2') selected @endif>2</option>
+                            <option value="3" @if (old('floor') == '3') selected @endif>3</option>
                         </select>
                     </div>
 
@@ -334,7 +334,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                @if(isset($room))
+                @if (isset($room))
                     <input type="hidden" value="{{ $room->id }}" name="id">
                 @endif
 

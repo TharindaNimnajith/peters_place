@@ -54,7 +54,7 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                @endforeach
+                    @endforeach
             </div>
         @endif
 
@@ -72,9 +72,9 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                <!--
+                    <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                -->
+                    -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -121,34 +121,34 @@
             </thead>
 
             <tbody>
-            @foreach ($room_types as $room_type)
-                <tr>
-                    <td>{{ $room_type->id }}</td>
-                    <td>{{ $room_type->name }}</td>
-                    <td>{{ $room_type->base_price }}</td>
-                    <td>{{ $room_type->total }}</td>
-                    <td>{{ $room_type->available }}</td>
+                @foreach ($room_types as $room_type)
+                    <tr>
+                        <td>{{ $room_type->id }}</td>
+                        <td>{{ $room_type->name }}</td>
+                        <td>{{ $room_type->base_price }}</td>
+                        <td>{{ $room_type->total }}</td>
+                        <td>{{ $room_type->available }}</td>
 
-                    <td>
-                        <a href="/view_type/{{ $room_type->id }}" class="view">
-                            <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
-                        </a>
+                        <td>
+                            <a href="/view_type/{{ $room_type->id }}" class="view">
+                                <i class="material-icons" data-toggle="tooltip" title="View">&#xE417;</i>
+                            </a>
 
-                        <a href="/update_room_type/{{ $room_type->id }}" class="edit">
-                            <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
-                        </a>
+                            <a href="/update_room_type/{{ $room_type->id }}" class="edit">
+                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                            </a>
 
-                        <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomTypeModal"
-                           data-id="{{ $room_type->id }}" data-url="{{ url('room_types', $room_type->id) }}">
-                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-                        </a>
-                    </td>
-                </tr>
-            @endforeach
+                            <a class="delete" role="button" data-toggle="modal" data-target="#deleteRoomTypeModal"
+                               data-id="{{ $room_type->id }}" data-url="{{ url('room_types', $room_type->id) }}">
+                                <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
 
-        @if(!isset($room_type))
+        @if (!isset($room_type))
             <div class="alert alert-info" role="alert">
                 No Records!
             </div>
@@ -255,7 +255,7 @@
             <form method="post" action="" id="deleteForm">
                 {{ csrf_field() }}
 
-                @if(isset($room_type))
+                @if (isset($room_type))
                     <input type="hidden" value="{{ $room_type->id }}" name="id">
                 @endif
 
@@ -289,7 +289,6 @@
             $("#deleteForm").attr("action", url);
         });
     });
-
 </script>
 </body>
 

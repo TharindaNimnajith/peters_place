@@ -45,7 +45,7 @@
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                 </ul>
-                @endforeach
+                    @endforeach
             </div>
         @endif
 
@@ -63,9 +63,9 @@
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
-                <!--
+                    <!--
                     <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                -->
+                    -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>

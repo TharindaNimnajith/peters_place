@@ -49,7 +49,7 @@
             @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
         </ul>
-        @endforeach
+            @endforeach
     </div>
 @endif
 
@@ -78,30 +78,30 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
-                    <!--
+                        <!--
                         @if ($details->t_id == '1')
-                        <select name="roomtype" class="form-control">
-                            <option value="1" selected>Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-@endif
+                            <select name="roomtype" class="form-control">
+                                <option value="1" selected>Single Bedroom</option>
+                                <option value="2">Double Bedroom</option>
+                                <option value="3">Family Bedroom</option>
+                            </select>
+                        @endif
 
-                    @if ($details->t_id == '2')
-                        <select name="roomtype" class="form-control">
-                            <option value="1">Single Bedroom</option>
-                            <option value="2" selected>Double Bedroom</option>
-                            <option value="3">Family Bedroom</option>
-                        </select>
-@endif
+                        @if ($details->t_id == '2')
+                            <select name="roomtype" class="form-control">
+                                <option value="1">Single Bedroom</option>
+                                <option value="2" selected>Double Bedroom</option>
+                                <option value="3">Family Bedroom</option>
+                            </select>
+                        @endif
 
-                    @if ($details->t_id == '3')
-                        <select name="roomtype" class="form-control">
-                            <option value="1">Single Bedroom</option>
-                            <option value="2">Double Bedroom</option>
-                            <option value="3" selected>Family Bedroom</option>
-                        </select>
-@endif
+                        @if ($details->t_id == '3')
+                            <select name="roomtype" class="form-control">
+                                <option value="1">Single Bedroom</option>
+                                <option value="2">Double Bedroom</option>
+                                <option value="3" selected>Family Bedroom</option>
+                            </select>
+                        @endif
                         -->
 
 
@@ -148,7 +148,7 @@
                                 <label>Availability</label>
 
                                 <div class="radio">
-                                    @if($details->availability == '1')
+                                    @if ($details->availability == '1')
                                         <label><input type="radio" name="available" value="1" checked>Available</label>
 
                                     @else
@@ -158,7 +158,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->availability == '0')
+                                    @if ($details->availability == '0')
                                         <label><input type="radio" name="available" value="0" checked>Not
                                             Available</label>
 
@@ -176,7 +176,7 @@
                                 <label>Status</label>
 
                                 <div class="radio">
-                                    @if($details->status == '1')
+                                    @if ($details->status == '1')
                                         <label><input type="radio" name="status_btn" value="1" checked>Clean</label>
 
                                     @else
@@ -186,7 +186,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->status == '2')
+                                    @if ($details->status == '2')
                                         <label><input type="radio" name="status_btn" value="2" checked>Not
                                             Clean</label>
 
@@ -198,7 +198,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->status == '3')
+                                    @if ($details->status == '3')
                                         <label><input type="radio" name="status_btn" value="3" checked>Out of
                                             Service</label>
 

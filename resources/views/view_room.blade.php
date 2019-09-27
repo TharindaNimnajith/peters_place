@@ -86,7 +86,7 @@
                                 <label>Availability</label>
 
                                 <div class="radio">
-                                    @if($details->availability == '1')
+                                    @if ($details->availability == '1')
                                         <label><input type="radio" name="available" value="1" checked
                                                       disabled>Available</label>
 
@@ -97,7 +97,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->availability == '0')
+                                    @if ($details->availability == '0')
                                         <label><input type="radio" name="available" value="0" checked disabled>Not
                                             Available</label>
 
@@ -115,7 +115,7 @@
                                 <label>Status</label>
 
                                 <div class="radio">
-                                    @if($details->status == '1')
+                                    @if ($details->status == '1')
                                         <label><input type="radio" name="status_btn" value="1" checked
                                                       disabled>Clean</label>
 
@@ -126,7 +126,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->status == '2')
+                                    @if ($details->status == '2')
                                         <label><input type="radio" name="status_btn" value="2" checked disabled>Not
                                             Clean</label>
 
@@ -138,7 +138,7 @@
                                 </div>
 
                                 <div class="radio">
-                                    @if($details->status == '3')
+                                    @if ($details->status == '3')
                                         <label><input type="radio" name="status_btn" value="3" checked disabled>Out of
                                             Service</label>
 
