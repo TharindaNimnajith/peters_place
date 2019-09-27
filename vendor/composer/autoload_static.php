@@ -4,9 +4,11 @@
 
 namespace Composer\Autoload;
 
+use Closure;
+
 class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
 {
-    public static $files = array (
+    public static $files = array(
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
@@ -24,398 +26,398 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
         '0b47d6d4a00ca9112ba3953b49e7c9a4' => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src/helper.php',
     );
 
-    public static $prefixLengthsPsr4 = array (
-        'p' => 
-        array (
-            'phpDocumentor\\Reflection\\' => 25,
-        ),
-        'Y' => 
-        array (
-            'Yajra\\DataTables\\' => 17,
-        ),
-        'X' => 
-        array (
-            'XdgBaseDir\\' => 11,
-        ),
-        'W' => 
-        array (
-            'Whoops\\' => 7,
-            'Webmozart\\Assert\\' => 17,
-        ),
-        'T' => 
-        array (
-            'TijsVerkoyen\\CssToInlineStyles\\' => 31,
-            'Tests\\' => 6,
-        ),
-        'S' => 
-        array (
-            'Symfony\\Polyfill\\Php73\\' => 23,
-            'Symfony\\Polyfill\\Php72\\' => 23,
-            'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
-            'Symfony\\Polyfill\\Iconv\\' => 23,
-            'Symfony\\Polyfill\\Ctype\\' => 23,
-            'Symfony\\Contracts\\Translation\\' => 30,
-            'Symfony\\Contracts\\Service\\' => 26,
-            'Symfony\\Contracts\\EventDispatcher\\' => 34,
-            'Symfony\\Component\\VarDumper\\' => 28,
-            'Symfony\\Component\\Translation\\' => 30,
-            'Symfony\\Component\\Routing\\' => 26,
-            'Symfony\\Component\\Process\\' => 26,
-            'Symfony\\Component\\Mime\\' => 23,
-            'Symfony\\Component\\HttpKernel\\' => 29,
-            'Symfony\\Component\\HttpFoundation\\' => 33,
-            'Symfony\\Component\\Finder\\' => 25,
-            'Symfony\\Component\\EventDispatcher\\' => 34,
-            'Symfony\\Component\\Debug\\' => 24,
-            'Symfony\\Component\\CssSelector\\' => 30,
-            'Symfony\\Component\\Console\\' => 26,
-            'Svg\\' => 4,
-        ),
-        'R' => 
-        array (
-            'Ramsey\\Uuid\\' => 12,
-        ),
-        'P' => 
-        array (
-            'Psy\\' => 4,
-            'Psr\\SimpleCache\\' => 16,
-            'Psr\\Log\\' => 8,
-            'Psr\\Container\\' => 14,
-            'Prophecy\\' => 9,
-            'PhpParser\\' => 10,
-        ),
-        'O' => 
-        array (
-            'Opis\\Closure\\' => 13,
-        ),
-        'N' => 
-        array (
-            'NunoMaduro\\Collision\\' => 21,
-        ),
-        'M' => 
-        array (
-            'Monolog\\' => 8,
-        ),
-        'L' => 
-        array (
-            'League\\Flysystem\\' => 17,
-            'Laravel\\Tinker\\' => 15,
-        ),
-        'J' => 
-        array (
-            'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
-            'JakubOnderka\\PhpConsoleColor\\' => 29,
-        ),
-        'I' => 
-        array (
-            'Illuminate\\' => 11,
-        ),
-        'F' => 
-        array (
-            'FontLib\\' => 8,
-            'Fideloper\\Proxy\\' => 16,
-            'Faker\\' => 6,
-        ),
-        'E' => 
-        array (
-            'Egulias\\EmailValidator\\' => 23,
-        ),
-        'D' => 
-        array (
-            'Dotenv\\' => 7,
-            'Dompdf\\' => 7,
-            'Doctrine\\Instantiator\\' => 22,
-            'Doctrine\\Common\\Lexer\\' => 22,
-            'Doctrine\\Common\\Inflector\\' => 26,
-            'DeepCopy\\' => 9,
-        ),
-        'C' => 
-        array (
-            'Cron\\' => 5,
-            'Carbon\\' => 7,
-        ),
-        'B' => 
-        array (
-            'BeyondCode\\DumpServer\\' => 22,
-            'Barryvdh\\DomPDF\\' => 16,
-        ),
-        'A' => 
-        array (
-            'App\\' => 4,
-        ),
+    public static $prefixLengthsPsr4 = array(
+        'p' =>
+            array(
+                'phpDocumentor\\Reflection\\' => 25,
+            ),
+        'Y' =>
+            array(
+                'Yajra\\DataTables\\' => 17,
+            ),
+        'X' =>
+            array(
+                'XdgBaseDir\\' => 11,
+            ),
+        'W' =>
+            array(
+                'Whoops\\' => 7,
+                'Webmozart\\Assert\\' => 17,
+            ),
+        'T' =>
+            array(
+                'TijsVerkoyen\\CssToInlineStyles\\' => 31,
+                'Tests\\' => 6,
+            ),
+        'S' =>
+            array(
+                'Symfony\\Polyfill\\Php73\\' => 23,
+                'Symfony\\Polyfill\\Php72\\' => 23,
+                'Symfony\\Polyfill\\Mbstring\\' => 26,
+                'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
+                'Symfony\\Polyfill\\Iconv\\' => 23,
+                'Symfony\\Polyfill\\Ctype\\' => 23,
+                'Symfony\\Contracts\\Translation\\' => 30,
+                'Symfony\\Contracts\\Service\\' => 26,
+                'Symfony\\Contracts\\EventDispatcher\\' => 34,
+                'Symfony\\Component\\VarDumper\\' => 28,
+                'Symfony\\Component\\Translation\\' => 30,
+                'Symfony\\Component\\Routing\\' => 26,
+                'Symfony\\Component\\Process\\' => 26,
+                'Symfony\\Component\\Mime\\' => 23,
+                'Symfony\\Component\\HttpKernel\\' => 29,
+                'Symfony\\Component\\HttpFoundation\\' => 33,
+                'Symfony\\Component\\Finder\\' => 25,
+                'Symfony\\Component\\EventDispatcher\\' => 34,
+                'Symfony\\Component\\Debug\\' => 24,
+                'Symfony\\Component\\CssSelector\\' => 30,
+                'Symfony\\Component\\Console\\' => 26,
+                'Svg\\' => 4,
+            ),
+        'R' =>
+            array(
+                'Ramsey\\Uuid\\' => 12,
+            ),
+        'P' =>
+            array(
+                'Psy\\' => 4,
+                'Psr\\SimpleCache\\' => 16,
+                'Psr\\Log\\' => 8,
+                'Psr\\Container\\' => 14,
+                'Prophecy\\' => 9,
+                'PhpParser\\' => 10,
+            ),
+        'O' =>
+            array(
+                'Opis\\Closure\\' => 13,
+            ),
+        'N' =>
+            array(
+                'NunoMaduro\\Collision\\' => 21,
+            ),
+        'M' =>
+            array(
+                'Monolog\\' => 8,
+            ),
+        'L' =>
+            array(
+                'League\\Flysystem\\' => 17,
+                'Laravel\\Tinker\\' => 15,
+            ),
+        'J' =>
+            array(
+                'JakubOnderka\\PhpConsoleHighlighter\\' => 35,
+                'JakubOnderka\\PhpConsoleColor\\' => 29,
+            ),
+        'I' =>
+            array(
+                'Illuminate\\' => 11,
+            ),
+        'F' =>
+            array(
+                'FontLib\\' => 8,
+                'Fideloper\\Proxy\\' => 16,
+                'Faker\\' => 6,
+            ),
+        'E' =>
+            array(
+                'Egulias\\EmailValidator\\' => 23,
+            ),
+        'D' =>
+            array(
+                'Dotenv\\' => 7,
+                'Dompdf\\' => 7,
+                'Doctrine\\Instantiator\\' => 22,
+                'Doctrine\\Common\\Lexer\\' => 22,
+                'Doctrine\\Common\\Inflector\\' => 26,
+                'DeepCopy\\' => 9,
+            ),
+        'C' =>
+            array(
+                'Cron\\' => 5,
+                'Carbon\\' => 7,
+            ),
+        'B' =>
+            array(
+                'BeyondCode\\DumpServer\\' => 22,
+                'Barryvdh\\DomPDF\\' => 16,
+            ),
+        'A' =>
+            array(
+                'App\\' => 4,
+            ),
     );
 
-    public static $prefixDirsPsr4 = array (
-        'phpDocumentor\\Reflection\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
-        ),
-        'Yajra\\DataTables\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src',
-        ),
-        'XdgBaseDir\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src',
-        ),
-        'Whoops\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
-        ),
-        'Webmozart\\Assert\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/webmozart/assert/src',
-        ),
-        'TijsVerkoyen\\CssToInlineStyles\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
-        ),
-        'Tests\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/tests',
-        ),
-        'Symfony\\Polyfill\\Php73\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
-        ),
-        'Symfony\\Polyfill\\Php72\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
-        ),
-        'Symfony\\Polyfill\\Mbstring\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Polyfill\\Intl\\Idn\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
-        ),
-        'Symfony\\Polyfill\\Iconv\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
-        ),
-        'Symfony\\Polyfill\\Ctype\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
-        ),
-        'Symfony\\Contracts\\Translation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
-        ),
-        'Symfony\\Contracts\\Service\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/service-contracts',
-        ),
-        'Symfony\\Contracts\\EventDispatcher\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
-        ),
-        'Symfony\\Component\\VarDumper\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/var-dumper',
-        ),
-        'Symfony\\Component\\Translation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/translation',
-        ),
-        'Symfony\\Component\\Routing\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/routing',
-        ),
-        'Symfony\\Component\\Process\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/process',
-        ),
-        'Symfony\\Component\\Mime\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/mime',
-        ),
-        'Symfony\\Component\\HttpKernel\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/http-kernel',
-        ),
-        'Symfony\\Component\\HttpFoundation\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/http-foundation',
-        ),
-        'Symfony\\Component\\Finder\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/finder',
-        ),
-        'Symfony\\Component\\EventDispatcher\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
-        ),
-        'Symfony\\Component\\Debug\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/debug',
-        ),
-        'Symfony\\Component\\CssSelector\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/css-selector',
-        ),
-        'Symfony\\Component\\Console\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/console',
-        ),
-        'Svg\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
-        ),
-        'Ramsey\\Uuid\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/ramsey/uuid/src',
-        ),
-        'Psy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psy/psysh/src',
-        ),
-        'Psr\\SimpleCache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
-        ),
-        'Psr\\Log\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
-        ),
-        'Psr\\Container\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/container/src',
-        ),
-        'Prophecy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
-        ),
-        'PhpParser\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
-        ),
-        'Opis\\Closure\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/opis/closure/src',
-        ),
-        'NunoMaduro\\Collision\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nunomaduro/collision/src',
-        ),
-        'Monolog\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
-        ),
-        'League\\Flysystem\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/league/flysystem/src',
-        ),
-        'Laravel\\Tinker\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laravel/tinker/src',
-        ),
-        'JakubOnderka\\PhpConsoleHighlighter\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
-        ),
-        'JakubOnderka\\PhpConsoleColor\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src',
-        ),
-        'Illuminate\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
-        ),
-        'FontLib\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
-        ),
-        'Fideloper\\Proxy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/fideloper/proxy/src',
-        ),
-        'Faker\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
-        ),
-        'Egulias\\EmailValidator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
-        ),
-        'Dotenv\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
-        ),
-        'Dompdf\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
-        ),
-        'Doctrine\\Instantiator\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
-        ),
-        'Doctrine\\Common\\Lexer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
-        ),
-        'Doctrine\\Common\\Inflector\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
-        ),
-        'DeepCopy\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
-        ),
-        'Cron\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
-        ),
-        'Carbon\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
-        ),
-        'BeyondCode\\DumpServer\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src',
-        ),
-        'Barryvdh\\DomPDF\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/barryvdh/laravel-dompdf/src',
-        ),
-        'App\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/app',
-        ),
+    public static $prefixDirsPsr4 = array(
+        'phpDocumentor\\Reflection\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
+                1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
+                2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            ),
+        'Yajra\\DataTables\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/yajra/laravel-datatables-oracle/src',
+            ),
+        'XdgBaseDir\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/dnoegel/php-xdg-base-dir/src',
+            ),
+        'Whoops\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/filp/whoops/src/Whoops',
+            ),
+        'Webmozart\\Assert\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/webmozart/assert/src',
+            ),
+        'TijsVerkoyen\\CssToInlineStyles\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
+            ),
+        'Tests\\' =>
+            array(
+                0 => __DIR__ . '/../..' . '/tests',
+            ),
+        'Symfony\\Polyfill\\Php73\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
+            ),
+        'Symfony\\Polyfill\\Php72\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
+            ),
+        'Symfony\\Polyfill\\Mbstring\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+            ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
+            ),
+        'Symfony\\Polyfill\\Iconv\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
+            ),
+        'Symfony\\Polyfill\\Ctype\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+            ),
+        'Symfony\\Contracts\\Translation\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/translation-contracts',
+            ),
+        'Symfony\\Contracts\\Service\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/service-contracts',
+            ),
+        'Symfony\\Contracts\\EventDispatcher\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/event-dispatcher-contracts',
+            ),
+        'Symfony\\Component\\VarDumper\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/var-dumper',
+            ),
+        'Symfony\\Component\\Translation\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/translation',
+            ),
+        'Symfony\\Component\\Routing\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/routing',
+            ),
+        'Symfony\\Component\\Process\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/process',
+            ),
+        'Symfony\\Component\\Mime\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/mime',
+            ),
+        'Symfony\\Component\\HttpKernel\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/http-kernel',
+            ),
+        'Symfony\\Component\\HttpFoundation\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/http-foundation',
+            ),
+        'Symfony\\Component\\Finder\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/finder',
+            ),
+        'Symfony\\Component\\EventDispatcher\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/event-dispatcher',
+            ),
+        'Symfony\\Component\\Debug\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/debug',
+            ),
+        'Symfony\\Component\\CssSelector\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/css-selector',
+            ),
+        'Symfony\\Component\\Console\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/symfony/console',
+            ),
+        'Svg\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/phenx/php-svg-lib/src/Svg',
+            ),
+        'Ramsey\\Uuid\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/ramsey/uuid/src',
+            ),
+        'Psy\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/psy/psysh/src',
+            ),
+        'Psr\\SimpleCache\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+            ),
+        'Psr\\Log\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+            ),
+        'Psr\\Container\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/psr/container/src',
+            ),
+        'Prophecy\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
+            ),
+        'PhpParser\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
+            ),
+        'Opis\\Closure\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/opis/closure/src',
+            ),
+        'NunoMaduro\\Collision\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/nunomaduro/collision/src',
+            ),
+        'Monolog\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+            ),
+        'League\\Flysystem\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/league/flysystem/src',
+            ),
+        'Laravel\\Tinker\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/laravel/tinker/src',
+            ),
+        'JakubOnderka\\PhpConsoleHighlighter\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/jakub-onderka/php-console-highlighter/src',
+            ),
+        'JakubOnderka\\PhpConsoleColor\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/jakub-onderka/php-console-color/src',
+            ),
+        'Illuminate\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
+            ),
+        'FontLib\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+            ),
+        'Fideloper\\Proxy\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/fideloper/proxy/src',
+            ),
+        'Faker\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/fzaninotto/faker/src/Faker',
+            ),
+        'Egulias\\EmailValidator\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/egulias/email-validator/EmailValidator',
+            ),
+        'Dotenv\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
+            ),
+        'Dompdf\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+            ),
+        'Doctrine\\Instantiator\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
+            ),
+        'Doctrine\\Common\\Lexer\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
+            ),
+        'Doctrine\\Common\\Inflector\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/doctrine/inflector/lib/Doctrine/Common/Inflector',
+            ),
+        'DeepCopy\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+            ),
+        'Cron\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
+            ),
+        'Carbon\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+            ),
+        'BeyondCode\\DumpServer\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/beyondcode/laravel-dump-server/src',
+            ),
+        'Barryvdh\\DomPDF\\' =>
+            array(
+                0 => __DIR__ . '/..' . '/barryvdh/laravel-dompdf/src',
+            ),
+        'App\\' =>
+            array(
+                0 => __DIR__ . '/../..' . '/app',
+            ),
     );
 
-    public static $prefixesPsr0 = array (
-        'S' => 
-        array (
-            'Sabberworm\\CSS' => 
-            array (
-                0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
+    public static $prefixesPsr0 = array(
+        'S' =>
+            array(
+                'Sabberworm\\CSS' =>
+                    array(
+                        0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/lib',
+                    ),
             ),
-        ),
-        'P' => 
-        array (
-            'PhpOption\\' => 
-            array (
-                0 => __DIR__ . '/..' . '/phpoption/phpoption/src',
+        'P' =>
+            array(
+                'PhpOption\\' =>
+                    array(
+                        0 => __DIR__ . '/..' . '/phpoption/phpoption/src',
+                    ),
+                'Parsedown' =>
+                    array(
+                        0 => __DIR__ . '/..' . '/erusev/parsedown',
+                    ),
             ),
-            'Parsedown' => 
-            array (
-                0 => __DIR__ . '/..' . '/erusev/parsedown',
+        'M' =>
+            array(
+                'Mockery' =>
+                    array(
+                        0 => __DIR__ . '/..' . '/mockery/mockery/library',
+                    ),
             ),
-        ),
-        'M' => 
-        array (
-            'Mockery' => 
-            array (
-                0 => __DIR__ . '/..' . '/mockery/mockery/library',
-            ),
-        ),
     );
 
-    public static $classMap = array (
+    public static $classMap = array(
         'App\\Attendence' => __DIR__ . '/../..' . '/app/Attendence.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\DeleteEmployee' => __DIR__ . '/../..' . '/app/DeleteEmployee.php',
@@ -4310,7 +4312,7 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
 
     public static function getInitializer(ClassLoader $loader)
     {
-        return \Closure::bind(function () use ($loader) {
+        return Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixesPsr0;

@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/online_reservation.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/update_room.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/update_room.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/mockery/mockery/library/Mockery/Matcher/PHPUnitConstraint.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/mockery/mockery/library/Mockery/Matcher/PHPUnitConstraint.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -204,6 +211,8 @@
       <workItem from="1569567768156" duration="1730000" />
       <workItem from="1569569759367" duration="515000" />
       <workItem from="1569570912821" duration="5000" />
+      <workItem from="1569571067491" duration="97000" />
+      <workItem from="1569588986534" duration="1291000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>

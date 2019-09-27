@@ -70,29 +70,33 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
+                    <!--
                         @if ($details->t_id == '1')
-                            <select name="roomtype" class="form-control">
-                                <option value="1" selected>Single Bedroom</option>
-                                <option value="2">Double Bedroom</option>
-                                <option value="3">Family Bedroom</option>
-                            </select>
-                        @endif
+                        <select name="roomtype" class="form-control">
+                            <option value="1" selected>Single Bedroom</option>
+                            <option value="2">Double Bedroom</option>
+                            <option value="3">Family Bedroom</option>
+                        </select>
+@endif
 
-                        @if ($details->t_id == '2')
-                            <select name="roomtype" class="form-control">
-                                <option value="1">Single Bedroom</option>
-                                <option value="2" selected>Double Bedroom</option>
-                                <option value="3">Family Bedroom</option>
-                            </select>
-                        @endif
+                    @if ($details->t_id == '2')
+                        <select name="roomtype" class="form-control">
+                            <option value="1">Single Bedroom</option>
+                            <option value="2" selected>Double Bedroom</option>
+                            <option value="3">Family Bedroom</option>
+                        </select>
+@endif
 
-                        @if ($details->t_id == '3')
-                            <select name="roomtype" class="form-control">
-                                <option value="1">Single Bedroom</option>
-                                <option value="2">Double Bedroom</option>
-                                <option value="3" selected>Family Bedroom</option>
-                            </select>
-                        @endif
+                    @if ($details->t_id == '3')
+                        <select name="roomtype" class="form-control">
+                            <option value="1">Single Bedroom</option>
+                            <option value="2">Double Bedroom</option>
+                            <option value="3" selected>Family Bedroom</option>
+                        </select>
+@endif
+                        -->
+
+
                     </div>
 
                     <div class="form-group">

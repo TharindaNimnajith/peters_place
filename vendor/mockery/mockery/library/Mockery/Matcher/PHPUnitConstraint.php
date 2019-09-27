@@ -22,7 +22,6 @@ namespace Mockery\Matcher;
 
 use Mockery\Exception\InvalidArgumentException;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Constraint;
 use PHPUnit_Framework_AssertionFailedError;
 use PHPUnit_Framework_Constraint;
 

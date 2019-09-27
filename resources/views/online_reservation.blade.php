@@ -158,7 +158,7 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group" >
+                                <div class="form-group">
                                     <label>Check In</label>
                                     <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"/>
                                 </div>

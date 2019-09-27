@@ -15,7 +15,8 @@
 use App\User;
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Tharinda Rajapaksha - Room Management and Online Room Reservation
 
@@ -107,7 +108,8 @@ Route::post('/search_room_type', 'RoomController@search_room_type');
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Kavindi Gunasinghe - Front Desk Management
 
@@ -140,7 +142,8 @@ Route::get('/eventh', 'EventController@index');
 Route::resource('events', 'EventTController');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Visna Oshani - Finance Management
 
@@ -154,7 +157,8 @@ Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 Route::resource('utilities', 'utilitycontroller');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Sethma Wattegedara - Event Management
 
@@ -178,7 +182,8 @@ Route::resource('ereport', 'EreportController');
 Route::get('/create', 'EventItemController@create');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Himasha Amarasinghe - Housekeeping Management
 
@@ -208,7 +213,8 @@ Route::get('/found', 'frontaddtask@founditems');
 Route::post('/found', 'frontaddtask@store')->name('addimage');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Tharushika Liyanage - Supplier Management
 
@@ -242,7 +248,8 @@ Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
 Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Jithma Pramudith - Inventory Management
 
@@ -283,7 +290,8 @@ Route::get('/task3/destroy/{id}', 'TaskController@destroy3');
 Route::get('/search', 'TaskController@search');
 
 
-// --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
 // Akalanka Nayanajith - HR Management
 
@@ -417,3 +425,7 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
+
+
+// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
