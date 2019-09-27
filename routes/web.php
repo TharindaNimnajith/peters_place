@@ -11,12 +11,14 @@
 |
 */
 
+
 use App\User;
 
 
 // --------------------------------------------------------------------------------------
 
-//tharinda
+// Tharinda Rajapaksha - Room Management and Online Room Reservation
+
 
 Route::get('/', function () {
     return view('peters_place');
@@ -107,7 +109,8 @@ Route::post('/search_room_reservation', 'RoomController@search_room_reservation'
 
 // --------------------------------------------------------------------------------------
 
-//kavindi
+// Kavindi Gunasinghe - Front Desk Management
+
 
 Route::get('customer', 'postcontroller@index');
 
@@ -139,7 +142,8 @@ Route::resource('events', 'EventTController');
 
 // --------------------------------------------------------------------------------------
 
-//visna
+// Visna Oshani - Finance Management
+
 
 Route::get('u', 'utilitycontroller@index');
 
@@ -152,7 +156,8 @@ Route::resource('utilities', 'utilitycontroller');
 
 // --------------------------------------------------------------------------------------
 
-//sethma
+// Sethma Wattegedara - Event Management
+
 
 //add menu
 Route::resource('menus', 'EventMenuController');
@@ -175,7 +180,8 @@ Route::get('/create', 'EventItemController@create');
 
 // --------------------------------------------------------------------------------------
 
-//himasha
+// Himasha Amarasinghe - Housekeeping Management
+
 
 Route::get('/vie', 'frontaddtask@indexassing');
 
@@ -204,7 +210,8 @@ Route::post('/found', 'frontaddtask@store')->name('addimage');
 
 // --------------------------------------------------------------------------------------
 
-//tharushika
+// Tharushika Liyanage - Supplier Management
+
 
 Route::get('/supplier', function () {
     $data = App\supplier::all();
@@ -237,7 +244,8 @@ Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
 
 // --------------------------------------------------------------------------------------
 
-//jima
+// Jithma Pramudith - Inventory Management
+
 
 Route::get('/inventory', function () {
     return view('inventory');
@@ -277,7 +285,8 @@ Route::get('/search', 'TaskController@search');
 
 // --------------------------------------------------------------------------------------
 
-//nayanajith
+// Akalanka Nayanajith - HR Management
+
 
 Route::get('/Eadd', function () {
     return view('Employee_add');
@@ -311,6 +320,10 @@ Route::get('/Eaddleave', function () {
     return view('Employee_add_leaveType');
 });
 
+Route::get('/Edelete', function () {
+    return view('EmpDelete');
+});
+
 
 //Route::post('/addLeave' , 'LeaveTypeController@leave');
 
@@ -326,6 +339,8 @@ Route::post('/AddEmployee', 'EmployeeController@store');
 Route::get('/Emanagement', 'EmployeeController@index');
 
 Route::get('/search', 'EmployeeController@search');
+
+Route::get('/Edelete', 'EmployeeController@showDeleteEmp');
 
 
 Route::get('/show/{id}', 'EmployeeController@show');
@@ -397,3 +412,8 @@ Route::group(['middleware' => ['web', 'auth']], function () {
         }
     });
 });
+
+
+Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
+
+Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));

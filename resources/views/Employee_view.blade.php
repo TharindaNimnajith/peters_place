@@ -13,7 +13,6 @@
 
     <style>
         .btn {
-
             border: none;
             color: black;
             padding: 5px 5px;
