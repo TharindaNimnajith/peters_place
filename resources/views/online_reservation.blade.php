@@ -30,7 +30,6 @@
         #s label {
             margin-top: 3.5%;
         }
-
     </style>
 
     <!--Materialize CSS-->

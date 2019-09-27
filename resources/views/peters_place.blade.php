@@ -37,7 +37,6 @@
         jQuery(function ($) {
             $(".swipebox").swipebox();
         });
-
     </script>
 
     <script>
@@ -50,7 +49,6 @@
                 }, 1000);
             });
         });
-
     </script>
 
     <script>
@@ -63,7 +61,6 @@
                 }
             });
         });
-
     </script>
 
     <script>
@@ -84,7 +81,6 @@
                 }
             });
         });
-
     </script>
 
     <script>
@@ -110,7 +106,6 @@
                 fit: true
             });
         });
-
     </script>
 
     <script>
@@ -119,14 +114,12 @@
                 easingType: 'easeOutQuart'
             });
         });
-
     </script>
 
     <script>
         $(function () {
             $("#datepicker, #datepicker1, #datepicker2, #datepicker3").datepicker();
         });
-
     </script>
 
     <script>
@@ -137,7 +130,6 @@
         function hideURLbar() {
             window.scrollTo(0, 1);
         }
-
     </script>
 </head>
 

@@ -35,7 +35,6 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
-
     </script>
 </head>
 
@@ -226,18 +225,18 @@
                     </div>
 
                     <!--
-                <div class="form-group">
-                    <label>Availability</label>
+                    <div class="form-group">
+                        <label>Availability</label>
 
-                    <div class="radio">
-                        <label><input type="radio" name="available" value="1">Available</label>
-                    </div>
+                        <div class="radio">
+                            <label><input type="radio" name="available" value="1">Available</label>
+                        </div>
 
-                    <div class="radio">
-                        <label><input type="radio" name="available" value="0">Not Available</label>
+                        <div class="radio">
+                            <label><input type="radio" name="available" value="0">Not Available</label>
+                        </div>
                     </div>
-                </div>
-                -->
+                    -->
                 </div>
 
                 <div class="modal-footer">

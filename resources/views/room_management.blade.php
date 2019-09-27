@@ -65,7 +65,7 @@
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">
                 <!--
                         <li><a href="{{ url('/profile') }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-                        -->
+                    -->
 
                     <li><a href="{{ url('/') }}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                 </ul>
@@ -203,7 +203,7 @@
                                 <option value="2" @if (old('roomtype') == '2') selected @endif>Double Bedroom</option>
                                 <option value="3" @if (old('roomtype') == '3') selected @endif>Family Bedroom</option>
                             </select>
-                            -->
+                        -->
 
                         <select name="roomtype" class="form-control">
                             @foreach ($dat as $item)

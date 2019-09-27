@@ -21,7 +21,6 @@
         #form_body {
             margin-top: 6%;
         }
-
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -34,7 +33,6 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
-
     </script>
 </head>
 
@@ -98,6 +96,7 @@
 
                         <input type="submit" class="btn btn-info" value="Save">
                     </div>
+                </div>
             </form>
         </div>
     </div>

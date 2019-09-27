@@ -21,7 +21,6 @@
         #form_body {
             margin-top: 4%;
         }
-
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -34,7 +33,6 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
-
     </script>
 </head>
 
@@ -81,7 +79,7 @@
                         <label>Room Type</label>
 
                     <!--
-                    @if ($details->t_id == '1')
+                        @if ($details->t_id == '1')
                         <select name="roomtype" class="form-control">
                             <option value="1" selected>Single Bedroom</option>
                             <option value="2">Double Bedroom</option>
@@ -95,7 +93,7 @@
                             <option value="2" selected>Double Bedroom</option>
                             <option value="3">Family Bedroom</option>
                         </select>
-                    @endif
+@endif
 
                     @if ($details->t_id == '3')
                         <select name="roomtype" class="form-control">
@@ -103,7 +101,7 @@
                             <option value="2">Double Bedroom</option>
                             <option value="3" selected>Family Bedroom</option>
                         </select>
-                    @endif
+@endif
                         -->
 
 

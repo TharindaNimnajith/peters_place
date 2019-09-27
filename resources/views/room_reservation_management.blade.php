@@ -27,7 +27,6 @@
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });
-
     </script>
 </head>
 
@@ -260,16 +259,16 @@
                     </div>
 
                     <!--
-                <div class="form-group">
-                    <label>First Name</label>
-                    <input type="text" name="fname" class="form-control">
-                </div>
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" name="fname" class="form-control">
+                    </div>
 
-                <div class="form-group">
-                    <label>Last Name</label>
-                    <input type="text" name="lname" class="form-control">
-                </div>
-                -->
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" name="lname" class="form-control">
+                    </div>
+                    -->
 
                     <div class="form-group">
                         <label>Room Type</label>
@@ -287,18 +286,18 @@
                     </div>
 
                     <!--
-                <div class="form-group">
-                    <br/>
-                    <label>Check In</label>
-                    <input name="cin" type="date" class="form-control">
-                </div>
+                    <div class="form-group">
+                        <br/>
+                        <label>Check In</label>
+                        <input name="cin" type="date" class="form-control">
+                    </div>
 
-                <div class="form-group">
-                    <br/>
-                    <label>Check Out</label>
-                    <input name="cout" type="date" class="form-control">
-                </div>
-                -->
+                    <div class="form-group">
+                        <br/>
+                        <label>Check Out</label>
+                        <input name="cout" type="date" class="form-control">
+                    </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">
@@ -351,7 +350,6 @@
             $("#deleteForm").attr("action", url);
         });
     });
-
 </script>
 </body>
 
