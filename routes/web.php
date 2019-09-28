@@ -139,12 +139,10 @@ Route::resource('accoms', 'accomcontroller');
 Route::get('events1', 'eventscontroller@index');
 Route::get('/search5','eventscontroller@search');
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
-Route::resource('events1','eventscontroller');
+Route::resource('events','eventscontroller');
 
 
-Route::get('/eventh', 'EventController@index');
 
-Route::resource('events', 'EventTController');
 
 
 // ------------------------------------------------------------------------
@@ -186,7 +184,9 @@ Route::resource('ereport', 'EreportController');
 //event item
 Route::get('/create', 'EventItemController@create');
 
+Route::get('/eventh', 'EventController@index');
 
+//Route::resource('events', 'EventTController');
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 

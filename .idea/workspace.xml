@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/resources/views/create5.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/create5.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/edit5.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/edit5.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/index5.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index5.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -211,7 +208,7 @@
       <workItem from="1569588986534" duration="1408000" />
       <workItem from="1569592949934" duration="7000" />
       <workItem from="1569595272801" duration="3444000" />
-      <workItem from="1569649715843" duration="3726000" />
+      <workItem from="1569649715843" duration="4354000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -507,7 +504,28 @@
       <option name="project" value="LOCAL" />
       <updated>1569653688424</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="event management">
+      <created>1569653982695</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653982695</updated>
+    </task>
+    <task id="LOCAL-00044" summary="event management">
+      <created>1569653996114</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653996114</updated>
+    </task>
+    <task id="LOCAL-00045" summary="event management">
+      <created>1569654117410</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1569654117410</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
