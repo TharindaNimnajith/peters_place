@@ -136,6 +136,11 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 
 Route::resource('accoms', 'accomcontroller');
 
+Route::get('events', 'eventscontroller@index');
+Route::get('/search5','eventscontroller@search');
+Route::delete('/deleteall5', 'eventscontroller@deleteAll');
+Route::resource('events','eventscontroller');
+
 
 Route::get('/eventh', 'EventController@index');
 
