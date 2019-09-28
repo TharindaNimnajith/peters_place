@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/create1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/create1.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/edit.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/edit1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/edit1.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/edit5.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/edit5.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/index1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index1.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/report1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/report1.blade.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -215,7 +208,7 @@
       <workItem from="1569588986534" duration="1408000" />
       <workItem from="1569592949934" duration="7000" />
       <workItem from="1569595272801" duration="3444000" />
-      <workItem from="1569649715843" duration="4936000" />
+      <workItem from="1569649715843" duration="5180000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -539,7 +532,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569654901770</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="navigation errors fixed">
+      <created>1569655295647</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1569655295647</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -563,7 +563,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="validations and inserting data - Tharinda Nimnajith" />
     <MESSAGE value="online room reservation, materialize css, validations - Tharinda Nimnajith" />
     <MESSAGE value="update tables when inserting (table view) - Tharinda Nimnajith" />
     <MESSAGE value="delete rows - Tharinda Nimnajith" />
@@ -588,7 +587,8 @@
     <MESSAGE value="controller" />
     <MESSAGE value="event model" />
     <MESSAGE value="event management" />
-    <option name="LAST_COMMIT_MESSAGE" value="event management" />
+    <MESSAGE value="navigation errors fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="navigation errors fixed" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
