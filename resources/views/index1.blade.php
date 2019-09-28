@@ -76,8 +76,12 @@
 
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <h1 style="padding-left: 29px"> Click here to continue </h1>
+    <br>
+    <br>
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
+    <a href="/events1">Event Details</a>
     <a href="/report1">Reports</a>
 
 </div>
@@ -186,17 +190,17 @@
         });
         $('.selectall').click(function () {
             $('.selectbox').prop('checked', $(this).prop('checked'));
-            $('.selectall').prop('checked', $(this).prop('checked'));
+            $('.selectall1').prop('checked', $(this).prop('checked'));
         });
         $('.selectbox').change(function () {
             var total = $('.selectbox').length;
             var number = $('.selectbox:checked').length;
             if (total == number) {
-                $('.selectall').prop('checked', true);
-                $('.selectall2').prop('checked', true);
+                $('.selectall1').prop('checked', true);
+                $('.selectall1').prop('checked', true);
             } else {
-                $('.selectall').prop('checked', false);
-                $('.selectall2').prop('checked', false);
+                $('.selectall1').prop('checked', false);
+                $('.selectall1').prop('checked', false);
             }
         })
 

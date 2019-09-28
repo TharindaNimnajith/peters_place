@@ -79,6 +79,7 @@ return array(
     'App\\customer' => $baseDir . '/app/customer.php',
     'App\\eventItem' => $baseDir . '/app/eventItem.php',
     'App\\eventM' => $baseDir . '/app/eventM.php',
+    'App\\events' => $baseDir . '/app/events.php',
     'App\\expenditure' => $baseDir . '/app/expenditure.php',
     'App\\foundite' => $baseDir . '/app/foundite.php',
     'App\\newstst' => $baseDir . '/app/newstst.php',

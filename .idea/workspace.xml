@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EmployeeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/EmpDelete.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/EmpDelete.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-    </list>
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +16,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="UPDATE_TYPE" value="MERGE" />
   </component>
   <component name="IgnoredFileRootStore">
     <option name="generatedRoots">
@@ -133,14 +120,8 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/public/uploads" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\peters_place\public\uploads" />
-    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -203,19 +184,28 @@
       <workItem from="1567597897321" duration="163000" />
       <workItem from="1567612886344" duration="123000" />
       <workItem from="1567615271432" duration="255000" />
-      <workItem from="1567624087368" duration="8785000" />
-      <workItem from="1567661292800" duration="1021000" />
-      <workItem from="1567663046667" duration="1795000" />
-      <workItem from="1567948061510" duration="6570000" />
-      <workItem from="1568043478961" duration="2480000" />
-      <workItem from="1568259062089" duration="3836000" />
-      <workItem from="1568335036548" duration="2378000" />
-      <workItem from="1568361739763" duration="757000" />
-      <workItem from="1568689503567" duration="1555000" />
-      <workItem from="1568712425200" duration="5315000" />
-      <workItem from="1568718378686" duration="240000" />
-      <workItem from="1568807085244" duration="17090000" />
-      <workItem from="1569653691258" duration="1078000" />
+      <workItem from="1567624087368" duration="9051000" />
+      <workItem from="1567643505703" duration="11031000" />
+      <workItem from="1567952207999" duration="2869000" />
+      <workItem from="1567955800577" duration="156000" />
+      <workItem from="1567955966597" duration="59000" />
+      <workItem from="1567958595873" duration="368000" />
+      <workItem from="1567962737912" duration="16000" />
+      <workItem from="1568046142997" duration="81000" />
+      <workItem from="1568258190133" duration="3854000" />
+      <workItem from="1568368889010" duration="5000" />
+      <workItem from="1569479233599" duration="100000" />
+      <workItem from="1569479576561" duration="23961000" />
+      <workItem from="1569561776082" duration="113000" />
+      <workItem from="1569562196107" duration="1163000" />
+      <workItem from="1569563421882" duration="2434000" />
+      <workItem from="1569567768156" duration="1730000" />
+      <workItem from="1569569759367" duration="515000" />
+      <workItem from="1569570912821" duration="5000" />
+      <workItem from="1569571067491" duration="97000" />
+      <workItem from="1569588986534" duration="1408000" />
+      <workItem from="1569592949934" duration="7000" />
+      <workItem from="1569595272801" duration="3444000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -357,49 +347,140 @@
       <option name="project" value="LOCAL" />
       <updated>1567628917203</updated>
     </task>
-    <task id="LOCAL-00021" summary="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe">
-      <created>1567954641055</created>
+    <task id="LOCAL-00021" summary="join table - Tharinda Nimnajith">
+      <created>1567633227002</created>
       <option name="number" value="00021" />
       <option name="presentableId" value="LOCAL-00021" />
       <option name="project" value="LOCAL" />
-      <updated>1567954641055</updated>
+      <updated>1567633227002</updated>
     </task>
-    <task id="LOCAL-00022" summary="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe">
-      <created>1568045731592</created>
+    <task id="LOCAL-00022" summary="test">
+      <created>1567952539804</created>
       <option name="number" value="00022" />
       <option name="presentableId" value="LOCAL-00022" />
       <option name="project" value="LOCAL" />
-      <updated>1568045731592</updated>
+      <updated>1567952539804</updated>
     </task>
-    <task id="LOCAL-00023" summary="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe">
-      <created>1568045979548</created>
+    <task id="LOCAL-00023" summary="test1">
+      <created>1567954429407</created>
       <option name="number" value="00023" />
       <option name="presentableId" value="LOCAL-00023" />
       <option name="project" value="LOCAL" />
-      <updated>1568045979548</updated>
+      <updated>1567954429407</updated>
     </task>
-    <task id="LOCAL-00024" summary="Updated On 13/9/19 At 6.45 - A.N Gajasinghe(Improved UI and )">
-      <created>1568337390498</created>
+    <task id="LOCAL-00024" summary="test3">
+      <created>1567958934876</created>
       <option name="number" value="00024" />
       <option name="presentableId" value="LOCAL-00024" />
       <option name="project" value="LOCAL" />
-      <updated>1568337390498</updated>
+      <updated>1567958934876</updated>
     </task>
-    <task id="LOCAL-00025" summary="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )">
-      <created>1568718551885</created>
+    <task id="LOCAL-00025" summary="itp">
+      <created>1568258914668</created>
       <option name="number" value="00025" />
       <option name="presentableId" value="LOCAL-00025" />
       <option name="project" value="LOCAL" />
-      <updated>1568718551885</updated>
+      <updated>1568258914668</updated>
     </task>
-    <task id="LOCAL-00026" summary="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )">
-      <created>1568807225717</created>
+    <task id="LOCAL-00026" summary="tharinda">
+      <created>1569487897373</created>
       <option name="number" value="00026" />
       <option name="presentableId" value="LOCAL-00026" />
       <option name="project" value="LOCAL" />
-      <updated>1568807225717</updated>
+      <updated>1569487897373</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="tharinda">
+      <created>1569516299441</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1569516299441</updated>
+    </task>
+    <task id="LOCAL-00028" summary="tharinda">
+      <created>1569561852025</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1569561852026</updated>
+    </task>
+    <task id="LOCAL-00029" summary="tharinda">
+      <created>1569562212219</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1569562212219</updated>
+    </task>
+    <task id="LOCAL-00030" summary="tharinda">
+      <created>1569562537040</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1569562537040</updated>
+    </task>
+    <task id="LOCAL-00031" summary="tharinda">
+      <created>1569563442309</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1569563442309</updated>
+    </task>
+    <task id="LOCAL-00032" summary="tharinda">
+      <created>1569564166418</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1569564166418</updated>
+    </task>
+    <task id="LOCAL-00033" summary="tharinda">
+      <created>1569565376801</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1569565376801</updated>
+    </task>
+    <task id="LOCAL-00034" summary="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install">
+      <created>1569569663015</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1569569663015</updated>
+    </task>
+    <task id="LOCAL-00035" summary="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install">
+      <created>1569569775919</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1569569775919</updated>
+    </task>
+    <task id="LOCAL-00036" summary="TNR">
+      <created>1569590752338</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1569590752338</updated>
+    </task>
+    <task id="LOCAL-00037" summary="TNR">
+      <created>1569595802017</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1569595802017</updated>
+    </task>
+    <task id="LOCAL-00038" summary="TNR">
+      <created>1569597189647</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1569597189647</updated>
+    </task>
+    <task id="LOCAL-00039" summary="TNR">
+      <created>1569598632401</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1569598632401</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -423,7 +504,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith" />
     <MESSAGE value="editing report generation ui, formatting code - Tharinda Nimnajith" />
     <MESSAGE value="room reservation ui, update customer table - Tharinda Nimnajith" />
     <MESSAGE value="validations with requests, insert data, etc. - Tharinda Nimnajith" />
@@ -441,28 +521,15 @@
     <MESSAGE value="integration - Tharinda Nimnajith" />
     <MESSAGE value="search - Tharinda Nimnajith" />
     <MESSAGE value="room_type changes - Tharinda Nimnajith" />
-    <MESSAGE value="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe" />
-    <MESSAGE value="Updated On 13/9/19 At 6.45 - A.N Gajasinghe(Improved UI and )" />
-    <MESSAGE value="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )" />
+    <MESSAGE value="join table - Tharinda Nimnajith" />
+    <MESSAGE value="test" />
+    <MESSAGE value="test1" />
+    <MESSAGE value="test3" />
+    <MESSAGE value="itp" />
+    <MESSAGE value="tharinda" />
+    <MESSAGE value="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install" />
+    <MESSAGE value="TNR" />
+    <option name="LAST_COMMIT_MESSAGE" value="TNR" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
-    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/resources/views/Employee_view.blade.php</url>
-          <line>182</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/resources/views/Employee_profile.blade.php</url>
-          <line>19</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
