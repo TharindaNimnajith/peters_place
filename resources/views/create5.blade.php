@@ -76,9 +76,9 @@
     <h1 style="padding-left: 29px"> Click here to continue </h1>
     <br>
     <br>
-    <a href="/">Customer Details</a>
+    <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
-    <a href="/events">Event Details</a>
+    <a href="/events1">Event Details</a>
     <a href="/report1">Reports</a>
 
 </div>
