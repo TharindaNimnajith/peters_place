@@ -270,6 +270,7 @@ class EmployeeController extends Controller
         return View('EmpDelete')->with('employeeD', $empdata);
     }
 
+    //pdf generation
     public function pdfview(Request $request)
     {
         $items = DB::table("employees")->get();

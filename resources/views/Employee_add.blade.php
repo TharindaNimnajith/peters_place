@@ -142,6 +142,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 200px;">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:10px">
                         <thead class="thead-dark">
