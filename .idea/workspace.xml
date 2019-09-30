@@ -2,8 +2,93 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Charts/test1.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/EmployeeAttCount.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/charts.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/composer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/composer.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/phpunit.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Encoder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Raw.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Replacer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/tests/RawEncoderTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/tests/ReplacerTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/FUNDING.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/bug_report.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/feature_request.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/question.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/composer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/ChartsServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/BaseChart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/C3/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/C3/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Chartjs/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Chartjs/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/DatasetClass.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Echarts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Echarts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Frappe/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Frappe/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Fusioncharts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Fusioncharts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Highcharts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Highcharts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/ChartsCommand.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/stubs/chart.stub" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Config/charts.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/C3/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/C3/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Chartjs/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Chartjs/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Echarts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Echarts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Frappe/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Frappe/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Fusioncharts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Fusioncharts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Highcharts/Chart.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Highcharts/Dataset.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/c3/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/c3/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/chartjs/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/chartjs/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/echarts/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/echarts/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/frappe/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/frappe/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/fusioncharts/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/fusioncharts/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/highcharts/container.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/highcharts/script.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/init.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/loader.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/peters_place.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/peters_place.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_real.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_real.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,6 +101,20 @@
     <execution>
       <executable />
     </execution>
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -117,6 +216,8 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-dompdf" />
       <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
       <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/balping/json-raw-encoder" />
+      <path value="$PROJECT_DIR$/vendor/consoletvs/charts" />
     </include_path>
   </component>
   <component name="ProjectId" id="1Q0v8XDUxSYsEAvRZjQg1krasLk" />
@@ -207,6 +308,9 @@
       <workItem from="1568718378686" duration="240000" />
       <workItem from="1568807085244" duration="17090000" />
       <workItem from="1569653691258" duration="1078000" />
+      <workItem from="1569788759618" duration="917000" />
+      <workItem from="1569789810724" duration="1427000" />
+      <workItem from="1569809212229" duration="10027000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -390,7 +494,14 @@
       <option name="project" value="LOCAL" />
       <updated>1568807225717</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Updated On 29/9/19 At 23.22 - A.N Gajasinghe( add validation to salaries **need to improve Salary UI(list CSS) )">
+      <created>1569779488530</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1569779488530</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -435,7 +546,8 @@
     <MESSAGE value="Updated On 8/9/19 At 8.25 PM - A.N Gajasinghe" />
     <MESSAGE value="Updated On 13/9/19 At 6.45 - A.N Gajasinghe(Improved UI and )" />
     <MESSAGE value="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated On 17/9/19 At 16.40 - A.N Gajasinghe(Improved UI(home icon) , created a Table for the delete employees )" />
+    <MESSAGE value="Updated On 29/9/19 At 23.22 - A.N Gajasinghe( add validation to salaries **need to improve Salary UI(list CSS) )" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated On 29/9/19 At 23.22 - A.N Gajasinghe( add validation to salaries **need to improve Salary UI(list CSS) )" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
