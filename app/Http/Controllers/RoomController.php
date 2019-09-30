@@ -15,6 +15,9 @@ use App\room_type;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use PDF;
+
+//use DB;
 
 class RoomController extends Controller
 {
@@ -138,25 +141,27 @@ class RoomController extends Controller
         ]);
 
         $reserve->save();
+
         /*
-                $data = DB::table('reserves')
-                    ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
-                    ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
-                    ->join('reserves', 'reserves.cid', '=', 'customers.id')
-                    ->get();
+        $data = DB::table('reserves')
+            ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
+            ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
+            ->join('reserves', 'reserves.cid', '=', 'customers.id')
+            ->get();
 
-                $data1 = DB::table('customers')
-                    ->join('reserves', 'reserves.cid', '=', 'customers.id')
-                    ->get();
+        $data1 = DB::table('customers')
+            ->join('reserves', 'reserves.cid', '=', 'customers.id')
+            ->get();
 
-                $data2 = DB::table('rooms')
-                    ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
-                    ->get();
+        $data2 = DB::table('rooms')
+            ->join('reserves', 'reserves.room_no', '=', 'rooms.id')
+            ->get();
 
-                $data3 = DB::table('room_types')
-                    ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
-                    ->get();
+        $data3 = DB::table('room_types')
+            ->join('reserves', 'reserves.t_id', '=', 'room_types.id')
+            ->get();
         */
+
         return redirect()
             ->back()
             ->with('success', 'Your room has been reserved successfully!');
@@ -358,7 +363,7 @@ class RoomController extends Controller
         //$rt_details = room_type::where('id', $type_id)->first();
 
         $rt_details = room_type::all();
-        
+
         //dd($rt_details);
         //dd($rt_details->id);
 
@@ -366,7 +371,7 @@ class RoomController extends Controller
         return view('update_room')
             ->with('details', $details);
         */
-        
+
         return view('update_room', ['details' => $details, 'rt_details' => $rt_details]);
     }
 
@@ -544,13 +549,43 @@ class RoomController extends Controller
         $availability = $request->available;
         $status = $request->status_btn;
 
+        //$data1 = App\room_type::all();
+
+        //$data1 = DB::table('room_types');
+
+        $data1 = room_type::all();
+
+        /*
         $data = DB::table('rooms')
             ->orWhere('id', $id)
             ->orWhere('availability', $availability)
             ->orWhere('status', $status)
             ->paginate(5);
+        */
 
-        return view('room_management', ['rooms' => $data]);
+        $data = DB::table('rooms')
+            ->orWhere('id', $id)
+            ->orWhere('availability', $availability)
+            ->orWhere('status', $status)
+            ->orWhere('t_id', $t_id)
+            ->orWhere('floor', $floor)
+            ->paginate(30);
+
+        /*
+        if ($id != null) {
+            $data = DB::table('rooms')
+                ->where('id', $id)
+                ->paginate(5);
+        } else {
+            $data = DB::table('room_types')
+                ->orWhere('id', $id)
+                ->paginate(5);
+        }
+        */
+
+        return view('room_management', ['rooms' => $data, 'dat' => $data1]);
+
+        //return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
 
         /*
         $data = DB::table('rooms')
@@ -578,10 +613,12 @@ class RoomController extends Controller
     {
         $id = $request->t_id;
         $name = $request->t_name;
+
         $availability = $request->available;
 
         //dd($id);
 
+        /*
         if ($id == null) {
             $data = DB::table('room_types')
                 ->orWhere('name', 'like', '%' . $name . '%')
@@ -591,6 +628,13 @@ class RoomController extends Controller
                 ->orWhere('id', $id)
                 ->paginate(5);
         }
+        */
+
+        $data = DB::table('room_types')
+            ->orWhere('id', $id)
+            ->orWhere('name', 'like', '%' . $name . '%')
+            //->orWhere('availability')
+            ->paginate(30);
 
         /*
         $data = DB::table('room_types')
@@ -646,6 +690,7 @@ class RoomController extends Controller
             ->paginate(5);
         */
 
+        /*
         if ($id != null) {
             $data = DB::table('reserves')
                 ->orWhere('id', $id)
@@ -663,6 +708,7 @@ class RoomController extends Controller
                 ->orWhere('t_id', $roomtype)
                 ->paginate(5);
         }
+        */
 
         /*
         else if ($cin != null) {
@@ -680,7 +726,165 @@ class RoomController extends Controller
         }
         */
 
-        return view('room_reservation_management', ['reservations' => $data]);
+        //$data = App\reserve::all();
+        //$data1 = App\customer::all();
+        //$data2 = App\room_type::all();
+
+        //return view('room_reservation_management')->with(['reservations' => $data, 'dat' => $data1, 'rt' => $data2]);
+
+        /*
+        $d = DB::table('room_types')
+            ->join('rooms', 'rooms.t_id', '=', 'room_types.id')
+            ->get();
+        */
+
+        $data1 = customer::all();
+        $data2 = room_type::all();
+
+        /*
+        $data = DB::table('reserves')
+            ->join('reserves', 'reserves.cid', '=', 'customers.id')
+            //->join('reserves', 'reserves.t_id', '=', 'room_types.id')
+            //->join('reserves', 'reserves.room_no', '=', 'rooms.id')
+
+            ->orWhere('reserves.id', $id)
+            ->orWhere('reserves.cid', $cid)
+
+            ->orWhere('customers.fname', 'like', '%' . $fname . '%')
+            ->orWhere('customers.lname', 'like', '%' . $lname . '%')
+
+            ->orWhere('reserves.t_id', $roomtype)
+
+            ->orWhere('reserves.room_no', $r_no)
+            ->orWhere('reserves.check_in', 'like', '%' . $cin . '%')
+            ->orWhere('reserves.check_out', 'like', '%' . $cout . '%')
+
+            ->paginate(30);
+        */
+
+        //return view('room_reservation_management', ['reservations' => $data]);
+
+        $data = DB::table('reserves')
+            ->orWhere('id', $id)
+            ->orWhere('cid', $cid)
+
+            //->orWhere('fname', 'like', '%' . $fname . '%')
+            //->orWhere('lname', 'like', '%' . $lname . '%')
+
+            ->orWhere('t_id', $roomtype)
+            ->orWhere('room_no', $r_no)
+
+            //->orWhere('reserves.check_in', 'like', '%' . $cin . '%')
+            //->orWhere('reserves.check_out', 'like', '%' . $cout . '%')
+
+            ->paginate(30);
+
+        /*
+        $data1 = DB::table('customers')
+            ->orWhere('fname', 'like', '%' . $fname . '%')
+            ->orWhere('lname', 'like', '%' . $lname . '%')
+            
+            ->paginate(30);
+        */
+
+        return view('room_reservation_management', ['reservations' => $data, 'dat' => $data1, 'rt' => $data2]);
+    }
+
+
+    function dynamic_pdf_rooms()
+    {
+        $room_data = $this->get_room_data();
+        
+        return view('dynamic_pdf_rooms')->with('room_data', $room_data);
+    }
+
+    function get_rooms_data()
+    {
+        $rooms_data = DB::table('rooms')
+            ->limit(30)
+            ->get();
+
+        return $rooms_data;
+    }
+
+    function get_room_types_data()
+    {
+        $room_types_data = DB::table('room_types')
+            ->limit(30)
+            ->get();
+
+        return $room_types_data;
+    }
+
+    function rooms_pdf()
+    {
+        $pdf = \App::make('dompdf.wrapper');
+
+        $pdf->loadHTML($this->convert_rooms_data_to_html());
+
+        return $pdf->stream();
+    }
+
+    function convert_rooms_data_to_html()
+    {
+        $rooms_data = $this->get_rooms_data();
+        $room_types_data = $this->get_room_types_data();
+
+        $output = '
+            <h1 align="center">Room List</h1>
+
+            <table width="100%" style="border-collapse:collapse; border:0px;">
+
+            <tr style="background-color:black; color:white;">
+                <th style="border:1px solid; padding:12px;" width="20%">Room No</th>
+                <th style="border:1px solid; padding:12px;" width="20%">Floor</th>
+                <th style="border:1px solid; padding:12px;" width="20%">Type</th>
+                <th style="border:1px solid; padding:12px;" width="20%">Availability</th>
+                <th style="border:1px solid; padding:12px;" width="20%">Status</th>
+            </tr>
+        ';
+
+        foreach ($rooms_data as $rooms) {
+            // availability - formatting db value
+            if ($rooms->availability) {
+                $availability = "Available"; 
+            }
+            else {
+                $availability = "Not Available"; 
+            }
+
+            // status - formatting db value
+            if ($rooms->status == 1) {
+                $status = "Clean"; 
+            }
+            else if ($rooms->status == 2) {
+                $status = "Not Clean"; 
+            }
+            else if ($rooms->status == 3) {
+                $status = "Out of Service"; 
+            }
+
+            // room types - formatting db value
+            foreach ($room_types_data as $room_type) {
+                if ($room_type->id == $rooms->t_id) {
+                    $type = $room_type->name;
+                }
+            }
+
+            $output .= '
+                <tr>
+                    <td style="border:1px solid; padding:12px;">' . $rooms->id . '</td>
+                    <td style="border:1px solid; padding:12px;">' . $rooms->floor . '</td>
+                    <td style="border:1px solid; padding:12px;">' . $type . '</td>
+                    <td style="border:1px solid; padding:12px;">' . $availability . '</td>
+                    <td style="border:1px solid; padding:12px;">' . $status . '</td>
+                </tr>
+            ';
+        }
+
+        $output .= '</table>';
+
+        return $output;
     }
 
 

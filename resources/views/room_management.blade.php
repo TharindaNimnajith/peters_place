@@ -176,6 +176,8 @@
     </div>
 </div>
 
+<a href="{{url('/dynamic_pdf_rooms/Room List')}}" target="_blank" class="btn btn-danger">Convert into PDF</a>
+
 <!-- Add Modal HTML -->
 <div id="addRoomModal" class="modal fade">
     <div class="modal-dialog">
@@ -259,14 +261,26 @@
                         <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
                     </div>
 
-                    <!--
                     <div class="form-group">
                         <label>Room Type</label>
 
+                        <!--
                         <select name="roomtype" class="form-control">
+                            <option></option>
                             <option value="1">Single Bedroom</option>
                             <option value="2">Double Bedroom</option>
                             <option value="3">Family Bedroom</option>
+                        </select>
+                        -->
+
+                        <select name="roomtype" class="form-control">
+                            <option></option>
+                            
+                            @foreach ($dat as $item)
+                                @if (isset($item))
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                @endif
+                            @endforeach
                         </select>
                     </div>
 
@@ -274,12 +288,12 @@
                         <label>Floor</label>
 
                         <select name="floor" class="form-control">
+                            <option></option>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
                         </select>
                     </div>
-                    -->
                 </div>
 
                 <div class="row">

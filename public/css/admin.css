@@ -1,10 +1,10 @@
-/*
-#searchRoomModal, 
-#searchReservationModal, 
-#searchRoomTypeModal {
-    top: 25%;
+#searchRoomModal  {
+    top: 12%;
 }
-*/
+
+#searchRoomTypeModal {
+    top: 16%;
+}
 
 #addRoomModal,
 #addRoomTypeModal {

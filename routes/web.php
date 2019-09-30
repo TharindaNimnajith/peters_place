@@ -46,8 +46,13 @@ Route::get('/room_management', function () {
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
+    //$dat = App\room::all();
+
+    //$count = room::where('t_id', '=', )->count();
 
     return view('room_type_management')->with('room_types', $data);
+
+    //return view('room_type_management')->with(['room_types' => $data, 'dat' => $dat]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -106,6 +111,11 @@ Route::post('/search_room', 'RoomController@search_room');
 Route::post('/search_room_type', 'RoomController@search_room_type');
 
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
+
+
+Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
+
+Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
 
 
 // ------------------------------------------------------------------------
