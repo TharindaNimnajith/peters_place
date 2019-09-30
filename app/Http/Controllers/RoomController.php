@@ -845,6 +845,7 @@ class RoomController extends Controller
         return $rooms_data;
     }
 
+    
     function get_room_types_data()
     {
         $room_types_data = DB::table('room_types')
@@ -933,6 +934,7 @@ class RoomController extends Controller
         ';
         */
 
+
         // header
 
         $output = '
@@ -951,6 +953,7 @@ class RoomController extends Controller
             </div>
         ';
 
+
         // table headings
 
         $output .= '
@@ -967,6 +970,7 @@ class RoomController extends Controller
             </tr>
         ';
 
+
         foreach ($rooms_data as $rooms) 
         {
             // availability - formatting db value
@@ -979,6 +983,7 @@ class RoomController extends Controller
             {
                 $availability = "Not Available";
             }
+
 
             // status - formatting db value
 
@@ -995,6 +1000,7 @@ class RoomController extends Controller
                 $status = "Out of Service";
             }
 
+
             // room types - formatting db value
 
             foreach ($room_types_data as $room_type) 
@@ -1004,6 +1010,7 @@ class RoomController extends Controller
                     $type = $room_type->name;
                 }
             }
+
 
             // table rows with table data
 
