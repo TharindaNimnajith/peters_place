@@ -1,15 +1,13 @@
 <!doctype html>
 <html>
-
-<head>
-    <title>PetersPlace</title>
-    <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all'/>
+<head><title>PetersPlace</title>
+    <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all' />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
-            font-family: sans-serif;
+            font-family:  sans-serif;
         }
 
         .sidenav {
@@ -48,19 +46,17 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
-
     </style>
 </head>
 
+
+</head>
+
 <body>
+
 <div id="main">
     <nav>
 
@@ -73,6 +69,8 @@
         </ul>
     </nav>
 </div>
+
+
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h1 style="padding-left: 29px"> Click here to continue </h1>
@@ -96,8 +94,9 @@
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
     }
-
 </script>
+
+
 
 @extends('layout')
 @section('content')
@@ -114,41 +113,53 @@
 
                 </div>
             @endif
-            @foreach($posts as $post)
-                <form action="{{ action('postcontroller@update', $post->id) }}" method="post">
-                    @csrf
-                    @method('PUT')
-                    <div class="form-group">
-                        <label>First Name</label>
-                        <input class="form-control" type="text" name="fname" value="{{ $post->fname}}">
-                    </div>
+            <form action="{{action('eventscontroller@store')}}" method="post">
+                @csrf
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input class="form-control" type="text" name="c_name">
+                </div>
 
-                    <div class="form-group">
-                        <label>Last Name</label>
-                        <input class="form-control" type="text" name="lname" value="{{ $post->lname}}">
-                    </div>
-                    <div class="form-group">
-                        <label>NIC</label>
-                        <input class="form-control" type="text" name="nic" value="{{ $post->nic}}">
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input class="form-control" type="text" name="email" value="{{ $post->email}}">
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input class="form-control" type="Number" name="phone" value="{{ $post->phone}}">
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <input class="form-control" type="text" name="address" value="{{ $post->address}}">
-                    </div>
-                    <button type="submit" class="btn btn-warning">Update</button>
-                    <a href="{{ action('postcontroller@index') }}" class="btn btn-default">Back</a>
-                </form>
-            @endforeach
+                <div class="form-group">
+                    <label>Event Date</label>
+                    <input class="form-control" type="date" name="event_date">
+                </div>
+                <div class="form-group">
+                    <label>Event Time</label>
+                    <input class="form-control" type="time" name="time">
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <select style="margin-left: 0px; margin-bottom: 30px" class="form-control" type="text" name="category">
+                        <option value="wedding">Wedding</option>
+                        <option value="party">Party</option>
+                        <option value="conference">Conference</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>No. of Guests</label>
+                    <input class="form-control" type="Number" name="guests">
+                </div>
+                <div class="form-group">
+                    <label>Menu ID</label>
+                    <input class="form-control" type="text" name="mid">
+                </div>
+            </div>
+        <div class="form-group">
+            <label>Advancement</label>
+            <input class="form-control" type="Number" name="advance">
         </div>
+    </div>
+    <div class="form-group">
+        <label>Total Payment</label>
+        <input class="form-control" type="Number" name="total">
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+
+    </form>
+    </div>
     </div>
 @endsection
 
 </body>
+</html>

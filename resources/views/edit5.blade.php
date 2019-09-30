@@ -1,15 +1,12 @@
 <!doctype html>
 <html>
-
-<head>
-    <title>PetersPlace</title>
-    <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all'/>
+<head><title>PetersPlace</title>
+    <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all' />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <style>
         body {
-            font-family: sans-serif;
+            font-family:  sans-serif;
         }
 
         .sidenav {
@@ -48,16 +45,14 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
-
     </style>
+</head>
+
+
+</head>
 </head>
 
 <body>
@@ -73,6 +68,7 @@
         </ul>
     </nav>
 </div>
+
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <h1 style="padding-left: 29px"> Click here to continue </h1>
@@ -96,7 +92,6 @@
     function closeNav() {
         document.getElementById("mySidenav").style.width = "0";
     }
-
 </script>
 
 @extends('layout')
@@ -114,49 +109,46 @@
 
                 </div>
             @endif
-            @foreach($accoms as $accom)
-                <form action="{{ action('accomcontroller@update', $accom->id) }}" method="post">
+            @foreach($events as $events)
+                <form action="{{ action('eventscontroller@update', $events->id) }}" method="post">
                     @csrf
                     @method('PUT')
                     <div class="form-group">
-                        <label>Arrival</label>
-                        <input class="form-control" type="date" name="arrival_date" value="{{ $accom->arrival_date}}">
+                        <label>Customer Name</label>
+                        <input class="form-control" type="text" name="c_name" value="{{ $events->c_name}}">
                     </div>
 
                     <div class="form-group">
-                        <label>Departure</label>
-                        <input class="form-control" type="date" name="deparure_date" value="{{ $accom->deparure_date}}">
+                        <label>Event Date</label>
+                        <input class="form-control" type="date" name="event_date" value="{{ $events->event_date}}">
                     </div>
                     <div class="form-group">
-                        <label>Adults</label>
-                        <input class="form-control" type="Number" name="adults" value="{{ $accom->adults}}">
+                        <label>Event Time</label>
+                        <input class="form-control" type="time" name="time" value="{{ $events->time}}">
                     </div>
                     <div class="form-group">
-                        <label>Kids</label>
-                        <input class="form-control" type="Number" name="kids" value="{{ $accom->kids}}">
+                        <label>Category</label>
+                        <input class="form-control" type="text" name="category" value="{{ $events->category}}">
                     </div>
                     <div class="form-group">
-                        <label>Room Type</label>
-                        <input class="form-control" type="text" name="room_type" value="{{ $accom->room_type}}">
+                        <label>No. of Guests</label>
+                        <input class="form-control" type="Number" name="guests" value="{{ $events->guests}}">
                     </div>
                     <div class="form-group">
-                        <label>Room No</label>
-                        <input class="form-control" type="text" name="room_no" value="{{ $accom->room_no}}">
+                        <label>Menu ID</label>
+                        <input class="form-control" type="text" name="mid" value="{{ $events->mid}}">
                     </div>
                     <div class="form-group">
-                        <label>Food Service</label>
-                        <input class="form-control" type="text" name="food_ser" value="{{ $accom->food_ser}}">
+                        <label>Advancement</label>
+                        <input class="form-control" type="Number" name="advance" value="{{ $events->advance}}">
                     </div>
                     <div class="form-group">
-                        <label>Payment</label>
-                        <input class="form-control" type="text" name="payment" value="{{ $accom->payment}}">
+                        <label>Total Payment</label>
+                        <input class="form-control" type="text" name="total" value="{{ $events->total}}">
                     </div>
-                    <div class="form-group">
-                        <label>NIC</label>
-                        <input class="form-control" type="text" name="nic" value="{{ $accom->nic}}">
-                    </div>
+
                     <button type="submit" class="btn btn-warning">Update</button>
-                    <a href="{{ action('accomcontroller@index') }}" class="btn btn-default">Back</a>
+                    <a href="{{ action('eventscontroller@index') }}" class="btn btn-default">Back</a>
                 </form>
             @endforeach
         </div>
@@ -164,3 +156,4 @@
 @endsection
 
 </body>
+</html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Attendence;
+use App\Charts\test1;
 use App\Employee;
 use App\Memployee;
 use Illuminate\Http\Request;
@@ -18,6 +19,9 @@ class attendenceController extends Controller
 
     public function storeA(Request $request)
     {
+        $this->validate($request, [
+            "date" => 'unique:memployees,day'
+        ]);
         $att = new Memployee([
             'id' => $request->get('id'),
             'type' => $request->get('type'),
@@ -117,5 +121,18 @@ class attendenceController extends Controller
         $empdata->delete();
 
         return redirect()->back();
+    }
+
+
+    //Chart generation test 1
+
+    public function chartTest()
+    {
+        $chart = new test1();
+        $chart->labels(['One', 'Two', 'Three', 'Four']);
+        $chart->dataset('My dataset', 'line', [1, 2, 3, 4]);
+        $chart->dataset('My dataset 2', 'line', [4, 3, 2, 1]);
+
+        return view('sample_view', compact('chart'));
     }
 }
