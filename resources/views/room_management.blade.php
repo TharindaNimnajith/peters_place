@@ -76,10 +76,15 @@
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                     <h2 class="room_mngmnt">
                         <a href="{{ url('/room_management') }}">Room <b>Management</b></a>
                     </h2>
+                </div>
+
+                <div class="col-sm-2">
+                    <a href="{{url('/dynamic_pdf_rooms/Room List')}}" target="_blank" class="btn btn-danger"
+                       id="pdf_btn">Room List PDF</a>
                 </div>
 
                 <div class="col-sm-3">
@@ -175,8 +180,6 @@
         <div class="clearfix"></div>
     </div>
 </div>
-
-<a href="{{url('/dynamic_pdf_rooms/Room List')}}" target="_blank" class="btn btn-danger">Convert into PDF</a>
 
 <!-- Add Modal HTML -->
 <div id="addRoomModal" class="modal fade">
@@ -275,7 +278,7 @@
 
                         <select name="roomtype" class="form-control">
                             <option></option>
-                            
+
                             @foreach ($dat as $item)
                                 @if (isset($item))
                                     <option value="{{ $item->id }}">{{ $item->name }}</option>

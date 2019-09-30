@@ -436,15 +436,16 @@ Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdf
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
 
-Route::get('my-chart', 'ChartController@index');
-
 
 //chart maker
+
 Route::get('/EChart', function () {
     return view('EmployeeChart');
 });
 
 Route::get('EChart', 'EmployeeChartController@index');
+
+Route::get('my-chart', 'ChartController@index');
 
 
 // ------------------------------------------------------------------------

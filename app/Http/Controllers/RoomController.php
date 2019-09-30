@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App;
 use App\customer;
 use App\Http\Requests\ReservationValidation;
 use App\Http\Requests\RoomReservationUpdateValidation;
@@ -15,8 +16,8 @@ use App\room_type;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use PDF;
 
+//use PDF;
 //use DB;
 
 class RoomController extends Controller
@@ -783,7 +784,7 @@ class RoomController extends Controller
         $data1 = DB::table('customers')
             ->orWhere('fname', 'like', '%' . $fname . '%')
             ->orWhere('lname', 'like', '%' . $lname . '%')
-            
+
             ->paginate(30);
         */
 
@@ -794,9 +795,10 @@ class RoomController extends Controller
     function dynamic_pdf_rooms()
     {
         $room_data = $this->get_room_data();
-        
+
         return view('dynamic_pdf_rooms')->with('room_data', $room_data);
     }
+
 
     function get_rooms_data()
     {
@@ -816,21 +818,106 @@ class RoomController extends Controller
         return $room_types_data;
     }
 
+
     function rooms_pdf()
     {
-        $pdf = \App::make('dompdf.wrapper');
+        $pdf = App::make('dompdf.wrapper');
 
         $pdf->loadHTML($this->convert_rooms_data_to_html());
 
         return $pdf->stream();
     }
 
+
     function convert_rooms_data_to_html()
     {
         $rooms_data = $this->get_rooms_data();
         $room_types_data = $this->get_room_types_data();
 
+        //$img = "{{ asset('images/g12.jpg') }}";
+        //$filePath = "../../../public/images/g12.jpg";
+        //$filePath = asset('images/g12.jpg');
+        //$filePath = "http://localhost:8000/images/g12.jpg";
+
+        //$url = url('/uploads/images/g12.jpg');
+        //$img = "<img src='{$url}'>";
+
+        //$img = "https://bit.ly/2mfEoEW";
+        //$img = "bit.ly/2mfEoEW";
+
+        //$img = "https://scontent.fcmb4-1.fna.fbcdn.net/v/t1.0-9/41770553_1922586088038067_3670679183752691712_n.jpg?_nc_cat=108&_nc_oc=AQkaGnHV6GpZLD3ygEi9ZnytPLN_K5qKEIvmuxYoufeCFFjV-eOyNbiLbF-Pph5zHuQ&_nc_ht=scontent.fcmb4-1.fna&oh=642539f387d00aaedde65de24ab60ac8&oe=5E3122A1";
+        //$img = "scontent.fcmb4-1.fna.fbcdn.net/v/t1.0-9/41770553_1922586088038067_3670679183752691712_n.jpg?_nc_cat=108&_nc_oc=AQkaGnHV6GpZLD3ygEi9ZnytPLN_K5qKEIvmuxYoufeCFFjV-eOyNbiLbF-Pph5zHuQ&_nc_ht=scontent.fcmb4-1.fna&oh=642539f387d00aaedde65de24ab60ac8&oe=5E3122A1";
+
+        /*
+        // header
+
         $output = '
+            <head>
+                <link href="{{ URL::asset("css/bootstrap.css") }}" rel="stylesheet" media="all"/>
+                <link href="{{ URL::asset("css/font-awesome.css") }}" rel="stylesheet"/>
+
+                <script src="{{ URL::asset("js/bootstrap-3.1.1.min.js") }}"></script>
+            <head>
+
+            <body>
+                <div>
+                    <div>
+                        <img src="https://bit.ly/2mfEoEW" alt="logo" width="20%" height="20%">
+                    </div>
+
+                    <div>
+                        <h2>Peter\'s Place Hotel </h2>
+                    </div>
+
+                    <div>
+                        <h2>Contact Us</h2>
+
+                        <div>
+                            <h3>
+                                <i class="fa fa-map"></i>
+                                <p>Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara</p>
+                            </h3>
+                        </div>
+
+                        <div>
+                            <h3>
+                                <i class="fa fa-phone"></i>
+                                <p>+94 (41)225-74-66</p>
+                            </h3>
+                        </div>
+
+                        <div>
+                            <h3>
+                                <i class="fa fa-envelope"></i>
+                                <p>info@petersplace.lk</p>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+        ';
+        */
+
+        // header
+
+        $output = '
+            <div>
+                <div> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="25%" height="25%"> 
+                </div>
+
+                <div style="">
+                    <h2>Peter\'s Place Hotel </h2>
+
+                    <p>Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara</p>
+                    <p>+94 (41)225-74-66</p>
+                    <p>info@petersplace.lk</p>
+                </div>
+            </div>
+        ';
+
+        // table headings
+
+        $output .= '
             <h1 align="center">Room List</h1>
 
             <table width="100%" style="border-collapse:collapse; border:0px;">
@@ -846,30 +933,32 @@ class RoomController extends Controller
 
         foreach ($rooms_data as $rooms) {
             // availability - formatting db value
+
             if ($rooms->availability) {
-                $availability = "Available"; 
-            }
-            else {
-                $availability = "Not Available"; 
+                $availability = "Available";
+            } else {
+                $availability = "Not Available";
             }
 
             // status - formatting db value
+
             if ($rooms->status == 1) {
-                $status = "Clean"; 
-            }
-            else if ($rooms->status == 2) {
-                $status = "Not Clean"; 
-            }
-            else if ($rooms->status == 3) {
-                $status = "Out of Service"; 
+                $status = "Clean";
+            } else if ($rooms->status == 2) {
+                $status = "Not Clean";
+            } else if ($rooms->status == 3) {
+                $status = "Out of Service";
             }
 
             // room types - formatting db value
+
             foreach ($room_types_data as $room_type) {
                 if ($room_type->id == $rooms->t_id) {
                     $type = $room_type->name;
                 }
             }
+
+            // table rows with table data
 
             $output .= '
                 <tr>
