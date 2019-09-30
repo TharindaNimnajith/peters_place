@@ -22,6 +22,12 @@ use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Insert
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -208,6 +214,12 @@ class RoomController extends Controller
     }
 
 
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Delete
+
+
     /**
      * Remove the specified resource from storage.
      *
@@ -257,6 +269,12 @@ class RoomController extends Controller
             ->back()
             ->with('success', 'Room reservation has been deleted successfully!');
     }
+
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Retrieve & View
 
 
     /**
@@ -332,6 +350,12 @@ class RoomController extends Controller
 
         return view('view_room_reservation', ['details' => $details, 'cust_details' => $cust_details, 'rt_details' => $rt_details]);
     }
+
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Update / Edit, View & Retrieve
 
 
     /**
@@ -534,6 +558,12 @@ class RoomController extends Controller
             ->with('reservations', $data)
             ->with('success', 'The reservation has been updated successfully!');
     }
+
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Search, View & Retrieve
 
 
     /**
@@ -792,6 +822,12 @@ class RoomController extends Controller
     }
 
 
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Reports Generation
+
+
     function dynamic_pdf_rooms()
     {
         $room_data = $this->get_room_data();
@@ -862,7 +898,7 @@ class RoomController extends Controller
             <body>
                 <div>
                     <div>
-                        <img src="https://bit.ly/2mfEoEW" alt="logo" width="20%" height="20%">
+                        <img src="https://bit.ly/2mfEoEW" alt="logo" width="20%" height="20%"/>
                     </div>
 
                     <div>
@@ -902,7 +938,7 @@ class RoomController extends Controller
         $output = '
             <div>
                 <div> 
-                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="25%" height="25%"> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="25%" height="25%"/> 
                 </div>
 
                 <div style="">
@@ -931,29 +967,40 @@ class RoomController extends Controller
             </tr>
         ';
 
-        foreach ($rooms_data as $rooms) {
+        foreach ($rooms_data as $rooms) 
+        {
             // availability - formatting db value
 
-            if ($rooms->availability) {
+            if ($rooms->availability) 
+            {
                 $availability = "Available";
-            } else {
+            } 
+            else 
+            {
                 $availability = "Not Available";
             }
 
             // status - formatting db value
 
-            if ($rooms->status == 1) {
+            if ($rooms->status == 1) 
+            {
                 $status = "Clean";
-            } else if ($rooms->status == 2) {
+            } 
+            else if ($rooms->status == 2) 
+            {
                 $status = "Not Clean";
-            } else if ($rooms->status == 3) {
+            } 
+            else if ($rooms->status == 3) 
+            {
                 $status = "Out of Service";
             }
 
             // room types - formatting db value
 
-            foreach ($room_types_data as $room_type) {
-                if ($room_type->id == $rooms->t_id) {
+            foreach ($room_types_data as $room_type) 
+            {
+                if ($room_type->id == $rooms->t_id) 
+                {
                     $type = $room_type->name;
                 }
             }
@@ -975,6 +1022,12 @@ class RoomController extends Controller
 
         return $output;
     }
+
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // Default Methods in Controller
 
 
     /**
@@ -1058,4 +1111,8 @@ class RoomController extends Controller
     {
         //
     }
+
+
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
 }
