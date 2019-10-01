@@ -42,6 +42,7 @@
   .sidenav a {font-size: 18px;}
 }
 </style>
+
 <head><title>PetersPlace</title>
     <link href="{{ URL::asset('css/pay.css')}}" rel='stylesheet' media='all'/>
 
@@ -78,7 +79,6 @@ function closeNav() {
             <li><a href="#">About</a></li>
             <li><a href="#">Update</a></li>
             <li><a href="#">Search</a></li>
-
         </ul>
     </nav>
 </div>
@@ -95,15 +95,15 @@ function closeNav() {
 
     <div class="row">
         <div class="col-md-6">
-            <h1>Utility Details</h1>
-            <a href= "{{ url('dynamicVisna/pdf') }}" class="btn btn-warning">PDF</a>
+            <h1>Finance Details</h1>
+            <a href= "{{ url('reportDynamicVisna/pdf') }}" class="btn btn-warning">PDF</a>
             <br>
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search3" method="get" >
+            <form action="/search7" method="get" >
                 <div class="input-group">
-                    <input type="search" name="search3" class="form-control" placeholder="Search by Date">
+                    <input type="search" name="search7" class="form-control" placeholder="Search by NIC">
                     <span class="input-group-prepend">
 					<button type="submit" class="btn btn-primary">Search</button>
 				</span>
@@ -111,7 +111,7 @@ function closeNav() {
             </form>
         </div>
         <div class="col-md-2 text-right">
-            <a href="{{ action('utilitycontroller@create') }}" class="btn btn-primary">Add Details</a>
+            <a href="{{ action('reportVisnacontroller@create') }}" class="btn btn-primary">Add Details</a>
         </div>
     </div>
 
@@ -119,32 +119,34 @@ function closeNav() {
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall3" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall7" type="submit" class="btn btn-danger">Delete All Selected</button>
         <br>
         <br>
         <table class="table table-bordered">
             <thead>
             <tr>
                 <th width="230"></th>
-                <th width="230">ID</th>
-                <th width="230">Type</th>
+                <th width="230">NIC</th>
+                <th width="230">Name</th>
+                <th width="230">Type of amount</th>
                 <th width="230">Date</th>
                 <th width="230">Amount</th>
             </tr>
             </thead>
             <tbody>
-            @foreach($utilities as $utility)
+            @foreach($reports_visnas as $reports_visna)
                 <tr>
-                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $utility->id}}"></td>
-                    <td>{{ $utility->id }}</td>
-                    <td>{{ $utility->type }}</td>
-                    <td>{{ $utility->date }}</td>
-                    <td>{{ $utility->amount }}</td>
+                    <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $reports_visna->id}}"></td>
+                    <td>{{ $reports_visna->nic }}</td>
+                    <td>{{ $reports_visna->name }}</td>
+                    <td>{{ $reports_visna->type }}</td>
+                    <td>{{ $reports_visna->date }}</td>
+                    <td>{{ $reports_visna->amount }}</td>
 
                     <td>
-                        <a href="{{ action('utilitycontroller@edit', $utility->id) }}"
+                        <a href="{{ action('reportVisnacontroller@edit', $reports_visna->id) }}"
                            class="btn btn-warning">UPDATE</a>
-                        <button formaction="{{ action('utilitycontroller@destroy', $utility->id)}}" type="submit"
+                        <button formaction="{{ action('reportVisnacontroller@destroy', $reports_visna->id)}}" type="submit"
                                 class="btn btn-danger">DELETE
                         </button>
 
@@ -185,3 +187,5 @@ function closeNav() {
 
 @endsection
 </body>
+</html>
+

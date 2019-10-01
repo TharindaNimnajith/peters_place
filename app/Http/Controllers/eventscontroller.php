@@ -38,7 +38,7 @@ class eventscontroller extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->get('search5');
+        $search = $request->get('search4');
         $events = DB::table('events')->orWhere('c_name', 'like','%'.$search. '%')
             ->orWhere('event_date', 'like','%'.$search. '%')
             ->orWhere('time', 'like','%'.$search. '%')->paginate(5);

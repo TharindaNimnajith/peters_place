@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
-class utilitycontroller extends Controller
+
+class reportVisnacontroller extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +16,8 @@ class utilitycontroller extends Controller
      */
     public function index()
     {
-        $utilities = DB::select('select * from utilities');
-        return view('index2', ['utilities' => $utilities]);
+        $reports_visnas = DB::select('select * from reports_visnas');
+        return view('index7', ['reports_visnas' => $reports_visnas]);
 
     }
 
@@ -27,7 +28,7 @@ class utilitycontroller extends Controller
      */
     public function create()
     {
-        return view('create2');
+        return view('create7');
     }
 
     /**
@@ -38,27 +39,31 @@ class utilitycontroller extends Controller
      */
     public function search(Request $request)
     {
-        $search = $request->get('search3');
-        $utilities = DB::table('utilities')->where('date', 'like', '%' . $search . '%')->paginate(5);
-        return view('index2', ['utilities' => $utilities]);
+        $search = $request->get('search7');
+        $reports_visnas = DB::table('reports_visnas')->where('nic', 'like', '%' . $search . '%')->paginate(5);
+        return view('index7', ['reports_visnas' => $reports_visnas]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'nic' => 'required|string',
+            'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
             'amount' => 'required|numeric',
         ]);
 
+        $nic = $request->get('nic');
+        $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
         $amount = $request->get('amount');
-        $utilities = DB::insert('insert into utilities(type, date, amount) value(?,?,?)', [$type, $date, $amount]);
-        if ($utilities) {
-            $red = redirect('utilities')->with('success', 'Data has been added');
+        $reports_visnas = DB::insert('insert into reports_visnas(nic, name, type, date, amount) value(?,?,?,?,?)', [$nic, $name, $type, $date, $amount]);
+        if ($reports_visnas) {
+            $red = redirect('reports_visnas')->with('success', 'Data has been added');
         } else {
-            $red = redirect('utilities/create2')->with('danger', 'Input data failed, please try again');
+            $red = redirect('reports_visnas/create7')->with('danger', 'Input data failed, please try again');
         }
         return $red;
     }
@@ -82,8 +87,8 @@ class utilitycontroller extends Controller
      */
     public function edit($id)
     {
-        $utilities = DB::select('select * from utilities where id=?', [$id]);
-        return view('edit2', ['utilities' => $utilities]);
+        $reports_visnas = DB::select('select * from reports_visnas where id=?', [$id]);
+        return view('edit7', ['reports_visnas' => $reports_visnas]);
     }
 
     /**
@@ -96,20 +101,25 @@ class utilitycontroller extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
+
+            'nic' => 'required|string',
+            'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
             'amount' => 'required|numeric',
         ]);
 
+        $nic = $request->get('nic');
+        $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
         $amount = $request->get('amount');
 
-        $utilities = DB::update('update utilities set type=?, date=?, amount=? where id=?', [$type, $date, $amount, $id]);
-        if ($utilities) {
-            $red = redirect('utilities')->with('success', 'Data has been updated');
+        $reports_visnas = DB::update('update reports_visnas set nic=?, name=?, type=?, date=?, amount=? where id=?', [$nic, $name, $type, $date, $amount, $id]);
+        if ($reports_visnas) {
+            $red = redirect('reports_visnas')->with('success', 'Data has been updated');
         } else {
-            $red = redirect('utilities/edit2/', $id)->with('danger', 'Error update, please try again');
+            $red = redirect('reports_visnas/edit2/', $id)->with('danger', 'Error update, please try again');
         }
         return $red;
     }
@@ -122,37 +132,15 @@ class utilitycontroller extends Controller
      */
     public function destroy($id)
     {
-        $utilities = DB::delete('delete from utilities where id=?', [$id]);
-        $red = redirect('utilities');
+        $reports_visnas = DB::delete('delete from reports_visnas where id=?', [$id]);
+        $red = redirect('reports_visnas');
         return $red;
     }
 
     public function deleteAll(Request $request)
     {
         $ids = $request->get('ids');
-        $dbs = DB::delete('delete from utilities where id in(' . implode(",", $ids) . ')');
-        return redirect('utilities');
+        $dbs = DB::delete('delete from reports_visnas where id in(' . implode(",", $ids) . ')');
+        return redirect('reports_visnas');
     }
-    public function calc()
-    {
-        $calcAmount = DB::table('utilities')->sum('amount');
-        dd($calcAmount);
-        return view('index2', compact('calcAmount'));
-    }
-    public function accomCal()
-    {
-        $calcAcoom = DB::table('accoms')->sum('payment');
-        dd($calcAcoom);
-        return view('index1', compact('calcAcoom'));
-    }
-    public function eventCal()
-    {
-        $calcEvent = DB::table('')->sum('');
-    }
-
-//    public function sum($calcAmount, $calcAcoom)
-//    {
-//        $total = calc.$calcAmount + accomCal().$calcAcoom;
-//    }
-
 }

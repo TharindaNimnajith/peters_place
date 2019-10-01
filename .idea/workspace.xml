@@ -2,7 +2,40 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/resources/views/report1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/report1.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/DynamicPDFController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/dynamicvisnaPDFcontroller.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/reportVisnaPDFcontroller.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/reportVisnacontroller.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/reportVisna-m.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/reportsV-m.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/reportsVisna.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2019_09_30_164407_create_reports_visnas_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/create7.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/dynamicVisna.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/edit7.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/index7.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/reportDynamicVisna.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/reportVisna.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/accomcontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/accomcontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/eventscontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/eventscontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/incomecontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/incomecontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/utilitycontroller.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/utilitycontroller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_31_092122_create_posts_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_09_30_062538_create_posts_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_01_081538_create_accoms_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_09_30_062843_create_accoms_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/AssingTask.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/AssingTask.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Incomes.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Incomes.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/create2.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/create2.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/index2.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index2.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/index5.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/index5.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_real.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_real.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -122,6 +155,7 @@
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
@@ -208,7 +242,16 @@
       <workItem from="1569588986534" duration="1408000" />
       <workItem from="1569592949934" duration="7000" />
       <workItem from="1569595272801" duration="3444000" />
-      <workItem from="1569649715843" duration="5180000" />
+      <workItem from="1569649715843" duration="6996000" />
+      <workItem from="1569659621774" duration="475000" />
+      <workItem from="1569689147194" duration="2002000" />
+      <workItem from="1569692300566" duration="174000" />
+      <workItem from="1569775655929" duration="8675000" />
+      <workItem from="1569819392931" duration="750000" />
+      <workItem from="1569820282374" duration="245000" />
+      <workItem from="1569821478925" duration="5703000" />
+      <workItem from="1569829082472" duration="24862000" />
+      <workItem from="1569903494158" duration="2547000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -539,7 +582,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569655295647</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="reports">
+      <created>1569655447497</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1569655447497</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -563,7 +613,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="online room reservation, materialize css, validations - Tharinda Nimnajith" />
     <MESSAGE value="update tables when inserting (table view) - Tharinda Nimnajith" />
     <MESSAGE value="delete rows - Tharinda Nimnajith" />
     <MESSAGE value="delete rows in room type, reservations + changes to routes in web.php - Tharinda Nimnajith" />
@@ -588,7 +637,8 @@
     <MESSAGE value="event model" />
     <MESSAGE value="event management" />
     <MESSAGE value="navigation errors fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="navigation errors fixed" />
+    <MESSAGE value="reports" />
+    <option name="LAST_COMMIT_MESSAGE" value="reports" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
 </project>
