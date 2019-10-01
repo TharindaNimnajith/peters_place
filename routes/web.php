@@ -116,9 +116,6 @@ Route::post('/search_room_reservation', 'RoomController@search_room_reservation'
 
 Route::get('customer', 'postcontroller@index');
 
-Route::get('dynamic_pdf', 'DynamicPDFController@index');
-Route::get('dynamic_pdf/pdf', 'DynamicPDFController@pdf');
-
 Route::get('/search1', 'postcontroller@search');
 
 Route::delete('/deleteall1', 'postcontroller@deleteAll');
@@ -140,11 +137,9 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 Route::resource('accoms', 'accomcontroller');
 
 Route::get('events1', 'eventscontroller@index');
-Route::get('/search6','eventscontroller@search');
+Route::get('/search5','eventscontroller@search');
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
 Route::resource('events','eventscontroller');
-
-
 
 
 
@@ -155,27 +150,14 @@ Route::resource('events','eventscontroller');
 
 // Visna Oshani - Finance Management
 
+
 Route::get('u', 'utilitycontroller@index');
+
 Route::get('/search3', 'utilitycontroller@search');
 
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
 Route::resource('utilities', 'utilitycontroller');
-Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
-Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
-
-Route::get('rep','reportVisnacontroller@index');
-Route::get('/search7', 'reportVisnacontroller@search');
-Route::delete('/deleteall7', 'reportVisnacontroller@deleteAll');
-
-Route::resource('reports_visnas','reportVisnacontroller');
-Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
-Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
-
-Route::get('/calcAmount', 'utilitycontroller@calc');
-Route::get('/calcAmount', 'utilitycontroller@accomCal');
-Route::get('/calcAmount', 'utilitycontroller@sum');
-
 
 
 // ------------------------------------------------------------------------

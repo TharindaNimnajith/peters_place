@@ -15,13 +15,12 @@ class CreateEventItemsTable extends Migration
     {
         Schema::create('event_items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('event_id');
             $table->date('event_date');
+            $table->date('rq_date');
             $table->string('item_name');
-            $table->integer('quantity');
+            $table->string('qty');
             $table->timestamps();
         });
-
     }
 
     /**

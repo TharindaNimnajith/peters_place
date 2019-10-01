@@ -1,10 +1,14 @@
-/*
-#searchRoomModal, 
-#searchReservationModal, 
-#searchRoomTypeModal {
-    top: 25%;
+#pdf_btn {
+    font-size: 120%;
 }
-*/
+
+#searchRoomModal  {
+    top: 12%;
+}
+
+#searchRoomTypeModal {
+    top: 16%;
+}
 
 #addRoomModal,
 #addRoomTypeModal {
