@@ -5,6 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+    <!-- Javascript -->
+
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -14,7 +18,7 @@
 <body>
 
 <nav class="navbar  fixed-top navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="{{url('/Eattendence')}}">Employee Attendance</a>
+    <a class="navbar-brand" href="{{url('/Eattendence')}}">Attendance</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -25,16 +29,15 @@
             <li class="nav-item">
                 <a class="nav-link" href="{{url('/EChart')}}"> Employee base <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item ">
                 <a class="nav-link" href="{{url('/MChart')}}"> Month base <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item active ">
                 <a class="nav-link" href="{{url('/sss')}}"> Register <span class="sr-only">(current)</span></a>
             </li>
 
 
         </ul>
-
     </div>
 </nav>
 <p></p>
@@ -47,33 +50,21 @@
                             </span>
         </div>
     </form>
-    <h2 style="text-align: center">MONTH BASE CHART</h2>
-    <h3>Please Select A month</h3>
-    <form method="post" action='/Mchart'>
+    <h3 style="text-align: center">Register </h3>
+    <p></p>
+    <form method="post" action="/date">
         {{ csrf_field() }}
-
-        <select id="category" name="month" required="required"
-                class="mdb-select md-form">
-            <option>Select Month</option>
-            <option value="Jan">January</option>
-            <option value="Feb">February</option>
-            <option value="Mar">March</option>
-            <option value="Apr">April</option>
-            <option value="May">May</option>
-            <option value="Jun">June</option>
-            <option value="Jul">July</option>
-            <option value="Aug">August</option>
-            <option value="Sep">September</option>
-            <option value="Oct">October</option>
-            <option value="Nov">November</option>
-            <option value="Dec">December</option>
-
-
-        </select>
+        Date:<input type="date" name="date" required>
         <input type="submit" value="submit"
                class="btn btn-primary btn-sm" style="margin-left: 0px">
     </form>
+
 </div>
+<p></p>
+<div class="container">
+    <h2>Selected Date:{{$date}}</h2>
+</div>
+
 <div class="container">
     {!! $chart->container() !!}
 </div>
@@ -94,6 +85,3 @@
 {!! $chart->script() !!}
 </body>
 </html>
-
-
-

@@ -459,8 +459,8 @@ Route::get('/ESChart', function () {
 
 Route::get('/ESChart', 'EmployeeChartController@salaryR');
 
-
-
+Route::get('/sss', 'EmployeeChartController@regdate');
+Route::post('/date', 'EmployeeChartController@register');
 
 
 

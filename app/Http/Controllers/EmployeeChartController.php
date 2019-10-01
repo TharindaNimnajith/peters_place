@@ -20,15 +20,6 @@ class EmployeeChartController extends Controller
     {
         $data = collect([]);//declare as a Array-----------------
         $data2 = collect([]);
-        $user_info = DB::table('memployees')->where('month', '')
-            ->select('id', DB::raw('count(*) as total'))
-            ->groupBy('id')
-            ->get();
-        //find relevant information from table--------------
-        foreach ($user_info as $row) {
-            $data->push($row->id);
-            $data2->push($row->total);
-        };
 
         //add data to Array---------------------------------------
 
@@ -151,8 +142,61 @@ class EmployeeChartController extends Controller
     }
 
     //register
-    public function register()
+    public function regdate()
     {
+        $date = 0;
+        $data = collect([]);//declare as a Array-----------------
+        $data2 = collect([]);
+
+
+        //add data to Array---------------------------------------
+
+        $chart = new test1();
+        //begin chart----------------------
+        $chart->labels($data->values());
+        $chart->dataset('Register', 'line', $data2->values());
+        //add label and data set
+        return view('Eregister', compact('chart', 'date'));
+
+    }
+
+
+    public function register(Request $request)
+    {
+        $date = $request->get('date');
+        $dateOnly = explode('-', $date);
+        $getdate = $dateOnly[2];
+        $getmonth = $dateOnly[1];
+        $getmonth--;
+        $monthArr = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
+            "Oct", "Nov", "Dec"
+        ];
+        $month = $monthArr[$getmonth];
+        //dd($month);
+
+
+        $data = collect([]);//declare as a Array-----------------
+        $data2 = collect([]);
+
+        $registerinfo = DB::table('memployees')->where('month', $month)->where('day', $getdate)->get();
+
+
+        //dd($registerinfo);
+        foreach ($registerinfo as $row) {
+            $data->push($row->id);
+            $data2->push($row->day);
+        };
+        $chart = new test1();
+        //begin chart----------------------
+
+        $chart->title($month);
+
+
+        $chart->labels($data->values());
+        $chart->dataset('Monthly Salaries', 'line', $data2->values());
+        //add label and data set
+        return view('Eregister', compact('chart', 'date'));
+        //dd($salary_info);
 
     }
 
