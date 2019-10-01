@@ -22,10 +22,10 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{{url('/EChart')}}"> Employee base <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item ">
+            <li class="nav-item active">
                 <a class="nav-link" href="{{url('/MChart')}}"> Month base <span class="sr-only">(current)</span></a>
             </li>
 
@@ -44,9 +44,9 @@
                             </span>
         </div>
     </form>
-    <h2 style="text-align: center">EMPLOYEE BASE CHART</h2>
+    <h2 style="text-align: center">MONTH BASE CHART</h2>
     <h3>Please Select A month</h3>
-    <form method="post" action='/Echart'>
+    <form method="post" action='/Mchart'>
         {{ csrf_field() }}
 
         <select id="category" name="month" required="required"

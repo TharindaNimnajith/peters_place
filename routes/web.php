@@ -313,6 +313,7 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
+Route::post('calmonsalary', 'salaryController@store');
 
 Route::get('/Eattendence', function () {
     return view('Employee_attendence');
@@ -442,10 +443,33 @@ Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' =>
 Route::get('/EChart', function () {
     return view('EmployeeChart');
 });
-
 Route::get('EChart', 'EmployeeChartController@index');
+Route::post('/Echart', 'EmployeeChartController@store');
 
-Route::get('my-chart', 'ChartController@index');
+Route::get('/MChart', function () {
+    return view('EMonthChart');
+});
+Route::get('/MChart', 'EmployeeChartController@day');
+Route::post('/Mchart', 'EmployeeChartController@day');
+
+
+Route::get('/ESChart', function () {
+    return view('EsalaryChart');
+});
+
+Route::get('/ESChart', 'EmployeeChartController@salaryR');
+
+
+
+
+
+
+
+
+//Route::get('/sss' ,'EmployeeChartController@salaryR');
+
+
+
 
 
 // ------------------------------------------------------------------------
