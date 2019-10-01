@@ -28,6 +28,9 @@
             <li class="nav-item ">
                 <a class="nav-link" href="{{url('/MChart')}}"> Month base <span class="sr-only">(current)</span></a>
             </li>
+            <li class="nav-item ">
+                <a class="nav-link" href="{{url('/sss')}}"> Register <span class="sr-only">(current)</span></a>
+            </li>
 
 
         </ul>

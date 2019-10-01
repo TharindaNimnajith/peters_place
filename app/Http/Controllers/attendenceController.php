@@ -20,7 +20,7 @@ class attendenceController extends Controller
     public function storeA(Request $request)
     {
         $this->validate($request, [
-            "id" => 'unique:memployees,id'
+            //"date" => 'unique:memployees,day'
         ]);
         $att = new Memployee([
             'id' => $request->get('id'),
