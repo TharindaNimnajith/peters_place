@@ -173,23 +173,37 @@ Route::resource('utilities', 'utilitycontroller');
 // Sethma Wattegedara - Event Management
 
 
+Route::resource('eventh', 'EventController');
+
+Route::resource('eventsa', 'EventTController');
+
+Route::get('searcheventaa', 'EventController@searcheventaa');
+
+
 //add menu
 Route::resource('menus', 'EventMenuController');
 
-//search
-Route::get('/search', 'EventMenuController@search');
 
 //add item
 Route::resource('eitems', 'EventItemController');
 
+
+Route::get('searcheitem', 'EventItemController@searcheitem');
+
+Route::get('/e_item/edit/pdf', 'EventItemController@pdf');
+
+
 //staff
 Route::resource('estaff', 'EstaffController');
 
+
 //e report
+
 Route::resource('ereport', 'EreportController');
 
-//event item
-Route::get('/create', 'EventItemController@create');
+Route::get('/e_report/edit/pdf', 'EreportController@pdf');
+
+Route::get('searchereport', 'EreportController@searchereport');
 
 
 // ------------------------------------------------------------------------
@@ -229,6 +243,7 @@ Route::post('/found', 'frontaddtask@store')->name('addimage');
 // Tharushika Liyanage - Supplier Management
 
 
+/*
 Route::get('/supplier', function () {
     $data = App\supplier::all();
     return view('supplier')->with('supplier', $data);
@@ -256,6 +271,44 @@ Route::post('/savesup', 'suppliercontroller@store');
 Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
 
 Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
+*/
+
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/supplier', function () {
+    $data = App\supplier::all();
+    return view('supplier')->with('supplier', $data);
+});
+
+Route::get('/booking', function () {
+    return view('booking');
+});
+
+Route::get('/orderFinal', function () {
+    return view('orderFinal');
+});
+
+Route::get('/expenditureFinal', function () {
+    return view('expenditureFinal');
+});
+
+
+Route::get('/search', 'orderController@search');
+
+Route::post('/save', 'ExpendsController@store');
+
+Route::post('/makeorderTask', 'orderController@store');
+
+Route::post('/savesup', 'suppliercontroller@store');
+
+Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
+
+Route::get('/updatesup/{id}', 'suppliercontroller@updatesup');
+
+Route::post('/updatesupp', 'suppliercontroller@updatesupp');
 
 
 // ------------------------------------------------------------------------

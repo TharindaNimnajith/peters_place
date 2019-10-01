@@ -13,224 +13,165 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <style type="text/css">
-        body {
-            color: #404E67;
-            background: #F5F7FA;
-            font-family: 'Open Sans', sans-serif;
-        }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 
-        .table-wrapper {
-            width: 700px;
-            margin: 30px auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        }
-
-        .table-title {
-            padding-bottom: 10px;
-            margin: 0 0 10px;
-        }
-
-        .table-title h2 {
-            margin: 6px 0 0;
-            font-size: 22px;
-        }
-
-        .table-title .add-new {
-            float: right;
-            height: 30px;
-            font-weight: bold;
-            font-size: 12px;
-            text-shadow: none;
-            min-width: 100px;
-            border-radius: 50px;
-            line-height: 13px;
-        }
-
-        .table-title .add-new i {
-            margin-right: 4px;
-        }
-
-        table.table {
-            table-layout: fixed;
-        }
-
-        table.table tr th, table.table tr td {
-            border-color: #e9e9e9;
-        }
-
-        table.table th i {
-            font-size: 13px;
-            margin: 0 5px;
-            cursor: pointer;
-        }
-
-        table.table th:last-child {
-            width: 100px;
-        }
-
-        table.table td a {
-            cursor: pointer;
-            display: inline-block;
-            margin: 0 5px;
-            min-width: 24px;
-        }
-
-        table.table td a.add {
-            color: #27C46B;
-        }
-
-        table.table td a.edit {
-            color: #FFC107;
-        }
-
-        table.table td a.delete {
-            color: #E34724;
-        }
-
-        table.table td i {
-            font-size: 19px;
-        }
-
-        table.table td a.add i {
-            font-size: 24px;
-            margin-right: -1px;
-            position: relative;
-            top: 3px;
-        }
-
-        table.table .form-control {
-            height: 32px;
-            line-height: 32px;
-            box-shadow: none;
-            border-radius: 2px;
-        }
-
-        table.table .form-control.error {
-            border-color: #f50000;
-        }
-
-        table.table td .add {
-            display: none;
-        }
-    </style>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('[data-toggle="tooltip"]').tooltip();
-            var actions = $("table td:last-child").html();
-            // Append table with add row form on add new button click
-            $(".add-new").click(function () {
-                $(this).attr("disabled", "disabled");
-                var index = $("table tbody tr:last-child").index();
-                var row = '<tr>' +
-                    '<td><input type="text" class="form-control" name="eventid" id="eventid"></td>' +
-                    '<td><input type="text" class="form-control" name="eventdata" id="eventdate"></td>' +
-                    '<td><input type="text" class="form-control" name="itemnm" id="itemnm"></td>' +
-                    '<td><input type="text" class="form-control" name="qty" id="qty"></td>' +
-                    '<td>' + actions + '</td>' +
-                    '</tr>';
-                $("table").append(row);
-                $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-            // Add row on add button click
-            $(document).on("click", ".add", function () {
-                var empty = false;
-                var input = $(this).parents("tr").find('input[type="text"]');
-                input.each(function () {
-                    if (!$(this).val()) {
-                        $(this).addClass("error");
-                        empty = true;
-                    } else {
-                        $(this).removeClass("error");
-                    }
-                });
-                $(this).parents("tr").find(".error").first().focus();
-                if (!empty) {
-                    input.each(function () {
-                        $(this).parent("td").html($(this).val());
-                    });
-                    $(this).parents("tr").find(".add, .edit").toggle();
-                    $(".add-new").removeAttr("disabled");
-                }
-            });
-            // Edit row on edit button click
-            $(document).on("click", ".edit", function () {
-                $(this).parents("tr").find("td:not(:last-child)").each(function () {
-                    $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
-                });
-                $(this).parents("tr").find(".add, .edit").toggle();
-                $(".add-new").attr("disabled", "disabled");
-            });
-            // Delete row on delete button click
-            $(document).on("click", ".delete", function () {
-                $(this).parents("tr").remove();
-                $(".add-new").removeAttr("disabled");
-            });
-        });
-    </script>
 </head>
+<style>
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
+
+    .sidenav a {
+
+        padding: 8px 18px 8px 32px;
+        text-decoration: none;
+        font-size: 20px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 16px;
+        margin-left: 50px;
+    }
+
+    @media screen and (max-height: 450px) {
+        .sidenav {
+            padding-top: 15px;
+        }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+    }
+
+</style>
 <body>
-<form method="post" action="/saveeventitems">
-    {{csrf_field()}}
-    <div class="container">
-        <div class="table-wrapper">
-            <div class="table-title">
-                <div class="row">
-                    <div class="col-sm-8"><h2>Event Items' <b>Details</b></h2></div>
-                    <div class="col-sm-4">
-                        <button type="button" class="btn btn-info add-new" disabled="disabled"><i
-                                class="fa fa-plus"></i> Add New
-                        </button>
-                    </div>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/eventh"> Event Information </a>
+    <a href="/eitems">Items Information</a>
+    <a href="/menus">Menu Information</a>
+    <a href="/ereport">Event Report Information</a>
+
+</div>
+<br>
+
+<span style="font-size:20px;cursor:pointer; padding-top: 200px " onclick="openNav()">&#9776;Event Management</span>
+
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>
+
+<div class="container">
+    <br>
+    <br>
+    <!--item date and required date-->
+    <div>
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div><br/>
+        @endif
+        <form method="post" action="{{ route('eitems.store') }}">
+
+            @csrf
+            <section>
+
+                <!--start of the table-->
+                <div class="panel panel-footer">
+                    <table class="table table-bordered ">
+                        <thead>
+                        <tr>
+                            <th>Event Date</th>
+                            <th>Required Date</th>
+                            <th>Item Name</th>
+                            <th>Item Quantity/Weight</th>
+                            <th><a href="#" class="addRow"><i class="glyphicon glyphicon-plus"></i> </a></th>
+                        </tr>
+                        </thead>
+                        <tbody><!--start tbody-->
+                        <tr>
+                            <td><input type="date" name="event_date" class="form-control quantity" required=""></td>
+                            <td><input type="date" name="rq_date" class="form-control quantity" required=""></td>
+                            <td><input type="text" name="item_name" class="form-control quantity" required=""></td>
+                            <td><input type="text" name="qty" class="form-control quantity" required=""></td>
+                            <!--X button-->
+                            <td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a>
+                            </td>
+                        </tr>
+                        </tbody><!--tbody end-->
+                        <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td><input type="submit" name="" value="Submit" class="btn btn-success"></td>
+                        </tr>
+                        </tfoot>
+
+                    </table><!--table end-->
+
                 </div>
-            </div>
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>Event ID</th>
-                    <th>Event Date</th>
-                    <th>Item Name</th>
-                    <th>Quantity</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
+            </section>
 
-                <tr>
-                    <td><input type="text" class="form-control" name="eventid" id="eventid"></td>
-                    <td><input type="text" class="form-control" name="eventdate" id="eventdate"></td>
-                    <td><input type="text" class="form-control" name="itemnm" id="itemnm"></td>
-                    <td><input type="text" class="form-control" name="qty" id="qty"></td>
-                    <td>
-                        <a class="add" title="" data-toggle="tooltip" data-original-title="Add"
-                           style="display: inline;"><i class="material-icons"></i></a>
-                        <a class="edit" title="" data-toggle="tooltip" data-original-title="Edit"
-                           style="display: none;"><i class="material-icons"></i></a>
-                        <a class="delete" title="" data-toggle="tooltip" data-original-title="Delete"><i
-                                class="material-icons"></i></a>
-
-                    </td>
-                </tr>
-                </tbody>
-                <td><input type="submit" name="Save" class="btn btn-primary"></td>
-            </table>
-        </div>
+        </form>
     </div>
-</form>
+</div>
+<!-- javascript for the table-->
+<script type="text/javascript">
 
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+    $('.addRow').on('click', function () {
+        addRow();
+    });
 
+    function addRow() {
+        var tr = '<tr>' + '<td><input type="date" name="event_date" class="form-control quantity" required=""></td>' +
+            '<td><input type="date" name="rq_date" class="form-control quantity" required=""></td>' +
+            '<td><input type="text" name="item_name" class="form-control name" required=""></td>' +
+            '<td><input type="text" name="qty" class="form-control quantity" required=""></td>' +
+            '<td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a> </td>' +
+            '</td>';
+        $('tbody').append(tr);
+
+    }
+
+    $('.remove').live('click', function () {
+        var last = $('tbody tr').length;
+        if (last == 1) {
+            alert("You can not remove the last row");
+        } else {
+            $(this).parent().parent().remove();
+        }
+    });
+</script>
+<script src="{{ asset('js/app.js') }}" type="text/js"></script>
 
 </body>
 

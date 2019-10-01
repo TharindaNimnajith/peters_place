@@ -16,7 +16,6 @@ class EventTController extends Controller
     public function index()
     {
         $eventt = EventT::all();
-
         return view('events.index', compact('eventt'));
     }
 
