@@ -14,11 +14,13 @@ class EmployeeChartController extends Controller
      *
      * @return Response
      */
+
+    ///attendance cart base on employeee
     public function index()
     {
         $data = collect([]);//declare as a Array-----------------
         $data2 = collect([]);
-        $user_info = DB::table('memployees')->where('month', 'Sep')
+        $user_info = DB::table('memployees')->where('month', '')
             ->select('id', DB::raw('count(*) as total'))
             ->groupBy('id')
             ->get();
@@ -55,9 +57,103 @@ class EmployeeChartController extends Controller
      * @param Request $request
      * @return Response
      */
+
     public function store(Request $request)
     {
-        //
+        $mon = $request->get('month');
+
+
+        $data = collect([]);//declare as a Array-----------------
+        $data2 = collect([]);
+        $user_info = DB::table('memployees')->where('month', $mon)
+            ->select('id', DB::raw('count(*) as total'))
+            ->groupBy('id')
+            ->get();
+        //find relevant information from table--------------
+        foreach ($user_info as $row) {
+            $data->push($row->id);
+            $data2->push($row->total);
+        };
+
+        //add data to Array---------------------------------------
+
+        $chart = new test1();
+        //begin chart----------------------
+
+        $chart->title($mon);
+
+
+        $chart->labels($data->values());
+        $chart->dataset('Employee Attendance', 'line', $data2->values());
+        //add label and data set
+        return view('EmployeeChart', compact('chart'));
+    }
+
+
+    /////attendance base on month
+
+    public function day(Request $request)
+    {
+
+        $mon = $request->get('month');
+
+        $data = collect([]);//declare as a Array-----------------
+        $data2 = collect([]);
+
+        $user_info = DB::table('memployees')->where('month', $mon)
+            ->select('day', DB::raw('count(*) as total'))
+            ->groupBy('day')
+            ->get();
+        // dd($user_info);
+        foreach ($user_info as $row) {
+            $data->push($row->day);
+            $data2->push($row->total);
+        };
+
+        $chart = new test1();
+        //begin chart----------------------
+
+        $chart->title('');
+
+
+        $chart->labels($data->values());
+        $chart->dataset('Daily Attendance', 'line', $data2->values());
+        //add label and data set
+        return view('EMonthChart', compact('chart'));
+    }
+
+
+    ///salary chart
+    public function salaryR()
+    {
+
+        $data = collect([]);//declare as a Array-----------------
+        $data2 = collect([]);
+
+        $salary_info = DB::table('e_m_salaries')->select("month", "salary")->get();
+        //  dd($salary_info);
+        foreach ($salary_info as $row) {
+            $data->push($row->month);
+            $data2->push($row->salary);
+        };
+        $chart = new test1();
+        //begin chart----------------------
+
+        $chart->title('');
+
+
+        $chart->labels($data->values());
+        $chart->dataset('Monthly Salaries', 'line', $data2->values());
+        //add label and data set
+        return view('EsalaryChart', compact('chart'));
+        dd($salary_info);
+
+    }
+
+    //register
+    public function register()
+    {
+
     }
 
     /**
@@ -79,7 +175,7 @@ class EmployeeChartController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**

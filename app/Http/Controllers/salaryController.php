@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Employee;
 use App\EmpSalary;
+use App\EMSalary;
 use App\Memployee;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -185,7 +186,7 @@ class salaryController extends Controller
             }
         }
 
-        return redirect()->back()->with('wrong', 'please select valide month');
+        return redirect()->back()->with('wrong', 'please select valid month');
 
 
     }
@@ -210,7 +211,46 @@ class salaryController extends Controller
     public
     function store(Request $request)
     {
-        //
+
+        $mon = $request->get('month');
+
+
+        $getmonth = DB::table('emp_salaries')->where('month', "=", $mon)->value('month');
+        if ($getmonth != null) {
+            $this->validate($request, [
+                "month" => 'unique:e_m_salaries,month'
+            ]);
+
+            $salary_info = DB::table('emp_salaries')->where('month', $mon)->sum('salary');
+            //dd($salary_info);
+            $monsalary = new EMSalary([
+                    'month' => $mon,
+                    'salary' => $salary_info,]
+            );
+            $monsalary->save();
+            return redirect()->back();
+        } else {
+            return redirect()->back()->with('wrong', 'This month salary not added yet');
+        }
+
+//        if (rr)
+//        {
+//            dd($getmonth);
+//        }
+//        else{
+//            dd('fuck');
+//        }
+
+
+        $salary_info = DB::table('emp_salaries')->where('month', $mon)->sum('salary');
+        //dd($salary_info);
+        $monsalary = new EMSalary([
+                'month' => $mon,
+                'salary' => $salary_info,]
+        );
+        $monsalary->save();
+        return redirect()->back();
+
     }
 
     /**
@@ -220,9 +260,9 @@ class salaryController extends Controller
      * @return Response
      */
     public
-    function show($id)
+    function show()
     {
-        //
+
     }
 
     /**
