@@ -98,13 +98,22 @@ function closeNav() {
                     </ul>
                 </div>
             @endif
-            <form action="{{action('utilitycontroller@store')}}" method="post">
+            <form action="{{action('reportVisnacontroller@store')}}" method="post">
                 @csrf
+                <div class="form-group">
+                    <label>Nic</label>
+                    <input class="form-control" type="text" name="nic"/>
+                </div>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input class="form-control" type="text" name="name"/>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Type</label>
                     <select style="margin-left: 0px; margin-bottom:30px" class="form-control" type="text" name="type">
-                        <option value="water">Water</option>
-                        <option value="electricity">Electricity</option>
+                        <option value="income">Income</option>
+                        <option value="expenditure">Expenditure</option>
                     </select>
                 </div>
                 <div class="form-group">

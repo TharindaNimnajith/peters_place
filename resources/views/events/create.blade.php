@@ -61,12 +61,12 @@
 
                     <div class="form-group">
                         <label for="last_name">Event Date:</label>
-                        <input type="date" class="form-control" name="event_date"/>
+                        <input type="text" class="form-control" name="event_date"/>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Event Time:</label>
-                        <input type="time" class="form-control" name="event_time"/>
+                        <input type="text" class="form-control" name="event_time"/>
                     </div>
                     <div class="form-group">
                         <label for="city">Category:</label>

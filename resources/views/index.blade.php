@@ -115,6 +115,9 @@
             <br>
             <br>
         </div>
+        <div class="col-md-5" align="right">
+            <a href="{{url('dynamic_pdf/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+        </div>
         <div class="col-md-4">
             <form action="/search1" method="get">
                 <div class="input-group">
@@ -167,6 +170,17 @@
                     </td>
                 </tr>
             @endforeach
+
+            @foreach($posts as $customer)
+                <tr>
+                    <td>{{$customer->fname}}</td>
+                    <td>{{$customer->lname}}</td>
+                    <td>{{$customer->nic}}</td>
+                    <td>{{$customer->email}}</td>
+                    <td>{{$customer->phone}}</td>
+                    <td>{{$customer->address}}</td>
+                </tr>
+                @endforeach
             </tbody>
             <tfoot>
 

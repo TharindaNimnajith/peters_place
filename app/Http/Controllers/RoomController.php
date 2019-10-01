@@ -836,6 +836,22 @@ class RoomController extends Controller
     }
 
 
+    function dynamic_pdf_room_types()
+    {
+        $room_types_data = $this->get_room_types_data();
+
+        return view('dynamic_pdf_rooms')->with('room_types_data', $room_types_data);
+    }
+
+
+    function dynamic_pdf_room_reservations()
+    {
+        $room_reservations_data = $this->get_room_reservations_data();
+
+        return view('dynamic_pdf_rooms')->with('room_reservations_data', $room_reservations_data);
+    }
+
+
     function get_rooms_data()
     {
         $rooms_data = DB::table('rooms')
@@ -845,7 +861,7 @@ class RoomController extends Controller
         return $rooms_data;
     }
 
-    
+
     function get_room_types_data()
     {
         $room_types_data = DB::table('room_types')
@@ -856,11 +872,51 @@ class RoomController extends Controller
     }
 
 
+    function get_room_reservations_data()
+    {
+        $room_reservations_data = DB::table('reserves')
+            ->limit(30)
+            ->get();
+
+        return $room_reservations_data;
+    }
+
+
+    function get_customers_data()
+    {
+        $customers_data = DB::table('customers')
+            ->limit(30)
+            ->get();
+
+        return $customers_data;
+    }
+
+
     function rooms_pdf()
     {
         $pdf = App::make('dompdf.wrapper');
 
         $pdf->loadHTML($this->convert_rooms_data_to_html());
+
+        return $pdf->stream();
+    }
+
+
+    function room_types_pdf()
+    {
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->loadHTML($this->convert_room_types_data_to_html());
+
+        return $pdf->stream();
+    }
+
+
+    function room_reservations_pdf()
+    {
+        $pdf = App::make('dompdf.wrapper');
+
+        $pdf->loadHTML($this->convert_room_reservations_data_to_html());
 
         return $pdf->stream();
     }
@@ -938,17 +994,28 @@ class RoomController extends Controller
         // header
 
         $output = '
-            <div>
+            <div style="border:solid 1px; margin-bottom:40px;">
                 <div> 
-                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="25%" height="25%"/> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin:2px 2px 2px 2px;"/> 
                 </div>
 
-                <div style="">
-                    <h2>Peter\'s Place Hotel </h2>
+                <div style="margin-left:300px; margin-top:-200px;">
+                    <h2 style="margin-left:50px;">Peter\'s Place Hotel</h2>
 
-                    <p>Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara</p>
-                    <p>+94 (41)225-74-66</p>
-                    <p>info@petersplace.lk</p>
+                    <p> 
+                        <b><p>Address    : </p></b> 
+                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara
+                    </p>
+                    
+                    <p> 
+                        <b><p>Contact No : </p></b> 
+                        +94 (41)225-74-66
+                    </p>
+                    
+                    <p> 
+                        <b><p>E-mail     : </p></b> 
+                        info@petersplace.lk
+                    </p>
                 </div>
             </div>
         ';
@@ -957,7 +1024,7 @@ class RoomController extends Controller
         // table headings
 
         $output .= '
-            <h1 align="center">Room List</h1>
+            <h1 align="center" style="margin-bottom:20px;">Room List</h1>
 
             <table width="100%" style="border-collapse:collapse; border:0px;">
 
@@ -971,15 +1038,15 @@ class RoomController extends Controller
         ';
 
 
-        foreach ($rooms_data as $rooms) 
+        foreach ($rooms_data as $rooms)
         {
             // availability - formatting db value
 
-            if ($rooms->availability) 
+            if ($rooms->availability)
             {
                 $availability = "Available";
-            } 
-            else 
+            }
+            else
             {
                 $availability = "Not Available";
             }
@@ -987,15 +1054,15 @@ class RoomController extends Controller
 
             // status - formatting db value
 
-            if ($rooms->status == 1) 
+            if ($rooms->status == 1)
             {
                 $status = "Clean";
-            } 
-            else if ($rooms->status == 2) 
+            }
+            else if ($rooms->status == 2)
             {
                 $status = "Not Clean";
-            } 
-            else if ($rooms->status == 3) 
+            }
+            else if ($rooms->status == 3)
             {
                 $status = "Out of Service";
             }
@@ -1003,9 +1070,9 @@ class RoomController extends Controller
 
             // room types - formatting db value
 
-            foreach ($room_types_data as $room_type) 
+            foreach ($room_types_data as $room_type)
             {
-                if ($room_type->id == $rooms->t_id) 
+                if ($room_type->id == $rooms->t_id)
                 {
                     $type = $room_type->name;
                 }
@@ -1028,6 +1095,18 @@ class RoomController extends Controller
         $output .= '</table>';
 
         return $output;
+    }
+
+
+    function convert_room_types_data_to_html()
+    {
+
+    }
+
+
+    function convert_room_reservations_data_to_html()
+    {
+
     }
 
 

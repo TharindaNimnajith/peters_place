@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Expends;
 use Illuminate\Http\Request;
+
 
 class ExpendsController extends Controller
 {
@@ -12,7 +14,7 @@ class ExpendsController extends Controller
             'amount' => 'required',
             'date' => 'required'
         ]);
-        
+
         $expends = new Expends([
             'type' => $request->get('item'),
             'amount' => $request->get('amount'),
@@ -20,5 +22,8 @@ class ExpendsController extends Controller
         ]);
 
         $expends->save();
+        $data = expends::all();
+
+        return view('expenditureFinal')->with('expends', $data);
     }
 }

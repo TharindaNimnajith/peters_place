@@ -4,8 +4,6 @@
 
 namespace Composer\Autoload;
 
-use Closure;
-
 class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
 {
     public static $files = array (
@@ -429,13 +427,10 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
 
     public static $classMap = array (
         'App\\Attendence' => __DIR__ . '/../..' . '/app/Attendence.php',
-        'App\\Charts\\test1' => __DIR__ . '/../..' . '/app/Charts/test1.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\DeleteEmployee' => __DIR__ . '/../..' . '/app/DeleteEmployee.php',
-        'App\\EMSalary' => __DIR__ . '/../..' . '/app/EMSalary.php',
         'App\\EmpSalary' => __DIR__ . '/../..' . '/app/EmpSalary.php',
         'App\\Employee' => __DIR__ . '/../..' . '/app/Employee.php',
-        'App\\EmployeeAttCount' => __DIR__ . '/../..' . '/app/EmployeeAttCount.php',
         'App\\Estaff' => __DIR__ . '/../..' . '/app/Estaff.php',
         'App\\EventT' => __DIR__ . '/../..' . '/app/EventT.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
@@ -447,7 +442,6 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
         'App\\Http\\Controllers\\Auth\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ResetPasswordController.php',
         'App\\Http\\Controllers\\Auth\\VerificationController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/VerificationController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
-        'App\\Http\\Controllers\\EmployeeChartController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmployeeChartController.php',
         'App\\Http\\Controllers\\EmployeeController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmployeeController.php',
         'App\\Http\\Controllers\\EreportController' => __DIR__ . '/../..' . '/app/Http/Controllers/EreportController.php',
         'App\\Http\\Controllers\\EstaffController' => __DIR__ . '/../..' . '/app/Http/Controllers/EstaffController.php',
@@ -464,7 +458,6 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
         'App\\Http\\Controllers\\TaskController' => __DIR__ . '/../..' . '/app/Http/Controllers/TaskController.php',
         'App\\Http\\Controllers\\accomcontroller' => __DIR__ . '/../..' . '/app/Http/Controllers/accomcontroller.php',
         'App\\Http\\Controllers\\attendenceController' => __DIR__ . '/../..' . '/app/Http/Controllers/attendenceController.php',
-        'App\\Http\\Controllers\\eventscontroller' => __DIR__ . '/../..' . '/app/Http/Controllers/eventscontroller.php',
         'App\\Http\\Controllers\\expenditurecontroller' => __DIR__ . '/../..' . '/app/Http/Controllers/expenditurecontroller.php',
         'App\\Http\\Controllers\\frontaddtask' => __DIR__ . '/../..' . '/app/Http/Controllers/frontaddtask.php',
         'App\\Http\\Controllers\\incomecontroller' => __DIR__ . '/../..' . '/app/Http/Controllers/incomecontroller.php',
@@ -508,7 +501,6 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
         'App\\customer' => __DIR__ . '/../..' . '/app/customer.php',
         'App\\eventItem' => __DIR__ . '/../..' . '/app/eventItem.php',
         'App\\eventM' => __DIR__ . '/../..' . '/app/eventM.php',
-        'App\\events' => __DIR__ . '/../..' . '/app/events.php',
         'App\\expenditure' => __DIR__ . '/../..' . '/app/expenditure.php',
         'App\\foundite' => __DIR__ . '/../..' . '/app/foundite.php',
         'App\\newstst' => __DIR__ . '/../..' . '/app/newstst.php',
@@ -4361,7 +4353,7 @@ class ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef
 
     public static function getInitializer(ClassLoader $loader)
     {
-        return Closure::bind(function () use ($loader) {
+        return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit4e1bace597da56e8af58ea8d7e6e77ef::$prefixesPsr0;

@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu</title>
+    <title>report</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -63,15 +63,19 @@
 
 </head>
 <body>
+<div class="container">
+</div>
+<br>
+<!--MAIN SECTION-->
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="/eventh"> Event Information </a>
     <a href="/eitems">Items Information</a>
     <a href="/menus">Menu Information</a>
     <a href="/ereport">Event Report Information</a>
+    <br>
 
 </div>
-<br>
 
 <span style="font-size:20px;cursor:pointer; padding-top: 200px " onclick="openNav()">&#9776;Event Management</span>
 
@@ -84,65 +88,88 @@
         document.getElementById("mySidenav").style.width = "0";
     }
 </script>
-<div class="container">
-    <!--MAIN SECTION-->
 
+<div class="row">
+    <div class="col-sm-12">
+        <br>
 
-    <div class="row">
-        <div class="col-sm-12">
-            <br>
-            <br>
-            <br>
-            <br>
-            <center><h2>Menus</h2></center>
-            <table class="table table-hover table-dark">
+        <center><h2>Event Management Report</h2></center>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <br/>
+        @endif
+        <form method="post" action="{{ route('ereport.update', $eventreport->id) }}">
+            @method('PATCH')
+            @csrf
+            <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <td>ID</td>
-                    <td>Menu name</td>
-                    <td>Menu type</td>
-                    <td>Main Dishes</td>
-                    <td>Salads</td>
-                    <td>Desserts</td>
-                    <td>beverages</td>
-                    <td>price</td>
-                    <td colspan=2>Actions</td>
+                    <th scope="col" colspan="4" style="color:blue;">Event Information</th>
+
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($menu as $emenu)
-                    <tr>
-                        <td>{{$emenu->id}}</td>
-                        <td>{{$emenu->menu_name}}</td>
-                        <td>{{$emenu->menu_type}}</td>
-                        <td>{{$emenu->main_dishes}}</td>
-                        <td>{{$emenu->salads}}</td>
-                        <td>{{$emenu->deserts}}</td>
-                        <td>{{$emenu->beverages}}</td>
-                        <td>{{$emenu->price}}</td>
-                        <td>
-                            <a href="{{ route('menus.edit', $emenu->id)}}" class="btn btn-primary">View</a>
-                        </td>
-                        <td>
-                            <form action="{{ route('menus.destroy', $emenu->id)}}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
+                <tr>
+                    <td>Customer name</td>
+                    <td><input type="text" name="customer_name" value={{ $eventreport->customer_name }}></td>
+                    <td>Event date</td>
+                    <td><input type="text" name="event_date" value={{ $eventreport->event_date }}></td>
+                <tr>
+                    <td>Event time</td>
+                    <td><input type="text" name="event_time" value={{ $eventreport->event_time }}></td>
+                    <td>Event Manager</td>
+                    <td><input type="text" name="event_manager" value={{ $eventreport->event_manager }}></td>
+                </tr>
+                </tr>
+                <tr>
+
+                    <td>Estimated No. of Attendence of guest for the Event</td>
+                    <td><input type="text" name="attendence" value={{ $eventreport->attendence }} ></td>
+                    <td>Proposed Registration cost for a each person</td>
+                    <td><input type="text" name="cost" value={{ $eventreport->cost }} ></td>
+
+                </tr>
+                <tr>
+                    <th colspan="4" style="color:blue;">Budget Information</th>
+                </tr>
+                <tr>
+
+                    <td colspan="2">Actual Expence</td>
+                    <td><input type="text" name="etotal" value={{ $eventreport->etotal }}></td>
+                    <td></td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">Budget Expence</td>
+                    <td><input type="text" name="btotal" value={{ $eventreport->btotal }}></td>
+                    <td></td>
+
+                </tr>
+
                 </tbody>
+
             </table>
-            <div></div>
-        </div>
-        <!--MAIN SECTION-->
-        <div>
-            <a style="margin: 19px;" href="{{ route('menus.create')}}" class="btn btn-primary">New Menu</a>
-        </div>
+            <input type="submit" value="Update" name="" class="btn btn-success"/>
+
+        </form>
 
     </div>
-    <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+    <!--MAIN SECTION-->
+
+
 </div>
+<script src="{{ asset('js/app.js') }}" type="text/js"></script>
+</div>
+<br>
+
 </body>
 </html>
+
+
