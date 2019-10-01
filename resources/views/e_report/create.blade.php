@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>edit event</title>
+    <title>report</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
     <style>
         .sidenav {
             height: 100%;
@@ -60,9 +61,13 @@
 
     </style>
 
-
 </head>
 <body>
+
+<div class="container">
+
+
+</div>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     <a href="/eventh"> Event Information </a>
@@ -84,12 +89,15 @@
         document.getElementById("mySidenav").style.width = "0";
     }
 </script>
-<div class="container">
-    <!--MAIN SECTION-->
-    <div class="row">
-        <div class="col-sm-8 offset-sm-2">
-            <center><h2>Update item </h2></center>
 
+
+<!--MAIN SECTION-->
+<div class="row">
+    <div class="col-sm-12">
+
+        <br>
+        <center><h2>Event Management Report</h2></center>
+        <div>
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -97,44 +105,90 @@
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div>
-                <br/>
+                </div><br/>
             @endif
-            <form method="post" action="{{ route('eitems.update', $eitem->id) }}">
-                @method('PATCH')
+            <form method="post" action="{{ route('ereport.store') }}">
                 @csrf
-                <div class="form-group">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col" colspan="4" style="color:blue;">Event Information</th>
 
-                    <label for="event_date">Event Date</label>
-                    <input type="date" class="form-control" name="event_date" value={{ $eitem->event_date}} />
-                </div>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Customer name</td>
+                        <td><input type="text" name="customer_name" id="val1"></td>
+                        <td>Event date</td>
+                        <td><input type="date" name="event_date" id="val2"></td>
+                    <tr>
+                        <td>Event time</td>
+                        <td><input type="text" name="event_time" id="val3"></td>
+                        <td>Event Manager</td>
+                        <td><input type="text" name="event_manager" id="val4"></td>
+                    </tr>
+                    </tr>
+                    <tr>
 
-                <div class="form-group">
-                    <label for="rq_date">Required Date</label>
-                    <input type="date" class="form-control" name="rq_date" value={{ $eitem->rq_date }} />
-                </div>
+                        <td>Estimated No. of Attendence of guest for the Event</td>
+                        <td><input type="text" name="attendence" id="val5"></td>
+                        <td>Proposed Registration cost for a each person</td>
+                        <td><input type="text" name="cost" id="val6"></td>
 
-                <div class="form-group">
-                    <label for="item_name">Item name </label>
-                    <input type="text" class="form-control" name="item_name" value={{ $eitem->item_name }} />
-                </div>
-                <div class="form-group">
-                    <label for="qty">Quantity / Weight</label>
-                    <input type="text" class="form-control" name="qty" value={{ $eitem->qty }} />
-                </div>
+                    </tr>
+                    <tr>
+                        <th colspan="4" style="color:blue;">Budget Information</th>
+                    </tr>
+                    <tr>
 
+                        <td colspan="2">Actual Expence</td>
+                        <td colspan="2"><input type="number" name="etotal" id="val7"></td>
+                        <td></td>
+                    </tr>
 
-                <button type="submit" class="btn btn-primary">Update</button>
+                    <tr>
+                        <td colspan="2">Budget Expence</td>
+                        <td colspan="2"><input type="number" name="btotal" id="val8"></td>
+                        <td></td>
 
+                    </tr>
+
+                    </tbody>
+
+                </table>
+                <center><input type="submit" value="Save" name="" class="btn btn-success"></center>
             </form>
         </div>
+        <input type="button" value="Demo" id="btn3">
+
     </div>
-
-
     <!--MAIN SECTION-->
+
 
 </div>
 <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+</div>
+<br>
+<br>
+<script>
+    $(document).ready(function () {
+        $("#btn3").click(function () {
+            $("#val1").val("Nimal");
+            $("#val2").val("2019-08-19");
+            $("#val3").val("11.00 AM -4.00 PM");
+            $("#val4").val("kavi");
+            $("#val5").val("100");
+            $("#val6").val("1000.00");
+            $("#val7").val("50000.00");
+            $("#val8").val("45000.00");
+
+        });
+    });
+
+</script>
 </body>
+
 </html>
+
 

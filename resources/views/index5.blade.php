@@ -112,9 +112,9 @@
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search5" method="get">
+            <form action="/search6" method="get">
                 <div class="input-group">
-                    <input type="search" name="search5" class="form-control">
+                    <input type="search" name="search4" class="form-control">
                     <span class="input-group-prepend">
 					<button type="submit" class="btn btn-primary">Search</button>
 				</span>
@@ -135,7 +135,7 @@
             <thead>
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
-                <th style="width: 60px">Custome Name</th>
+                <th style="width: 60px">Customer Name</th>
                 <th style="width: 80px">Event Date</th>
                 <th style="width: 60px">Event Time</th>
                 <th style="width: 60px">Category</th>

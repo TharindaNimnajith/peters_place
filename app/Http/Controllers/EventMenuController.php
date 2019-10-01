@@ -33,6 +33,7 @@ class EventMenuController extends Controller
     }
 
 
+
     /**
      * Store a newly created resource in storage.
      *
@@ -46,7 +47,6 @@ class EventMenuController extends Controller
         $eemenu = DB::table('event_m_s')->where('menu_name', 'like', '%' . $search . '%')->paginate(5);
         return view('menus.index', ['event_m_s' => $eemenu]);
     }
-
     public function store(Request $request)
     {
         $request->validate([
@@ -56,7 +56,7 @@ class EventMenuController extends Controller
             'salads' => 'required',
             'deserts' => 'required',
             'beverages' => 'required',
-            'price' => 'required|integer'
+            'price' => 'required'
         ]);
 
         $menu = new eventM([
@@ -116,7 +116,7 @@ class EventMenuController extends Controller
             'salads' => 'required',
             'deserts' => 'required',
             'beverages' => 'required',
-            'price' => 'required|integer'
+            'price' => 'required'
 
         ]);
 
