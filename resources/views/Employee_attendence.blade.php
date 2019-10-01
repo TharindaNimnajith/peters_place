@@ -207,7 +207,7 @@
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="#contact"><img
+                    <li class="my"><a href={{url('/EChart')}}><img
                                 src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                     </li>
                 </ul>

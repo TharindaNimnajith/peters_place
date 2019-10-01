@@ -46,8 +46,13 @@ Route::get('/room_management', function () {
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
+    //$dat = App\room::all();
+
+    //$count = room::where('t_id', '=', )->count();
 
     return view('room_type_management')->with('room_types', $data);
+
+    //return view('room_type_management')->with(['room_types' => $data, 'dat' => $dat]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -108,6 +113,11 @@ Route::post('/search_room_type', 'RoomController@search_room_type');
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
+Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
+
+Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
+
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -155,6 +165,10 @@ Route::get('/search6','eventscontroller@search');
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
 Route::resource('events','eventscontroller');
 
+Route::get('/eventh', 'EventController@index');
+
+Route::resource('events', 'EventTController');
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -162,6 +176,7 @@ Route::resource('events','eventscontroller');
 
 
 Route::get('u', 'utilitycontroller@index');
+
 Route::get('/search3', 'utilitycontroller@search');
 
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
@@ -212,9 +227,7 @@ Route::resource('ereport', 'EreportController');
 //event item
 Route::get('/create', 'EventItemController@create');
 
-Route::get('/eventh', 'EventController@index');
 
-//Route::resource('events', 'EventTController');
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -336,6 +349,7 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
+Route::post('calmonsalary', 'salaryController@store');
 
 Route::get('/Eattendence', function () {
     return view('Employee_attendence');
@@ -458,6 +472,40 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
+
+
+//chart maker
+
+Route::get('/EChart', function () {
+    return view('EmployeeChart');
+});
+Route::get('EChart', 'EmployeeChartController@index');
+Route::post('/Echart', 'EmployeeChartController@store');
+
+Route::get('/MChart', function () {
+    return view('EMonthChart');
+});
+Route::get('/MChart', 'EmployeeChartController@day');
+Route::post('/Mchart', 'EmployeeChartController@day');
+
+
+Route::get('/ESChart', function () {
+    return view('EsalaryChart');
+});
+
+Route::get('/ESChart', 'EmployeeChartController@salaryR');
+
+Route::get('/sss', 'EmployeeChartController@regdate');
+Route::post('/date', 'EmployeeChartController@register');
+
+
+
+
+
+//Route::get('/sss' ,'EmployeeChartController@salaryR');
+
+
+
 
 
 // ------------------------------------------------------------------------

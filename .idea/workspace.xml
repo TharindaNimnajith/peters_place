@@ -2,106 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-<<<<<<< HEAD
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/RoomController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/admin.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/admin.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_reservation_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/room_type_management.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
-=======
-      <change afterPath="$PROJECT_DIR$/app/Charts/test1.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/EmployeeAttCount.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/charts.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/composer.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/composer.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/phpunit.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Encoder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Raw.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/src/Replacer.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/tests/RawEncoderTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/balping/json-raw-encoder/tests/ReplacerTest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.gitattributes" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/FUNDING.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/bug_report.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/feature_request.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.github/ISSUE_TEMPLATE/question.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/composer.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/ChartsServiceProvider.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/BaseChart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/C3/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/C3/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Chartjs/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Chartjs/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/DatasetClass.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Echarts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Echarts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Frappe/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Frappe/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Fusioncharts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Fusioncharts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Highcharts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/Highcharts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Classes/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/ChartsCommand.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Commands/stubs/chart.stub" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Config/charts.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/C3/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/C3/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Chartjs/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Chartjs/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Echarts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Echarts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Frappe/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Frappe/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Fusioncharts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Fusioncharts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Highcharts/Chart.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Features/Highcharts/Dataset.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/c3/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/c3/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/chartjs/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/chartjs/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/echarts/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/echarts/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/frappe/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/frappe/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/fusioncharts/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/fusioncharts/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/highcharts/container.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/highcharts/script.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/init.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/vendor/consoletvs/charts/src/Views/loader.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/peters_place.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/peters_place.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_psr4.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_real.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_real.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/installed.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/installed.json" afterDir="false" />
->>>>>>> 7bb61cb3fa33bcbf3d60dab7844f7481dda63447
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -229,8 +143,8 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-dompdf" />
       <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
       <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
-      <path value="$PROJECT_DIR$/vendor/balping/json-raw-encoder" />
       <path value="$PROJECT_DIR$/vendor/consoletvs/charts" />
+      <path value="$PROJECT_DIR$/vendor/balping/json-raw-encoder" />
     </include_path>
   </component>
   <component name="ProjectId" id="1Q0v8XDUxSYsEAvRZjQg1krasLk" />
@@ -243,6 +157,9 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\peters_place\resources\views" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\peters_place\public\uploads" />
     </key>
@@ -308,33 +225,6 @@
       <workItem from="1567597897321" duration="163000" />
       <workItem from="1567612886344" duration="123000" />
       <workItem from="1567615271432" duration="255000" />
-<<<<<<< HEAD
-      <workItem from="1567624087368" duration="9051000" />
-      <workItem from="1567643505703" duration="11031000" />
-      <workItem from="1567952207999" duration="2869000" />
-      <workItem from="1567955800577" duration="156000" />
-      <workItem from="1567955966597" duration="59000" />
-      <workItem from="1567958595873" duration="368000" />
-      <workItem from="1567962737912" duration="16000" />
-      <workItem from="1568046142997" duration="81000" />
-      <workItem from="1568258190133" duration="3854000" />
-      <workItem from="1568368889010" duration="5000" />
-      <workItem from="1569479233599" duration="100000" />
-      <workItem from="1569479576561" duration="23961000" />
-      <workItem from="1569561776082" duration="113000" />
-      <workItem from="1569562196107" duration="1163000" />
-      <workItem from="1569563421882" duration="2434000" />
-      <workItem from="1569567768156" duration="1730000" />
-      <workItem from="1569569759367" duration="515000" />
-      <workItem from="1569570912821" duration="5000" />
-      <workItem from="1569571067491" duration="97000" />
-      <workItem from="1569588986534" duration="1408000" />
-      <workItem from="1569592949934" duration="7000" />
-      <workItem from="1569595272801" duration="3444000" />
-      <workItem from="1569616783204" duration="218000" />
-      <workItem from="1569834617920" duration="39000" />
-      <workItem from="1569839832709" duration="77000" />
-=======
       <workItem from="1567624087368" duration="8785000" />
       <workItem from="1567661292800" duration="1021000" />
       <workItem from="1567663046667" duration="1795000" />
@@ -351,7 +241,7 @@
       <workItem from="1569788759618" duration="917000" />
       <workItem from="1569789810724" duration="1427000" />
       <workItem from="1569809212229" duration="10027000" />
->>>>>>> 7bb61cb3fa33bcbf3d60dab7844f7481dda63447
+      <workItem from="1569909523614" duration="10348000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
