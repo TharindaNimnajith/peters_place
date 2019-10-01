@@ -994,27 +994,26 @@ class RoomController extends Controller
         // header
 
         $output = '
-            <div style="border:solid 1px; margin-bottom:40px;">
+            <div style="border: solid 1px; margin-bottom: 40px;">
                 <div> 
-                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin:2px 2px 2px 2px;"/> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin: 2px 2px 2px 2px;"/> 
                 </div>
 
-                <div style="margin-left:300px; margin-top:-200px;">
-                    <h2 style="margin-left:50px;">Peter\'s Place Hotel</h2>
+                <div style="margin-left: 300px; margin-top: -200px;">
+                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
 
                     <p> 
-                        <b><p>Address    : </p></b> 
-                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara
+                        <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara </p>                         
                     </p>
                     
                     <p> 
-                        <b><p>Contact No : </p></b> 
-                        +94 (41)225-74-66
+                        <p style="margin-left: -68px;">Phone Number &nbsp; : &nbsp; +94 (41)225-74-66</p>                     
                     </p>
                     
                     <p> 
-                        <b><p>E-mail     : </p></b> 
-                        info@petersplace.lk
+                        <p style="margin-left: -70px;">E-mail &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        info@petersplace.lk</p>
                     </p>
                 </div>
             </div>
@@ -1024,16 +1023,16 @@ class RoomController extends Controller
         // table headings
 
         $output .= '
-            <h1 align="center" style="margin-bottom:20px;">Room List</h1>
+            <h1 align="center" style="margin-bottom: 20px;">Room List</h1>
 
-            <table width="100%" style="border-collapse:collapse; border:0px;">
+            <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border:1px solid; padding:12px;" width="20%">Room No</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Floor</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Type</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Availability</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Status</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Room No</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Floor</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Type</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Availability</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Status</th>
             </tr>
         ';
 
@@ -1083,11 +1082,11 @@ class RoomController extends Controller
 
             $output .= '
                 <tr>
-                    <td style="border:1px solid; padding:12px;">' . $rooms->id . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $rooms->floor . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $type . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $availability . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $status . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $rooms->id . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $rooms->floor . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $type . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $availability . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $status . '</td>
                 </tr>
             ';
         }
