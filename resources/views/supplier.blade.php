@@ -126,7 +126,7 @@
         }
 
         .topnav a.active {
-            background-color: #4CAF50;
+            background-color: #3495e3;
             color: white;
         }
 
@@ -294,7 +294,8 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-4">
-            <form class="sup1" onsubmit="return formValidation()" method="post" action="/savesup">
+            <form class="sup1" onsubmit="return formValidation()" method="post" action="/savesup"
+                  style="background-color: #3495e3">
                 @csrf
                 {{csrf_field() }}
                 <h5 class="topic">Create Suppliers</h5>

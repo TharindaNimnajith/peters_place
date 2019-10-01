@@ -30,7 +30,7 @@
         }
 
         .topnav a.active {
-            background-color: #4CAF50;
+            background-color: #3495e3;
             color: white;
         }
 
@@ -43,7 +43,7 @@
 </div>
 
 <body>
-<div class="jumbotron text-center" style="padding-top: 50px;padding-bottom: 45px;background-color: lightgray">
+<div class="jumbotron text-center" style="padding-top: 50px;padding-bottom: 45px;background-color: #3495e3">
     <h1>Orders</h1>
 </div>
 <div class="container">
