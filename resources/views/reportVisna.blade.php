@@ -37,6 +37,10 @@
                     <input class="form-control" type="date" name="date"/>
                 </div>
                 <div class="form-group">
+                    <label>Month</label>
+                    <input class="form-control" type="month" name="month"/>
+                </div>
+                <div class="form-group">
                     <label>Amount</label>
                     <input class="form-control" type="text" name="amount"/>
                 </div>

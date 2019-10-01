@@ -57,6 +57,10 @@
                         <input class="form-control" type="date" name="date" value="{{ $reports_visna->date}}">
                     </div>
                     <div class="form-group">
+                        <label>Month</label>
+                        <input class="form-control" type="month" name"month" value"{{ $reports_visna->month}}">
+                    </div>
+                    <div class="form-group">
                         <label>Amount</label>
                         <input class="form-control" type="number" name="amount" value="{{ $reports_visna->amount}}">
                     </div>
