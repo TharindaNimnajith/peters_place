@@ -40,6 +40,7 @@ class accomcontroller extends Controller
         $search = $request->get('search2');
         $accoms = DB::table('accoms')->orWhere('arrival_date', 'like', '%' . $search . '%')
             ->orWhere('deparure_date', 'like', '%' . $search . '%')
+            ->orWhere('nic', 'like', '%' . $search . '%')
             ->orWhere('adults', 'like', '%' . $search . '%')->paginate(5);
         return view('index1', ['accoms' => $accoms]);
     }

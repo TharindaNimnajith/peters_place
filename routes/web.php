@@ -46,13 +46,8 @@ Route::get('/room_management', function () {
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
-    //$dat = App\room::all();
-
-    //$count = room::where('t_id', '=', )->count();
 
     return view('room_type_management')->with('room_types', $data);
-
-    //return view('room_type_management')->with(['room_types' => $data, 'dat' => $dat]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -113,11 +108,6 @@ Route::post('/search_room_type', 'RoomController@search_room_type');
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
-Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
-
-Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
-
-
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -146,10 +136,13 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 
 Route::resource('accoms', 'accomcontroller');
 
+Route::get('events1', 'eventscontroller@index');
 
-Route::get('/eventh', 'EventController@index');
+Route::get('/search5','eventscontroller@search');
 
-Route::resource('events', 'EventTController');
+Route::delete('/deleteall5', 'eventscontroller@deleteAll');
+
+Route::resource('events','eventscontroller');
 
 
 // ------------------------------------------------------------------------
@@ -159,12 +152,25 @@ Route::resource('events', 'EventTController');
 
 
 Route::get('u', 'utilitycontroller@index');
-
 Route::get('/search3', 'utilitycontroller@search');
 
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
 Route::resource('utilities', 'utilitycontroller');
+Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
+Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
+
+Route::get('rep','reportVisnacontroller@index');
+Route::get('/search7', 'reportVisnacontroller@search');
+Route::delete('/deleteall7', 'reportVisnacontroller@deleteAll');
+
+Route::resource('reports_visnas','reportVisnacontroller');
+Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
+Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
+
+Route::get('/calcAmount', 'utilitycontroller@calc');
+Route::get('/calcAmount', 'utilitycontroller@accomCal');
+Route::get('/calcAmount', 'utilitycontroller@sum');
 
 
 // ------------------------------------------------------------------------
@@ -173,39 +179,27 @@ Route::resource('utilities', 'utilitycontroller');
 // Sethma Wattegedara - Event Management
 
 
-Route::resource('eventh', 'EventController');
-
-Route::resource('eventsa', 'EventTController');
-
-Route::get('searcheventaa', 'EventController@searcheventaa');
-
-
 //add menu
 Route::resource('menus', 'EventMenuController');
 
+//search
+Route::get('/search', 'EventMenuController@search');
 
 //add item
 Route::resource('eitems', 'EventItemController');
 
-
-Route::get('searcheitem', 'EventItemController@searcheitem');
-
-Route::get('/e_item/edit/pdf', 'EventItemController@pdf');
-
-
 //staff
 Route::resource('estaff', 'EstaffController');
 
-
 //e report
-
 Route::resource('ereport', 'EreportController');
 
-Route::get('/e_report/edit/pdf', 'EreportController@pdf');
+//event item
+Route::get('/create', 'EventItemController@create');
 
-Route::get('searchereport', 'EreportController@searchereport');
+Route::get('/eventh', 'EventController@index');
 
-
+//Route::resource('events', 'EventTController');
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -243,7 +237,6 @@ Route::post('/found', 'frontaddtask@store')->name('addimage');
 // Tharushika Liyanage - Supplier Management
 
 
-/*
 Route::get('/supplier', function () {
     $data = App\supplier::all();
     return view('supplier')->with('supplier', $data);
@@ -271,44 +264,6 @@ Route::post('/savesup', 'suppliercontroller@store');
 Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
 
 Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
-*/
-
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/supplier', function () {
-    $data = App\supplier::all();
-    return view('supplier')->with('supplier', $data);
-});
-
-Route::get('/booking', function () {
-    return view('booking');
-});
-
-Route::get('/orderFinal', function () {
-    return view('orderFinal');
-});
-
-Route::get('/expenditureFinal', function () {
-    return view('expenditureFinal');
-});
-
-
-Route::get('/search', 'orderController@search');
-
-Route::post('/save', 'ExpendsController@store');
-
-Route::post('/makeorderTask', 'orderController@store');
-
-Route::post('/savesup', 'suppliercontroller@store');
-
-Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
-
-Route::get('/updatesup/{id}', 'suppliercontroller@updatesup');
-
-Route::post('/updatesupp', 'suppliercontroller@updatesupp');
 
 
 // ------------------------------------------------------------------------
@@ -488,17 +443,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
-
-
-//chart maker
-
-Route::get('/EChart', function () {
-    return view('EmployeeChart');
-});
-
-Route::get('EChart', 'EmployeeChartController@index');
-
-Route::get('my-chart', 'ChartController@index');
 
 
 // ------------------------------------------------------------------------
