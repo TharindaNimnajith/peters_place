@@ -108,6 +108,21 @@ Route::post('/search_room_type', 'RoomController@search_room_type');
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
+Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
+
+Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
+
+
+Route::get('/dynamic_pdf_room_types', 'RoomController@dynamic_pdf_room_types');
+
+Route::get('/dynamic_pdf_rooms/Room Types List', 'RoomController@room_types_pdf');
+
+
+Route::get('/dynamic_pdf_room_reservations', 'RoomController@dynamic_pdf_room_reservations');
+
+Route::get('/dynamic_pdf_room_reservations/Room Reservations List', 'RoomController@room_reservations_pdf');
+
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -152,24 +167,38 @@ Route::resource('events','eventscontroller');
 
 
 Route::get('u', 'utilitycontroller@index');
+
 Route::get('/search3', 'utilitycontroller@search');
+
 
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
+
 Route::resource('utilities', 'utilitycontroller');
+
 Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
+
 Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
 
+
 Route::get('rep','reportVisnacontroller@index');
+
 Route::get('/search7', 'reportVisnacontroller@search');
+
 Route::delete('/deleteall7', 'reportVisnacontroller@deleteAll');
 
+
 Route::resource('reports_visnas','reportVisnacontroller');
+
 Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
+
 Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
 
+
 Route::get('/calcAmount', 'utilitycontroller@calc');
+
 Route::get('/calcAmount', 'utilitycontroller@accomCal');
+
 Route::get('/calcAmount', 'utilitycontroller@sum');
 
 
@@ -200,35 +229,50 @@ Route::get('/create', 'EventItemController@create');
 Route::get('/eventh', 'EventController@index');
 
 //Route::resource('events', 'EventTController');
+
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
 // Himasha Amarasinghe - Housekeeping Management
 
 
-Route::get('/vie', 'frontaddtask@indexassing');
+Route::get('/vie','frontaddtask@indexassing');
 
-Route::get('/vie2', 'frontaddtask@taskslist');
+Route::get('/vie2','frontaddtask@taskslist');
 
-Route::post('/saved', 'frontaddtask@insert');
+Route::post('/saved','frontaddtask@insert');
 
-Route::get('/deletetask/{id}', 'frontaddtask@deletetask');
+Route::get('/deletetask/{id}','frontaddtask@deletetask');
 
-Route::get('/List', 'frontaddtask@Listsearch');
+//Route::get('/List','frontaddtask@Listsearch');
 
-Route::get('/List', 'frontaddtask@retrive');
+//Route::get('/List','frontaddtask@retrive');
 
-Route::get('/search5', 'frontaddtask@statusSearch');
+Route::get('/searchH','frontaddtask@statusSearch');
 
-Route::get('/Update', 'frontaddtask@supdate');
+Route::get('/Update','frontaddtask@supdate');
 
-Route::get('/Update', 'frontaddtask@retriveupdate');
+Route::get('/Update','frontaddtask@retriveupdate');
 
-Route::get('/prnpriview', 'frontaddtask@prnpriview');
 
-Route::get('/found', 'frontaddtask@founditems');
+Route::get('/prnpriview','frontaddtask@prnpriview');
 
-Route::post('/found', 'frontaddtask@store')->name('addimage');
+Route::get('/found','frontaddtask@founditems');
+
+Route::post('/found','frontaddtask@store')->name('addimage');
+
+
+Route::get('/upd/{id}','frontaddtask@updating');
+
+Route::post('/newone','frontaddtask@newViewUp');
+
+
+Route::get('/lost','frontaddtask@itemview');
+
+Route::get('/lost','frontaddtask@retriveLitems');
+
+Route::get('/deleteItem/{id}','frontaddtask@deleteLostItem');
 
 
 // ------------------------------------------------------------------------
@@ -255,15 +299,13 @@ Route::get('/expenditureFinal', function () {
 });
 
 
-Route::post('/send', 'expenditureController@store');
+Route::post('/save', 'ExpendsController@store');
 
 Route::post('/makeorderTask', 'orderController@store');
 
 Route::post('/savesup', 'suppliercontroller@store');
 
 Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
-
-Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
 
 
 // ------------------------------------------------------------------------

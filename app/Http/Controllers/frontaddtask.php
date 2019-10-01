@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\foundite;
-use App\newstst;
-use App\Status;
+use App\room;
 use App\Taskadd;
 use DB;
 use Illuminate\Http\Request;
@@ -24,17 +23,17 @@ class frontaddtask extends Controller
 
     public function prnpriview()
     {
-        $data = Taskadd::all();
+        $data =  Taskadd::all();
         return view('print')->with('print', $data);
     }
 
-    public function taskslist()
-    {
+    public function taskslist(){
+
 
 
         $data = Taskadd::all();
-
         return view('Tasks')->with('AssingTask', $data);
+
 
     }
 
@@ -66,10 +65,9 @@ class frontaddtask extends Controller
 
         $rget = Taskadd::all();
 
-        //dd($rget);
-
 
         return view('Tasks')->with('Tasks', $rget);
+
 
 
     }
@@ -81,14 +79,14 @@ class frontaddtask extends Controller
         $task->delete();
         return redirect()->back();
     }
-
+/*
 
     public function Listsearch()
     {
 
         return view('statusList');
 
-        $data = newststs::all();
+        $data = room::all();
 
         return view('statusList')->with('statusList', $data);
 
@@ -98,61 +96,68 @@ class frontaddtask extends Controller
     public function retrive()
     {
 
-        $dataa = newstst::all();
+        $dataa = room::all();
 
-
-        return view('statusList', ['sty' => $dataa]);
+        return view('statusList',['sty'=>$dataa]);
     }
 
+    */
+    public function statusSearch(Request $request){
 
-    public function statusSearch(Request $request)
-    {
+
+
         $gat = $request->get('search');
 
-        $sty = DB::table('newststs')->where('rmn', 'like', '%' . $gat . '%')->paginate(5);
+        $sty = DB::table('rooms')->where('id','like','%'.$gat.'%')->paginate(5);
 
 
-        return view('statusList', ['sty' => $sty]);
+        return view('StatutsUpdate',['up'=>$sty]);
 
 
     }
+
 
 
     public function supdate()
     {
 
-        return view('StatutsUpdate');
+
+      return view('StatutsUpdate');
 
 
     }
+
+
+
 
     public function retriveupdate()
     {
 
+        $datup = room::all();
 
-        $datup = Status::all();
-
-        return view('StatutsUpdate', ['up' => $datup]);
-    }
-
-
-    public function founditems()
-    {
-
-        return view('found');
+   return view('StatutsUpdate',['up'=>$datup]);
 
     }
 
-    public function store(Request $request)
-    {
 
 
-        $this->validate($request, [
-            'typo' => 'required',
-            'place' => 'required',
-            'Description' => 'required',
 
-        ]);
+    public function founditems(){
+
+         return view('found');
+
+}
+
+public function store(Request $request){
+
+
+    $this->validate($request, [
+        'typo' => 'required',
+        'place' => 'required',
+        'Description' => 'required',
+
+    ]);
+
 
 
         $foundite = new foundite();
@@ -163,24 +168,83 @@ class frontaddtask extends Controller
         $foundite->image = $request->input('image');
 
 
-        if ($request->hasFile('image')) {
+        if($request->hasFile('image')) {
             $file = $request->file('image');
             $extension = $file->getClientOriginalExtension();
-            $filename = time() . '.' . $extension;
-            $file->move('uploads/foundite/', $filename);
-            $foundite->image = $filename;
+            $filename = time(). '.' .$extension;
+            $file->move('uploads/foundite/',$filename);
+            $foundite->image=$filename;
 
-        } else {
+        }else {
 
             return $request;
             $highlights->image = '';
+
         }
 
-        $foundite->save();
+            $foundite->save();
 
-        return view('found')->with('employee', $foundite);
+            return view('found')->with('employee', $foundite);
 
     }
 
+
+    public function updating($id){
+
+        $status = room::find($id);
+
+        return view('RstatusUpdate')->with('statusdata',$status);
+
+
+
+    }
+
+
+    public function newViewUp(Request $request){
+
+
+        $this->validate($request, [
+            'status' => 'required',
+        ]);
+
+        $id=$request->id;
+        $status=$request->status;
+
+        $data=room::find($id);
+        $data->status=$status;
+        $data->save();
+
+        $datas=room::all();
+
+
+        return view('StatutsUpdate',['up'=>$datas]);
+    }
+
+   /* public function itemview()
+    {
+
+
+        return view('lostitemsretrive');
+
+
+    }
+*/
+    public function retriveLitems()
+    {
+
+        $last = foundite::all();
+
+        return view('lostitemsretrive',['lf'=>$last]);
+
+    }
+
+
+    public function deleteLostItem($id)
+    {
+        $lf = foundite::find($id);
+
+        $lf->delete();
+        return redirect()->back();
+    }
 
 }

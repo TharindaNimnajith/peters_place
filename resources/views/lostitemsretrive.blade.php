@@ -2,9 +2,9 @@
 <head>
 
 
-    <title>Lost and Found</title>
 
-    <link href="css\f.css" rel="stylesheet" type="text/css">
+
+    <title>Found Items</title>
 
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
@@ -18,6 +18,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 
+    
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
 
@@ -32,20 +33,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
-
-    
     <!-- header style-->
-
 
     <style>
 
-       
-
+      
     </style>
+
+
 
 </head>
 <body>
+
 <!--- header-->
+
 
 <nav class="navbar navbar-inverse">
         <div class="container-fluid">
@@ -73,63 +74,89 @@
 </div>
 
 
-
 <!--- header-->
 
-@foreach($errors->all() as $error)
 
-    <div class="alert alert-danger" role="alert">
-        {{$error}}
+<!-- add new -->
 
-    </div>
+</div>
+<a href="/found" type="button" class="btn btn-success" style="margin-left: 1100px">
+    <i class="material-icons">&#xE147;</i>
+    <span>Add New Item</span>
+</a>
+</div>
 
-@endforeach
-
-
-
-
-
+<!-- add new -->
 
 
 
-<h1>Lost and Found Items</h1>
 <div class="container">
-    <div class="jumbotron">
-    <form action="{{ route('addimage') }}" method="POST" enctype="multipart/form-data">
-        {{csrf_field()}}
-        <div class="form-group">
-            <label>Item Type</label>
-            <input type="text" name="typo" class="form-control" placeholder="Enter Type">
-            </div>
-
-        <div class="form-group">
-            <label>Place</label>
-            <input type="text" name="place" class="form-control" placeholder="Enter place">
-        </div>
-
-        <div class="form-group">
-            <label>Description</label>
-            <input type="text" name="Description" class="form-control" placeholder="Enter descroption">
-        </div>
-
-        <label>Image</label>
-        <div class="input-group">
-            <div class="custon-file">
-            <input type="file"  name="image" class="custom-file-input">
-                <label class="custom-file-label">Choose file</label>
-        </div>
-            </div>
-        <br/>
-        <br/>
-
-        <button type="submit" name="submit" class="btn btn-primary btn-block">Save</button>
-        <br/>
-        <a href="/lost" type="button" class="btn btn-success btn-block" >View</a>
-    </form>
+    <div class="text-center"  style="margin-left:500px">
+        <h2>Lost and Found Items</h2> <br/>
+    </div>
 </div>
-</div>
+
+
+
+<span class="limiter">
+        <span class="container-table100">
+
+            <div class="wrap-table100">
+                <div class="table100">
+                    <table id="datatable">
+ {{csrf_field()}}
+
+                       <table class="table table-hover table-bordered"  style="width:1280px ; margin-left: 40px">
+        <thead class="thead-dark">
+        <tr>
+
+            <th scope="col">Item Type</th>
+            <th scope="col">Place</th>
+            <th scope="col">Description</th>
+
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+
+        </tr>
+        </thead>
+
+
+                           @foreach($lf as $stat)
+
+                               <tbody>
+                            <tr>
+
+                                <td>{{$stat->itm_typ}}</td>
+                                <td> {{$stat->place}}</td>
+                                <td>{{$stat->discription}}</td>
+                                <td><img src="{{asset('uploads/foundite/'.$stat->image)}}" width="100px;"height="100px;" alt="Image"></td>
+
+
+
+
+
+                                <td>
+
+                <a href="/deleteItem/{{$stat->id}}" class="btn btn-danger">Delete</a>
+
+
+                                </td>
+                                                       </tr>
+
+
+
+                @endforeach
+
+
+
+                            </tbody>
+                    </table>
+                    </table>
+                </div>
+            </div>
+        </span>
+</span>
+
+
 </body>
 </html>
-
-
-

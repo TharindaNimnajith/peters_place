@@ -313,7 +313,7 @@
                         </tr>
                         <tr>
                             <td>Supplier Type</td>
-                            <td><select id="supType" name="suptype">
+                            <td><select id="supType" name="suptype" style="width: 160px">
                                     <option value="food">Food</option>
                                     <option value="EventPro">Event Products</option>
                                     <option value="Infra">Infrastructure</option>
@@ -326,12 +326,12 @@
                             <p id="p3"></p>
                         <tr>
                             <td>Inactive Date</td>
-                            <td><input type="date" id="date" name="date"></td>
+                            <td><input type="date" id="date" name="date" style="width: 160px"></td>
                         </tr>
                         <tr>
                             <td>Bank Name</td>
                             <td>
-                                <select id="bank" name="bank">
+                                <select id="bank" name="bank" style="width: 160px">
                                     <option value="sampath">Sampath Bank</option>
                                     <option value="peoples">Peoples' Bank</option>
                                     <option value="boc">BOC</option>
