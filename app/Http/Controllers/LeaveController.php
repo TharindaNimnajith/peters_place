@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Employee;
 use App\Http\Requests\StoreBlogPost;
 use App\Leave;
+use App\RequestedLeave;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -24,6 +25,17 @@ class LeaveController extends Controller
         //if ($emp['type']==$leave['type']){}
         //return View('LeaveM', compact('emp'));
         return view('Employee_leave')->with('emp', $emp)->with('leave', $leave);
+
+    }
+
+    public function indexR()
+    {
+
+        $emp = Employee::all();
+        $leave = RequestedLeave::all();
+        //if ($emp['type']==$leave['type']){}
+        //return View('LeaveM', compact('emp'));
+        return view('ErequestedLeave')->with('emp', $emp)->with('leave', $leave);
 
     }
 
@@ -62,9 +74,9 @@ class LeaveController extends Controller
 
         $validatedData = $request->validated();
 
-        $leave = new Leave([
-            'id' => $request->get('ID'),
-            'type' => $request->get('name'),
+        $leave = new RequestedLeave([
+            'eid' => $request->get('ID'),
+            'name' => $request->get('name'),
             'Requesting_date' => $request->get('today'),
             'leaving_date' => $request->get("Date"),
             'nof_days' => $request->get("#days"),
@@ -73,6 +85,23 @@ class LeaveController extends Controller
 
         $leave->save();
         return redirect()->back()->with('success', 'The Form Data is successfully inserted to the Database!');
+    }
+
+    public function storea(Request $request)
+    {
+
+
+        $leave = new Leave([
+            'id' => $request->get('ID'),
+            'Requesting_date' => $request->get('today'),
+            'leaving_date' => $request->get("Date"),
+            'nof_days' => $request->get("#days"),
+            'leve_type' => $request->get('leavetype'),
+        ]);
+
+        $leave->save();
+        return redirect()->back()->with('success', 'The Form Data is successfully inserted to the Database!');
+
     }
 
     /**

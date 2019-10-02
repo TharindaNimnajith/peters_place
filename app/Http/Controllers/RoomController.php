@@ -1367,7 +1367,7 @@ class RoomController extends Controller
             // room types - formatting db value
 
             foreach ($room_types_data as $room_type) {
-                if ($room_type->t_id == $reservations->t_id) {
+                if ($room_type->id == $reservations->t_id) {
                     $type = $room_type->name;
                 }
             }

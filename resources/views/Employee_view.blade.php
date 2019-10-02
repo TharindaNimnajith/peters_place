@@ -9,6 +9,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.3/css/mdb.min.css">
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <title>Document</title>
 
     <style>
@@ -95,7 +96,7 @@
 
         .my-custom-scrollbar {
             position: relative;
-            height: 580px;
+            height: 650px;
             overflow: auto;
 
         }
@@ -127,11 +128,19 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+
+                <div class="center">
+
+                    <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
+                                                     src="{{ asset ('uploads/home.png') }}"></a>
+                </div>
+
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE
+                            <th class="text-center" scope="row"
+                                style="width:300px ; height:10px;background-color:#264348">EMPLOYEE
                                 MANAGEMENT
                             </th>
                         </tr>
@@ -199,7 +208,7 @@
                 {{csrf_field()}}
                 <input type="text" class="form-control" id="inputEmail3" name="Rno" value="{{$row->id}}" readonly
                        hidden>
-                <input type="submit" class="btn btn-secondary btn-sm" value="DOWNLOAD PDF">
+                <input type="submit" class="btn btn-secondary btn-sm " value="DOWNLOAD PDF">
             </form>
 
             <div class="table-wrapper-scroll-y my-custom-scrollbar">

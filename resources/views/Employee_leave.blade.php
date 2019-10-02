@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -34,7 +35,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #4c3c3c;
+            background-color: #435E7c;
             width: 50%;
         }
 
@@ -144,9 +145,8 @@
             <div class="container-fluid" style="margin-top: 150px">
 
                 <div class="center">
-
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
-                         src="{{ asset ('uploads/home.png') }}">
+                    <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
+                                                     src="{{ asset ('uploads/home.png') }}"></a>
                 </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
@@ -201,12 +201,12 @@
         <div class="col-9">
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    <li class="my" style="background-color:#857373"><a href={{url('/Eleave')}}><i
+                                class="far fa-check-square"></i>Accepted Leave </a>
                     </li>
-                    <li class="my"><a href={{url('/Eadd')}}><img
-                                src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
-                            Employee</a>
+                    <li class="my"><a href={{url('/ERleave')}}><i class="fas fa-exclamation-triangle"></i> Requested
+                            Leave </a>
+                    </li>
                     </li>
                     <li class="my"><a href='{{url("/Eaddleave")}}'><img
                                 src="https://img.icons8.com/metro/26/000000/file.png">Add Leave</a>
@@ -214,6 +214,7 @@
                 </ul>
             </div>
             <p></p>
+
             <div class="col-md-10">
                 <form action="/search2" method="get">
                     <div class="input-group input-group-sm mb-3">
@@ -227,17 +228,20 @@
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
                 <h3>Today:<h3 id="date">Today</h3>
                 </h3>
+                <p></p>
+                <h4><b><u>Accepted Leaves</u></b></h4>
+                <p></p>
                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
                     <table class="table table-bordered">
                         <thead>
                         <tr>
                             <th scope="col"><b>Registation No</b></th>
-                            <th scope="col"><b>Name</b></th>
+
                             <th scope="col"><b>Apply Date</b></th>
                             <th scope="col"><b>Leaving Date</b></th>
                             <th scope="col"><b>Leave Type</b></th>
                             <th scope="col"><b>#Leaving Dates</b></th>
-                            <th scope="col"><b>Email</b></th>
+
                         </tr>
                         </thead>
 
@@ -247,26 +251,12 @@
                         @foreach($leave as $row )
                             <tr>
                                 <td>{{$row['id']}}</td>
-                                <td>{{$row['name']}}</td>
                                 <td>{{$row['Requesting_date']}}</td>
                                 <td>{{$row['leaving_date']}}</td>
                                 <td>{{$row['leve_type']}}</td>
                                 <td>{{$row['nof_days']}}</td>
-                                <td>{{$row['Email']}}</td>
 
-                                @foreach($emp as $r)
-                                    @if($r['id']==$row['id'])
-                                        <td>{{$r['Email']}} </td>
-                                    @endif
-                                @endforeach
 
-                                <form class="form-group" method="post" action="getid">
-                                    {{ csrf_field() }}
-
-                                    <td><input type="submit" value="View" class="btn btn-primary btn-sm"
-                                               style="margin-left: 0px"></td>
-                                    <input type="hidden" name="id" value="{{$row['id']}}"/>
-                                </form>
                                 <td><a href="/destroyl/{{$row->id}} " class="btn btn-danger btn-sm"
                                        style="margin-top:4px"
                                        onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>

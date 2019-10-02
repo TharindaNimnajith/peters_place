@@ -105,6 +105,19 @@
                                             </table>
                                             </table>
                                         </a>
+
+                                        <a href="{{url('/inventory')}}">
+                                            <table class="table" style="width:300px;margin-left: 0px">
+                                                <thead class="thead-dark">
+                                                <tr class="btn">
+                                                    <th class="text-center" scope="row" style="width:300px;height:10px">
+                                                        INVENTORY MANAGEMENT
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                            </table>
+                                        </a>
                                     </div>
                                 </div>
                                 <div class="col-2" style="margin-left: 230px;margin-top: 60px">

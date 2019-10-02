@@ -36,7 +36,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #4c3c3c;
+            background-color: #435E7c;
             width: 50%;
         }
 
@@ -147,8 +147,8 @@
             <div class="container-fluid" style="margin-top: 150px">
                 <div class="center">
 
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
-                         src="{{ asset ('uploads/home.png') }}">
+                    <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
+                                                     src="{{ asset ('uploads/home.png') }}"></a>
                 </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px;margin:10px auto 0px auto">
@@ -203,7 +203,7 @@
         </div>
 
         <div class="col-9">
-            <div class="container-fluid" style="width: 2000px ;margin-left: -3ch">
+            <div class="container-fluid" style="width: 1200px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
                                 src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
@@ -232,7 +232,8 @@
 
 
             <p></p>
-            <a href='pdfview'>Download PDF</a>
+            <a href='pdfview' class="btn btn-secondary btn-sm ">Download PDF</a>
+            <p></p>
 
 
             <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-bottom: 10px">

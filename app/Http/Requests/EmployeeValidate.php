@@ -40,7 +40,7 @@ class EmployeeValidate extends FormRequest
     public function messages()
     {
         return [
-            'NIC.unique' => 'please enter numrtic method only',
+            'NIC.unique' => "That NIC already use",
             'NIC.max' => 'please add Valid NIC no ',
             'NIC.min' => 'please add Valid NIC no ',
             'tp.min' => 'please add Valid Telephone No  ',

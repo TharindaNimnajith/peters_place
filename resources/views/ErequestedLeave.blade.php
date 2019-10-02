@@ -10,8 +10,6 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.3/css/mdb.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <title>Document</title>
 
     <style>
@@ -32,7 +30,7 @@
             color: white;
         }
 
-        ul.my {
+        ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -41,7 +39,7 @@
             width: 50%;
         }
 
-        li.my {
+        li {
             float: left;
         }
 
@@ -145,6 +143,7 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+
                 <div class="center">
 
                     <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
@@ -168,7 +167,7 @@
                         <thead class="thead-dark">
                         <tr class="btn">
                             <th class="text-center" scope="row"
-                                style="width:300px;height:10px;background-color: #264348;">LEAVE MANAGEMENT
+                                style="width:300px;height:10px;background-color:#264348"><b>LEAVE MANAGEMENT</b>
                             </th>
                         </tr>
                         </thead>
@@ -178,8 +177,8 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE
-                            </th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">
+                                <b>ATTENDANCE</b></th>
                         </tr>
                         </thead>
                     </table>
@@ -201,101 +200,118 @@
         </div>
 
         <div class="col-9">
+            <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
+                <ul class="my">
+                    <li class="my"><a href={{url('/Eleave')}}><i class="far fa-check-square"></i>Accepted Leave </a>
+                    </li>
 
-            <ul class="my">
-                <li class="my"><a href={{url('/Eleave')}}><i class="far fa-check-square"></i>Accepted Leave </a>
-                </li>
-                <li class="my"><a href={{url('/ERleave')}}><i class="fas fa-exclamation-triangle"></i> Requested Leave
-                    </a>
-                </li>
-                <li class="my" style="background-color:#857373"><a href='{{url("/Eaddleave")}}'><img
-                            src="https://img.icons8.com/metro/26/000000/file.png">Add Leave</a>
-                </li>
-            </ul>
-            <p style="  margin-top: 50px"></p>
-            <!--access java function -->
-            <h3>Today:<h3 id="date">Today</h3>
-            </h3>
-            <!-- Table  -->
+                    <li class="my" style="background-color:#857373"><a href={{url('/ERleave')}}><i
+                                class="fas fa-exclamation-triangle"></i> Requested Leave </a>
+                    </li>
+                    <li class="my"><a href='{{url("/Eaddleave")}}'><img
+                                src="https://img.icons8.com/metro/26/000000/file.png">Add Leave</a>
+                    </li>
+                </ul>
+            </div>
+            <p></p>
+            <h3>Requested Leave</h3>
+            <div class="col-md-10">
+                <form action="/search2" method="get">
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="search" name="search" class="form-control">
+                        <span class="input-group-prepend" style="width: 510px">
+                                <button type="submit" class="btn btn-primary"> Search</button>
+                            </span>
+                    </div>
+                </form>
+            </div>
             <div class="table-wrapper-scroll-y my-custom-scrollbar">
-
-                @if(session()->has('success'))
-                    <div class="alert alert-success">
-                        {{ session()->get('success') }}
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                        </ul>
-                        @endforeach
-
-                    </div>
-                @endif
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-10">
-                            <form class="form-group" method="post" action="/addLeave">
-                                {{ csrf_field() }}
-                                <div class="row">
-                                    <div class="col">
-
-                                        <input type="text" name="leve_type" class="form-control"
-                                               placeholder="Leave Type" onkeypress="return tabE(this,event)">
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" name="days" class="form-control" placeholder="Days"
-                                               onkeypress="return tabE(this,event)">
-                                    </div>
-                                    <p>
-                                        <button name="submit" type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <h3>Today:<h3 id="date">Today</h3>
+                </h3>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th scope="col"><b>Registation No</b></th>
+                            <th scope="col"><b>Name</b></th>
+                            <th scope="col"><b>Apply Date</b></th>
+                            <th scope="col"><b>Leaving Date</b></th>
+                            <th scope="col"><b>Leave Type</b></th>
+                            <th scope="col"><b>#Leaving Dates</b></th>
+                            <th scope="col"><b>Email</b></th>
+                        </tr>
+                        </thead>
 
 
-                <div class="container" style="margin-top: 20px ">
-                    <div class="row">
-                        <div class="col-sm-8">
+                        <tbody>
 
-                            <table class="table table-bordered">
-                                <thead>
-                                <tr>
-                                    <th style="text-align:center">Leave Type ID</th>
-                                    <th style="text-align:center">Leave Type</th>
-                                    <th style="text-align:center">Allow Days</th>
-                                </tr>
-                                </thead>
-                                <tbody>
+                        @foreach($leave as $row )
+                            <tr>
+                                <td>{{$row['eid']}}</td>
+                                <td>{{$row['name']}}</td>
+                                <td>{{$row['Requesting_date']}}</td>
+                                <td>{{$row['leaving_date']}}</td>
+                                <td>{{$row['leve_type']}}</td>
+                                <td>{{$row['nof_days']}}</td>
 
-                                @foreach($leaveType as $row)
-                                    <tr>
 
-                                        <td style="text-align:center">{{$row['id']}}</td>
-                                        <td style="text-align:center">{{$row['leve_type']}}</td>
-                                        <td style="text-align:center">{{$row['allow_leaves']}}</td>
-
-                                        <td style="text-align:center"><a href="/des/{{$row['id']}} "
-                                                                         class="btn btn-danger btn-sm"
-                                                                         style="margin-top:4px"
-                                                                         onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
-                                        </td>
-                                    </tr>
+                                @foreach($emp as $r)
+                                    @if($r['id']==$row['eid'])
+                                        <td>{{$r['Email']}} </td>
+                                    @endif
                                 @endforeach
 
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
+                                <form class="form-group" method="post" action="/sendleave">
+                                    {{ csrf_field() }}
+
+
+                                    <input type="hidden" name="ID" value="{{$row['eid']}}"/>
+                                    <input type="hidden" name="today" value="{{$row['Requesting_date']}}"/>
+                                    <input type="hidden" name="Date" value="{{$row['leaving_date']}}"/>
+                                    <input type="hidden" name="leavetype" value="{{$row['leve_type']}}"/>
+                                    <input type="hidden" name="#days" value="{{$row['nof_days']}}"/>
+                                    <td><input type="submit" value="Add" class="btn btn-primary btn-sm"
+                                               style="margin-left: 0px"></td>
+                                </form>
+                                <td><a href="/destroyl/{{$row->id}} " class="btn btn-danger btn-sm"
+                                       style="margin-top:4px"
+                                       onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
+                                </td>
+                                </td>
+
+
+                            </tr>
+
+                        @endforeach
+
+                        </tbody>
+
+
+                    </table>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
+</div>
 
+<script>
+    window.onload = setInterval(clock, 1000);
+
+    function clock() {
+        var d = new Date();
+        var date = d.getDate();
+        var year = d.getFullYear();
+        var month = d.getMonth();
+        var monthArr = ["January", "February", "March", "April", "May", "June", "July", "August", "September",
+            "October", "November", "December"
+        ];
+        month = monthArr[month];
+        document.getElementById("date").innerHTML = date + " " + month + ", " + year;
+    }
+
+</script>
 </body>
 
 </html>

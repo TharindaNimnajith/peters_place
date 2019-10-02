@@ -65,7 +65,10 @@
                     <li class="active"><a href="#">Rooms</a></li>
                     <li><a href="{{ url('/room_type_management') }}">Room Types</a></li>
                     <li><a href="{{ url('/room_reservation_management') }}">Room Reservations</a></li>
+
+                <!--
                     <li><a href="{{ url('/room_reports') }}">Reports</a></li>
+                    -->
                 </ul>
 
                 <ul class="nav navbar-nav navbar-right" id="nav-sign">

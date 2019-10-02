@@ -51,39 +51,34 @@ echo "" . date("l");
 
 
 </p>
+
+
+<div class="center">
+    <h4>Daily Attendance</h4>
+</div>
+
 <div class="center">
 
-    <h3>Employee ID:-{{$row->id}}</h3>
+
     <table>
         <tr>
-            <td>Category</td>
-            <td>{{$row->type}}</td>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td>{{$row->name}}</td>
-        </tr>
-        <tr>
-            <td>Date Of Birth</td>
-            <td>{{$row->DOB}}</td>
-        </tr>
-        <tr>
-            <td>Gender</td>
-            <td>{{$row->gender}}</td>
-        </tr>
-        <tr>
-            <td>Join Date</td>
-            <td>{{$row->joindate}}</td>
-        </tr>
-        <tr>
-            <td>Telephone No</td>
-            <td>{{$row->tp}}</td>
-        </tr>
-        <tr>
-            <td>E-mail</td>
-            <td>{{$row->Email}}</td>
-        </tr>
+            <th></th>
 
+
+            <th><b>Rrgistaion NO</b></th>
+            <th><b>Type</b></th>
+            <th><b>Name</b></th>
+
+        </tr>
+        @foreach ($items as $key => $row)
+            <tr>
+                <td>{{ ++$key }}</td>
+                <th><b>{{$row->id}}</b></th>
+                <td>{{$row->type}}</td>
+                <td>{{$row->name}}</td>
+
+            </tr>
+        @endforeach
     </table>
 </div>
 

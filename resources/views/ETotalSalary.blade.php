@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.3/css/mdb.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <title>Document</title>
 
     <style>
@@ -118,6 +119,8 @@
             text-align: center;
 
         }
+
+
     </style>
 </head>
 
@@ -127,12 +130,12 @@
 
 
 <!-- Grid column ---hover code for pic ---
-            <div class="col-md-6 mb-4">
+        <div class="col-md-6 mb-4">
 
-                <div class="view overlay hm-zoom">
-                    <img src="Capture.PNG">
-                </div>
+            <div class="view overlay hm-zoom">
+                <img src="Capture.PNG">
             </div>
+        </div>
 
 -->
 
@@ -141,7 +144,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3" style="background-color: #2C3E50 ">
+        <div class="col-3" style="background-color: #2C3E50 ;">
             <div class="container-fluid" style="margin-top: 150px">
                 <div class="center">
 
@@ -149,10 +152,12 @@
                                                      src="{{ asset ('uploads/home.png') }}"></a>
                 </div>
                 <a href="{{url('/Emanagement') }}">
-                    <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
-                        <thead class="thead-dark">
+                    <table class="table" style="width:300px;height:100px;margin:10px auto 0px auto">
+                        <thead class="thead-dark" style="">
                         <tr class="btn" style="">
-                            <th class="text-center" scope="row" style="width:300px ; height:10px">EMPLOYEE MANAGEMENT
+                            <th class="text-center" scope="row"
+                                style="width:300px ; height:10px ; "><b>EMPLOYEE
+                                    MANAGEMENT</b>
                             </th>
                         </tr>
 
@@ -161,28 +166,35 @@
                 </a>
 
                 <a href="{{url('/Eleave') }}">
-                    <table class="table" style="width:300px ; margin-left: 0px ">
+                    <table class="table" style="width:300px ; margin:10px auto 10px auto">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px; ">LEAVE MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
                 </a>
                 <a href="{{url('/Eattendence')}}">
-                    <table class="table" style="width:300px;margin-left: 0px">
+                    <table class="table" style="width:300px;margin:10px auto 10px auto">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">DAILY ATTENDANCE</th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px; margin-left: -4ch;">
+                                ATTENDANCE
+                            </th>
                         </tr>
                         </thead>
                     </table>
                 </a>
                 <a href="{{url('/Esalary')}}">
-                    <table class="table" style="width:300px;margin-left: 0px">
+                    <table class="table" style="width:300px;margin:10px auto 10px auto">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY MANAGEMENT</th>
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px; margin-left: -4ch;background-color:#264348;">
+                                SALARY
+                                MANAGEMENT
+                            </th>
                         </tr>
                         </thead>
                     </table>
@@ -193,48 +205,79 @@
         </div>
 
         <div class="col-9">
+            <div class="container-fluid" style="width: 1200px ;margin-left: -3ch">
+                <ul class="my">
+                    <li class="my"><a href={{url('/Eadd')}}><img
+                                src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
+                            Employee</a>
+                    </li>
+                    <li class="my"><a href={{url('/ESChart')}}><img
+                                src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                    </li>
+                    <li class="my" style="background-color:#857373"><a href={{url('/MTsalary')}}><i
+                                class="fas fa-file-invoice-dollar fa-1x"></i> Total Expands</a>
+                    </li>
+
+                </ul>
+            </div>
+            <p></p>
+            <div class="col-md-10">
+                <form action="/search" method="get">
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="search" name="search" class="form-control">
+                        <span class="input-group-prepend" style="width: 510px">
+                                <button type="submit" class="btn btn-primary"> Search</button>
+                            </span>
+                    </div>
+                </form>
+            </div>
+
 
             <p></p>
-            <b>
-                <h4><b><u>Removed Employee List</u></b></h4>
-            </b>
-            <p></p>
-            <!-- Table  -->
-            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <a href='pdfview'>Download PDF</a>
+
+
+            <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-bottom: 10px">
+                <!-- Search form -->
 
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th style="text-align:center">Employee ID</th>
-                        <th style="text-align:center">Name</th>
-                        <th style="text-align:center">Email</th>
-                        <th style="text-align:center">tp</th>
+
+                        <th><b>Month</b></th>
+                        <th><b>Salary</b></th>
+
                     </tr>
                     </thead>
+
                     <tbody>
-                    @foreach($employeeD as $row)
-                        <tr>
 
-                            <td style="text-align:center">{{$row['empid']}}</td>
-                            <td style="text-align:center">{{$row['name']}}</td>
-                            <td style="text-align:center">{{$row['email']}}</td>
-                            <td style="text-align:center">{{$row['tp']}}</td>
+                    <tr>
+                        @foreach($data as $row)
 
-                        </tr>
+
+                            <td>{{$row->month}}</td>
+                            <td>{{$row->salary}}</td>
+
+
+                            <td><a href="/dessalary/{{$row->id}} " class="btn btn-danger btn-sm"
+                                   style="margin-top:4px"
+                                   onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
+                            </td>
+
+
+                    </tr>
                     @endforeach
-
                     </tbody>
                 </table>
-
-
             </div>
         </div>
     </div>
 </div>
 
+<script>
+
+</script>
 </body>
 
 </html>
-
-
-
