@@ -25,7 +25,7 @@ class StoreBlogPost extends FormRequest
     public function rules()
     {
         return [
-
+            'ID' => 'numeric',
             'leve_type' => 'unique:leave_types,leve_type|alpha',
             'days' => 'numeric',
             'Date' => 'date_format:Y-m-d',
@@ -37,7 +37,7 @@ class StoreBlogPost extends FormRequest
     {
         return [
 
-            'days.numeric' => 'please enter numrtic method only',
+            '#days.numeric' => 'please enter numrtic method only',
 
         ];
     }

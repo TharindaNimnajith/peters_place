@@ -203,7 +203,7 @@
         </div>
 
         <div class="col-9">
-            <div class="container-fluid" style="width: 2000px ;margin-left: -3ch">
+            <div class="container-fluid" style="width: 1200px ;margin-left: -3ch">
                 <ul class="my">
                     <li class="my"><a href={{url('/Emanagement')}}><img
                                 src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>

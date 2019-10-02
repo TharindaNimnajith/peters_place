@@ -9,6 +9,7 @@ use App\Memployee;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class salaryController extends Controller
 {
@@ -54,10 +55,20 @@ class salaryController extends Controller
             ->select('id', DB::raw('count(*) as total'))
             ->groupBy('id')
             ->get();
-
+        $messages = ['id.unique' => 'Given ip and hostname are not unique',];
         $this->validate($request, [
-            "id" => 'unique:emp_salaries,id'
+            // "date" => 'unique:memployees,day'
+            'id' => [
+                'required',
+                Rule::unique('emp_salaries')->where(function ($query) use ($id, $pp) {
+                    return $query->where('id', $id)
+                        ->where('month', $pp);
+                }),
+            ],
+            ['id.Rule::unique' => 'Given ip and hostname are not unique',],
+
         ]);
+
 
         foreach ($attendenceS as $value) {
             $value;

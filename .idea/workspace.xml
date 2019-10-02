@@ -2,19 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LeaveController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LeaveController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/EmployeeValidate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/StoreBlogPost.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/StoreBlogPost.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2019_08_28_002649_create_leaves_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_30_062538_create_posts_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_add_leaveType.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_leave.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_management.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_view.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/home.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/home.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_real.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_real.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -242,6 +245,7 @@
       <workItem from="1569789810724" duration="1427000" />
       <workItem from="1569809212229" duration="10027000" />
       <workItem from="1569909523614" duration="10348000" />
+      <workItem from="1569960693431" duration="3351000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -488,7 +492,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/resources/views/Employee_view.blade.php</url>
-          <line>182</line>
+          <line>189</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">

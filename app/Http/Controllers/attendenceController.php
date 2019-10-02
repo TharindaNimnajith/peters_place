@@ -8,6 +8,7 @@ use App\Employee;
 use App\Memployee;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class attendenceController extends Controller
 {
@@ -19,9 +20,22 @@ class attendenceController extends Controller
 
     public function storeA(Request $request)
     {
+        $id = $request->get('id');
+        $day = $request->get('date');
+
         $this->validate($request, [
-            //"date" => 'unique:memployees,day'
+            // "date" => 'unique:memployees,day'
+            'id' => [
+                'required',
+                Rule::unique('memployees')->where(function ($query) use ($id, $day) {
+                    return $query->where('id', $id)
+                        ->where('day', $day);
+                }),
+            ],
         ]);
+//        $this->messages = [
+//            'date' = 'Given ip and hostname are not unique',
+//        ];
         $att = new Memployee([
             'id' => $request->get('id'),
             'type' => $request->get('type'),

@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Dashboard</div>
+                    <div class="card-header">ADD LEAVE</div>
 
                     <div class="card-body">
                         @if (session('status'))
@@ -57,15 +57,6 @@
                                     <input id="name" name="name" onkeypress="return tabE(this,event)"
                                            placeholder="Ranil Ramanayaka" type="text" class="form-control"
                                            required="required">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="Employee_type" class="col-4 col-form-label">Type</label>
-                                <div class="col-8">
-                                    <input type="radio" name="type" onkeypress="return tabE(this,event)" value="normal"
-                                           checked> NORMAL<br>
-                                    <input type="radio" name="type" onkeypress="return tabE(this,event)" value="admin">
-                                    ADMIN<br>
                                 </div>
                             </div>
                             <div class="form-group row">

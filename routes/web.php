@@ -323,6 +323,10 @@ Route::get('/Eleave', function () {
     return view('Employee_leave');
 });
 
+Route::get('/ERleave', function () {
+    return view('ErequestedLeave');
+});
+
 Route::get('/Emanagement', function () {
     return view('Employee_management');
 });
@@ -375,8 +379,12 @@ Route::post('/edit', 'EmployeeController@edit');
 
 
 Route::post('/addleave', 'LeaveController@store');
+Route::post('/sendleave', 'LeaveController@storea');
 
 Route::get('/Eleave', 'LeaveController@index');
+
+Route::get('/ERleave', 'LeaveController@indexR');
+
 
 Route::get('/search2', 'LeaveController@search2');
 
