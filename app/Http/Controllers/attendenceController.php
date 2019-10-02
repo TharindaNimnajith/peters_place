@@ -6,8 +6,10 @@ use App\Attendence;
 use App\Charts\test1;
 use App\Employee;
 use App\Memployee;
+use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class attendenceController extends Controller
@@ -148,5 +150,30 @@ class attendenceController extends Controller
         $chart->dataset('My dataset 2', 'line', [4, 3, 2, 1]);
 
         return view('sample_view', compact('chart'));
+    }
+
+    public function dailyattPdf(Request $request)
+    {
+
+        $data = Attendence::all();
+        $count = DB::table('attendences')->count('id');
+        view()->share('items', $data);
+        //view()->share('count', $count);
+
+        // dd($count);
+        $pdf = PDF::loadView('Dailyattendance');
+        return $pdf->download('dalyAttendancePdf.pdf');
+
+
+    }
+
+    public function pdf()
+    {
+        $items = Attendence::all();
+        $count = DB::table('attendences')->count('id');
+        view()->share('items', $items);
+        //  view()->share('count', $count);
+
+        return view('Dailyattendance');
     }
 }

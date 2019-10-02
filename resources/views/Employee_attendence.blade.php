@@ -34,8 +34,8 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #4c3c3c;
-            width: 50%;
+            background-color: #435E7c;
+            width: 30%;
         }
 
         li {
@@ -200,9 +200,7 @@
         <div class="col-9">
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
-                    </li>
+
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
@@ -235,6 +233,9 @@
                         <b>
                             <h4 id="date" style="margin-top: 20px;"></h4>
                         </b>
+
+                        <h5 style="margin: 30px;text-align: center;border-bottom: 1px solid black"><b>All Employees
+                                List</b></h5>
 
                         <table class="table table-bordered">
 
@@ -271,6 +272,15 @@
 
 
                 <div class="col-7">
+                    <form method="post" action="/dailyAttDetailsPdf" enctype="multipart/form-data">
+                        {{csrf_field()}}
+                        <i class="fas fa-file-pdf"></i><input type="submit" class="btn btn-secondary btn-sm"
+                                                              value="DOWNLOAD PDF">
+                    </form>
+
+                    <h5 style="margin: 45px 30px 30px 30px;text-align: center;border-bottom: 1px solid black"><b>ADD
+                            Attendance</b></h5>
+
                     <h3 style="margin-top:20px;margin-left: 20px;color: #c51f1a">Total Attendance = {{$count}} </h3>
                     <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-left: -2ch>
                         <div class=" container-fluid

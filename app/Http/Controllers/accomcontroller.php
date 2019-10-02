@@ -162,4 +162,6 @@ class accomcontroller extends Controller
         $dbs = DB::delete('delete from accoms where id in(' . implode(",", $ids) . ')');
         return redirect('accoms');
     }
+
+
 }

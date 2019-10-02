@@ -9,6 +9,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.3/css/mdb.min.css">
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <title>Document</title>
 
     <style>
@@ -34,7 +35,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #4c3c3c;
+            background-color: #435E7c;
             width: 50%;
         }
 
@@ -144,8 +145,8 @@
             <div class="container-fluid" style="margin-top: 150px">
                 <div class="center">
 
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
-                         src="{{ asset ('uploads/home.png') }}">
+                    <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
+                                                     src="{{ asset ('uploads/home.png') }}"></a>
                 </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
@@ -198,15 +199,15 @@
         <div class="col-9">
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
-                    </li>
                     <li class="my"><a href={{url('/Eadd')}}><img
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
                     <li class="my"><a href={{url('/ESChart')}}><img
                                 src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                    </li>
+                    <li class="my"><a href={{url('/MTsalary')}}><i class="fas fa-file-invoice-dollar fa-1x"></i> Total
+                            Expands</a>
                     </li>
                 </ul>
             </div>

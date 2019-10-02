@@ -35,7 +35,7 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #4c3c3c;
+            background-color: #435E7c;
             width: 50%;
         }
 
@@ -145,9 +145,8 @@
             <div class="container-fluid" style="margin-top: 150px">
 
                 <div class="center">
-
-                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
-                         src="{{ asset ('uploads/home.png') }}">
+                    <a href="{{url('/home') }}"><img style="margin-top:-10ch;width: 100px; height: 100px;"
+                                                     src="{{ asset ('uploads/home.png') }}"></a>
                 </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">

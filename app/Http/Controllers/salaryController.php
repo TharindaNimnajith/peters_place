@@ -314,4 +314,19 @@ class salaryController extends Controller
 
         return redirect()->back();
     }
+
+    public function getData()
+    {
+        $data = EMSalary::all();
+        return view("ETotalSalary", compact('data'));
+    }
+
+    public function getDatadelete($id)
+    {
+
+        $data = EMSalary::find($id);
+        $data->delete();
+        return redirect()->back();
+
+    }
 }
