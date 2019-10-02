@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -144,6 +145,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
@@ -161,7 +167,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px;background-color: #264348;">LEAVE MANAGEMENT
                             </th>
                         </tr>
                         </thead>
@@ -196,14 +203,13 @@
         <div class="col-9">
 
             <ul class="my">
-                <li class="my"><a href="http://127.0.0.1:8000/employee"><img
-                            src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a></li>
-                <li class="my"><a href="#news"><img src="https://img.icons8.com/metro/26/000000/add-user-male.png">
-                        Add
-                        Employee</a>
+                <li class="my"><a href={{url('/Eleave')}}><i class="far fa-check-square"></i>Accepted Leave </a>
                 </li>
-                <li class="my"><a href="#contact"><img
-                            src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                <li class="my"><a href={{url('/ERleave')}}><i class="fas fa-exclamation-triangle"></i> Requested Leave
+                    </a>
+                </li>
+                <li class="my" style="background-color:#857373"><a href='{{url("/Eaddleave")}}'><img
+                            src="https://img.icons8.com/metro/26/000000/file.png">Add Leave</a>
                 </li>
             </ul>
             <p style="  margin-top: 50px"></p>

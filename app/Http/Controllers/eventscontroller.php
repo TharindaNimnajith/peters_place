@@ -1,18 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class eventscontroller extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function index()
     {
         $events = DB::select('select * from events');
@@ -156,4 +148,5 @@ class eventscontroller extends Controller
         $dbs = DB::delete('delete from events where id in('.implode(",",$ids).')');
         return redirect('events');
     }
+
 }

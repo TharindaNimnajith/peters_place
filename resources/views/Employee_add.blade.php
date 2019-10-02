@@ -142,6 +142,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 200px;">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:10px">
                         <thead class="thead-dark">
@@ -232,19 +237,22 @@
                         <label for="Employee_type" class="col-4 col-form-label">Employee Type</label>
                         <div class="col-5">
                             <input type="radio" onkeypress="return tabE(this,event)" name="type"
-                                   value="Room Service" @if(old('type')=="Room Service" ) checked="checked" @endif>Room
+                                   value="Room Service" @if(old('type')=="Room Service" ) checked="checked"
+                                   @endif required="required">Room
                             Service<br>
 
                             <input type="radio" onkeypress="return tabE(this,event)" name="type"
                                    value="Kitchen Staff" @if(old('type')=="Kitchen Staff" ) checked="checked"
-                                @endif>Kitchen
+                                   @endif required="required">Kitchen
                             Staff<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Waitress"
-                                   @if(old('type')=="Waitress" ) checked="checked" @endif>Waitress<br>
+                                   @if(old('type')=="Waitress" ) checked="checked"
+                                   @endif required="required">Waitress<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Cleaners"
-                                   @if(old('type')=="Cleaners" ) checked="checked" @endif>Cleaners<br>
+                                   @if(old('type')=="Cleaners" ) checked="checked"
+                                   @endif required="required">Cleaners<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="type" value="Manager"
-                                   @if(old('type')=="Manager" ) checked="checked" @endif>Manager<br>
+                                   @if(old('type')=="Manager" ) checked="checked" @endif required="required">Manager<br>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -283,13 +291,13 @@
                         <label for="DOB" class="col-4 col-form-label">Gender</label>
                         <div class="col-5">
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Male"
-                                   @if(old('type')=="Male" ) checked="checked" @endif>
+                                   @if(old('gender')=='Male' ) checked="checked" @endif required="required">
                             Male<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Female"
-                                   @if(old('type')=="Female" ) checked="checked" @endif>
+                                   @if(old('gender')=="Female" ) checked="checked" @endif required="required">
                             Female<br>
                             <input type="radio" onkeypress="return tabE(this,event)" name="gender" value="Other"
-                                   @if(old('type')=="Other" ) checked="checked" @endif> Other
+                                   @if(old('gender')=="Other" ) checked="checked" @endif required="required"> Other
                         </div>
                     </div>
                     <div class="form-group row">
@@ -321,7 +329,7 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="tp1" class="col-4 col-form-label">Telephone No.1</label>
+                        <label for="tp1" class="col-4 col-form-label">Telephone No.</label>
                         <div class="col-5">
                             <div class="input-group">
                                 <div class="input-group-prepend">

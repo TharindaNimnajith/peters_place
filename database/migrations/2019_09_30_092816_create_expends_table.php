@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEventItemsTable extends Migration
+class CreateExpendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateEventItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('event_items', function (Blueprint $table) {
+        Schema::create('expends', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('event_id');
-            $table->date('event_date');
-            $table->string('item_name');
-            $table->integer('quantity');
+            $table->string('type');
+            $table->string('amount');
+            $table->dateTime('date');
+            /*$table->integer('oid')->unsigned();
+            $table->foreign('oid')->references('id')->on('orders');*/
             $table->timestamps();
         });
-
     }
 
     /**
@@ -31,6 +31,6 @@ class CreateEventItemsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('event_items');
+        Schema::dropIfExists('expends');
     }
 }

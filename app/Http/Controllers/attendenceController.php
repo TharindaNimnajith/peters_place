@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Attendence;
+use App\Charts\test1;
 use App\Employee;
 use App\Memployee;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class attendenceController extends Controller
 {
@@ -18,6 +20,22 @@ class attendenceController extends Controller
 
     public function storeA(Request $request)
     {
+        $id = $request->get('id');
+        $day = $request->get('date');
+
+        $this->validate($request, [
+            // "date" => 'unique:memployees,day'
+            'id' => [
+                'required',
+                Rule::unique('memployees')->where(function ($query) use ($id, $day) {
+                    return $query->where('id', $id)
+                        ->where('day', $day);
+                }),
+            ],
+        ]);
+//        $this->messages = [
+//            'date' = 'Given ip and hostname are not unique',
+//        ];
         $att = new Memployee([
             'id' => $request->get('id'),
             'type' => $request->get('type'),
@@ -117,5 +135,18 @@ class attendenceController extends Controller
         $empdata->delete();
 
         return redirect()->back();
+    }
+
+
+    //Chart generation test 1
+
+    public function chartTest()
+    {
+        $chart = new test1();
+        $chart->labels(['One', 'Two', 'Three', 'Four']);
+        $chart->dataset('My dataset', 'line', [1, 2, 3, 4]);
+        $chart->dataset('My dataset 2', 'line', [4, 3, 2, 1]);
+
+        return view('sample_view', compact('chart'));
     }
 }

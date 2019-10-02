@@ -47,3 +47,4 @@ class CreateAccomsTable extends Migration
         Schema::dropIfExists('accoms');
     }
 }
+

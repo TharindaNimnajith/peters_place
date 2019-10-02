@@ -46,8 +46,13 @@ Route::get('/room_management', function () {
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
+    //$dat = App\room::all();
+
+    //$count = room::where('t_id', '=', )->count();
 
     return view('room_type_management')->with('room_types', $data);
+
+    //return view('room_type_management')->with(['room_types' => $data, 'dat' => $dat]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -108,6 +113,11 @@ Route::post('/search_room_type', 'RoomController@search_room_type');
 Route::post('/search_room_reservation', 'RoomController@search_room_reservation');
 
 
+Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
+
+Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
+
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -155,9 +165,9 @@ Route::get('/search6','eventscontroller@search');
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
 Route::resource('events','eventscontroller');
 
+Route::get('/eventh', 'EventController@index');
 
-
-
+Route::resource('events', 'EventTController');
 
 
 
@@ -174,6 +184,25 @@ Route::get('/search3', 'utilitycontroller@search');
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
 Route::resource('utilities', 'utilitycontroller');
+Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
+Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
+
+Route::get('rep','reportVisnacontroller@index');
+Route::get('/search7', 'reportVisnacontroller@search');
+Route::delete('/deleteall7', 'reportVisnacontroller@deleteAll');
+
+Route::resource('reports_visnas','reportVisnacontroller');
+Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
+Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
+
+Route::get('chart', 'FinanceChartController@index');
+Route::get('/fchart', function (){
+    return view('FinanceChart');
+});
+Route::get('fchart', 'FinanceChartController@index');
+
+//Route::get('/calcExp', 'utilitycontroller@calc');
+//Route::get('/calcIncome', 'utilitycontroller@accomCal');
 
 
 // ------------------------------------------------------------------------
@@ -200,9 +229,7 @@ Route::resource('ereport', 'EreportController');
 //event item
 Route::get('/create', 'EventItemController@create');
 
-Route::get('/eventh', 'EventController@index');
 
-//Route::resource('events', 'EventTController');
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -258,7 +285,7 @@ Route::get('/expenditureFinal', function () {
 });
 
 
-Route::post('/send', 'expenditureController@store');
+Route::post('/send', 'expendsController@store');
 
 Route::post('/makeorderTask', 'orderController@store');
 
@@ -324,6 +351,7 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
+Route::post('calmonsalary', 'salaryController@store');
 
 Route::get('/Eattendence', function () {
     return view('Employee_attendence');
@@ -331,6 +359,10 @@ Route::get('/Eattendence', function () {
 
 Route::get('/Eleave', function () {
     return view('Employee_leave');
+});
+
+Route::get('/ERleave', function () {
+    return view('ErequestedLeave');
 });
 
 Route::get('/Emanagement', function () {
@@ -385,8 +417,12 @@ Route::post('/edit', 'EmployeeController@edit');
 
 
 Route::post('/addleave', 'LeaveController@store');
+Route::post('/sendleave', 'LeaveController@storea');
 
 Route::get('/Eleave', 'LeaveController@index');
+
+Route::get('/ERleave', 'LeaveController@indexR');
+
 
 Route::get('/search2', 'LeaveController@search2');
 
@@ -446,6 +482,40 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
+
+
+//chart maker
+
+Route::get('/EChart', function () {
+    return view('EmployeeChart');
+});
+Route::get('EChart', 'EmployeeChartController@index');
+Route::post('/Echart', 'EmployeeChartController@store');
+
+Route::get('/MChart', function () {
+    return view('EMonthChart');
+});
+Route::get('/MChart', 'EmployeeChartController@day');
+Route::post('/Mchart', 'EmployeeChartController@day');
+
+
+Route::get('/ESChart', function () {
+    return view('EsalaryChart');
+});
+
+Route::get('/ESChart', 'EmployeeChartController@salaryR');
+
+Route::get('/sss', 'EmployeeChartController@regdate');
+Route::post('/date', 'EmployeeChartController@register');
+
+
+
+
+
+//Route::get('/sss' ,'EmployeeChartController@salaryR');
+
+
+
 
 
 // ------------------------------------------------------------------------

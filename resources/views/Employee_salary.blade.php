@@ -29,7 +29,7 @@
             color: white;
         }
 
-        ul {
+        ul.my {
             list-style-type: none;
             margin: 0;
             padding: 0;
@@ -142,6 +142,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
@@ -200,7 +205,7 @@
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="#contact"><img
+                    <li class="my"><a href={{url('/ESChart')}}><img
                                 src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                     </li>
                 </ul>
@@ -296,6 +301,32 @@
 
 
                     <div class="col-4">
+                        <big style="color: red">ADD TOTAL MONTHLY SLARY</big>
+                        <form method="post" action="calmonsalary">
+                            {{ csrf_field() }}
+                            <select id="category" name="month" required="required"
+                                    class="mdb-select md-form">
+                                <option>Select Month</option>
+                                <option value="Jan">January</option>
+                                <option value="Feb">February</option>
+                                <option value="Mar">March</option>
+                                <option value="Apr">April</option>
+                                <option value="May">May</option>
+                                <option value="Jun">June</option>
+                                <option value="Jul">July</option>
+                                <option value="Aug">August</option>
+                                <option value="Sep">September</option>
+                                <option value="Oct">October</option>
+                                <option value="Nov">November</option>
+                                <option value="Dec">December</option>
+
+
+                            </select>
+                            <input type="submit" value="SUBMIT"
+                                   class="btn btn-primary btn-sm" style="margin-left: 0px">
+
+
+                        </form>
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
                             <b>
                                 <h4 id="date" style="margin-top: 20px;"></h4>

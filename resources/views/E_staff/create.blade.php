@@ -1,7 +1,7 @@
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>create staff</title>
+    <title>Menu</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
 
 
 </head>
@@ -46,7 +47,7 @@
             <br>
             <br>
             <br>
-            <center><h2>Allocate Staff</h2></center>
+            <center><h2>Add a Menu List</h2></center>
             <div>
                 @if ($errors->any())
                     <div class="alert alert-danger">
@@ -74,7 +75,7 @@
                         <input type="text" class="form-control" name="count"/>
                     </div>
 
-                    <button type="submit" class="btn btn-success">Add</button>
+                    <button type="submit" class="btn btn-success">Add Menu</button>
                 </form>
             </div>
         </div>

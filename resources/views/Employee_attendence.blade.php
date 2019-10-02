@@ -142,6 +142,11 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
@@ -202,7 +207,7 @@
                                 src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
                             Employee</a>
                     </li>
-                    <li class="my"><a href="#contact"><img
+                    <li class="my"><a href={{url('/EChart')}}><img
                                 src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
                     </li>
                 </ul>

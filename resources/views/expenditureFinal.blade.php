@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -38,10 +37,9 @@
         }
 
         .topnav a.active {
-            background-color: #4CAF50;
+            background-color: #3495e3;
             color: white;
         }
-
     </style>
 </head>
 <div class="topnav">
@@ -57,15 +55,15 @@
 
             <h2>Expenditures</h2>
 
-            <form method="post" action="/send" id="reused_form">
+            <form method="post" action="/save" id="reused_form">
                 {{csrf_field()}}
                 <div class="row">
                     <div class="col-sm-12 form-group">
                         <label for="message" name="item"> Item Type:</label></br>
-                        <select style="height:28px">
-                            <option value="sampath">Food</option>
-                            <option value="peoples">Event Products</option>
-                            <option value="boc">Infrastructure</option>
+                        <select style="height:28px" name="item">
+                            <option value="food">Food</option>
+                            <option value="event">Event Products</option>
+                            <option value="infa">Infrastructure</option>
                         </select></br></br>
                         <label for="email" name="amount"> Amount:</label>
                         <input type="text" style="width:175px" class="form-control" id="amount" name="amount" required>
@@ -78,10 +76,11 @@
 
                 <div class="row">
                     <div class="col-sm-6 form-group">
-                        <button type="submit" style="margin-left: 71px " class="btn btn-primary">Send</button>
+                        <button type="reset" class="btn btn-warning" style="margin-left: 60px">Clear</button>
+
                     </div>
                     <div class="col-sm-6 form-group">
-                        <button type="submit" class="btn btn-warning" style="margin-left: -24px">Clear</button>
+                        <button type="submit" class="btn btn-success">Send</button>
                     </div>
                 </div>
 
@@ -91,5 +90,4 @@
     </div>
 </div>
 </body>
-
 </html>
