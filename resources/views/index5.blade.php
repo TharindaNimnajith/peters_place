@@ -78,7 +78,7 @@
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
-    <a href="/report1">Reports</a>
+    <a href="/freport">Reports</a>
 
 </div>
 <br>
@@ -112,9 +112,9 @@
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search5" method="get">
+            <form action="/search6" method="get">
                 <div class="input-group">
-                    <input type="search" name="search5" class="form-control">
+                    <input type="search" name="search4" class="form-control">
                     <span class="input-group-prepend">
 					<button type="submit" class="btn btn-primary">Search</button>
 				</span>
@@ -125,17 +125,22 @@
             <a href="{{ action('eventscontroller@create') }}" class="btn btn-primary">Add Data</a>
         </div>
     </div>
+
+    <div class="col-md-12" style="margin-top: -95px; margin-left: 1135px">
+        <a href="{{url('dynamic_pdf5/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+    </div>
+
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall5" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall5" type="submit" class="btn btn-danger" style="margin-top: 45px">Delete All Selected</button>
         <br>
         <br>
         <table class="table table-bordered">
             <thead>
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
-                <th style="width: 60px">Custome Name</th>
+                <th style="width: 60px">Customer Name</th>
                 <th style="width: 80px">Event Date</th>
                 <th style="width: 60px">Event Time</th>
                 <th style="width: 60px">Category</th>
@@ -143,7 +148,7 @@
                 <th style="width: 80px">Menu ID</th>
                 <th style="width: 80px">Advancement</th>
                 <th style="width: 80px">Total Payment</th>
-                <th style="width: 200px">Action</th>
+                <th style="width:200px">Action</th>
             </tr>
             </thead>
             <tbody>

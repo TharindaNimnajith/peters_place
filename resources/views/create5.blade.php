@@ -79,7 +79,7 @@
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
-    <a href="/report1">Reports</a>
+    <a href="/freport">Reports</a>
 
 </div>
 <br>

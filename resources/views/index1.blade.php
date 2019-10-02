@@ -82,7 +82,7 @@
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
-    <a href="/report1">Reports</a>
+    <<a href="/freport">Reports</a>
 
 </div>
 <br>
@@ -127,13 +127,16 @@
             </form>
         </div>
         <div class="col-md-2 text-right">
-            <a href="{{ action('accomcontroller@create') }}" class="btn btn-primary">Add Data</a>
+            <a href="{{ action('accomcontroller@create') }}" class="btn btn-primary" style="margin-left: -30px">Add Data</a>
         </div>
+    </div>
+    <div class="col-md-12" style="margin-top: -95px; margin-left: 1135px">
+        <a href="{{url('dynamic_pdf1/pdf')}}" class="btn btn-danger">Convert into PDF</a>
     </div>
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall2" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall2" type="submit" class="btn btn-danger" style="margin-top: 45px">Delete All Selected</button>
         <br>
         <br>
         <table class="table table-bordered">
@@ -141,15 +144,15 @@
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
                 <th style="width: 60px">Arrival</th>
-                <th style="width: 80px">Departure</th>
+                <th style="width: 60px">Departure</th>
                 <th style="width: 60px">Adults</th>
                 <th style="width: 60px">Kids</th>
                 <th style="width: 60px">Room Type</th>
-                <th style="width: 80px">Room No</th>
-                <th style="width: 80px">Food Service</th>
-                <th style="width: 80px">Payment</th>
-                <th style="width: 80px">NIC</th>
-                <th style="width: 200px">Action</th>
+                <th style="width: 60px">Room No</th>
+                <th style="width: 60px">Food Service</th>
+                <th style="width: 60px">Payment</th>
+                <th style="width: 60px">NIC</th>
+                <th style="width: 600px">Action</th>
             </tr>
             </thead>
             <tbody>
@@ -174,6 +177,9 @@
                     </td>
                 </tr>
             @endforeach
+
+
+
             </tbody>
             <tfoot>
 

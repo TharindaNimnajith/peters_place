@@ -116,6 +116,20 @@ Route::post('/search_room_reservation', 'RoomController@search_room_reservation'
 
 Route::get('customer', 'postcontroller@index');
 
+Route::get('dynamic_pdf', 'DynamicPDFController@index');
+Route::get('dynamic_pdf/pdf', 'DynamicPDFController@pdf');
+
+Route::get('dynamic_pdf1', 'DynamicPDFController1@index');
+Route::get('dynamic_pdf1/pdf', 'DynamicPDFController1@pdf');
+
+Route::get('dynamic_pdf5', 'DynamicPDFController5@index');
+Route::get('dynamic_pdf5/pdf', 'DynamicPDFController5@pdf');
+
+Route::resource('freport', 'pay_e_reportController');
+Route::get('/f_report/edit/pdf','pay_e_reportController@pdf');
+Route::get('searchereport', 'pay_e_reportController@searchereport');
+
+
 Route::get('/search1', 'postcontroller@search');
 
 Route::delete('/deleteall1', 'postcontroller@deleteAll');
@@ -123,9 +137,9 @@ Route::delete('/deleteall1', 'postcontroller@deleteAll');
 Route::resource('posts', 'postcontroller');
 
 
-Route::get('/report1', function () {
-    return view('report1');
-});
+//Route::get('/report1', function () {
+  //  return view('report1');
+//});
 
 
 Route::get('accoms', 'accomcontroller@index');
@@ -137,9 +151,11 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 Route::resource('accoms', 'accomcontroller');
 
 Route::get('events1', 'eventscontroller@index');
-Route::get('/search5','eventscontroller@search');
+Route::get('/search6','eventscontroller@search');
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
 Route::resource('events','eventscontroller');
+
+
 
 
 
