@@ -253,13 +253,14 @@
                                 <td>{{$row['leaving_date']}}</td>
                                 <td>{{$row['leve_type']}}</td>
                                 <td>{{$row['nof_days']}}</td>
-                                <td>{{$row['Email']}}</td>
+
 
                                 @foreach($emp as $r)
-                                    @if($r['id']==$row['id'])
+                                    @if($r['id']==$row['eid'])
                                         <td>{{$r['Email']}} </td>
                                     @endif
                                 @endforeach
+
 
                                 <form class="form-group" method="post" action="/sendleave">
                                     {{ csrf_field() }}

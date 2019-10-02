@@ -23,9 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Balping\JsonRaw;
 
-use JsonSerializable;
-
-class Raw implements JsonSerializable {
+class Raw implements \JsonSerializable {
 	/**
 	 * Unique identifier. Gets replaced with raw value
 	 * after using built-in json_encode

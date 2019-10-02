@@ -2,7 +2,6 @@
 
 namespace ConsoleTVs\Charts;
 
-use ConsoleTVs\Charts\Commands\ChartsCommand;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +26,7 @@ class ChartsServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                ChartsCommand::class,
+                \ConsoleTVs\Charts\Commands\ChartsCommand::class,
             ]);
         }
     }

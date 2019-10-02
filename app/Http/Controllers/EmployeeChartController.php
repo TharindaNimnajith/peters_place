@@ -193,7 +193,7 @@ class EmployeeChartController extends Controller
 
 
         $chart->labels($data->values());
-        $chart->dataset('Monthly Salaries', 'line', $data2->values());
+        $chart->dataset('Daily Attendence', 'line', $data2->values());
         //add label and data set
         return view('Eregister', compact('chart', 'date'));
         //dd($salary_info);

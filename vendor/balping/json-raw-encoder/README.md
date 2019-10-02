@@ -61,7 +61,7 @@ To get around this problem, use `Raw` objects provided by this package:
 Now, the encoded JSON looks like this. Notice, that there are no parentheses around the function.
 
 ```js
-{"type";:"cat","count";:42,"callback";:function(a){alert(a);}}
+{"type":"cat","count":42,"callback":function(a){alert(a);}}
 ```
 
 Calling `bar.callback()` now works, as `callback` is a function and not a string.
@@ -94,7 +94,7 @@ echo Replacer::replace($encoded, $rawObjects);
 Result:
 
 ```js
-{"type";:"cat","count";:42,"callback";:function(a){alert(a);}}
+{"type":"cat","count":42,"callback":function(a){alert(a);}}
 ```
 
 ## License

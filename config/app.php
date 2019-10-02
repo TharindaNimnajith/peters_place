@@ -168,6 +168,8 @@ return [
 
         Barryvdh\DomPDF\ServiceProvider::class,
 
+        ConsoleTVs\Charts\ChartsServiceProvider::class,
+
         /*
          * Package Service Providers...
          */
@@ -235,7 +237,6 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
 
         'PDF' => Barryvdh\DomPDF\Facade::class,
-
 
     ],
 

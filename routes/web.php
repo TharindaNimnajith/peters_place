@@ -433,6 +433,7 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
+Route::post('calmonsalary', 'salaryController@store');
 
 Route::get('/Eattendence', function () {
     return view('Employee_attendence');
@@ -440,6 +441,10 @@ Route::get('/Eattendence', function () {
 
 Route::get('/Eleave', function () {
     return view('Employee_leave');
+});
+
+Route::get('/ERleave', function () {
+    return view('ErequestedLeave');
 });
 
 Route::get('/Emanagement', function () {
@@ -494,8 +499,12 @@ Route::post('/edit', 'EmployeeController@edit');
 
 
 Route::post('/addleave', 'LeaveController@store');
+Route::post('/sendleave', 'LeaveController@storea');
 
 Route::get('/Eleave', 'LeaveController@index');
+
+Route::get('/ERleave', 'LeaveController@indexR');
+
 
 Route::get('/search2', 'LeaveController@search2');
 
@@ -555,6 +564,60 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
+
+
+//chart maker
+
+Route::get('/EChart', function () {
+    return view('EmployeeChart');
+});
+
+
+Route::get('EChart', 'EmployeeChartController@index');
+
+Route::post('/Echart', 'EmployeeChartController@store');
+
+
+Route::get('/MChart', function () {
+    return view('EMonthChart');
+});
+
+
+Route::get('/MChart', 'EmployeeChartController@day');
+
+Route::post('/Mchart', 'EmployeeChartController@day');
+
+
+Route::get('/ESChart', function () {
+    return view('EsalaryChart');
+});
+
+
+Route::get('/ESChart', 'EmployeeChartController@salaryR');
+
+Route::get('/sss', 'EmployeeChartController@regdate');
+
+Route::post('/date', 'EmployeeChartController@register');
+
+//Route::post("/dailyAttDetailsPdf", 'attendenceController@dailyattPdf');
+
+
+Route::post('/dailyAttDetailsPdf', array('as' => 'dailyattPdf', 'uses' => 'attendenceController@dailyattPdf'));
+
+
+Route::get('/pdf', function () {
+    return view('Dailyattendance');
+});
+
+
+Route::get('/vv', 'attendenceController@pdf');
+
+Route::get('/MTsalary', 'salaryController@getData');
+
+Route::get('/dessalary/{id}', 'salaryController@getDatadelete');
+
+
+//Route::get('/sss' ,'EmployeeChartController@salaryR');
 
 
 // ------------------------------------------------------------------------
