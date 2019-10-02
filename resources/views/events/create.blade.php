@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>create menu</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,22 +18,12 @@
 <br>
 <br>
 <div class="container">
-    <div role="group" aria-label="Basic example" class="btn btn-dark">
-        <a href="{{ route('events.index')}}">
-            <button class="btn btn-dark">Events</button>
-        </a>
-        <a href="{{ route('menus.index')}}">
-            <button class="btn btn-dark">Menus</button>
-        </a>
-        <a href="/eitems">
-            <button class="btn btn-dark">Event Items</button>
-        </a>
-        <a href="/estaff">
-            <button class="btn btn-dark">Manage Staff</button>
-        </a>
-        <a href="/ereport">
-            <button class="btn btn-dark">Report</button>
-        </a>
+    <div role="group" aria-label="Basic example"  class="btn btn-dark">
+        <a href="{{ route('events.index')}}"><button class="btn btn-dark">Events</button></a>
+        <a href="{{ route('menus.index')}}"><button class="btn btn-dark">Menus</button></a>
+        <a href="/eitems"><button class="btn btn-dark">Event Items</button></a>
+        <a href="/estaff"><button class="btn btn-dark">Manage Staff</button></a>
+        <a href="/ereport"><button  class="btn btn-dark">Report</button></a>
 
     </div>
 
@@ -50,7 +40,7 @@
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
-                    </div><br/>
+                    </div><br />
                 @endif
                 <form method="post" action="{{ route('events.store') }}">
                     @csrf
@@ -89,7 +79,7 @@
             </div>
         </div>
     </div>
-    <!--MAIN SECTION-->
+<!--MAIN SECTION-->
 
 </div>
 <script src="{{ asset('js/app.js') }}" type="text/js"></script>

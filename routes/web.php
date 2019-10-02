@@ -25,6 +25,7 @@ Route::get('/', function () {
     return view('peters_place');
 });
 
+
 Route::get('/online_reservation', function () {
     $data = App\room_type::all();
 
@@ -46,13 +47,8 @@ Route::get('/room_management', function () {
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
-    //$dat = App\room::all();
-
-    //$count = room::where('t_id', '=', )->count();
 
     return view('room_type_management')->with('room_types', $data);
-
-    //return view('room_type_management')->with(['room_types' => $data, 'dat' => $dat]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -118,6 +114,16 @@ Route::get('/dynamic_pdf_rooms', 'RoomController@dynamic_pdf_rooms');
 Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
 
 
+Route::get('/dynamic_pdf_room_types', 'RoomController@dynamic_pdf_room_types');
+
+Route::get('/dynamic_pdf_room_types/Room Types List', 'RoomController@room_types_pdf');
+
+
+Route::get('/dynamic_pdf_room_reservations', 'RoomController@dynamic_pdf_room_reservations');
+
+Route::get('/dynamic_pdf_room_reservations/Room Reservations List', 'RoomController@room_reservations_pdf');
+
+
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 
@@ -126,17 +132,24 @@ Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
 
 Route::get('customer', 'postcontroller@index');
 
+
 Route::get('dynamic_pdf', 'DynamicPDFController@index');
+
 Route::get('dynamic_pdf/pdf', 'DynamicPDFController@pdf');
 
 Route::get('dynamic_pdf1', 'DynamicPDFController1@index');
+
 Route::get('dynamic_pdf1/pdf', 'DynamicPDFController1@pdf');
 
 Route::get('dynamic_pdf5', 'DynamicPDFController5@index');
+
 Route::get('dynamic_pdf5/pdf', 'DynamicPDFController5@pdf');
 
+
 Route::resource('freport', 'pay_e_reportController');
-Route::get('/f_report/edit/pdf','pay_e_reportController@pdf');
+
+Route::get('/f_report/edit/pdf', 'pay_e_reportController@pdf');
+
 Route::get('searchereport', 'pay_e_reportController@searchereport');
 
 
@@ -148,7 +161,7 @@ Route::resource('posts', 'postcontroller');
 
 
 //Route::get('/report1', function () {
-  //  return view('report1');
+//  return view('report1');
 //});
 
 
@@ -161,13 +174,13 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 Route::resource('accoms', 'accomcontroller');
 
 Route::get('events1', 'eventscontroller@index');
-Route::get('/search6','eventscontroller@search');
+
+Route::get('/search6', 'eventscontroller@search');
+
 Route::delete('/deleteall5', 'eventscontroller@deleteAll');
+
 Route::resource('events','eventscontroller');
 
-Route::get('/eventh', 'EventController@index');
-
-Route::resource('events', 'EventTController');
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -176,12 +189,11 @@ Route::resource('events', 'EventTController');
 
 
 Route::get('u', 'utilitycontroller@index');
-
 Route::get('/search3', 'utilitycontroller@search');
-
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
 Route::resource('utilities', 'utilitycontroller');
+
 Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
 Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
 
@@ -194,13 +206,10 @@ Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
 Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
 
 Route::get('chart', 'FinanceChartController@index');
-Route::get('/fchart', function (){
+Route::get('/fchart', function () {
     return view('FinanceChart');
 });
 Route::get('fchart', 'FinanceChartController@index');
-
-//Route::get('/calcExp', 'utilitycontroller@calc');
-//Route::get('/calcIncome', 'utilitycontroller@accomCal');
 
 
 // ------------------------------------------------------------------------
@@ -209,23 +218,44 @@ Route::get('fchart', 'FinanceChartController@index');
 // Sethma Wattegedara - Event Management
 
 
+Route::resource('eventh', 'EventController');
+
+Route::resource('eventsa', 'EventTController');
+
+Route::get('searcheventaa', 'EventController@searcheventaa');
+
+
 //add menu
+
 Route::resource('menus', 'EventMenuController');
 
+
 //search
+
 Route::get('/search', 'EventMenuController@search');
 
+
 //add item
+
 Route::resource('eitems', 'EventItemController');
 
+Route::get('searcheitem', 'EventItemController@searcheitem');
+
+Route::get('/e_item/edit/pdf', 'EventItemController@pdf');
+
+
 //staff
+
 Route::resource('estaff', 'EstaffController');
 
+
 //e report
+
 Route::resource('ereport', 'EreportController');
 
-//event item
-Route::get('/create', 'EventItemController@create');
+Route::get('/e_report/edit/pdf', 'EreportController@pdf');
+
+Route::get('searchereport', 'EreportController@searchereport');
 
 
 // ------------------------------------------------------------------------
@@ -234,29 +264,59 @@ Route::get('/create', 'EventItemController@create');
 // Himasha Amarasinghe - Housekeeping Management
 
 
-Route::get('/vie', 'frontaddtask@indexassing');
+Route::get('/vie','frontaddtask@indexassing');
 
-Route::get('/vie2', 'frontaddtask@taskslist');
+Route::get('/vie2','frontaddtask@taskslist');
 
-Route::post('/saved', 'frontaddtask@insert');
+Route::post('/saved','frontaddtask@insert');
 
-Route::get('/deletetask/{id}', 'frontaddtask@deletetask');
+Route::get('/deletetask/{id}','frontaddtask@deletetask');
 
-Route::get('/List', 'frontaddtask@Listsearch');
+//Route::get('/List','frontaddtask@Listsearch');
 
-Route::get('/List', 'frontaddtask@retrive');
+//Route::get('/List','frontaddtask@retrive');
 
-Route::get('/search5', 'frontaddtask@statusSearch');
+Route::get('/searchH','frontaddtask@statusSearch');
 
-Route::get('/Update', 'frontaddtask@supdate');
+Route::get('/Update','frontaddtask@supdate');
 
-Route::get('/Update', 'frontaddtask@retriveupdate');
+Route::get('/Update','frontaddtask@retriveupdate');
 
-Route::get('/prnpriview', 'frontaddtask@prnpriview');
 
-Route::get('/found', 'frontaddtask@founditems');
+Route::get('/prnpriview','frontaddtask@prnpriview');
 
-Route::post('/found', 'frontaddtask@store')->name('addimage');
+Route::get('/found','frontaddtask@founditems');
+
+Route::post('/found','frontaddtask@store')->name('addimage');
+
+
+Route::get('/upd/{id}','frontaddtask@updating');
+
+Route::post('/newone','frontaddtask@newViewUp');
+
+
+Route::get('/lost','frontaddtask@itemview');
+
+Route::get('/lost','frontaddtask@retriveLitems');
+
+Route::get('/deleteItem/{id}','frontaddtask@deleteLostItem');
+
+
+//reports
+
+Route::get('/Hrepo', 'frontaddtask@indexH');
+
+Route::get('/Hrepo/pdf', 'frontaddtask@pdfH');
+
+
+Route::get('/Frepo', 'frontaddtask@indexF');
+
+Route::get('/Frepo/pdf', 'frontaddtask@pdfHF');
+
+
+Route::get('/Srepo', 'frontaddtask@indexState');
+
+Route::get('/Srepo/pdf', 'frontaddtask@pdfstate');
 
 
 // ------------------------------------------------------------------------
@@ -265,10 +325,12 @@ Route::post('/found', 'frontaddtask@store')->name('addimage');
 // Tharushika Liyanage - Supplier Management
 
 
+/*
 Route::get('/supplier', function () {
-    $data = App\supplier::all();
-    return view('supplier')->with('supplier', $data);
+    $data =App\supplier::all();
+    return view('supplier')->with('supplier',$data);
 });
+*/
 
 Route::get('/booking', function () {
     return view('booking');
@@ -283,15 +345,35 @@ Route::get('/expenditureFinal', function () {
 });
 
 
-Route::post('/send', 'expendsController@store');
+Route::get('/search', 'orderController@search');
+
+Route::post('/save', 'ExpendsController@store');
 
 Route::post('/makeorderTask', 'orderController@store');
 
-Route::post('/savesup', 'suppliercontroller@store');
 
-Route::get('/deletesup/{id}', 'suppliercontroller@deletesup');
+/*
+Route::post('/savesup','suppliercontroller@store');
+*/
 
-Route::get('/savesup/{id,data}', 'suppliercontroller@updatetask');
+/*
+Route::get('/deletesup/{id}','suppliercontroller@deletesup');
+*/
+
+/*
+Route::get('/updatesup/{id}','suppliercontroller@updatesup');
+*/
+
+/*
+Route::post('/updatesupp','suppliercontroller@updatesupp');
+*/
+
+
+Route::resource('/supplier', 'suppliercontroller');
+
+Route::get('/dynamic_pdf', 'DynamicPDFController1@sup');
+
+Route::get('/dynamic_pdf/pdf', 'DynamicPDFController1@pdf');
 
 
 // ------------------------------------------------------------------------
@@ -317,11 +399,13 @@ Route::post('/saveTask1', 'TaskController@store1');
 
 Route::get('/inventory', 'TaskController@index1');
 
+Route::post('/pinventory/update', 'TaskController@update');
+
 Route::post('/saveTask2', 'TaskController@store2');
 
 Route::get('/hall', 'TaskController@index2');
 
-Route::post('/saveTask3', 'TaskController@store3');
+Route::post('/saveTask3', 'TaskController@store5');
 
 Route::get('/room', 'TaskController@index3');
 
@@ -333,7 +417,7 @@ Route::get('/task2/destroy/{id}', 'TaskController@destroy2');
 
 Route::get('/task3/destroy/{id}', 'TaskController@destroy3');
 
-Route::get('/search', 'TaskController@search');
+//Route::get('/search', 'TaskController@search');
 
 
 // ------------------------------------------------------------------------
@@ -349,7 +433,6 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
-Route::post('calmonsalary', 'salaryController@store');
 
 Route::get('/Eattendence', function () {
     return view('Employee_attendence');
@@ -357,10 +440,6 @@ Route::get('/Eattendence', function () {
 
 Route::get('/Eleave', function () {
     return view('Employee_leave');
-});
-
-Route::get('/ERleave', function () {
-    return view('ErequestedLeave');
 });
 
 Route::get('/Emanagement', function () {
@@ -415,12 +494,8 @@ Route::post('/edit', 'EmployeeController@edit');
 
 
 Route::post('/addleave', 'LeaveController@store');
-Route::post('/sendleave', 'LeaveController@storea');
 
 Route::get('/Eleave', 'LeaveController@index');
-
-Route::get('/ERleave', 'LeaveController@indexR');
-
 
 Route::get('/search2', 'LeaveController@search2');
 
@@ -480,50 +555,6 @@ Route::group(['middleware' => ['web', 'auth']], function () {
 Route::get('pdfview', array('as' => 'pdfview', 'uses' => 'EmployeeController@pdfview'));
 
 Route::post('/EmployeeDetailsPdf', array('as' => 'EmployeeDetailsPdf', 'uses' => 'EmployeeController@EmployeeDetailsPdf'));
-
-
-//chart maker
-
-Route::get('/EChart', function () {
-    return view('EmployeeChart');
-});
-Route::get('EChart', 'EmployeeChartController@index');
-Route::post('/Echart', 'EmployeeChartController@store');
-
-Route::get('/MChart', function () {
-    return view('EMonthChart');
-});
-Route::get('/MChart', 'EmployeeChartController@day');
-Route::post('/Mchart', 'EmployeeChartController@day');
-
-
-Route::get('/ESChart', function () {
-    return view('EsalaryChart');
-});
-
-Route::get('/ESChart', 'EmployeeChartController@salaryR');
-
-Route::get('/sss', 'EmployeeChartController@regdate');
-Route::post('/date', 'EmployeeChartController@register');
-
-//Route::post("/dailyAttDetailsPdf", 'attendenceController@dailyattPdf');
-Route::post('/dailyAttDetailsPdf', array('as' => 'dailyattPdf', 'uses' => 'attendenceController@dailyattPdf'));
-
-Route::get('/pdf', function () {
-    return view('Dailyattendance');
-});
-
-
-Route::get('/vv', 'attendenceController@pdf');
-
-Route::get('/MTsalary', 'salaryController@getData');
-Route::get('/dessalary/{id}', 'salaryController@getDatadelete');
-
-
-//Route::get('/sss' ,'EmployeeChartController@salaryR');
-
-
-
 
 
 // ------------------------------------------------------------------------

@@ -16,8 +16,9 @@ class CreateLeavesTable extends Migration
         Schema::create('leaves',
             function (Blueprint $table) {
                 $table->integer('id');
-                $table->primary(['id', 'Requesting_date']);
-                $table->date("Requesting_date");
+                $table->string('type');
+                $table->primary(['id', 'type']);
+                $table->date("Requesting_date")->nullable();
                 $table->date('leaving_date')->nullable();
                 $table->integer('nof_days')->nullable();
                 $table->string("leve_type");

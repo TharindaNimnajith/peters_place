@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App;
 use App\customer;
+use App\Http\Requests\DeleteRoomTypeValidation;
 use App\Http\Requests\ReservationValidation;
 use App\Http\Requests\RoomReservationUpdateValidation;
 use App\Http\Requests\RoomTypeUpdateValidation;
@@ -143,7 +144,7 @@ class RoomController extends Controller
             't_id' => $request->get('rtype'),
             'check_in' => $request->get('cin'),
             'check_out' => $request->get('cout'),
-            'room_no' => 200,
+            'room_no' => null,
             'cid' => $maxValue
         ]);
 
@@ -228,12 +229,28 @@ class RoomController extends Controller
      */
     public function delete_room($id)
     {
+        $details = reserve::all();
+
+        foreach ($details as $tid) {
+            if ($tid->room_no == $id) {
+                return redirect()
+                    ->back()
+                    ->with('unsuccess', 'Foreign key violation! The room is already in use for a reservation!');
+            }
+        }
+
         $room = room::where('id', $id);
         $room->delete();
 
         return redirect()
             ->back()
             ->with('success', 'Room has been deleted successfully!');
+    }
+
+
+    public function delete_room_type_validation(DeleteRoomTypeValidation $request)
+    {
+        $validatedData = $request->validated();
     }
 
 
@@ -245,6 +262,41 @@ class RoomController extends Controller
      */
     public function delete_room_type($id)
     {
+        //$validatedData = $request->validated();
+
+        /*
+        $this->validate($request,[
+            't_id' => 'exists:rooms,t_id|exists:reserves,t_id',
+        ]);
+        */
+
+        /*
+        $validatedData = $request->validate([
+            't_id' => 'exists:rooms,t_id|exists:reserves,t_id',
+        ]);
+        */
+
+        //delete_room_type_validation($id);
+
+        $details = room::all();
+        $details1 = reserve::all();
+
+        foreach ($details as $tid) {
+            if ($tid->t_id == $id) {
+                return redirect()
+                    ->back()
+                    ->with('unsuccess', 'Foreign key violation! The room type is already in use for a room!');
+            }
+        }
+
+        foreach ($details1 as $tid) {
+            if ($tid->t_id == $id) {
+                return redirect()
+                    ->back()
+                    ->with('unsuccess', 'Foreign key violation! The room type is already in use for a reservation!');
+            }
+        }
+
         $room_type = room_type::where('id', $id);
         $room_type->delete();
 
@@ -645,11 +697,10 @@ class RoomController extends Controller
         $id = $request->t_id;
         $name = $request->t_name;
 
-        $availability = $request->available;
+        //$availability = $request->available;
 
         //dd($id);
 
-        /*
         if ($id == null) {
             $data = DB::table('room_types')
                 ->orWhere('name', 'like', '%' . $name . '%')
@@ -659,13 +710,14 @@ class RoomController extends Controller
                 ->orWhere('id', $id)
                 ->paginate(5);
         }
-        */
 
+        /*
         $data = DB::table('room_types')
             ->orWhere('id', $id)
             ->orWhere('name', 'like', '%' . $name . '%')
             //->orWhere('availability')
             ->paginate(30);
+        */
 
         /*
         $data = DB::table('room_types')
@@ -698,8 +750,10 @@ class RoomController extends Controller
     {
         $id = $request->id;
         $cid = $request->cid;
+
         $fname = $request->fname;
         $lname = $request->lname;
+
         $roomtype = $request->rtype;
         $r_no = $request->r_no;
         $cin = $request->cin;
@@ -808,6 +862,8 @@ class RoomController extends Controller
             //->orWhere('reserves.check_in', 'like', '%' . $cin . '%')
             //->orWhere('reserves.check_out', 'like', '%' . $cout . '%')
 
+            ->orWhere('check_in', $cin)
+            ->orWhere('check_out', $cout)
             ->paginate(30);
 
         /*
@@ -898,7 +954,9 @@ class RoomController extends Controller
 
         $pdf->loadHTML($this->convert_rooms_data_to_html());
 
-        return $pdf->stream();
+        //return $pdf->stream();
+
+        return $pdf->download('dynamic_pdf_rooms');
     }
 
 
@@ -908,7 +966,9 @@ class RoomController extends Controller
 
         $pdf->loadHTML($this->convert_room_types_data_to_html());
 
-        return $pdf->stream();
+        //return $pdf->stream();
+
+        return $pdf->download('dynamic_pdf_room_types');
     }
 
 
@@ -918,7 +978,9 @@ class RoomController extends Controller
 
         $pdf->loadHTML($this->convert_room_reservations_data_to_html());
 
-        return $pdf->stream();
+        //return $pdf->stream();
+
+        return $pdf->download('dynamic_pdf_room_reservations');
     }
 
 
@@ -926,6 +988,8 @@ class RoomController extends Controller
     {
         $rooms_data = $this->get_rooms_data();
         $room_types_data = $this->get_room_types_data();
+
+        $date_today = date("Y/m/d");
 
         //$img = "{{ asset('images/g12.jpg') }}";
         //$filePath = "../../../public/images/g12.jpg";
@@ -994,29 +1058,30 @@ class RoomController extends Controller
         // header
 
         $output = '
-            <div style="border:solid 1px; margin-bottom:40px;">
+            <div style="border: solid 1px; margin-bottom: 40px;">
                 <div> 
-                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin:2px 2px 2px 2px;"/> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin: 2px 2px 2px 2px;"/> 
                 </div>
 
-                <div style="margin-left:300px; margin-top:-200px;">
-                    <h2 style="margin-left:50px;">Peter\'s Place Hotel</h2>
+                <div style="margin-left: 300px; margin-top: -200px;">
+                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
 
                     <p> 
-                        <b><p>Address    : </p></b> 
-                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara
+                        <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara </p>                         
                     </p>
                     
                     <p> 
-                        <b><p>Contact No : </p></b> 
-                        +94 (41)225-74-66
+                        <p style="margin-left: -68px;">Phone Number &nbsp; : &nbsp; +94 (41)225-74-66</p>                     
                     </p>
                     
                     <p> 
-                        <b><p>E-mail     : </p></b> 
-                        info@petersplace.lk
+                        <p style="margin-left: -70px;">E-mail &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        info@petersplace.lk</p>
                     </p>
                 </div>
+
+                <h3>' . $date_today . '</h3>
             </div>
         ';
 
@@ -1024,16 +1089,16 @@ class RoomController extends Controller
         // table headings
 
         $output .= '
-            <h1 align="center" style="margin-bottom:20px;">Room List</h1>
+            <h1 align="center" style="margin-bottom: 20px;">Room List</h1>
 
-            <table width="100%" style="border-collapse:collapse; border:0px;">
+            <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border:1px solid; padding:12px;" width="20%">Room No</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Floor</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Type</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Availability</th>
-                <th style="border:1px solid; padding:12px;" width="20%">Status</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Room No</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Floor</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Type</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Availability</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Status</th>
             </tr>
         ';
 
@@ -1083,11 +1148,11 @@ class RoomController extends Controller
 
             $output .= '
                 <tr>
-                    <td style="border:1px solid; padding:12px;">' . $rooms->id . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $rooms->floor . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $type . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $availability . '</td>
-                    <td style="border:1px solid; padding:12px;">' . $status . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $rooms->id . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $rooms->floor . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $type . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $availability . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $status . '</td>
                 </tr>
             ';
         }
@@ -1100,13 +1165,262 @@ class RoomController extends Controller
 
     function convert_room_types_data_to_html()
     {
+        //$rooms_data = $this->get_rooms_data();
 
+        $room_types_data = $this->get_room_types_data();
+
+        // header
+
+        $output = '
+            <div style="border: solid 1px; margin-bottom: 40px;">
+                <div> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin: 2px 2px 2px 2px;"/> 
+                </div>
+
+                <div style="margin-left: 300px; margin-top: -200px;">
+                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
+
+                    <p> 
+                        <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara </p>                         
+                    </p>
+                    
+                    <p> 
+                        <p style="margin-left: -68px;">Phone Number &nbsp; : &nbsp; +94 (41)225-74-66</p>                     
+                    </p>
+                    
+                    <p> 
+                        <p style="margin-left: -70px;">E-mail &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        info@petersplace.lk</p>
+                    </p>
+                </div>
+            </div>
+        ';
+
+
+        // table headings
+
+        $output .= '
+            <h1 align="center" style="margin-bottom: 20px;">Room Types List</h1>
+
+            <table width="100%" style="border-collapse: collapse; border: 0px;">
+
+            <tr style="background-color:black; color:white;">
+                <th style="border: 1px solid; padding: 12px;" width="20%">Room Type ID</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Room Type Name</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Description</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Base Price</th>
+            </tr>
+        ';
+
+
+        foreach ($room_types_data as $room_types) {
+            /*
+            // availability - formatting db value
+
+            if ($rooms->availability)
+            {
+                $availability = "Available";
+            }
+            else
+            {
+                $availability = "Not Available";
+            }
+
+
+            // status - formatting db value
+
+            if ($rooms->status == 1)
+            {
+                $status = "Clean";
+            }
+            else if ($rooms->status == 2)
+            {
+                $status = "Not Clean";
+            }
+            else if ($rooms->status == 3)
+            {
+                $status = "Out of Service";
+            }
+
+
+            // room types - formatting db value
+
+            foreach ($room_types_data as $room_type)
+            {
+                if ($room_type->id == $rooms->t_id)
+                {
+                    $type = $room_type->name;
+                }
+            }
+            */
+
+
+            // table rows with table data
+
+            $output .= '
+                <tr>
+                    <td style="border: 1px solid; padding: 12px;">' . $room_types->id . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $room_types->name . '</td>
+                    <td style="border: 1px solid; padding: 30px;">' . $room_types->description . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $room_types->base_price . '</td>        
+                </tr>
+            ';
+        }
+
+        $output .= '</table>';
+
+        return $output;
     }
 
 
     function convert_room_reservations_data_to_html()
     {
+        //$rooms_data = $this->get_rooms_data();
 
+        $room_types_data = $this->get_room_types_data();
+        $room_reservation_data = $this->get_room_reservations_data();
+        $customers_data = $this->get_customers_data();
+
+        // header
+
+        $output = '
+            <div style="border: solid 1px; margin-bottom: 40px;">
+                <div> 
+                    <img src="https://bit.ly/2mfEoEW" alt="logo" width="180px" height="170px" style="margin: 2px 2px 2px 2px;"/> 
+                </div>
+
+                <div style="margin-left: 300px; margin-top: -200px;">
+                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
+
+                    <p> 
+                        <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        Peter\'s Place Hotel, Hiriketiya, Dickwella, Matara </p>                         
+                    </p>
+                    
+                    <p> 
+                        <p style="margin-left: -68px;">Phone Number &nbsp; : &nbsp; +94 (41)225-74-66</p>                     
+                    </p>
+                    
+                    <p> 
+                        <p style="margin-left: -70px;">E-mail &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
+                        info@petersplace.lk</p>
+                    </p>
+                </div>
+            </div>
+        ';
+
+
+        // table headings
+
+        $output .= '
+            <h1 align="center" style="margin-bottom: 20px;">Room Reservations List</h1>
+
+            <table width="100%" style="border-collapse: collapse; border: 0px;">
+
+            <tr style="background-color:black; color:white;">
+                <th style="border: 1px solid; padding: 12px;" width="10%">R_ID</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">C_ID</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">First Name</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Last Name</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Phone No</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Room Type</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Room No</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Reserved_Date_Time</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Check In</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Check Out</th>
+            </tr>
+        ';
+
+
+        foreach ($room_reservation_data as $reservations) {
+            /*
+            // availability - formatting db value
+
+            if ($rooms->availability)
+            {
+                $availability = "Available";
+            }
+            else
+            {
+                $availability = "Not Available";
+            }
+
+
+            // status - formatting db value
+
+            if ($rooms->status == 1)
+            {
+                $status = "Clean";
+            }
+            else if ($rooms->status == 2)
+            {
+                $status = "Not Clean";
+            }
+            else if ($rooms->status == 3)
+            {
+                $status = "Out of Service";
+            }
+            */
+
+
+            // room types - formatting db value
+
+            foreach ($room_types_data as $room_type) {
+                if ($room_type->t_id == $reservations->t_id) {
+                    $type = $room_type->name;
+                }
+            }
+
+
+            // first name - formatting db value
+
+            foreach ($customers_data as $customer) {
+                if ($reservations->cid == $customer->id) {
+                    $customer_fname = $customer->fname;
+                }
+            }
+
+
+            // last name - formatting db value
+
+            foreach ($customers_data as $customer) {
+                if ($reservations->cid == $customer->id) {
+                    $customer_lname = $customer->lname;
+                }
+            }
+
+
+            // phone number - formatting db value
+
+            foreach ($customers_data as $customer) {
+                if ($reservations->cid == $customer->id) {
+                    $customer_phone = $customer->phone;
+                }
+            }
+
+
+            // table rows with table data
+
+            $output .= '
+                <tr>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->id . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->cid . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $customer_fname . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $customer_lname . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $customer_phone . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $type . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->room_no . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->resereved_date_time . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->check_in . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $reservations->check_out . '</td>
+                </tr>
+            ';
+        }
+
+        $output .= '</table>';
+
+        return $output;
     }
 
 

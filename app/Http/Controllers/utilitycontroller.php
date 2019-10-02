@@ -134,26 +134,30 @@ class utilitycontroller extends Controller
         return redirect('utilities');
     }
 
-    //Expenditures
-    public function calc()
-    {
-        $calcAmount = DB::table('utilities')->sum('amount');
-        $calcEvent = DB::table('event_reports')->sum('etotal');
-        $calcSup = DB::table('expends')->sum('amount');
-        $calHr = DB::table('emp_salaries')->sum('salary');
-        dd($calcAmount + $calcEvent + $calcSup + $calHr);
-        return view('index2', compact('calcAmount'));
-    }
-
-    //Incomes
-    //kaavindi
-    public function accomCal()
-    {
-        $calcAcoom = DB::table('accoms')->sum('payment');
-        $kevent = DB::table('events')->sum('total');
-        dd($calcAcoom +  $kevent);
-        return view('index1', compact('calcAcoom'));
-    }
+//    public function calc()
+//    {
+//        $calcAmount = DB::table('utilities')->sum('amount');
+//        $calcEvent = DB::table('event_reports')->sum('etotal');
+//        $calcSup = DB::table('expends')->sum('amount');
+//        $calHr = DB::table('emp_salaries')->sum('salary');
+//        $sumofall =($calcAmount + $calcEvent + $calcSup + $calHr);
+//        dd($calcAmount + $calcEvent + $calcSup + $calHr);
+//        return view('index7', ['data' => $sumofall]);
+//        //return view::make('index7')->with('sumof', $sumofall);
+//        //return view('index7',['result' => $sumofall]);
+//        //echo "Result:<input type = 'text' value='$sumofall'>";
+//    }
+//
+//    //Incomes
+//    //kaavindi
+//    public function accomCal()
+//    {
+//        $calcAcoom = DB::table('accoms')->sum('payment');
+//        $kevent = DB::table('events')->sum('total');
+//        //dd($calcAcoom +  $kevent);
+//        $calT=($calcAcoom +  $kevent);
+//        return view('index7', compact('calT'));
+//    }
 
 
 }

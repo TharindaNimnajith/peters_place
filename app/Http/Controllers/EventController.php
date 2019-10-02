@@ -10,7 +10,7 @@ class EventController extends Controller
 {
     public function index()
     {
-        $eventh = events::all()->toArray();
+        $eventh = events::all();
         return view('eventHome', compact('eventh'));
 
     }
@@ -19,12 +19,11 @@ class EventController extends Controller
     {
         //
     }
-
     public function searcheventaa(Request $request)
     {
-        $searcheventaa = $request->get('searcheventaa');
-        $eventh = DB::table('events')->where('c_name', 'like', '%' . $searcheventaa . '%')->paginate(5);
-        return view('eventHome', ['eventh' => $eventh]);
+        $searcheventaa = $request->get('search');
+        $eventh = DB::table('events')->where('c_name', 'like', '%'.$searcheventaa.'%')->paginate(5);
+        return view('eventHome' , ['eventh' => $eventh]);
     }
 
 }

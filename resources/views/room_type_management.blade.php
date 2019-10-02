@@ -41,6 +41,12 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('unsuccess'))
+            <div class="alert alert-danger" role="alert">
+                {{ session()->get('unsuccess') }}
+            </div>
+        @endif
+
         @if (session()->has('success'))
             <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
@@ -84,10 +90,15 @@
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <h2 class="room_mngmnt">
-                        <a href="{{ url('/room_type_management') }}">Room Type <b>Management</b></a>
+                        <a href="{{ url('/room_type_management') }}">Room <b>Types</b></a>
                     </h2>
+                </div>
+
+                <div class="col-sm-1">
+                    <a href="{{url('/dynamic_pdf_room_types/Room Types List')}}" target="_blank" class="btn btn-danger"
+                       id="pdf_btn">Room Types List PDF</a>
                 </div>
 
                 <div class="col-sm-3">
@@ -172,22 +183,22 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room Type ID</label>
-                        <input type="text" name="t_id" class="form-control" value="{{ old('t_id') }}">
+                        <input type="text" name="t_id" class="form-control" value="{{ old('t_id') }}" id="no1">
                     </div>
 
                     <div class="form-group">
                         <label>Room Type Name</label>
-                        <input type="text" name="t_name" class="form-control" value="{{ old('t_name') }}">
+                        <input type="text" name="t_name" class="form-control" value="{{ old('t_name') }}" id="no2">
                     </div>
 
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="desc">{{ old('desc') }}</textarea>
+                        <textarea class="form-control" name="desc" id="no3">{{ old('desc') }}</textarea>
                     </div>
 
                     <div class="form-group">
                         <label>Base Price (LKR)</label>
-                        <input type="text" name="price" class="form-control" value="{{ old('price') }}">
+                        <input type="text" name="price" class="form-control" value="{{ old('price') }}" id="no4">
                     </div>
                 </div>
 
@@ -196,6 +207,22 @@
                     <input type="submit" class="btn btn-success" value="Add">
                 </div>
             </form>
+
+            <input type="button" value="Demo" id="demo" class="btn btn-primary"
+                   style="margin-top: -95px; margin-left: 20px;">
+
+            <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $("#demo").click(function () {
+                        $("#no1").val("10");
+                        $("#no2").val("ABC");
+                        $("#no3").val("abc");
+                        $("#no4").val("1000");
+                    });
+                });
+            </script>
         </div>
     </div>
 </div>
@@ -223,6 +250,7 @@
                         <input type="text" name="t_name" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <label>Availability</label>
 
@@ -234,6 +262,7 @@
                             <label><input type="radio" name="available" value="0">Not Available</label>
                         </div>
                     </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">

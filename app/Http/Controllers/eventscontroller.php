@@ -1,14 +1,22 @@
 <?php
 
 namespace App\Http\Controllers;
-use DB;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class eventscontroller extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
     public function index()
     {
         $events = DB::select('select * from events');
-        return view('index5',['events' => $events]);
+        return view('index5', ['events' => $events]);
     }
 
     /**
@@ -30,10 +38,10 @@ class eventscontroller extends Controller
 
     public function search(Request $request)
     {
-        $search = $request->get('search4');
-        $events = DB::table('events')->orWhere('c_name', 'like','%'.$search. '%')
-            ->orWhere('event_date', 'like','%'.$search. '%')
-            ->orWhere('time', 'like','%'.$search. '%')->paginate(5);
+        $search = $request->get('search5');
+        $events = DB::table('events')->orWhere('c_name', 'like', '%' . $search . '%')
+            ->orWhere('event_date', 'like', '%' . $search . '%')
+            ->orWhere('time', 'like', '%' . $search . '%')->paginate(5);
         return view('index5', ['events' => $events]);
     }
 
@@ -58,10 +66,10 @@ class eventscontroller extends Controller
         $mid = $request->get('mid');
         $advance = $request->get('advance');
         $total = $request->get('total');
-        $events = DB::insert('insert into events(c_name, event_date, time, category, guests, mid, advance, total) value(?,?,?,?,?,?,?,?)',[$c_name, $event_date, $time, $category, $guests, $mid, $advance, $total]);
-        if($events){
+        $events = DB::insert('insert into events(c_name, event_date, time, category, guests, mid, advance, total) value(?,?,?,?,?,?,?,?)', [$c_name, $event_date, $time, $category, $guests, $mid, $advance, $total]);
+        if ($events) {
             $red = redirect('events')->with('success', 'Data has been added');
-        } else{
+        } else {
             $red = redirect('events/create5')->with('danger', 'Input data failed, please try again');
         }
         return $red;
@@ -70,7 +78,7 @@ class eventscontroller extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function show($id)
@@ -81,13 +89,13 @@ class eventscontroller extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function edit($id)
     {
 
-        $events = DB::select('select * from events where id=?',[$id]);
+        $events = DB::select('select * from events where id=?', [$id]);
         return view('edit5', ['events' => $events]);
     }
 
@@ -95,7 +103,7 @@ class eventscontroller extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function update(Request $request, $id)
@@ -121,11 +129,11 @@ class eventscontroller extends Controller
         $mid = $request->get('mid');
         $advance = $request->get('advance');
         $total = $request->get('total');
-        $events = DB::update('update events set c_name=?, event_date=?, time=?, category=?, guests=?, mid=?, advance=?, total=? where id=?',[$c_name, $event_date, $time, $category, $guests, $mid, $advance, $total, $id]);
-        if($events){
+        $events = DB::update('update events set c_name=?, event_date=?, time=?, category=?, guests=?, mid=?, advance=?, total=? where id=?', [$c_name, $event_date, $time, $category, $guests, $mid, $advance, $total, $id]);
+        if ($events) {
             $red = redirect('events')->with('success', 'Data has been updated');
-        } else{
-            $red = redirect('events/edit5/' ,$id)->with('danger','Error update, please try again');
+        } else {
+            $red = redirect('events/edit5/', $id)->with('danger', 'Error update, please try again');
         }
         return $red;
     }
@@ -133,20 +141,20 @@ class eventscontroller extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return Response
      */
     public function destroy($id)
     {
-        $events = DB::delete('delete from events where id=?',[$id]);
+        $events = DB::delete('delete from events where id=?', [$id]);
         $red = redirect('events');
         return $red;
     }
 
-    public function deleteAll(Request $request){
+    public function deleteAll(Request $request)
+    {
         $ids = $request->get('ids');
-        $dbs = DB::delete('delete from events where id in('.implode(",",$ids).')');
+        $dbs = DB::delete('delete from events where id in(' . implode(",", $ids) . ')');
         return redirect('events');
     }
-
 }

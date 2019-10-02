@@ -38,13 +38,13 @@ class EventTController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'client_name' => 'required',
-            'event_date' => 'required',
-            'event_time' => 'required',
-            'category' => 'required',
-            'no_of_guests' => 'required',
-            'food_menu' => 'required',
-            'clients_menu' => 'required'
+            'client_name'=>'required',
+            'event_date'=>'required',
+            'event_time'=>'required',
+            'category'=>'required',
+            'no_of_guests'=>'required',
+            'food_menu'=>'required',
+            'clients_menu'=>'required'
         ]);
 
         $eventt = new EventT([
@@ -64,7 +64,7 @@ class EventTController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -75,7 +75,7 @@ class EventTController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function edit($id)
@@ -88,23 +88,23 @@ class EventTController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function update(Request $request, $id)
     {
         $request->validate([
-            'client_name' => 'required',
-            'event_date' => 'required',
-            'event_time' => 'required',
-            'category' => 'required',
-            'no_of_guests' => 'required',
-            'food_menu' => 'required',
-            'clients_menu' => 'required'
+            'client_name'=>'required',
+            'event_date'=>'required',
+            'event_time'=>'required',
+            'category'=>'required',
+            'no_of_guests'=>'required',
+            'food_menu'=>'required',
+            'clients_menu'=>'required'
         ]);
 
         $eventt = EventT::find($id);
-        $eventt->client_name = $request->get('client_name');
+        $eventt->client_name =  $request->get('client_name');
         $eventt->event_date = $request->get('event_date');
         $eventt->event_time = $request->get('event_time');
         $eventt->category = $request->get('category');
@@ -119,13 +119,13 @@ class EventTController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)
     {
         $eventt = EventT::find($id);
-        $eventt->delete();
+        $eventt ->delete();
 
         return redirect('/events')->with('success', 'Contact deleted!');
     }

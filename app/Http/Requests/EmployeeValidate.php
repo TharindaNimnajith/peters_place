@@ -23,7 +23,6 @@ class EmployeeValidate extends FormRequest
      */
     public function rules()
     {
-
         return [
             'Rno' => 'unique:employees,id|numeric',
             'image' => 'image',
@@ -34,28 +33,18 @@ class EmployeeValidate extends FormRequest
             'salary' => 'required|integer',
             'joindate' => 'required|date_format:Y-m-d|before:today',
             'tp' => 'min:10',
-            'Email' => 'unique:employees,Email|email',
-//            'date' => [
-//        'required',
-//
-//        Rule::unique('memployees')->where(function ($query) use('id','date') {
-//            return $query->where('id', $id)
-//                ->where('day', $day);
-//        }),
-//    ],
+            'Email' => 'unique:employees,Email|email'
         ];
     }
 
     public function messages()
     {
         return [
-            'NIC.unique' => 'NIC must be unique',
+            'NIC.unique' => 'please enter numrtic method only',
             'NIC.max' => 'please add Valid NIC no ',
             'NIC.min' => 'please add Valid NIC no ',
             'tp.min' => 'please add Valid Telephone No  ',
             'Rno' => 'please enter numeric value for registation no',
-            'date.unique' => 'Given ip and hostname are not unique',
-
 
         ];
     }

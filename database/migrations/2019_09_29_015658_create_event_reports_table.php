@@ -27,6 +27,7 @@ class CreateEventReportsTable extends Migration
             $table->double('btotal');
 
 
+
             $table->timestamps();
         });
     }

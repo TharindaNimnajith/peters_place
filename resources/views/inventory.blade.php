@@ -1,26 +1,46 @@
 <!doctype html>
 
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
 
-    <title>The HTML5 Herald</title>
+    <title>Inventory Management</title>
     <meta name="description" content="The HTML5 Herald">
     <meta name="author" content="SitePoint">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="css/styles.css?v=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!-- Datatables -->
+    <link href="{{url('admin/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url('admin/vendors/datatables.net-buttons-bs/css/buttons.bootstrap.min.css')}}" rel="stylesheet">
+    <link href="{{url('admin/vendors/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.min.css')}}"
+          rel="stylesheet">
+    <link href="{{url('admin/vendors/datatables.net-responsive-bs/css/responsive.bootstrap.min.css')}}"
+          rel="stylesheet">
+    <link href="{{url('admin/vendors/datatables.net-scroller-bs/css/scroller.bootstrap.min.css')}}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Datatables -->
+    <script src="{{url('admin/vendors/datatables.net/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-bs/js/dataTables.bootstrap.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-buttons/js/dataTables.buttons.min.js')}}"></script>
+    <script src={{url('admin/vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js')}}></script>
+    <script src="{{url('admin/vendors/datatables.net-buttons/js/buttons.flash.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-buttons/js/buttons.html5.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-buttons/js/buttons.print.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-keytable/js/dataTables.keyTable.min.js')}}"></script>
+    <script src={{url('admin/vendors/datatables.net-responsive/js/dataTables.responsive.min.js')}}></script>
+    <script src="{{url('admin/vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js')}}"></script>
+    <script src="{{url('admin/vendors/datatables.net-scroller/js/dataTables.scroller.min.js')}}"></script>
     <style type="text/css">
         body {
             color: #566787;
@@ -135,7 +155,7 @@
         }
 
         th {
-            font-family: Lucida Console;
+            font-family: Montserrat, Helvetica Neue, Arial, sans-serif;
         }
 
         .table-wrapper {
@@ -187,8 +207,7 @@
             margin-top: 2px;
         }
 
-        table.table tr th,
-        table.table tr td {
+        table.table tr th, table.table tr td {
             border-color: #e9e9e9;
             padding: 12px 15px;
             vertical-align: middle;
@@ -274,8 +293,7 @@
             color: #666;
         }
 
-        .pagination li.active a,
-        .pagination li.active a.page-link {
+        .pagination li.active a, .pagination li.active a.page-link {
             background: #03A9F4;
         }
 
@@ -314,7 +332,6 @@
             width: 18px;
             height: 18px;
         }
-
         .custom-checkbox label:before {
             content: '';
             margin-right: 10px;
@@ -326,7 +343,6 @@
             box-sizing: border-box;
             z-index: 2;
         }
-
         .custom-checkbox input[type="checkbox"]:checked + label:after {
             content: '';
             position: absolute;
@@ -362,9 +378,7 @@
             max-width: 400px;
         }
 
-        .modal .modal-header,
-        .modal .modal-body,
-        .modal .modal-footer {
+        .modal .modal-header, .modal .modal-body, .modal .modal-footer {
             padding: 20px 30px;
         }
 
@@ -399,10 +413,10 @@
         .modal form label {
             font-weight: normal;
         }
-
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
+            init_DataTables();
             // Activate tooltip
             $('[data-toggle="tooltip"]').tooltip();
 
@@ -424,8 +438,75 @@
                     $("#selectAll").prop("checked", false);
                 }
             });
-        });
 
+            //Datatable
+            function init_DataTables() {
+                var handleDataTableButtons = function () {
+                    $("#data_table").DataTable({
+                        dom: "Blfrtip",
+                        buttons: [
+                            {
+                                extend: "copy",
+                                className: "btn-sm"
+                            },
+                            {
+                                extend: "csv",
+                                className: "btn-sm"
+                            },
+                            {
+                                extend: "excel",
+                                className: "btn-sm"
+                            },
+                            {
+                                extend: "pdfHtml5",
+                                className: "btn-sm"
+                            },
+                            {
+                                extend: "print",
+                                className: "btn-sm"
+                            }
+                        ],
+                        order: [[1, "desc"]],
+                    });
+                };
+                TableManageButtons = function () {
+                    "use strict";
+                    return {
+                        init: function () {
+                            handleDataTableButtons();
+                        }
+                    };
+                }();
+                $('#datatable').dataTable();
+                $('#datatable-keytable').DataTable({
+                    keys: true
+                });
+                $('#datatable-responsive').DataTable();
+                $('#datatable-scroller').DataTable({
+                    ajax: "js/datatables/json/scroller-demo.json",
+                    deferRender: true,
+                    scrollY: 380,
+                    scrollCollapse: true,
+                    scroller: true
+                });
+                $('#datatable-fixed-header').DataTable({
+                    fixedHeader: true
+                });
+                var $datatable = $('#datatable-checkbox');
+                $datatable.dataTable({
+                    'order': [[1, 'asc']],
+                    'columnDefs': [
+                        {orderable: false, targets: [0]}
+                    ]
+                });
+                $datatable.on('draw.dt', function () {
+                    $('checkbox input').iCheck({
+                        checkboxClass: 'icheckbox_flat-green'
+                    });
+                });
+                TableManageButtons.init();
+            }
+        });
     </script>
 </head>
 
@@ -440,8 +521,7 @@
                         <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                             <thead class="thead-dark">
                             <tr class="btn" style="">
-                                <th class="text-center" scope="row" style="width:300px ; height:10px">KITCHEN
-                                    ITEMS
+                                <th class="text-center" scope="row" style="width:300px ; height:10px">KITCHEN ITEMS
                                 </th>
                             </tr>
 
@@ -453,8 +533,7 @@
                         <table class="table" style="width:300px ; margin-left: 0px ">
                             <thead class="thead-dark">
                             <tr class="btn">
-                                <th class="text-center" scope="row" style="width:300px;height:10px">ROOM ITEMS
-                                </th>
+                                <th class="text-center" scope="row" style="width:300px;height:10px">ROOM ITEMS</th>
                             </tr>
                             </thead>
                         </table>
@@ -463,8 +542,7 @@
                         <table class="table" style="width:300px;margin-left: 0px">
                             <thead class="thead-dark">
                             <tr class="btn">
-                                <th class="text-center" scope="row" style="width:300px;height:10px">HALL ITEMS
-                                </th>
+                                <th class="text-center" scope="row" style="width:300px;height:10px">HALL ITEMS</th>
                             </tr>
                             </thead>
                         </table>
@@ -481,11 +559,6 @@
 
                     </div>
                     <div class="col-md-4">
-                        <form class="form-inline mr-auto" action="/search" method="get">
-                            <input class="form-control mr-sm-2" type="text" placeholder="Search"
-                                   aria-label="Search">
-                            <button class="btn btn-success" type="submit">Search</button>
-                        </form>
 
                     </div>
                     <div class="col-md-4">
@@ -524,14 +597,14 @@
 
                                 </div>
                             @endif
-                            <table class="table table-striped table-hover">
+                            <table id="data_table" class="table table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th>
-                                                <span class="custom-checkbox">
-                                                    <input type="checkbox" id="selectAll">
-                                                    <label for="selectAll"></label>
-                                                </span>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="selectAll">
+								<label for="selectAll"></label>
+							</span>
                                     </th>
                                     <th>ID</th>
                                     <th>Item Name</th>
@@ -548,10 +621,10 @@
                                 @foreach($inventoryD as $row)
                                     <tr>
                                         <td>
-                                                <span class="custom-checkbox">
-                                                    <input type="checkbox" id="checkbox1" name="options[]" value="1">
-                                                    <label for="checkbox1"></label>
-                                                </span>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="checkbox1" name="options[]" value="1">
+								<label for="checkbox1"></label>
+							</span>
                                         </td>
                                         <td>{{$n}}</td>
                                         <td>{{$row->ItemName}}</td>
@@ -561,9 +634,12 @@
                                         <td>{{$row->issuedqty}}</td>
                                         <td>{{$row->availableqty}}</td>
                                         <td>
-                                            <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i
-                                                    class="material-icons" data-toggle="tooltip"
-                                                    title="Edit">&#xE254;</i></a>
+                                            <button data-id="{{$row->id}}" data-avb="{{$row->availableqty}}"
+                                                    data-isqty="{{$row->issuedqty}}" data-isdate="{{$row->issueddate}}"
+                                                    data-qty="{{$row->stockedqty}}" data-date="{{$row->stockeddate}}"
+                                                    data-name="{{$row->ItemName}}" class="edit" data-toggle="modal"
+                                                    data-target="#editEmployeeModal"><i
+                                                    class="material-icons" title="Edit">&#xE254;</i></button>
                                             <form action="{{url('task/destroy/'.$row->id)}}">
                                                 @csrf
                                                 <button class="delete" data-toggle="modal"><i class="material-icons"
@@ -648,7 +724,8 @@
                     <div id="editEmployeeModal" class="modal fade">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form>
+                                <form action="{{url('inventory/update')}}" method="POST">
+                                    @csrf
                                     <div class="modal-header">
                                         <h4 class="modal-title">Edit Item Details</h4>
                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
@@ -656,29 +733,30 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
+                                        <input id="id" name="id">
                                         <div class="form-group">
                                             <label>Item Name</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" name="ItemName">
                                         </div>
                                         <div class="form-group">
                                             <label>Item Stocked Date</label>
-                                            <input type="email" class="form-control" required>
+                                            <input type="date" class="form-control" name="stockeddate">
                                         </div>
                                         <div class="form-group">
                                             <label>Item Stocked Quantity</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" name="stockedqty">
                                         </div>
                                         <div class="form-group">
                                             <label>Item Issued Date</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" name="issueddate">
                                         </div>
                                         <div class="form-group">
                                             <label>Item Issued Quantity</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" name="issuedqty">
                                         </div>
-                                        <div class="form-group">
+                                        <div class="form-group mt-5">
                                             <label>Available Quantity</label>
-                                            <input type="text" class="form-control" required>
+                                            <input type="text" class="form-control" name="availableqty">
                                         </div>
                                     </div>
                                     <div class="modal-footer">
@@ -696,8 +774,25 @@
             </div>
 
         </div>
-
-
+        <script>
+            $('#editEmployeeModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var name = button.data('name');
+                var date = button.data('date');
+                var qty = button.data('qty');
+                var isdate = button.data('isdate');
+                var isqty = button.data('isqty');
+                var avb = button.data('avb');
+                var id = button.data('id');
+                var modal = $(this);
+                modal.find('.modal-body input[name=ItemName]').val(name);
+                modal.find('.modal-body input[name=stockeddate]').val(date);
+                modal.find('.modal-body input[name=stockedqty]').val(qty);
+                modal.find('.modal-body input[name=issueddate]').val(isdate);
+                modal.find('.modal-body input[name=issuedqty]').val(isqty);
+                modal.find('.modal-body input[name=availableqty]').val(avb);
+                modal.find('.modal-body input[name=id]').val(id);
+            });
+        </script>
 </body>
-
 </html>

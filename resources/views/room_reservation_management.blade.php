@@ -33,6 +33,12 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('unsuccess'))
+            <div class="alert alert-danger" role="alert">
+                {{ session()->get('unsuccess') }}
+            </div>
+        @endif
+
         @if (session()->has('success'))
             <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
@@ -76,10 +82,16 @@
     <div class="table-wrapper">
         <div class="table-title">
             <div class="row">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                     <h2 class="room_mngmnt">
                         <a href="{{ url('/room_reservation_management') }}">Room <b>Reservations</b></a>
                     </h2>
+                </div>
+
+                <div class="col-sm-1">
+                    <a href="{{url('/dynamic_pdf_room_reservations/Room Reservations List')}}" target="_blank"
+                       class="btn btn-danger"
+                       id="pdf_btn">Reservations List PDF</a>
                 </div>
 
                 <div class="col-sm-3">
@@ -185,17 +197,17 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>First Name</label>
-                        <input type="text" name="fname" class="form-control" value="{{ old('fname') }}">
+                        <input type="text" name="fname" class="form-control" value="{{ old('fname') }}" id="no1">
                     </div>
 
                     <div class="form-group">
                         <label>Last Name</label>
-                        <input type="text" name="lname" class="form-control" value="{{ old('lname') }}">
+                        <input type="text" name="lname" class="form-control" value="{{ old('lname') }}" id="no2">
                     </div>
 
                     <div class="form-group">
                         <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" value="{{ old('phone') }}">
+                        <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" id="no3">
                     </div>
 
                     <div class="form-group">
@@ -208,7 +220,7 @@
                             <option value="3" @if (old('rtype') == '3') selected @endif>Family Bedroom</option>
                         </select>
                         -->
-                        
+
                         <select name="rtype" class="form-control">
                             @foreach ($rt as $item)
                                 @if (isset($item))
@@ -221,19 +233,19 @@
 
                     <div class="form-group">
                         <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
+                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}" id="no6">
                     </div>
 
                     <div class="form-group" id="clbl">
 
                         <label>Check In</label>
-                        <input name="cin" type="date" class="form-control" value="{{ old('cin') }}">
+                        <input name="cin" type="date" class="form-control" value="{{ old('cin') }}" id="no4">
                     </div>
 
                     <div class="form-group" id="clbl">
 
                         <label>Check Out</label>
-                        <input name="cout" type="date" class="form-control" value="{{ old('cout') }}">
+                        <input name="cout" type="date" class="form-control" value="{{ old('cout') }}" id="no5">
                     </div>
                 </div>
 
@@ -242,6 +254,24 @@
                     <input type="submit" class="btn btn-success" value="Add">
                 </div>
             </form>
+
+            <input type="button" value="Demo" id="demo" class="btn btn-primary"
+                   style="margin-top: -95px; margin-left: 20px;">
+
+            <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $("#demo").click(function () {
+                        $("#no1").val("Tharinda");
+                        $("#no2").val("Nimnajith");
+                        $("#no3").val("0914921062");
+                        //$("#no4").val("10/12/2019");
+                        //$("#no5").val("12/12/2019");
+                        $("#no6").val("200");
+                    });
+                });
+            </script>
         </div>
     </div>
 </div>
@@ -269,6 +299,7 @@
                         <input type="text" name="cid" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <label>First Name</label>
                         <input type="text" name="fname" class="form-control">
@@ -278,26 +309,15 @@
                         <label>Last Name</label>
                         <input type="text" name="lname" class="form-control">
                     </div>
+                    -->
 
                     <div class="form-group">
                         <label>Room Type</label>
 
-                        <!--
                         <select name="rtype" class="form-control">
                             <option value="1">Single Bedroom</option>
                             <option value="2">Double Bedroom</option>
                             <option value="3">Family Bedroom</option>
-                        </select>
-                        -->
-
-                        <select name="rtype" class="form-control">
-                            <option></option>
-
-                            @foreach ($rt as $item)
-                                @if (isset($item))
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endif
-                            @endforeach
                         </select>
                     </div>
 
@@ -306,6 +326,7 @@
                         <input type="text" name="r_no" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <br/>
                         <label>Check In</label>
@@ -317,6 +338,7 @@
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control">
                     </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">

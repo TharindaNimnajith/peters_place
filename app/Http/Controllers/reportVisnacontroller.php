@@ -44,6 +44,17 @@ class reportVisnacontroller extends Controller
         return view('index7', ['reports_visnas' => $reports_visnas]);
     }
 
+    public function getSum()
+    {
+        $calcAmount = DB::table('utilities')->sum('amount');
+        $calcEvent = DB::table('event_reports')->sum('etotal');
+        $calcSup = DB::table('expends')->sum('amount');
+        $calHr = DB::table('emp_salaries')->sum('salary');
+        $sumofall = ($calcAmount + $calcEvent + $calcSup + $calHr);
+        //dd($calcAmount + $calcEvent + $calcSup + $calHr);
+        return view('index7', ['data' => $sumofall]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -51,7 +62,6 @@ class reportVisnacontroller extends Controller
             'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
-            'month' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -59,9 +69,8 @@ class reportVisnacontroller extends Controller
         $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
-        $month = $request->get('month');
         $amount = $request->get('amount');
-        $reports_visnas = DB::insert('insert into reports_visnas(nic, name, type, date, month, amount) value(?,?,?,?,?,?)', [$nic, $name, $type, $date, $month,$amount]);
+        $reports_visnas = DB::insert('insert into reports_visnas(nic, name, type, date, amount) value(?,?,?,?,?)', [$nic, $name, $type, $date, $amount]);
         if ($reports_visnas) {
             $red = redirect('reports_visnas')->with('success', 'Data has been added');
         } else {
@@ -108,7 +117,6 @@ class reportVisnacontroller extends Controller
             'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
-            'month' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -116,10 +124,9 @@ class reportVisnacontroller extends Controller
         $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
-        $month = $request->get('month');
         $amount = $request->get('amount');
 
-        $reports_visnas = DB::update('update reports_visnas set nic=?, name=?, type=?, date=?, month=?,amount=? where id=?', [$nic, $name, $type, $date, $month, $amount, $id]);
+        $reports_visnas = DB::update('update reports_visnas set nic=?, name=?, type=?, date=?,amount=? where id=?', [$nic, $name, $type, $date, $amount, $id]);
         if ($reports_visnas) {
             $red = redirect('reports_visnas')->with('success', 'Data has been updated');
         } else {
@@ -147,4 +154,6 @@ class reportVisnacontroller extends Controller
         $dbs = DB::delete('delete from reports_visnas where id in(' . implode(",", $ids) . ')');
         return redirect('reports_visnas');
     }
+
+
 }

@@ -2,45 +2,50 @@
 <html>
 
 <style>
-.sidenav {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  left: 0;
-  background-color: #111;
-  overflow-x: hidden;
-  transition: 0.5s;
-  padding-top: 60px;
-}
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+    }
 
-.sidenav a {
+    .sidenav a {
 
-  padding: 8px 18px 8px 32px;
-  text-decoration: none;
-  font-size: 20px;
-  color: #818181;
-  display: block;
-  transition: 0.3s;
-}
+        padding: 8px 18px 8px 32px;
+        text-decoration: none;
+        font-size: 20px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+    }
 
-.sidenav a:hover {
-  color: #f1f1f1;
-}
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
 
-.sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 16px;
-  margin-left: 50px;
-}
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 16px;
+        margin-left: 50px;
+    }
 
-@media screen and (max-height: 450px) {
-  .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
-}
+    @media screen and (max-height: 450px) {
+        .sidenav {
+            padding-top: 15px;
+        }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+    }
 </style>
 
 <head><title>PetersPlace</title>
@@ -51,9 +56,9 @@
 
 <body>
 <div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="/u">Utility Bills</a>
-  <a href="/rep">Reports</a>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/u">Utility Bills</a>
+    <a href="/rep">Reports</a>
 
 </div>
 <br>
@@ -61,13 +66,13 @@
 <span style="font-size:20px;cursor:pointer; padding-top: 200px " onclick="openNav()">&#9776; Finance Management</span>
 
 <script>
-function openNav() {
-  document.getElementById("mySidenav").style.width = "250px";
-}
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
 
-function closeNav() {
-  document.getElementById("mySidenav").style.width = "0";
-}
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
 </script>
 
 <div id="main">
@@ -96,12 +101,12 @@ function closeNav() {
     <div class="row">
         <div class="col-md-6">
             <h1>Finance Details</h1>
-            <a href= "{{ url('reportDynamicVisna/pdf') }}" class="btn btn-warning">PDF</a>
+            <a href="{{ url('reportDynamicVisna/pdf') }}" class="btn btn-warning">PDF</a>
             <br>
             <br>
         </div>
         <div class="col-md-4">
-            <form action="/search7" method="get" >
+            <form action="/search7" method="get">
                 <div class="input-group">
                     <input type="search" name="search7" class="form-control" placeholder="Search by NIC">
                     <span class="input-group-prepend">
@@ -114,7 +119,6 @@ function closeNav() {
             <a href="{{ action('reportVisnacontroller@create') }}" class="btn btn-primary">Add Details</a>
         </div>
     </div>
-
 
     <form method="post">
         @csrf
@@ -135,6 +139,7 @@ function closeNav() {
             </tr>
             </thead>
             <tbody>
+
             @foreach($reports_visnas as $reports_visna)
                 <tr>
                     <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $reports_visna->id}}"></td>
@@ -148,22 +153,45 @@ function closeNav() {
                     <td>
                         <a href="{{ action('reportVisnacontroller@edit', $reports_visna->id) }}"
                            class="btn btn-warning">UPDATE</a>
-                        <button formaction="{{ action('reportVisnacontroller@destroy', $reports_visna->id)}}" type="submit"
+                        <button formaction="{{ action('reportVisnacontroller@destroy', $reports_visna->id)}}"
+                                type="submit"
                                 class="btn btn-danger">DELETE
                         </button>
-
                     </td>
                 </tr>
             @endforeach
             </tbody>
             <tfoot>
-
             </tfoot>
 
+            <?php
+            $calcAcoom = DB::table('accoms')->sum('payment');
+            $kevent = DB::table('events')->sum('total');
+            $calI = ($calcAcoom + $kevent);
+            echo "<style>pre{font-size:20px; color:blue; float:left; margin-right:30px;}</style>";
+            echo "<html>";
+            echo "<pre>Monthly Income: $calI</pre>";
+            ?>
+
+            <?php
+            $calcAmount = DB::table('utilities')->sum('amount');
+            $calcEvent = DB::table('event_reports')->sum('etotal');
+            $calcSup = DB::table('expends')->sum('amount');
+            $calHr = DB::table('emp_salaries')->sum('salary');
+            $calE = ($calcAmount + $calcEvent + $calcSup + $calHr);
+            echo "<style>pre{font-size:20px; color:blue;}</style>";
+            echo "<html>";
+            echo "<pre>Monthly Expenditure: $calE</pre>";
+            ?>
+
+            <?php
+            $profit = ($calI - $calE);
+            echo "<style>code{font-size:20px; color:red; float:right; margin-left:30px;}</style>";
+            echo "<html>";
+            echo "<code>Monthly Profit: $profit</code>";
+            ?>
         </table>
     </form>
-
-
 
     <script type="text/javascript">
         $('.selectall').click(function () {

@@ -95,7 +95,7 @@
     <div class="col-md-4">
         <form action="/searcheventaa" method="get" align="right">
             <div class="form-group">
-                <input type="search" name="searcheventaa" class="form-control">
+                <input type="search" name="eventh" class="form-control">
                 <span class="form-group-btn"></span>
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>

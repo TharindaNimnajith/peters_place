@@ -33,6 +33,12 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('unsuccess'))
+            <div class="alert alert-danger" role="alert">
+                {{ session()->get('unsuccess') }}
+            </div>
+        @endif
+
         @if (session()->has('success'))
             <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}

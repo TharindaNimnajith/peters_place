@@ -30,11 +30,14 @@ class DynamicPDFController extends Controller
         //$pdf->stream();
         return $pdf->download('dynamic_pdf');
     }
-        function convert_customer_data_to_html()
-        {
-            $posts = $this->get_customer_data();
-            $output = '
+
+    function convert_customer_data_to_html()
+    {
+        $posts = $this->get_customer_data();
+        $dateth = date("Y/m/d");
+        $output = '
         <h3 align="center">Customer Data</h3>
+        <h2>' . $dateth . '</h2>
         <table width="100%" style="border-collapse: collapse; border: 0px;">
         <tr>
         <th style="border: 1px solid; padding: 12px;" width="20%">First Name</th>
@@ -46,8 +49,8 @@ class DynamicPDFController extends Controller
         
 </tr>
 ';
-            foreach ($posts as $customer) {
-                $output .= '
+        foreach ($posts as $customer) {
+            $output .= '
             <tr>
             <td style="border: 1px solid; padding: 12px;">' . $customer->fname . '</td>
             <td style="border: 1px solid; padding: 12px;">' . $customer->lname . '</td>
@@ -57,9 +60,9 @@ class DynamicPDFController extends Controller
             <td style="border: 1px solid; padding: 12px;">' . $customer->address . '</td>
             </tr>
             ';
-            }
-            $output .= '</table>';
-            return $output;
         }
+        $output .= '</table>';
+        return $output;
+    }
 
 }
