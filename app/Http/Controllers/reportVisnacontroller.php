@@ -51,6 +51,7 @@ class reportVisnacontroller extends Controller
             'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
+            'month' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -58,8 +59,9 @@ class reportVisnacontroller extends Controller
         $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
+        $month = $request->get('month');
         $amount = $request->get('amount');
-        $reports_visnas = DB::insert('insert into reports_visnas(nic, name, type, date, amount) value(?,?,?,?,?)', [$nic, $name, $type, $date, $amount]);
+        $reports_visnas = DB::insert('insert into reports_visnas(nic, name, type, date, month, amount) value(?,?,?,?,?,?)', [$nic, $name, $type, $date, $month,$amount]);
         if ($reports_visnas) {
             $red = redirect('reports_visnas')->with('success', 'Data has been added');
         } else {
@@ -106,6 +108,7 @@ class reportVisnacontroller extends Controller
             'name' => 'required|alpha',
             'type' => 'required|alpha',
             'date' => 'required',
+            'month' => 'required',
             'amount' => 'required|numeric',
         ]);
 
@@ -113,9 +116,10 @@ class reportVisnacontroller extends Controller
         $name = $request->get('name');
         $type = $request->get('type');
         $date = $request->get('date');
+        $month = $request->get('month');
         $amount = $request->get('amount');
 
-        $reports_visnas = DB::update('update reports_visnas set nic=?, name=?, type=?, date=?, amount=? where id=?', [$nic, $name, $type, $date, $amount, $id]);
+        $reports_visnas = DB::update('update reports_visnas set nic=?, name=?, type=?, date=?, month=?,amount=? where id=?', [$nic, $name, $type, $date, $month, $amount, $id]);
         if ($reports_visnas) {
             $red = redirect('reports_visnas')->with('success', 'Data has been updated');
         } else {

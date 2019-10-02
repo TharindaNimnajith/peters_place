@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateReportsVisnasTable extends Migration
 {
@@ -20,6 +20,7 @@ class CreateReportsVisnasTable extends Migration
             $table->string('type');
             $table->double('amount');
             $table->date('date');
+            $table->string('month');
             $table->timestamps();
         });
     }

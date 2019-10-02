@@ -128,8 +128,9 @@ function closeNav() {
                 <th width="230"></th>
                 <th width="230">NIC</th>
                 <th width="230">Name</th>
-                <th width="230">Type of amount</th>
+                <th width="250">Type of amount</th>
                 <th width="230">Date</th>
+                <th width="230">Month</th>
                 <th width="230">Amount</th>
             </tr>
             </thead>
@@ -141,6 +142,7 @@ function closeNav() {
                     <td>{{ $reports_visna->name }}</td>
                     <td>{{ $reports_visna->type }}</td>
                     <td>{{ $reports_visna->date }}</td>
+                    <td>{{ $reports_visna->month }}</td>
                     <td>{{ $reports_visna->amount }}</td>
 
                     <td>

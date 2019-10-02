@@ -126,6 +126,20 @@ Route::get('/dynamic_pdf_rooms/Room List', 'RoomController@rooms_pdf');
 
 Route::get('customer', 'postcontroller@index');
 
+Route::get('dynamic_pdf', 'DynamicPDFController@index');
+Route::get('dynamic_pdf/pdf', 'DynamicPDFController@pdf');
+
+Route::get('dynamic_pdf1', 'DynamicPDFController1@index');
+Route::get('dynamic_pdf1/pdf', 'DynamicPDFController1@pdf');
+
+Route::get('dynamic_pdf5', 'DynamicPDFController5@index');
+Route::get('dynamic_pdf5/pdf', 'DynamicPDFController5@pdf');
+
+Route::resource('freport', 'pay_e_reportController');
+Route::get('/f_report/edit/pdf','pay_e_reportController@pdf');
+Route::get('searchereport', 'pay_e_reportController@searchereport');
+
+
 Route::get('/search1', 'postcontroller@search');
 
 Route::delete('/deleteall1', 'postcontroller@deleteAll');
@@ -133,9 +147,9 @@ Route::delete('/deleteall1', 'postcontroller@deleteAll');
 Route::resource('posts', 'postcontroller');
 
 
-Route::get('/report1', function () {
-    return view('report1');
-});
+//Route::get('/report1', function () {
+  //  return view('report1');
+//});
 
 
 Route::get('accoms', 'accomcontroller@index');
@@ -146,11 +160,14 @@ Route::delete('/deleteall2', 'accomcontroller@deleteAll');
 
 Route::resource('accoms', 'accomcontroller');
 
+Route::get('events1', 'eventscontroller@index');
+Route::get('/search6','eventscontroller@search');
+Route::delete('/deleteall5', 'eventscontroller@deleteAll');
+Route::resource('events','eventscontroller');
 
 Route::get('/eventh', 'EventController@index');
 
 Route::resource('events', 'EventTController');
-
 
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
@@ -165,6 +182,25 @@ Route::get('/search3', 'utilitycontroller@search');
 Route::delete('/deleteall3', 'utilitycontroller@deleteAll');
 
 Route::resource('utilities', 'utilitycontroller');
+Route::get('/pdf', 'dynamicvisnaPDFcontroller@index');
+Route::get('/dynamicVisna/pdf', 'dynamicvisnaPDFcontroller@pdf');
+
+Route::get('rep','reportVisnacontroller@index');
+Route::get('/search7', 'reportVisnacontroller@search');
+Route::delete('/deleteall7', 'reportVisnacontroller@deleteAll');
+
+Route::resource('reports_visnas','reportVisnacontroller');
+Route::get('/pdfrep', 'reportVisnaPDFcontroller@index');
+Route::get('/reportDynamicVisna/pdf', 'reportVisnaPDFcontroller@pdf');
+
+Route::get('chart', 'FinanceChartController@index');
+Route::get('/fchart', function (){
+    return view('FinanceChart');
+});
+Route::get('fchart', 'FinanceChartController@index');
+
+//Route::get('/calcExp', 'utilitycontroller@calc');
+//Route::get('/calcIncome', 'utilitycontroller@accomCal');
 
 
 // ------------------------------------------------------------------------
@@ -247,7 +283,7 @@ Route::get('/expenditureFinal', function () {
 });
 
 
-Route::post('/send', 'expenditureController@store');
+Route::post('/send', 'expendsController@store');
 
 Route::post('/makeorderTask', 'orderController@store');
 
