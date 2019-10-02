@@ -18,7 +18,7 @@ class EventMenuController extends Controller
     public function index()
     {
         $menu = eventM::all();
-        return view('menus.index', compact('menu'));
+        return view('menus.index',compact('menu'));
 
     }
 
@@ -33,6 +33,7 @@ class EventMenuController extends Controller
     }
 
 
+
     /**
      * Store a newly created resource in storage.
      *
@@ -40,33 +41,31 @@ class EventMenuController extends Controller
      * @return Response
      */
 
-    public function search(Request $request)
-    {
+    public function search(Request $request){
         $search = $request->get('search');
-        $eemenu = DB::table('event_m_s')->where('menu_name', 'like', '%' . $search . '%')->paginate(5);
-        return view('menus.index', ['event_m_s' => $eemenu]);
+        $eemenu = DB::table('event_m_s')->where('menu_name','like','%'.$search.'%')->paginate(5);
+        return view('menus.index',['event_m_s'=> $eemenu]);
     }
-
     public function store(Request $request)
     {
         $request->validate([
-            'menu_name' => 'required',
-            'menu_type' => 'required',
-            'main_dishes' => 'required',
-            'salads' => 'required',
-            'deserts' => 'required',
-            'beverages' => 'required',
-            'price' => 'required|integer'
-        ]);
+        'menu_name'=>'required',
+        'menu_type'=>'required',
+        'main_dishes'=>'required',
+        'salads'=>'required',
+        'deserts'=>'required',
+        'beverages'=>'required',
+        'price' =>'required'
+    ]);
 
         $menu = new eventM([
-            'menu_name' => $request->get('menu_name'),
-            'menu_type' => $request->get('menu_type'),
-            'main_dishes' => $request->get('main_dishes'),
-            'salads' => $request->get('salads'),
-            'deserts' => $request->get('deserts'),
-            'beverages' => $request->get('beverages'),
-            'price' => $request->get('price'),
+        'menu_name' =>$request->get('menu_name'),
+        'menu_type'=> $request->get('menu_type'),
+        'main_dishes'=> $request->get('main_dishes'),
+        'salads' => $request->get('salads'),
+        'deserts' => $request->get('deserts'),
+        'beverages' => $request->get('beverages'),
+        'price' => $request->get('price'),
 
         ]);
 
@@ -79,7 +78,7 @@ class EventMenuController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -90,7 +89,7 @@ class EventMenuController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function edit($id)
@@ -103,42 +102,42 @@ class EventMenuController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function update(Request $request, $id)
     {
         $request->validate([
 
-            'menu_name' => 'required',
-            'menu_type' => 'required',
-            'main_dishes' => 'required',
-            'salads' => 'required',
-            'deserts' => 'required',
-            'beverages' => 'required',
-            'price' => 'required|integer'
+            'menu_name'=>'required',
+            'menu_type'=>'required',
+            'main_dishes'=>'required',
+            'salads'=>'required',
+            'deserts'=>'required',
+            'beverages'=>'required',
+            'price' =>'required'
 
         ]);
 
         $menu = eventM::find($id);
-        $menu->menu_name = $request->get('menu_name');
-        $menu->menu_type = $request->get('menu_type');
-        $menu->main_dishes = $request->get('main_dishes');
-        $menu->salads = $request->get('salads');
-        $menu->deserts = $request->get('deserts');
-        $menu->beverages = $request->get('beverages');
-        $menu->price = $request->get('price');
+        $menu -> menu_name = $request -> get('menu_name');
+        $menu -> menu_type = $request ->get('menu_type');
+        $menu -> main_dishes = $request ->get('main_dishes');
+        $menu -> salads = $request ->get('salads');
+        $menu -> deserts = $request ->get('deserts');
+        $menu -> beverages = $request ->get('beverages');
+        $menu -> price = $request ->get('price');
         $menu->save();
 
-        return redirect('/menus')->with('success', 'Menu Updates!');
+        return redirect('/menus')->with('success','Menu Updates!');
 
 
-    }
+     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)

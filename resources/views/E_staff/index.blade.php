@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event staff</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -29,24 +29,16 @@
             </div>
         </div>
     </div>
-    <div role="group" aria-label="Basic example" class="btn btn-dark">
-        <a href="{{ route('events.index')}}">
-            <button class="btn btn-dark">Events</button>
-        </a>
-        <a href="{{ route('menus.index')}}">
-            <button class="btn btn-dark">Menus</button>
-        </a>
-        <a href="/eitems">
-            <button class="btn btn-dark">Event Items</button>
-        </a>
-        <a href="/estaff">
-            <button class="btn btn-dark">Manage Staff</button>
-        </a>
-        <a href="/ereport">
-            <button class="btn btn-dark">Report</button>
-        </a>
+    <div role="group" aria-label="Basic example"  class="btn btn-dark">
+        <a href="{{ route('events.index')}}"><button class="btn btn-dark">Events</button></a>
+        <a href="{{ route('menus.index')}}"><button class="btn btn-dark">Menus</button></a>
+        <a href="/eitems"><button class="btn btn-dark">Event Items</button></a>
+        <a href="/estaff"><button class="btn btn-dark">Manage Staff</button></a>
+        <a href="/ereport"><button  class="btn btn-dark">Report</button></a>
 
     </div>
+
+
 
 
     <!--MAIN SECTION-->
@@ -58,7 +50,7 @@
             <br>
             <br>
             <br>
-            <center><h2>Event Staff</h2></center>
+            <center><h2>Menus</h2></center>
             <table class="table table-striped table-dark">
                 <thead>
                 <tr>
@@ -66,27 +58,27 @@
                     <td>Event ID</td>
                     <td>Type</td>
                     <td>Count</td>
-                    <td colspan=2>Actions</td>
+                    <td colspan = 2>Actions</td>
                 </tr>
                 </thead>
                 <tbody>
 
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
 
-                    <td>
-                        <button class="btn btn-primary">Edit</button>
-                    </td>
-                    <td>
-                        <form action="#" method="post">
+                        <td>
+                            <button class="btn btn-primary">Edit</button>
+                        </td>
+                        <td>
+                            <form action="#" method="post">
 
-                            <button class="btn btn-danger" type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
 
                 </tbody>
             </table>

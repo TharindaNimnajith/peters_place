@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit menu</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,31 +12,74 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+
+            padding: 8px 18px 8px 32px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 16px;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
+        }
+
+    </style>
+
+
 </head>
 <body>
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/eventh"> Event Information </a>
+    <a href="/eitems">Items Information</a>
+    <a href="/menus">Menu Information</a>
+    <a href="/ereport">Event Report Information</a>
+
+</div>
 <br>
-<br>
-<br>
+
+<span style="font-size:20px;cursor:pointer; padding-top: 200px " onclick="openNav()">&#9776;Event Management</span>
+
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>
 <div class="container">
-    <div role="group" aria-label="Basic example" class="btn btn-dark">
-        <a href="{{ route('events.index')}}">
-            <button class="btn btn-dark">Events</button>
-        </a>
-        <a href="{{ route('menus.index')}}">
-            <button class="btn btn-dark">Menus</button>
-        </a>
-        <a href="/eitems">
-            <button class="btn btn-dark">Event Items</button>
-        </a>
-        <a href="/estaff">
-            <button class="btn btn-dark">Manage Staff</button>
-        </a>
-        <a href="/ereport">
-            <button class="btn btn-dark">Report</button>
-        </a>
-
-    </div>
-
 
     <!--MAIN SECTION-->
     <div class="row">
@@ -51,7 +94,7 @@
                         @endforeach
                     </ul>
                 </div>
-                <br/>
+                <br />
             @endif
             <form method="post" action="{{ route('menus.update', $menu->id) }}">
                 @method('PATCH')
@@ -66,7 +109,7 @@
                 <div class="form-group">
                     <select name="menu_type" class="form-control">
 
-                        <option value="1">Choose</option>
+
                         <option value="2">Wedding</option>
                         <option value="3">Party</option>
                         <option value="4">Conference</option>
@@ -77,32 +120,30 @@
 
                 <div class="form-group">
                     <label for="main_dishes">Main Dishes</label>
-                    <textarea class="form-control" name="main_dishes" value="" rows="5" required=""
-                              style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->main_dishes }}</textarea>
+                    <textarea  class="form-control" name="main_dishes" value="" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->main_dishes }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="salads">Salads</label>
-                    <textarea class="form-control" name="salads" value="" rows="5" required=""
-                              style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->salads }}</textarea>
+                    <textarea  class="form-control" name="salads" value=""  rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->salads }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="deserts">Desserts</label>
-                    <textarea class="form-control" name="deserts" value="" rows="5" required=""
-                              style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->deserts }}</textarea>
+                    <textarea class="form-control" name="deserts" value="" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->deserts }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="beverages">Beverages</label>
-                    <textarea class="form-control" name="beverages" value="" rows="5" required=""
-                              style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->beverages }}</textarea>
+                    <textarea class="form-control" name="beverages" value="" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;">{{ $menu->beverages }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="price">Price </label>
                     <input type="text" class="form-control" name="price" value={{ $menu->price }} />
                 </div>
                 <button type="submit" class="btn btn-primary">Update</button>
+
             </form>
         </div>
     </div>
+
 
 
     <!--MAIN SECTION-->

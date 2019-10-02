@@ -1,8 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/resources/views/report1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/report1.blade.php" afterDir="false" />
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="report generation">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Estaff.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Estaff.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/EventT.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/EventT.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EreportController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EreportController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EstaffController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EstaffController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventItemController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventItemController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventMenuController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventMenuController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EventTController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EventTController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/eventItem.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventItem.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/eventM.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventM.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/events.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/events.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_01_131223_create_event_items_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_01_132025_create_addevents_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_02_120233_create_event_t_s_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_02_195208_create_event_m_s_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2019_09_03_100117_create_estaffs_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/E_staff/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/E_staff/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/E_staff/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/E_staff/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/E_staff/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/E_staff/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/e_item/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_item/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/e_item/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_item/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/e_report/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_report/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/eventHome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/eventHome.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/events/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/events/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/events/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/events/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/events/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/events/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/f_report/report1.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/f_report/report1.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/menus/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/menus/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/menus/edit.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/menus/edit.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/menus/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/menus/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -115,6 +147,8 @@
       <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-dompdf" />
       <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
       <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/consoletvs/charts" />
+      <path value="$PROJECT_DIR$/vendor/balping/json-raw-encoder" />
     </include_path>
   </component>
   <component name="ProjectId" id="1Q0v8XDUxSYsEAvRZjQg1krasLk" />
@@ -209,6 +243,9 @@
       <workItem from="1569592949934" duration="7000" />
       <workItem from="1569595272801" duration="3444000" />
       <workItem from="1569649715843" duration="5180000" />
+      <workItem from="1570007179598" duration="99000" />
+      <workItem from="1570007688096" duration="2475000" />
+      <workItem from="1570010255610" duration="175000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>

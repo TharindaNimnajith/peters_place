@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddeventsTable extends Migration
+class CreateEventReportsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,21 @@ class CreateAddeventsTable extends Migration
      */
     public function up()
     {
-        Schema::create('addevents', function (Blueprint $table) {
+        Schema::create('event_reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('client_name');
+
+
+            $table->string('customer_name');
             $table->date('event_date');
-            $table->time('event_time');
-            $table->string('category');
-            $table->integer('no_of_guests');
-            $table->string('food_menu');
-            $table->string('clients_menu');
+            $table->integer('event_time');
+            $table->string('event_manager');
+            $table->integer('attendence');
+            $table->double('cost');
+            $table->double('etotal');
+            $table->double('btotal');
+
+
+
             $table->timestamps();
         });
     }
@@ -33,6 +39,6 @@ class CreateAddeventsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('addevents');
+        Schema::dropIfExists('event_reports');
     }
 }

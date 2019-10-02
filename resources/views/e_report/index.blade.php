@@ -1,141 +1,173 @@
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>report</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Events</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+
+            padding: 8px 18px 8px 32px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 16px;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
+        }
+
+    </style>
+
+
 </head>
+
+
 <body>
 
+<div id="mySidenav" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/eventh"> Event Information </a>
+    <a href="/eitems">Items Information</a>
+    <a href="/menus">Menu Information</a>
+    <a href="/ereport">Event Report Information</a>
+
+</div>
 <br>
-<br>
-<br>
+
+<span style="font-size:20px;cursor:pointer; padding-top: 200px " onclick="openNav()">&#9776;Event Management</span>
+
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>
+
 <div class="container">
 
+    <div class="row">
 
-</div>
-<div role="group" aria-label="Basic example" class="btn btn-dark">
-    <a href="{{ route('events.index')}}">
-        <button class="btn btn-dark">Events</button>
-    </a>
-    <a href="{{ route('menus.index')}}">
-        <button class="btn btn-dark">Menus</button>
-    </a>
-    <a href="/eitems">
-        <button class="btn btn-dark">Event Items</button>
-    </a>
-    <a href="/estaff">
-        <button class="btn btn-dark">Manage Staff</button>
-    </a>
-    <a href="/ereport">
-        <button class="btn btn-dark">Report</button>
-    </a>
-
-</div>
-
-
-<!--MAIN SECTION-->
-
-
-<div class="row">
-    <div class="col-sm-12">
-        <br>
-        <br>
-        <br>
-        <br>
-        <center><h2>Event Management Report</h2></center>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th scope="col" colspan="4" style="color:blue;">Event Information</th>
-
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Event name</td>
-                <td><input type="text" name="event_name"/></td>
-                <td>Event date</td>
-                <td><input type="text" name="event_date"/></td>
-            <tr>
-                <td>Event time</td>
-                <td><input type="text" name="event_time"/></td>
-                <td>Event Manager</td>
-                <td><input type="text" name="event_manager"/></td>
-            </tr>
-            </tr>
-            <tr>
-
-                <td>Estimated No. of Attendence of guest for the Event</td>
-                <td><input type="text" name="attendence"/></td>
-                <td>Proposed Registration cost for a each person</td>
-                <td><input type="text" name="R_cost"/></td>
-
-            </tr>
-            <tr>
-                <th colspan="4" style="color:blue;">Budget Information</th>
-            </tr>
-            <tr>
-                <th scope="row" colspan="2">Expence category</th>
-                <th scope="row">Budget expence</th>
-                <th scope="row">Actual expence</th>
-
-            </tr>
-            <tr>
-                <td colspan="2"><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-            </tr>
-            <tr>
-                <td colspan="2"><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-            </tr>
-            <tr>
-                <td colspan="2">Total</td>
-                <td><input type="text" name="date"/></td>
-                <td><input type="text" name="date"/></td>
-            </tr>
-
-            </tbody>
-
-        </table>
-        <input type="submit" value="Save" name="savereport" class="btn btn-success"/>
+        <div class="col-sm-8"></div>
+        <div class="col-md-4">
+            <form action="/searchereport" method="get" align="right">
+                <div class="form-group">
+                    <input type="search" name="searchereport" class="form-control">
+                    <span class="form-group-btn"></span>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <!--MAIN SECTION-->
+
+    <div>
+        <a style="margin: 19px;" href="{{ route('ereport.create')}}" class="btn btn-primary">New Event Report</a>
+        <a href="{{url('e_report/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <center><h2 >Event Report</h2></center>
+            <table class="table table-bordered" >
+                <thead class="table-success">
+                <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Event Date</th>
+                    <th>Event Time</th>
+                    <th>Event Manager</th>
+                    <th>No of guests attended</th>
+                    <th>Cost</th>
+                    <th>e_Total</th>
+                    <th>b_Total</th>
+                    <th  colspan="2">Actions</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($eventreport as $report)
+                    <tr>
+                        <td>{{$report->id}}</td>
+                        <td>{{$report->customer_name}}</td>
+                        <td>{{$report->event_date}}</td>
+                        <td>{{$report->event_time}}</td>
+                        <td>{{$report->event_manager}}</td>
+                        <td>{{$report->attendence}}</td>
+                        <td>{{$report->cost}}</td>
+                        <td>{{$report->etotal}}</td>
+                        <td>{{$report->btotal}}</td>
+
+                        <td>
+                            <a href="{{ route('ereport.edit', $report->id)}}" class="btn btn-primary">View</a>
+                        </td>
+                        <td>
+
+                                <form action="{{ route('ereport.destroy', $report->id)}}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
+
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+            <div>
+            </div>
+            <!--MAIN SECTION-->
 
 
+
+
+
+
+
+
+        </div>
+
+    </div>
 </div>
 <script src="{{ asset('js/app.js') }}" type="text/js"></script>
-</div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 </body>
 </html>
-

@@ -39,9 +39,9 @@ class EstaffController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'event_id' => 'required',
-            'type' => 'required',
-            'count' => 'required'
+            'event_id'=>'required',
+            'type'=>'required',
+            'count'=>'required'
         ]);
 
         $staff = new Estaff([
@@ -57,7 +57,7 @@ class EstaffController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function show($id)
@@ -68,7 +68,7 @@ class EstaffController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function edit($id)
@@ -80,7 +80,7 @@ class EstaffController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function update(Request $request, $id)
@@ -91,7 +91,7 @@ class EstaffController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int  $id
      * @return Response
      */
     public function destroy($id)

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEstaffsTable extends Migration
+class CreateExpendsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,13 @@ class CreateEstaffsTable extends Migration
      */
     public function up()
     {
-        Schema::create('estaffs', function (Blueprint $table) {
+        Schema::create('expends', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('event_id');
             $table->string('type');
-            $table->integer('count');
-
+            $table->string('amount');
+            $table->dateTime('date');
+            /*$table->integer('oid')->unsigned();
+            $table->foreign('oid')->references('id')->on('orders');*/
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateEstaffsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estaffs');
+        Schema::dropIfExists('expends');
     }
 }
