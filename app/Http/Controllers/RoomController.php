@@ -1319,16 +1319,16 @@ class RoomController extends Controller
             <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border: 1px solid; padding: 12px;" width="10%">R_ID</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">C_ID</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">First Name</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Last Name</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Phone No</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Room Type</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Room No</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Reserved_Date_Time</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Check In</th>
-                <th style="border: 1px solid; padding: 12px;" width="10%">Check Out</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">R_ID</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">C_ID</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">First Name</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Last Name</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Phone No</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Room Type</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Room No</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Reserved DateTime</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Check In</th>
+                <th style="border: 1px solid; padding: 5px;" width="10%">Check Out</th>
             </tr>
         ';
 
@@ -1404,16 +1404,16 @@ class RoomController extends Controller
 
             $output .= '
                 <tr>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->id . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->cid . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $customer_fname . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $customer_lname . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $customer_phone . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $type . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->room_no . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->resereved_date_time . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->check_in . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $reservations->check_out . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->id . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->cid . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $customer_fname . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $customer_lname . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $customer_phone . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $type . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->room_no . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->resereved_date_time . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->check_in . '</td>
+                    <td style="border: 1px solid; padding: 5px;">' . $reservations->check_out . '</td>
                 </tr>
             ';
         }
