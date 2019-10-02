@@ -17,7 +17,7 @@
     <div class="row">
         <div class="col-md-6">
             <h1>Report Details</h1>
-            <a href= "{{ url('dynamic/pdf') }}" class="btn btn-danger"> Convert into PDF </a>
+            <a href="{{ url('dynamic/pdf') }}" class="btn btn-danger"> Convert into PDF </a>
             <br>
             <br>
         </div>

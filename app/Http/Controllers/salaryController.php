@@ -54,10 +54,6 @@ class salaryController extends Controller
             ->groupBy('id')
             ->get();
 
-        $this->validate($request, [
-            "id" => 'unique:emp_salaries,id'
-        ]);
-
         foreach ($attendenceS as $value) {
             $value;
             if ($value['month'] == $pp && $value['id'] == $id) {

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App;
 use App\eventReport;
 use DB;
@@ -27,14 +26,14 @@ class EreportController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'customer_name' => 'required',
-            'event_date' => 'required',
-            'event_time' => 'required',
-            'event_manager' => 'required',
-            'attendence' => 'required',
-            'cost' => 'required',
-            'etotal' => 'required',
-            'btotal' => 'required',
+            'customer_name'=>'required',
+            'event_date'=>'required',
+            'event_time'=>'required',
+            'event_manager'=>'required',
+            'attendence'=>'required',
+            'cost'=>'required',
+            'etotal'=>'required',
+            'btotal'=>'required',
         ]);
 
         $eventreport = new eventReport([
@@ -67,21 +66,21 @@ class EreportController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'customer_name' => 'required',
-            'event_date' => 'required',
-            'event_time' => 'required',
-            'event_manager' => 'required',
-            'attendence' => 'required',
-            'cost' => 'required',
-            'etotal' => 'required',
-            'btotal' => 'required',
+            'customer_name'=>'required',
+            'event_date'=>'required',
+            'event_time'=>'required',
+            'event_manager'=>'required',
+            'attendence'=>'required',
+            'cost'=>'required',
+            'etotal'=>'required',
+            'btotal'=>'required',
         ]);
 
 
         $eventreport = eventReport::find($id);
 
-        $eventreport->customer_name = $request->get('customer_name');
-        $eventreport->event_date = $request->get('event_date');
+        $eventreport->customer_name =  $request->get('customer_name');
+        $eventreport->event_date =  $request->get('event_date');
         $eventreport->event_time = $request->get('event_time');
         $eventreport->event_manager = $request->get('event_manager');
         $eventreport->attendence = $request->get('attendence');
@@ -96,8 +95,8 @@ class EreportController extends Controller
 
     public function destroy($id)
     {
-        $eventreport = eventReport::find($id);
-        $eventreport->delete();
+        $eventreport= eventReport::find($id);
+        $eventreport ->delete();
 
         return redirect('/ereport')->with('success', 'Contact deleted!');
     }
@@ -132,8 +131,9 @@ class EreportController extends Controller
 
               
            ';
-        foreach ($eventreport as $ereport) {
-            $output .= '        
+        foreach ($eventreport as $ereport)
+        {
+            $output .='        
                <table  style=" border: 1px solid #ddd;text-align: left;color: #10707f">
 }>
                  
@@ -146,22 +146,22 @@ class EreportController extends Controller
                 <tbody>
                 <tr>
                     <td>Customer name</td>
-                    <td>' . $ereport->customer_name . '</td>
+                    <td>'.$ereport->customer_name.'</td>
                     <td>Event date</td>
-                    <td>' . $ereport->event_date . '</td>
+                    <td>'.$ereport->event_date.'</td>
                 <tr>
                     <td>Event time</td>
-                    <td>' . $ereport->event_time . '</td>
+                    <td>'.$ereport->event_time.'</td>
                     <td>Event Manager</td>
-                    <td>' . $ereport->event_manager . '</td>
+                    <td>'.$ereport->event_manager.'</td>
                 </tr>
                 </tr>
                 <tr>
 
                     <td>Estimated No. of Attendence of guest for the Event </td>
-                    <td>' . $ereport->attendence . '</td>
+                    <td>'.$ereport->attendence.'</td>
                     <td>Proposed Registration cost for a each person</td>
-                    <td>' . $ereport->cost . '</td>
+                    <td>'.$ereport->cost.'</td>
 
                 </tr>
                 <tr>
@@ -170,13 +170,13 @@ class EreportController extends Controller
                 <tr>
 
                     <td colspan="2">Actual  Expence</td>
-                    <td>' . $ereport->etotal . '</td>
+                    <td>'.$ereport->etotal.'</td>
                     <td></td>
                 </tr>
 
                 <tr>
                     <td colspan="2">Budget Expence</td>
-                    <td>' . $ereport->btotal . '</td>
+                    <td>'.$ereport->btotal.'</td>
                     <td></td>
 
                 </tr>
@@ -189,16 +189,17 @@ class EreportController extends Controller
 
                 ';
         }
-        $output .= '</table>';
+        $output.='</table>';
         return $output;
     }
 
     public function searchereport(Request $request)
     {
         $searchereport = $request->get('searchereport');
-        $eventreport = DB::table('event_reports')->where('customer_name', 'like', '%' . $searchereport . '%')->paginate(5);
-        return view('e_report/index', ['eventreport' => $eventreport]);
+        $eventreport=DB::table('event_reports')->where('customer_name', 'like', '%'.$searchereport.'%')->paginate(5);
+        return view('e_report/index' , ['eventreport' => $eventreport ]);
     }
+
 
 
 }

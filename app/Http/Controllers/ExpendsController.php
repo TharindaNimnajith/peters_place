@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 
 class ExpendsController extends Controller
 {
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $this->validate($request, [
             'amount' => 'required',
             'date' => 'required'

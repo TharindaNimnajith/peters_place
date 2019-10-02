@@ -15,7 +15,7 @@ return [
 
     //'name' => env('APP_NAME', 'Laravel'),
 
-    'name' => 'Peters Place',
+    'name' => 'PETERS PLACE',
 
     /*
     |--------------------------------------------------------------------------
@@ -55,7 +55,6 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    //'url' => env('APP_URL', 'https://petersplace.com'),
 
     'asset_url' => env('ASSET_URL', null),
 
@@ -142,7 +141,6 @@ return [
         /*
          * Laravel Framework Service Providers...
          */
-
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -170,8 +168,6 @@ return [
 
         Barryvdh\DomPDF\ServiceProvider::class,
 
-        ConsoleTVs\Charts\ChartsServiceProvider::class,
-
         /*
          * Package Service Providers...
          */
@@ -179,15 +175,12 @@ return [
         /*
          * Application Service Providers...
          */
-
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-
         // App\Providers\BroadcastServiceProvider::class,
-        
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        ConsoleTVs\Charts\ChartsServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -242,7 +235,7 @@ return [
         'DataTables' => Yajra\DataTables\Facades\DataTables::class,
 
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        'Charts' => ConsoleTVs\Charts\Facades\Charts::class,
+
 
     ],
 

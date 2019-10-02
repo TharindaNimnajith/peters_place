@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Events</title>
@@ -49,13 +49,8 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
 
     </style>
@@ -87,6 +82,8 @@
     }
 </script>
 
+
+
 <div class="container">
 
     <div class="row">
@@ -112,11 +109,17 @@
     </div>
 
 
+    <div>
+        <a style="margin: 19px;" href="{{ route('eitems.create')}}" class="btn btn-primary">Add new item list</a>
+
+        <a href="{{url('e_item/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+
+    </div>
     <!--MAIN SECTION-->
 
     <div class="row">
         <div class="col-sm-12">
-            <center><h2>Event Order Items</h2></center>
+            <center><h2 >Event Order Items</h2></center>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -126,6 +129,7 @@
                     <th>Item Name</th>
                     <th>Item Quantity/Weight</th>
                     <th>Actions</th>
+
 
 
                 </tr>
@@ -146,11 +150,11 @@
                         </td>
                         <td>
 
-                            <form action="{{ route('eitems.destroy', $item->id)}}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Delete</button>
-                            </form>
+                                <form action="{{ route('eitems.destroy', $item->id)}}" method="post">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                </form>
 
                         </td>
                     </tr>

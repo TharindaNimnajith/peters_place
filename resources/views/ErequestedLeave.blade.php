@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://kit.fontawesome.com/8418d9c9c2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -142,6 +143,12 @@
     <div class="row">
         <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
+
+                <div class="center">
+
+                    <img style="margin-top:-10ch;width: 100px; height: 100px;"
+                         src="{{ asset ('uploads/home.png') }}">
+                </div>
                 <a href="{{url('/Emanagement') }}">
                     <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark">
@@ -159,7 +166,8 @@
                     <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
+                            <th class="text-center" scope="row"
+                                style="width:300px;height:10px;background-color:#264348"><b>LEAVE MANAGEMENT</b>
                             </th>
                         </tr>
                         </thead>
@@ -169,13 +177,12 @@
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row"
-                                style="width:300px;height:10px;background-color:#264348"><b>ATTENDANCE</b></th>
+                            <th class="text-center" scope="row" style="width:300px;height:10px">
+                                <b>ATTENDANCE</b></th>
                         </tr>
                         </thead>
                     </table>
                 </a>
-
                 <a href="{{url('/Esalary')}}">
                     <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
@@ -189,141 +196,103 @@
                     </table>
                 </a>
             </div>
-        </div>
 
+        </div>
 
         <div class="col-9">
             <div class="container-fluid" style="width: 900px ;margin-left: -3ch">
                 <ul class="my">
-                    <li class="my"><a href={{url('/Emanagement')}}><img
-                                src="https://img.icons8.com/metro/26/000000/ingredients-list.png">All Employee</a>
+                    <li class="my"><a href={{url('/Eleave')}}><i class="far fa-check-square"></i>Accepted Leave </a>
                     </li>
-                    <li class="my"><a href={{url('/Eadd')}}><img
-                                src="https://img.icons8.com/metro/26/000000/add-user-male.png"> Add
-                            Employee</a>
+
+                    <li class="my" style="background-color:#857373"><a href={{url('/ERleave')}}><i
+                                class="fas fa-exclamation-triangle"></i> Requested Leave </a>
                     </li>
-                    <li class="my"><a href="#contact"><img
-                                src="https://img.icons8.com/metro/26/000000/file.png">Report</a>
+                    <li class="my"><a href='{{url("/Eaddleave")}}'><img
+                                src="https://img.icons8.com/metro/26/000000/file.png">Add Leave</a>
                     </li>
                 </ul>
             </div>
-
-            @if(session()->has('success'))
-                <div class="alert alert-success">
-                    {{ session()->get('success') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="alert alert-danger">
-
-                    @foreach ($errors->all() as $error)
-                        {{ $error }}
-
-                    @endforeach
-
-                </div>
-            @endif
-
-            <div class="row">
-                <div class="col-5">
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                        <b>
-                            <h4 id="date" style="margin-top: 20px;"></h4>
-                        </b>
-
-                        <table class="table table-bordered">
-
-                            <thead>
-                            <tr>
-                                <th><b>Employee ID</b></th>
-                                <th><b>Type</b></th>
-                                <th><b>Name</b></th>
-                                <th></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($employeeD as $row)
-                                <tr>
-                                    <td><b>{{$row['id']}}</b></td>
-                                    <td>{{$row['type']}}</td>
-                                    <td>{{$row['name']}}</td>
-                                    <form method="post" action="/store">
-                                        {{ csrf_field() }}
-                                        <input type="hidden" name="id" value="{{$row['id']}}"/>
-                                        <input type="hidden" name="type" value="{{$row['type']}}"/>
-                                        <input type="hidden" name="name" value="{{$row['name']}}"/>
-                                        <input type="hidden" name="date" id="date" value="date"/>
-                                        <input type="hidden" name="count" value="1"/>
-                                        <td><input type="submit" value="ADD" class="btn btn-primary btn-sm"
-                                                   style="margin-left: 20px"/></td>
-                                    </form>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+            <p></p>
+            <h3>Requested Leave</h3>
+            <div class="col-md-10">
+                <form action="/search2" method="get">
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="search" name="search" class="form-control">
+                        <span class="input-group-prepend" style="width: 510px">
+                                <button type="submit" class="btn btn-primary"> Search</button>
+                            </span>
                     </div>
-                </div>
-
-
-                <div class="col-7">
-                    <h3 style="margin-top:20px;margin-left: 20px;color: #c51f1a">Total Attendance = {{$count}} </h3>
-                    <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-left: -2ch>
-                        <div class=" container-fluid
-                    " style=" margin-top: 20px">
-
-                    <table class="table table-bordered" style="margin-left: 0ch">
+                </form>
+            </div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <h3>Today:<h3 id="date">Today</h3>
+                </h3>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered">
                         <thead>
                         <tr>
-                            <td colspan="4">
-                                <h6><b>Daily Attendance List </b></h6>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th><b>Date</b></th>
-                            <th><b>Employee ID</b></th>
-                            <th><b>type</b></th>
-                            <th><b>Name</b></th>
+                            <th scope="col"><b>Registation No</b></th>
+                            <th scope="col"><b>Name</b></th>
+                            <th scope="col"><b>Apply Date</b></th>
+                            <th scope="col"><b>Leaving Date</b></th>
+                            <th scope="col"><b>Leave Type</b></th>
+                            <th scope="col"><b>#Leaving Dates</b></th>
+                            <th scope="col"><b>Email</b></th>
                         </tr>
                         </thead>
+
+
                         <tbody>
 
-                        <tr>
-                        <tr>
-                            @foreach($attendenceD as $row)
-                                <?php  $timestamp = strtotime($row['created_at']);
-                                $month = date('M', $timestamp);
-                                $dates = date('d', $timestamp);
-                                $date = date('d', $timestamp) . ' ' . date('M', $timestamp);?>
-                                <td><b style="color: #c51f1a">{{$date}}</b></td>
-                                <td><b>{{$row['id']}}</b></td>
-                                <td>{{$row['type']}}</td>
+                        @foreach($leave as $row )
+                            <tr>
+                                <td>{{$row['eid']}}</td>
                                 <td>{{$row['name']}}</td>
-                                <td><a href="/destroya/{{$row->id}} " class="btn btn-danger btn-sm"
-                                       style="margin-top:4px">Delete</a>
-                                </td>
-                                <form method="post" action="/storeA">
+                                <td>{{$row['Requesting_date']}}</td>
+                                <td>{{$row['leaving_date']}}</td>
+                                <td>{{$row['leve_type']}}</td>
+                                <td>{{$row['nof_days']}}</td>
+                                <td>{{$row['Email']}}</td>
+
+                                @foreach($emp as $r)
+                                    @if($r['id']==$row['id'])
+                                        <td>{{$r['Email']}} </td>
+                                    @endif
+                                @endforeach
+
+                                <form class="form-group" method="post" action="/sendleave">
                                     {{ csrf_field() }}
-                                    <input type="hidden" name="id" value="{{$row['id']}}"/>
-                                    <input type="hidden" name="type" value="{{$row['type']}}"/>
-                                    <input type="hidden" name="name" value="{{$row['name']}}"/>
-                                    <input type="hidden" name="month" value="{{$month}}"/>
-                                    <input type="hidden" name="date" value="{{$dates}}"/>
-                                    <td><input type="submit" value="ADD" class="btn btn-primary btn-sm"
-                                               style="margin-left: 20px"/></td>
+
+
+                                    <input type="hidden" name="ID" value="{{$row['eid']}}"/>
+                                    <input type="hidden" name="today" value="{{$row['Requesting_date']}}"/>
+                                    <input type="hidden" name="Date" value="{{$row['leaving_date']}}"/>
+                                    <input type="hidden" name="leavetype" value="{{$row['leve_type']}}"/>
+                                    <input type="hidden" name="#days" value="{{$row['nof_days']}}"/>
+                                    <td><input type="submit" value="Add" class="btn btn-primary btn-sm"
+                                               style="margin-left: 0px"></td>
                                 </form>
-                        </tr>
+                                <td><a href="/destroyl/{{$row->id}} " class="btn btn-danger btn-sm"
+                                       style="margin-top:4px"
+                                       onclick="return confirm('This Delete Process Can Not Undo')">Delete</a>
+                                </td>
+                                </td>
+
+
+                            </tr>
+
+                        @endforeach
 
                         </tbody>
-                        @endforeach
+
+
                     </table>
+                    </form>
                 </div>
-
             </div>
-
         </div>
     </div>
-</div>
-</div>
 </div>
 
 <script>
@@ -342,7 +311,6 @@
     }
 
 </script>
-
 </body>
 
 </html>

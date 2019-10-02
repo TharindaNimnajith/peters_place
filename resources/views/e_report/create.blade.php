@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>report</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -50,13 +50,8 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
 
     </style>
@@ -105,62 +100,62 @@
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
-                </div><br/>
+                </div><br />
             @endif
-            <form method="post" action="{{ route('ereport.store') }}">
-                @csrf
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th scope="col" colspan="4" style="color:blue;">Event Information</th>
+        <form method="post" action="{{ route('ereport.store') }}">
+            @csrf
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th scope="col" colspan="4" style="color:blue;">Event Information</th>
 
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>Customer name</td>
-                        <td><input type="text" name="customer_name" id="val1"></td>
-                        <td>Event date</td>
-                        <td><input type="date" name="event_date" id="val2"></td>
-                    <tr>
-                        <td>Event time</td>
-                        <td><input type="text" name="event_time" id="val3"></td>
-                        <td>Event Manager</td>
-                        <td><input type="text" name="event_manager" id="val4"></td>
-                    </tr>
-                    </tr>
-                    <tr>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Customer name</td>
+                    <td><input type="text" name="customer_name" id="val1"> </td>
+                    <td>Event date</td>
+                    <td><input type="date" name="event_date" id="val2"> </td>
+                <tr>
+                    <td>Event time</td>
+                    <td><input type="text" name="event_time" id="val3"> </td>
+                    <td>Event Manager</td>
+                    <td><input type="text" name="event_manager" id="val4"> </td>
+                </tr>
+                </tr>
+                <tr>
 
-                        <td>Estimated No. of Attendence of guest for the Event</td>
-                        <td><input type="text" name="attendence" id="val5"></td>
-                        <td>Proposed Registration cost for a each person</td>
-                        <td><input type="text" name="cost" id="val6"></td>
+                    <td>Estimated No. of Attendence of guest for the Event </td>
+                    <td><input type="text" name="attendence" id="val5"> </td>
+                    <td>Proposed Registration cost for a each person</td>
+                    <td><input type="text" name="cost" id="val6"> </td>
 
-                    </tr>
-                    <tr>
-                        <th colspan="4" style="color:blue;">Budget Information</th>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
+                    <th colspan="4" style="color:blue;" >Budget Information</th>
+                </tr>
+                <tr>
 
-                        <td colspan="2">Actual Expence</td>
-                        <td colspan="2"><input type="number" name="etotal" id="val7"></td>
-                        <td></td>
-                    </tr>
+                    <td colspan="2">Actual Expence</td>
+                    <td colspan="2"><input type="number" name="etotal" id="val7"> </td>
+                    <td></td>
+                </tr>
 
-                    <tr>
-                        <td colspan="2">Budget Expence</td>
-                        <td colspan="2"><input type="number" name="btotal" id="val8"></td>
-                        <td></td>
+                <tr>
+                    <td colspan="2">Budget Expence</td>
+                    <td colspan="2"><input type="number" name="btotal" id="val8"> </td>
+                    <td></td>
 
-                    </tr>
+                </tr>
 
-                    </tbody>
+                </tbody>
 
-                </table>
-                <center><input type="submit" value="Save" name="" class="btn btn-success"></center>
-            </form>
+            </table>
+            <center><input type="submit" value="Save" name="" class="btn btn-success" ></center>
+        </form>
         </div>
-        <input type="button" value="Demo" id="btn3">
+        <input type="button" value="Demo" id="btn3" >
 
     </div>
     <!--MAIN SECTION-->
@@ -172,8 +167,8 @@
 <br>
 <br>
 <script>
-    $(document).ready(function () {
-        $("#btn3").click(function () {
+    $(document).ready(function(){
+        $("#btn3").click(function(){
             $("#val1").val("Nimal");
             $("#val2").val("2019-08-19");
             $("#val3").val("11.00 AM -4.00 PM");

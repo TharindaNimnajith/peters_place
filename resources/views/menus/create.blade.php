@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,16 +49,14 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
 
     </style>
+
+
+
 
 
 </head>
@@ -100,7 +98,7 @@
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
-                    </div><br/>
+                    </div><br />
                 @endif
                 <form method="post" action="{{ route('menus.store') }}">
                     @csrf
@@ -126,28 +124,24 @@
 
                     <div class="form-group">
                         <label for="main_dishes">Main Dishes</label>
-                        <textarea type="text" class="form-control" name="main_dishes" rows="5" required=""
-                                  style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                        <textarea type="text" class="form-control" name="main_dishes" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="salads">Salads</label>
-                        <textarea type="text" class="form-control" name="salads" rows="5" required=""
-                                  style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                        <textarea type="text" class="form-control" name="salads" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="deserts">Desserts</label>
-                        <textarea type="text" class="form-control" name="deserts" rows="5" required=""
-                                  style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                        <textarea type="text" class="form-control" name="deserts" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="beverages">Beverages</label>
-                        <textarea type="text" class="form-control" name="beverages" rows="5" required=""
-                                  style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
+                        <textarea type="text" class="form-control" name="beverages" rows="5" required="" style="margin-top: 0px; margin-bottom: 0px; height: 100px;"></textarea>
                     </div>
 
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="text" class="form-control" name="price"/>
+                        <input type="text" class="form-control" name="price" />
                     </div>
 
                     <button type="submit" class="btn btn-success">Add Menu</button>

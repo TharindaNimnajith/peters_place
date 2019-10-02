@@ -119,7 +119,6 @@
 
         }
 
-
     </style>
 </head>
 
@@ -143,7 +142,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-3" style="background-color: #2C3E50 ;">
+        <div class="col-3" style="background-color: #2C3E50 ">
             <div class="container-fluid" style="margin-top: 150px">
                 <div class="center">
 
@@ -151,7 +150,7 @@
                          src="{{ asset ('uploads/home.png') }}">
                 </div>
                 <a href="{{url('/Emanagement') }}">
-                    <table class="table" style="width:300px;height:100px;margin:10px auto 0px auto">
+                    <table class="table" style="width:300px;height:100px; margin-left: 0px;margin-top:20px">
                         <thead class="thead-dark" style="">
                         <tr class="btn" style="">
                             <th class="text-center" scope="row"
@@ -165,20 +164,20 @@
                 </a>
 
                 <a href="{{url('/Eleave') }}">
-                    <table class="table" style="width:300px ; margin:10px auto 10px auto">
+                    <table class="table" style="width:300px ; margin-left: 0px ">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px; ">LEAVE MANAGEMENT
+                            <th class="text-center" scope="row" style="width:300px;height:10px">LEAVE MANAGEMENT
                             </th>
                         </tr>
                         </thead>
                     </table>
                 </a>
                 <a href="{{url('/Eattendence')}}">
-                    <table class="table" style="width:300px;margin:10px auto 10px auto">
+                    <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px; margin-left: -4ch;">
+                            <th class="text-center" scope="row" style="width:300px;height:10px">
                                 ATTENDANCE
                             </th>
                         </tr>
@@ -186,11 +185,10 @@
                     </table>
                 </a>
                 <a href="{{url('/Esalary')}}">
-                    <table class="table" style="width:300px;margin:10px auto 10px auto">
+                    <table class="table" style="width:300px;margin-left: 0px">
                         <thead class="thead-dark">
                         <tr class="btn">
-                            <th class="text-center" scope="row" style="width:300px;height:10px; margin-left: -4ch;">
-                                SALARY
+                            <th class="text-center" scope="row" style="width:300px;height:10px">SALARY
                                 MANAGEMENT
                             </th>
                         </tr>
@@ -233,8 +231,6 @@
 
             <p></p>
             <a href='pdfview'>Download PDF</a>
-
-
             <div class="table-wrapper-scroll-y my-custom-scrollbar" style="margin-bottom: 10px">
                 <!-- Search form -->
 

@@ -5,9 +5,9 @@
         @if ($chart->type)
             let {{ $chart->id }}_type = {{ $chart->type }}
         @else
-            let {{ $chart->id }}_type = data[0].renderAs;
+            let; {{ $chart->id }}_type = data[0].renderAs;
         @endif
-        if (!{!! json_encode($chart->keepType) !!}.includes({{ $chart->id }}_type)) {
+        if (!{!! json_encode($chart->keepType) !!}.includes({{ $chart->id }}_type);) {
             {{ $chart->id }}_type = "{{ $chart->comboType }}"
         }
         FusionCharts.ready(function () {
@@ -38,7 +38,7 @@
             .then(data => {
                 document.getElementById("{{ $chart->id }}_loader").style.display = 'none';
                 document.getElementById("{{ $chart->id }}").style.display = 'block';
-                let chartData = {{ $chart->id }}.getChartData("json");
+                let chartData =; {{ $chart->id }}.getChartData("json");
                 chartData.dataset = data;
                 {{ $chart->id }}.setChartData(chartData, "json");
         });

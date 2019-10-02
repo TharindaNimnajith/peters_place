@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportsVisnasTable extends Migration
+class CreateEventItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateReportsVisnasTable extends Migration
      */
     public function up()
     {
-        Schema::create('reports_visnas', function (Blueprint $table) {
+        Schema::create('event_items', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nic');
-            $table->string('name');
-            $table->string('type');
-            $table->double('amount');
-            $table->date('date');
+            $table->date('event_date');
+            $table->date('rq_date');
+            $table->string('item_name');
+            $table->string('qty');
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateReportsVisnasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('reports_visnas');
+        Schema::dropIfExists('event_items');
     }
 }

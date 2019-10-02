@@ -4,6 +4,7 @@ namespace ConsoleTVs\Charts\Classes;
 
 use Balping\JsonRaw\Encoder;
 use Balping\JsonRaw\Raw;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\View;
 
@@ -251,7 +252,7 @@ class BaseChart
     public function script(string $script = null)
     {
         if (count($this->datasets) == 0 && !$this->api_url) {
-            throw new \Exception('No datasets provided, please provide at least one dataset to generate a chart');
+            throw new Exception('No datasets provided, please provide at least one dataset to generate a chart');
         }
 
         if (!$script) {
@@ -367,7 +368,7 @@ class BaseChart
      *
      * @param string $value
      *
-     * @return \Balping\JsonRaw\Raw
+     * @return Raw
      */
     public function rawObject(string $value)
     {
