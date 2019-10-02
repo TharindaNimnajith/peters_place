@@ -65,7 +65,7 @@
     <nav>
 
         <ul style="display: inline-block">
-            <li><a href="#">Home</a></li>
+            <li><a href="{{ url('/home') }}">Home</a></li>
             <li><a href="#">Contact</a>
             <li><a href="#">About</a></li>
 
@@ -82,7 +82,7 @@
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
-    <a href="/report1">Reports</a>
+    <a href="/freport">Event Reports</a>
 
 </div>
 <br>
