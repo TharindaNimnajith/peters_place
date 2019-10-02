@@ -2,7 +2,7 @@
 
 namespace App;
 
-class reportVisna-m extends Model
+class reportVisna extends Model
 {
     //
 }

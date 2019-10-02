@@ -65,7 +65,7 @@
     <nav>
 
         <ul style="display: inline-block">
-            <li><a href="#">Home</a></li>
+            <li><a href="{{ url('/home') }}">Home</a></li>
             <li><a href="#">Contact</a>
             <li><a href="#">About</a></li>
 
@@ -81,7 +81,8 @@
     <a href="/customer">Customer Details</a>
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
-    <a href="/report1">Reports</a>
+    <a href="/freport">Event Reports</a>
+
 
 </div>
 <br>
@@ -115,9 +116,7 @@
             <br>
             <br>
         </div>
-        <div class="col-md-5" align="right">
-            <a href="{{url('dynamic_pdf/pdf')}}" class="btn btn-danger">Convert into PDF</a>
-        </div>
+
         <div class="col-md-4">
             <form action="/search1" method="get">
                 <div class="input-group">
@@ -129,26 +128,34 @@
             </form>
         </div>
         <div class="col-md-2 text-right">
-            <a href="{{ action('postcontroller@create') }}" class="btn btn-primary">Add Data</a>
+            <a href="{{ action('postcontroller@create') }}" class="btn btn-primary" style="margin-left: -30px">Add
+                Details</a>
+
         </div>
+    </div>
+    <div class="col-md-12" style="margin-top: -95px; margin-left: 1135px">
+        <a href="{{url('dynamic_pdf/pdf')}}" class="btn btn-danger">Convert into PDF</a>
     </div>
     <form method="post">
         @csrf
         @method('DELETE')
-        <button formaction="/deleteall1" type="submit" class="btn btn-danger">Delete All Selected</button>
+        <button formaction="/deleteall1" type="submit" class="btn btn-danger" style="margin-top: 45px">Delete All
+            Selected
+        </button>
         <br>
         <br>
         <table class="table table-bordered">
             <thead>
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
-                <th style="width: 60px">First Name</th>
-                <th style="width: 80px">Last Name</th>
-                <th style="width: 60px">NIC</th>
-                <th style="width: 60px">E mail</th>
-                <th style="width: 60px">Phone Number</th>
-                <th style="width: 80px">Address</th>
-                <th style="width: 500px">Action</th>
+                <th style="width:60px">First Name</th>
+                <th style="width:60px">Last Name</th>
+                <th style="width:60px"> NIC</th>
+                <th style="width:60px">E mail</th>
+                <th style="width:60px">Phone Number</th>
+                <th style="width:60px">Address</th>
+                <th style="width:200px">Action</th>
+
             </tr>
             </thead>
             <tbody>
@@ -171,16 +178,7 @@
                 </tr>
             @endforeach
 
-            @foreach($posts as $customer)
-                <tr>
-                    <td>{{$customer->fname}}</td>
-                    <td>{{$customer->lname}}</td>
-                    <td>{{$customer->nic}}</td>
-                    <td>{{$customer->email}}</td>
-                    <td>{{$customer->phone}}</td>
-                    <td>{{$customer->address}}</td>
-                </tr>
-                @endforeach
+
             </tbody>
             <tfoot>
 

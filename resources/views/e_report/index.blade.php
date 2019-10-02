@@ -107,6 +107,13 @@
 
     <!--MAIN SECTION-->
 
+    <div>
+        <a style="margin: 19px;" href="{{ route('ereport.create')}}" class="btn btn-primary">New Event
+            Report</a>
+        <a href="{{url('e_report/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+
+    </div>
+
 
     <div class="row">
         <div class="col-sm-12">
@@ -160,12 +167,6 @@
             </div>
             <!--MAIN SECTION-->
 
-            <div>
-                <a style="margin: 19px;" href="{{ route('ereport.create')}}" class="btn btn-primary">New Event
-                    Report</a>
-                <a href="{{url('e_report/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
-
-            </div>
 
 
         </div>

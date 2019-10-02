@@ -115,7 +115,6 @@ function closeNav() {
         </div>
     </div>
 
-
     <form method="post">
         @csrf
         @method('DELETE')
@@ -128,12 +127,13 @@ function closeNav() {
                 <th width="230"></th>
                 <th width="230">NIC</th>
                 <th width="230">Name</th>
-                <th width="230">Type of amount</th>
+                <th width="250">Type of amount</th>
                 <th width="230">Date</th>
                 <th width="230">Amount</th>
             </tr>
             </thead>
             <tbody>
+
             @foreach($reports_visnas as $reports_visna)
                 <tr>
                     <td><input type="checkbox" name="ids[]" class="selectbox" value="{{ $reports_visna->id}}"></td>
@@ -149,19 +149,41 @@ function closeNav() {
                         <button formaction="{{ action('reportVisnacontroller@destroy', $reports_visna->id)}}" type="submit"
                                 class="btn btn-danger">DELETE
                         </button>
-
                     </td>
                 </tr>
             @endforeach
             </tbody>
             <tfoot>
-
             </tfoot>
 
+            <?php
+            $calcAcoom = DB::table('accoms')->sum('payment');
+            $kevent = DB::table('events')->sum('total');
+            $calI = ($calcAcoom + $kevent);
+            echo "<style>pre{font-size:20px; color:blue; float:left; margin-right:30px;}</style>";
+            echo "<html>";
+            echo "<pre>Monthly Income: $calI</pre>";
+            ?>
+
+            <?php
+            $calcAmount = DB::table('utilities')->sum('amount');
+            $calcEvent = DB::table('event_reports')->sum('etotal');
+            $calcSup = DB::table('expends')->sum('amount');
+            $calHr = DB::table('emp_salaries')->sum('salary');
+            $calE = ($calcAmount + $calcEvent + $calcSup + $calHr);
+            echo "<style>pre{font-size:20px; color:blue;}</style>";
+            echo "<html>";
+            echo "<pre>Monthly Expenditure: $calE</pre>";
+            ?>
+
+            <?php
+            $profit = ($calI - $calE);
+            echo "<style>code{font-size:20px; color:red; float:right; margin-left:30px;}</style>";
+            echo "<html>";
+            echo "<code>Monthly Profit: $profit</code>";
+            ?>
         </table>
     </form>
-
-
 
     <script type="text/javascript">
         $('.selectall').click(function () {

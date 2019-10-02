@@ -33,6 +33,12 @@
 <body>
 <div class="container">
     <div class="navigation">
+        @if (session()->has('unsuccess'))
+            <div class="alert alert-danger" role="alert">
+                {{ session()->get('unsuccess') }}
+            </div>
+        @endif
+
         @if (session()->has('success'))
             <div class="alert alert-success" role="alert">
                 {{ session()->get('success') }}
@@ -196,7 +202,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Room No</label>
-                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}">
+                        <input type="text" name="r_no" class="form-control" value="{{ old('r_no') }}" id="no1">
                     </div>
 
                     <div class="form-group">
@@ -232,7 +238,7 @@
 
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea class="form-control" name="desc">{{ old('desc') }}</textarea>
+                        <textarea class="form-control" name="desc" id="no2">{{ old('desc') }}</textarea>
                     </div>
                 </div>
 
@@ -241,6 +247,20 @@
                     <input type="submit" class="btn btn-success" value="Add">
                 </div>
             </form>
+
+            <input type="button" value="Demo" id="demo" class="btn btn-primary"
+                   style="margin-top: -95px; margin-left: 20px;">
+
+            <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+
+            <script>
+                $(document).ready(function () {
+                    $("#demo").click(function () {
+                        $("#no1").val("2000");
+                        $("#no2").val("Large Room");
+                    });
+                });
+            </script>
         </div>
     </div>
 </div>

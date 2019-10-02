@@ -2,7 +2,7 @@
 
 namespace App;
 
-class reportsV-m extends Model
+class reportsV extends Model
 {
     //
 }

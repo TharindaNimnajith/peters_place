@@ -103,6 +103,13 @@
         </div>
     </div>
 
+    <div>
+        <a style="margin: 19px;" href="{{ route('eitems.create')}}" class="btn btn-primary">Add new item
+            list</a>
+
+        <a href="{{url('e_item/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
+
+    </div>
 
 
     <!--MAIN SECTION-->
@@ -154,13 +161,6 @@
             </div>
             <!--MAIN SECTION-->
 
-            <div>
-                <a style="margin: 19px;" href="{{ route('eitems.create')}}" class="btn btn-primary">Add new item
-                    list</a>
-
-                <a href="{{url('e_item/edit/pdf')}}" class="btn btn-danger">Convert into PDF</a>
-
-            </div>
 
         </div>
 

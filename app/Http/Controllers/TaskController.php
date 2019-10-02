@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Hall;
 use App\Http\Requests\my;
-use App\Room;
-use App\Task;
+use App\Roominventory;
+use App\Task2;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -13,7 +13,7 @@ class TaskController extends Controller
 {
     public function index1()
     {
-        $inventory = Task::all();
+        $inventory = Task2::all();
         return view('inventory')->with('inventoryD', $inventory);
     }
 
@@ -25,7 +25,7 @@ class TaskController extends Controller
 
     public function index3()
     {
-        $inventory = Room::all();
+        $inventory = Roominventory::all();
         return view('room')->with('inventoryD', $inventory);
     }
 
@@ -42,7 +42,7 @@ class TaskController extends Controller
             return back()->withErrors($validate)->withInput();
         }
 
-        $task1 = new Task([
+        $task1 = new Task2([
             'ItemName' => $request->get('name1'),
             'stockeddate' => $request->get('std'),
             'stockedqty' => $request->get('stq'),
@@ -62,7 +62,7 @@ class TaskController extends Controller
     {
         $validatedData = $request->validated();
 
-        $task2 = new Room([
+        $task2 = new Roominventory([
             'ItemName' => $request->get('name1'),
             'stockeddate' => $request->get('std'),
             'stockedqty' => $request->get('stq'),
@@ -102,9 +102,27 @@ class TaskController extends Controller
         //dd($request -> all());
     }
 
+    public function store5(my $request)
+    {
+        $task5 = new Roominventory([
+            'ItemName' => $request->get('name1'),
+            'stockeddate' => $request->get('std'),
+            'stockedqty' => $request->get('stq'),
+            'issueddate' => $request->get('isd'),
+            'issuedqty' => $request->get('isq'),
+            'availableqty' => $request->get('avq'),
+
+
+        ]);
+
+        $task5->save();
+        return redirect()->back()->with('success', 'Your Data Successfully Added ');
+    }
+
+
     public function destroy($id)
     {
-        $data = Task::findOrFail($id);
+        $data = Task2::findOrFail($id);
         $data->delete();
         return back()->with('success', 'Recode Deleted');
 
@@ -112,7 +130,7 @@ class TaskController extends Controller
 
     public function destroy2($id)
     {
-        $data = Room::findOrFail($id);
+        $data = Roominventory::findOrFail($id);
         $data->delete();
         return back()->with('success', 'Recode Deleted');
 
@@ -135,7 +153,7 @@ class TaskController extends Controller
 //        return View('inventory', compact("inventoryD"));
 //
 //    } else {
-        $inventoryD = Task::where('id', 'like', '%' . $search . '%')->get();
+        $inventoryD = Task2::where('id', 'like', '%' . $search . '%')->get();
         return View('inventory', compact("inventoryD"));//->with('employeeD',$empdata);
 
     }

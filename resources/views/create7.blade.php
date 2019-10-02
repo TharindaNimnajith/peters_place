@@ -101,13 +101,12 @@ function closeNav() {
             <form action="{{action('reportVisnacontroller@store')}}" method="post">
                 @csrf
                 <div class="form-group">
-                    <label>Nic</label>
+                    <label>NIC</label>
                     <input class="form-control" type="text" name="nic"/>
                 </div>
                 <div class="form-group">
                     <label>Name</label>
                     <input class="form-control" type="text" name="name"/>
-                    </select>
                 </div>
                 <div class="form-group">
                     <label>Type</label>

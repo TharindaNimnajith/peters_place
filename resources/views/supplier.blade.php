@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -46,7 +45,10 @@
                     return false;
                 }
 
+            } else {
+                return false;
             }
+
 
             function inputAlphabet(inputtext, alertmsg, elem) {
                 var alphaExp1 = /^[a-zA-Z]+$/;
@@ -88,7 +90,7 @@
 
             function AccValidation(inputtext, alertmsg, elem) {
                 var acc = /^[0-9]+$/;
-                if ((inputtxt.value.match(acc))) {
+                if ((inputtext.value.match(acc))) {
                     return true;
                 } else {
                     document.getElementById(elem).innerText = alertmsg;
@@ -101,6 +103,7 @@
     </script>
     <!-- Styles -->
     <style>
+
         body {
             margin: auto;
             font-family: Arial, Helvetica, sans-serif;
@@ -281,7 +284,6 @@
             margin-left: 16px;
 
         }
-
     </style>
 </head>
 <div class="topnav">
@@ -289,18 +291,26 @@
     <a href="/orderFinal">Orders</a>
     <a href="/expenditureFinal">Reports</a>
 </div>
-
 <body>
 <div class="container">
     <div class="row">
         <div class="col-sm-12 col-md-4">
-            <form class="sup1" onsubmit="return formValidation()" method="post" action="/savesup"
-                  style="background-color: #3495e3">
-                @csrf
-                {{csrf_field() }}
-                <h5 class="topic">Create Suppliers</h5>
-                <table class="table-responsive-sm" style="margin-left:15px">
-                    <div class="data">
+            <div>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach($errors->all() as $error)
+                                <li>{{$error}}</li>
+                            @endforeach
+                        </ul>
+                    </div><br/>
+                @endif
+                <form class="sup1" method="post" action="{{route('supplier.store')}}" style="background-color: #3495e3">
+                    @csrf
+
+                    <h5 class="topic">Create Suppliers</h5>
+                    <table class="table-responsive-sm" style="margin-left:15px">
+                        <div class="data">
                         <tr>
                             <td>Supplier Name</td>
                             <td><input type="text" id="name" placeholder="Enter Name" name="suppName" required></td>
@@ -313,7 +323,7 @@
                         </tr>
                         <tr>
                             <td>Supplier Type</td>
-                            <td><select id="supType" name="suptype" style="width: 160px">
+                            <td><select id="supType" name="suptype">
                                     <option value="food">Food</option>
                                     <option value="EventPro">Event Products</option>
                                     <option value="Infra">Infrastructure</option>
@@ -326,12 +336,12 @@
                             <p id="p3"></p>
                         <tr>
                             <td>Inactive Date</td>
-                            <td><input type="date" id="date" name="date" style="width: 160px"></td>
+                            <td><input type="date" id="date" name="date"></td>
                         </tr>
                         <tr>
                             <td>Bank Name</td>
                             <td>
-                                <select id="bank" name="bank" style="width: 160px">
+                                <select id="bank" name="bank">
                                     <option value="sampath">Sampath Bank</option>
                                     <option value="peoples">Peoples' Bank</option>
                                     <option value="boc">BOC</option>
@@ -341,26 +351,29 @@
                         </tr>
                         <tr>
                             <td>Bank Account No</td>
-                            <td><input type="text" id="acc" placeholder="Enter Account No" name="accNo" required>
-                            </td>
+                            <td><input type="text" id="acc" placeholder="Enter Account No" name="accNo" required></td>
                             <p id="p4"></p>
                         </tr>
 
 
-                        <tr>
-                            <td>
-                                <button class="btn btn-danger" id="button" value="goBtn" type="reset">Clear</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary" id="button1" value="clearBtn" type="submit">Insert
-                                </button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td>
+                                    <button class="btn btn-danger" id="button" value="goBtn" type="reset">Clear</button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-success" id="button1" value="clearBtn" type="submit">Insert
+                                    </button>
+                                </td>
+                            </tr>
                     </div>
                 </table>
             </form>
+
+            </div>
         </div>
         <div class="col-sm-12 col-md-8">
+            <a href="{{ url('dynamic_pdf/pdf') }}" class="btn btn-danger"
+               style="margin-left: 473px;margin-bottom: -75px">Convert into PDF </a>
             <table id="supT" class="table table-dark" style="margin-left: 15px;">
                 <th class="sup1" scope="col">Id</th>
                 <th class="sup1" scope="col">Name</th>
@@ -381,10 +394,15 @@
                         <td class="sup1">{{$sup ->inac_date}}</td>
                         <td class="sup1">{{$sup ->bank}}</td>
                         <td class="sup1">{{$sup ->acc_no}}</td>
-                        <td class="sup1"><a href='{{url("/savesup/{$sup -> id}{$sup->data}")}}' class="btn btn-success"
-                                            id="button" value="goBtn">Update</a></td>
-                        <td class="sup1"><a href='{{url("/deletesup/{$sup -> id}")}}' class="btn btn-warning"
-                                            id="button">Delete</a>
+                        <td class="sup1"><a href="{{route('supplier.edit',$sup -> id)}}" class="btn btn-success"
+                                            value="goBtn">Update</a></td>
+                        <td class="sup1">
+                            <form id=delete action="{{route('supplier.destroy',$sup -> id)}}" method="post"
+                                  style="margin-top: 0px;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
                         </td>
                     </tr>
 
@@ -396,5 +414,4 @@
     </div>
 </div>
 </body>
-
 </html>

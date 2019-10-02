@@ -32,6 +32,7 @@
         }
     </style>
 
+
     <!--Materialize CSS-->
 
     <!--Compiled and minified CSS-->
@@ -113,19 +114,19 @@
                                 <div class="form-group">
                                     <label>First Name</label>
                                     <input name="fname" type="text" class="form-control"
-                                           value="{{ old('fname') }}"/>
+                                           value="{{ old('fname') }}" id="no1"/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Last Name</label>
                                     <input name="lname" type="text" class="form-control"
-                                           value="{{ old('lname') }}"/>
+                                           value="{{ old('lname') }}" id="no2"/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Phone Number</label>
                                     <input name="phone" type="text" class="form-control"
-                                           value="{{ old('phone') }}"/>
+                                           value="{{ old('phone') }}" id="no3"/>
                                 </div>
                             </div>
                         </div>
@@ -152,7 +153,7 @@
                                     </select>
                                     -->
 
-                                    <select name="rtype" class="form-control">
+                                    <select name="rtype" class="form-control" id="no4">
                                         @foreach ($rt as $item)
                                             @if (isset($item))
                                                 <option value="{{ $item->id }}" @if (old('rtype') == '{{ $item->id }}')
@@ -164,12 +165,14 @@
 
                                 <div class="form-group">
                                     <label>Check In</label>
-                                    <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"/>
+                                    <input name="cin" type="date" class="form-control" value="{{ old('cin') }}"
+                                           id="no5"/>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Check Out</label>
-                                    <input name="cout" type="date" class="form-control" value="{{ old('cout') }}"/>
+                                    <input name="cout" type="date" class="form-control" value="{{ old('cout') }}"
+                                           id="no6"/>
                                 </div>
                             </div>
                         </div>
@@ -181,6 +184,24 @@
                 </div>
             </div>
         </form>
+
+        <!--
+        <input type="button" value="Demo" id="demo" class="btn btn-primary" style="margin-top: -120px; margin-left: 100px;">
+        -->
+
+        <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+
+        <script>
+            $(document).ready(function () {
+                $("#demo").click(function () {
+                    $("#no1").val("Tharinda");
+                    $("#no2").val("Nimnajith");
+                    $("#no3").val("0914921062");
+                    //$("#no5").val("10/12/2019");
+                    //$("#no6").val("12/12/2019");
+                });
+            });
+        </script>
 
         <div class="clearfix"></div>
     </div>

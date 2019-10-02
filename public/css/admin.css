@@ -6,8 +6,12 @@
     top: 12%;
 }
 
+#searchReservationModal {
+    top: 10%;
+}
+
 #searchRoomTypeModal {
-    top: 16%;
+    top: 20%;
 }
 
 #addRoomModal,
