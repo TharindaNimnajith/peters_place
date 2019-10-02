@@ -506,8 +506,18 @@ Route::get('/ESChart', 'EmployeeChartController@salaryR');
 Route::get('/sss', 'EmployeeChartController@regdate');
 Route::post('/date', 'EmployeeChartController@register');
 
+//Route::post("/dailyAttDetailsPdf", 'attendenceController@dailyattPdf');
+Route::post('/dailyAttDetailsPdf', array('as' => 'dailyattPdf', 'uses' => 'attendenceController@dailyattPdf'));
+
+Route::get('/pdf', function () {
+    return view('Dailyattendance');
+});
 
 
+Route::get('/vv', 'attendenceController@pdf');
+
+Route::get('/MTsalary', 'salaryController@getData');
+Route::get('/dessalary/{id}', 'salaryController@getDatadelete');
 
 
 //Route::get('/sss' ,'EmployeeChartController@salaryR');

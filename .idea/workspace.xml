@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="Updated On 29/9/19 At 23.22 - A.N Gajasinghe( add validation to salaries **need to improve Salary UI(list CSS) )">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/EmployeeChartController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/attendenceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/salaryController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/EmployeeChart.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_attendence.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/Employee_salary.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/ClassLoader.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_classmap.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_real.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_real.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendor/composer/autoload_static.php" beforeDir="false" afterPath="$PROJECT_DIR$/vendor/composer/autoload_static.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -242,6 +230,9 @@
       <workItem from="1569789810724" duration="1427000" />
       <workItem from="1569809212229" duration="10027000" />
       <workItem from="1569909523614" duration="10348000" />
+      <workItem from="1570003780575" duration="18619000" />
+      <workItem from="1570026379879" duration="201000" />
+      <workItem from="1570028163124" duration="266000" />
     </task>
     <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
       <created>1566921284088</created>
@@ -432,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1569779488530</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Updated On 29/9/19 At 23.22 - A.N Gajasinghe( add validation to salaries **need to improve Salary UI(list CSS) )">
+      <created>1570028287403</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1570028287403</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -488,13 +486,23 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/resources/views/Employee_view.blade.php</url>
-          <line>182</line>
+          <line>184</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/resources/views/Employee_profile.blade.php</url>
           <line>19</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/routes/web.php</url>
+          <line>518</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/routes/web.php</url>
+          <line>513</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
