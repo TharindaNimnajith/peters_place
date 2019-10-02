@@ -79,6 +79,7 @@
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
     <a href="/freport">Event Reports</a>
+    <a href="/freport">Reports</a>
 
 </div>
 <br>

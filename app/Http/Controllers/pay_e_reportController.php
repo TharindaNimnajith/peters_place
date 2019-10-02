@@ -115,6 +115,7 @@ class pay_e_reportController extends Controller
     public function pdf()
     {
         $pdf = App::make('dompdf.wrapper');
+        $pdf = \App::make('dompdf.wrapper');
         $pdf->loadHTML($this->convert_report_data_to_html());
         return $pdf->stream();
     }
@@ -151,6 +152,14 @@ class pay_e_reportController extends Controller
                     <td>Event time.........................................................</td>
                     <td>'.$freport->time.'</td>
                     <td>Category...........................................................</td>
+                    <td>Customer name</td>
+                    <td>'.$freport->c_name.'</td>
+                    <td>Event date</td>
+                    <td>'.$freport->event_date.'</td>
+                <tr>
+                    <td>Event time</td>
+                    <td>'.$freport->time.'</td>
+                    <td>Category</td>
                     <td>'.$freport->category.'</td>
                 </tr>
                 </tr>
@@ -159,6 +168,9 @@ class pay_e_reportController extends Controller
                     <td>No. of Guests.......................................................</td>
                     <td>'.$freport->guests.'</td>
                     <td>Menu ID.............................................................</td>
+                    <td>No. of Guests</td>
+                    <td>'.$freport->guests.'</td>
+                    <td>Menu ID</td>
                     <td>'.$freport->mid.'</td>
 
                 </tr>
@@ -168,12 +180,14 @@ class pay_e_reportController extends Controller
                 <tr>
 
                     <td colspan="2">Advancement.............................................</td>
+                    <td colspan="2">Advancement</td>
                     <td>'.$freport->advance.'</td>
                     <td></td>
                 </tr>
 
                 <tr>
                     <td colspan="2">Total Payment...........................................</td>
+                    <td colspan="2">Total Payment</td>
                     <td>'.$freport->total.'</td>
                     <td></td>
 

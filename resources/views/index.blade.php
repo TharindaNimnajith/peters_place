@@ -82,6 +82,7 @@
     <a href="/accoms">Accommodation Details</a>
     <a href="/events1">Event Details</a>
     <a href="/freport">Event Reports</a>
+    <a href="/freport">Reports</a>
 
 </div>
 <br>
@@ -128,6 +129,7 @@
         </div>
         <div class="col-md-2 text-right">
             <a href="{{ action('postcontroller@create') }}" class="btn btn-primary" style="margin-left: -30px">Add Details</a>
+            <a href="{{ action('postcontroller@create') }}" class="btn btn-primary" style="margin-left: -30px">Add Data</a>
         </div>
     </div>
     <div class="col-md-12" style="margin-top: -95px; margin-left: 1135px">
@@ -143,6 +145,13 @@
             <thead>
             <tr style="background-color:#4D6D9A">
                 <th><input type="checkbox" class="selectall"></th>
+                <th style="width:60px">First Name</th>
+                <th style="width:60px">Last Name</th>
+                <th style="width:60px"> NIC</th>
+                <th style="width:60px">E mail</th>
+                <th style="width:60px">Phone Number</th>
+                <th style="width:60px">Address</th>
+                <th style="width:600px">Action</th>
                 <th style="width:60px">First Name</th>
                 <th style="width:60px">Last Name</th>
                 <th style="width:60px"> NIC</th>

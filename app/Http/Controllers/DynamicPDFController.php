@@ -36,6 +36,11 @@ class DynamicPDFController extends Controller
         $posts = $this->get_customer_data();
         $output = '
         <h3 align="center">Customer Data</h3>
+        function convert_customer_data_to_html()
+        {
+            $posts = $this->get_customer_data();
+            $output = '
+        <h3 align="center">Customer Details</h3>
         <table width="100%" style="border-collapse: collapse; border: 0px;">
         <tr>
         <th style="border: 1px solid; padding: 12px;" width="20%">First Name</th>
@@ -43,8 +48,8 @@ class DynamicPDFController extends Controller
         <th style="border: 1px solid; padding: 12px;" width="20%">NIC</th>
         <th style="border: 1px solid; padding: 12px;" width="20%">E Mail</th>
         <th style="border: 1px solid; padding: 12px;" width="20%">Phone Number</th>
-        <th style="border: 1px solid; padding: 12px;" width="20%">Address</th>
-        
+        <th style="border: 1px solid; padding: 12px;" width="80%">Address</th>
+
 </tr>
 ';
         foreach ($posts as $customer) {
