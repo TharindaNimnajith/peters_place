@@ -317,22 +317,10 @@
                     <div class="form-group">
                         <label>Room Type</label>
 
-                        <!--
                         <select name="rtype" class="form-control">
                             <option value="1">Single Bedroom</option>
                             <option value="2">Double Bedroom</option>
                             <option value="3">Family Bedroom</option>
-                        </select>
-                        -->
-
-                        <select name="rtype" class="form-control">
-                            <option></option>
-
-                            @foreach ($rt as $item)
-                                @if (isset($item))
-                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endif
-                            @endforeach
                         </select>
                     </div>
 
@@ -341,6 +329,7 @@
                         <input type="text" name="r_no" class="form-control">
                     </div>
 
+                    <!--
                     <div class="form-group">
                         <br/>
                         <label>Check In</label>
@@ -352,6 +341,7 @@
                         <label>Check Out</label>
                         <input name="cout" type="date" class="form-control">
                     </div>
+                    -->
                 </div>
 
                 <div class="modal-footer">

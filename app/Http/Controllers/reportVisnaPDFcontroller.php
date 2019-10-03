@@ -14,12 +14,6 @@ class reportVisnaPDFcontroller extends Controller
         return view('')->with('reports_visnas', $reports_visnas);
     }
 
-    function get_report_data()
-    {
-        $reports_visnas = DB::table('reports_visnas')->limit(10)->get();
-        return $reports_visnas;
-    }
-
     function pdf()
     {
         $pdf = App::make('dompdf.wrapper');
@@ -59,5 +53,11 @@ class reportVisnaPDFcontroller extends Controller
         }
         $output .= '</table>';
         return $output;
+    }
+
+    function get_report_data()
+    {
+        $reports_visnas = DB::table('reports_visnas')->limit(10)->get();
+        return $reports_visnas;
     }
 }

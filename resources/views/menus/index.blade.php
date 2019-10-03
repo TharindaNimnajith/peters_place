@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,13 +49,8 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
 
     </style>
@@ -107,7 +102,7 @@
                     <td>Desserts</td>
                     <td>beverages</td>
                     <td>price</td>
-                    <td colspan=2>Actions</td>
+                    <td colspan = 2>Actions</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -136,14 +131,14 @@
                 </tbody>
             </table>
             <div></div>
-        </div>
-        <!--MAIN SECTION-->
+            </div>
+            <!--MAIN SECTION-->
         <div>
             <a style="margin: 19px;" href="{{ route('menus.create')}}" class="btn btn-primary">New Menu</a>
         </div>
 
-    </div>
-    <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+        </div>
+        <script src="{{ asset('js/app.js') }}" type="text/js"></script>
 </div>
 </body>
 </html>

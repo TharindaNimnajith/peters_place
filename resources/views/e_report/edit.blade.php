@@ -2,7 +2,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>report</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -49,13 +49,8 @@
         }
 
         @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
         }
 
     </style>
@@ -103,7 +98,7 @@
                     @endforeach
                 </ul>
             </div>
-            <br/>
+            <br />
         @endif
         <form method="post" action="{{ route('ereport.update', $eventreport->id) }}">
             @method('PATCH')
@@ -118,37 +113,37 @@
                 <tbody>
                 <tr>
                     <td>Customer name</td>
-                    <td><input type="text" name="customer_name" value={{ $eventreport->customer_name }}></td>
+                    <td><input type="text" name="customer_name" value={{ $eventreport->customer_name }}> </td>
                     <td>Event date</td>
-                    <td><input type="text" name="event_date" value={{ $eventreport->event_date }}></td>
+                    <td><input type="text" name="event_date" value={{ $eventreport->event_date }}> </td>
                 <tr>
                     <td>Event time</td>
-                    <td><input type="text" name="event_time" value={{ $eventreport->event_time }}></td>
+                    <td><input type="text" name="event_time" value={{ $eventreport->event_time }}> </td>
                     <td>Event Manager</td>
-                    <td><input type="text" name="event_manager" value={{ $eventreport->event_manager }}></td>
+                    <td><input type="text" name="event_manager" value={{ $eventreport->event_manager }}> </td>
                 </tr>
                 </tr>
                 <tr>
 
-                    <td>Estimated No. of Attendence of guest for the Event</td>
-                    <td><input type="text" name="attendence" value={{ $eventreport->attendence }} ></td>
+                    <td>Estimated No. of Attendence of guest for the Event </td>
+                    <td><input type="text" name="attendence" value={{ $eventreport->attendence }} > </td>
                     <td>Proposed Registration cost for a each person</td>
-                    <td><input type="text" name="cost" value={{ $eventreport->cost }} ></td>
+                    <td><input type="text" name="cost" value={{ $eventreport->cost }} > </td>
 
                 </tr>
                 <tr>
-                    <th colspan="4" style="color:blue;">Budget Information</th>
+                    <th colspan="4" style="color:blue;" >Budget Information</th>
                 </tr>
                 <tr>
 
-                    <td colspan="2">Actual Expence</td>
-                    <td><input type="text" name="etotal" value={{ $eventreport->etotal }}></td>
+                    <td colspan="2">Actual  Expence</td>
+                    <td><input type="text" name="etotal" value={{ $eventreport->etotal }}> </td>
                     <td></td>
                 </tr>
 
                 <tr>
                     <td colspan="2">Budget Expence</td>
-                    <td><input type="text" name="btotal" value={{ $eventreport->btotal }}></td>
+                    <td><input type="text" name="btotal"  value={{ $eventreport->btotal }}> </td>
                     <td></td>
 
                 </tr>

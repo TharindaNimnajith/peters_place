@@ -2,7 +2,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css"/>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet" type="text/css" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Events</title>
@@ -31,22 +31,12 @@
             </div>
         </div>
     </div>
-    <div role="group" aria-label="Basic example" class="btn btn-dark">
-        <a href="{{ route('events.index')}}">
-            <button class="btn btn-dark">Events</button>
-        </a>
-        <a href="{{ route('menus.index')}}">
-            <button class="btn btn-dark">Menus</button>
-        </a>
-        <a href="/eitems">
-            <button class="btn btn-dark">Event Items</button>
-        </a>
-        <a href="/estaff">
-            <button class="btn btn-dark">Manage Staff</button>
-        </a>
-        <a href="/ereport">
-            <button class="btn btn-dark">Report</button>
-        </a>
+    <div role="group" aria-label="Basic example"  class="btn btn-dark">
+        <a href="{{ route('events.index')}}"><button class="btn btn-dark">Events</button></a>
+        <a href="{{ route('menus.index')}}"><button class="btn btn-dark">Menus</button></a>
+        <a href="/eitems"><button class="btn btn-dark">Event Items</button></a>
+        <a href="/estaff"><button class="btn btn-dark">Manage Staff</button></a>
+        <a href="/ereport"><button  class="btn btn-dark">Report</button></a>
 
     </div>
 
@@ -56,7 +46,7 @@
 
     <div class="row">
         <div class="col-sm-12">
-            <center><h2>Events</h2></center>
+            <center><h2 >Events</h2></center>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -68,7 +58,7 @@
                     <td>No of Guests</td>
                     <td>Food Menu</td>
                     <td>Client Menu</td>
-                    <td colspan=2>Actions</td>
+                    <td colspan = 2>Actions</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -98,13 +88,13 @@
             </table>
             <div>
             </div>
-            <!--MAIN SECTION-->
+    <!--MAIN SECTION-->
 
             <div>
                 <a style="margin: 19px;" href="{{ route('events.create')}}" class="btn btn-primary">Add new event</a>
             </div>
 
         </div>
-        <script src="{{ asset('js/app.js') }}" type="text/js"></script>
+<script src="{{ asset('js/app.js') }}" type="text/js"></script>
 </body>
 </html>

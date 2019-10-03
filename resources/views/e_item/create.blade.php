@@ -53,13 +53,8 @@
     }
 
     @media screen and (max-height: 450px) {
-        .sidenav {
-            padding-top: 15px;
-        }
-
-        .sidenav a {
-            font-size: 18px;
-        }
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
     }
 
 </style>
@@ -98,75 +93,74 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
-            </div><br/>
+            </div><br />
         @endif
-        <form method="post" action="{{ route('eitems.store') }}">
+    <form  method="post" action="{{ route('eitems.store') }}">
 
-            @csrf
-            <section>
+        @csrf
+        <section>
 
-                <!--start of the table-->
-                <div class="panel panel-footer">
-                    <table class="table table-bordered ">
-                        <thead>
-                        <tr>
-                            <th>Event Date</th>
-                            <th>Required Date</th>
-                            <th>Item Name</th>
-                            <th>Item Quantity/Weight</th>
-                            <th><a href="#" class="addRow"><i class="glyphicon glyphicon-plus"></i> </a></th>
-                        </tr>
-                        </thead>
-                        <tbody><!--start tbody-->
-                        <tr>
-                            <td><input type="date" name="event_date" class="form-control quantity" required=""></td>
-                            <td><input type="date" name="rq_date" class="form-control quantity" required=""></td>
-                            <td><input type="text" name="item_name" class="form-control quantity" required=""></td>
-                            <td><input type="text" name="qty" class="form-control quantity" required=""></td>
-                            <!--X button-->
-                            <td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a>
-                            </td>
-                        </tr>
-                        </tbody><!--tbody end-->
-                        <tfoot>
+            <!--start of the table-->
+            <div class="panel panel-footer">
+                <table class="table table-bordered ">
+                    <thead>
+                    <tr>
+                        <th>Event Date</th>
+                        <th>Required Date</th>
+                        <th>Item Name </th>
+                        <th>Item Quantity/Weight</th>
+                        <th><a href="#" class="addRow"><i class="glyphicon glyphicon-plus"></i> </a> </th>
+                    </tr>
+                    </thead>
+                <tbody><!--start tbody-->
+                    <tr>
+                        <td><input type="date" name="event_date" class="form-control quantity" required=""></td>
+                        <td><input type="date" name="rq_date" class="form-control quantity" required=""></td>
+                        <td><input type="text" name="item_name" class="form-control quantity" required=""></td>
+                        <td><input type="text" name="qty" class="form-control quantity" required=""></td>
+                        <!--X button-->
+                        <td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a></td>
+                    </tr>
+                </tbody><!--tbody end-->
+                    <tfoot>
                         <tr>
                             <td></td>
                             <td></td>
                             <td><input type="submit" name="" value="Submit" class="btn btn-success"></td>
                         </tr>
-                        </tfoot>
+                    </tfoot>
 
-                    </table><!--table end-->
+                </table><!--table end-->
 
-                </div>
-            </section>
+            </div>
+        </section>
 
-        </form>
-    </div>
+    </form>
 </div>
-<!-- javascript for the table-->
+</div>
+ <!-- javascript for the table-->
 <script type="text/javascript">
 
-    $('.addRow').on('click', function () {
+    $('.addRow').on('click',function() {
         addRow();
     });
-
-    function addRow() {
-        var tr = '<tr>' + '<td><input type="date" name="event_date" class="form-control quantity" required=""></td>' +
-            '<td><input type="date" name="rq_date" class="form-control quantity" required=""></td>' +
-            '<td><input type="text" name="item_name" class="form-control name" required=""></td>' +
-            '<td><input type="text" name="qty" class="form-control quantity" required=""></td>' +
-            '<td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a> </td>' +
+    function addRow()
+    {
+        var tr='<tr>'+'<td><input type="date" name="event_date" class="form-control quantity" required=""></td>'+
+            '<td><input type="date" name="rq_date" class="form-control quantity" required=""></td>'+
+            '<td><input type="text" name="item_name" class="form-control name" required=""></td>'+
+            '<td><input type="text" name="qty" class="form-control quantity" required=""></td>'+
+            '<td><a href="#" class="btn btn-danger remove"><i class="glyphicon glyphicon-remove"></i></a> </td>'+
             '</td>';
         $('tbody').append(tr);
 
     }
-
-    $('.remove').live('click', function () {
-        var last = $('tbody tr').length;
-        if (last == 1) {
+    $('.remove').live('click',function () {
+        var last=$('tbody tr').length;
+        if (last==1){
             alert("You can not remove the last row");
-        } else {
+        }
+        else{
             $(this).parent().parent().remove();
         }
     });

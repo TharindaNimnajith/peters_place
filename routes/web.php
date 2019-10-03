@@ -437,6 +437,7 @@ Route::get('/Eadd', function () {
 Route::get('/Esalary', function () {
     return view('Employee_salary');
 });
+Route::post('calmonsalary', 'salaryController@store');
 
 
 Route::post('calmonsalary', 'salaryController@store');
