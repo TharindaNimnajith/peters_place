@@ -26,6 +26,7 @@ class RoomController extends Controller
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
+
     // Insert
 
 
@@ -218,6 +219,7 @@ class RoomController extends Controller
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
+
     // Delete
 
 
@@ -326,6 +328,7 @@ class RoomController extends Controller
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
+
     // Retrieve & View
 
 
@@ -339,8 +342,18 @@ class RoomController extends Controller
     {
         $details = room_type::find($id);
 
+        /*
         return view('view_room_type')
             ->with('details', $details);
+        */
+
+        $data = App\room_type::all();
+        $data1 = App\room::all();
+
+        //return view('view_room_type')->with('room_types', $data);
+
+        return view('view_room_type')
+            ->with(['details' => $details, 'dat' => $data1]);
     }
 
 
@@ -406,6 +419,7 @@ class RoomController extends Controller
 
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
+
 
     // Update / Edit, View & Retrieve
 
@@ -615,6 +629,7 @@ class RoomController extends Controller
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
+
     // Search, View & Retrieve
 
 
@@ -704,11 +719,11 @@ class RoomController extends Controller
         if ($id == null) {
             $data = DB::table('room_types')
                 ->orWhere('name', 'like', '%' . $name . '%')
-                ->paginate(5);
+                ->paginate(30);
         } else {
             $data = DB::table('room_types')
                 ->orWhere('id', $id)
-                ->paginate(5);
+                ->paginate(30);
         }
 
         /*
@@ -751,8 +766,8 @@ class RoomController extends Controller
         $id = $request->id;
         $cid = $request->cid;
 
-        $fname = $request->fname;
-        $lname = $request->lname;
+        //$fname = $request->fname;
+        //$lname = $request->lname;
 
         $roomtype = $request->rtype;
         $r_no = $request->r_no;
@@ -775,25 +790,33 @@ class RoomController extends Controller
             ->paginate(5);
         */
 
-        /*
         if ($id != null) {
             $data = DB::table('reserves')
                 ->orWhere('id', $id)
-                ->paginate(5);
+                ->paginate(30);
         } else if ($cid != null) {
             $data = DB::table('reserves')
                 ->orWhere('cid', $cid)
-                ->paginate(5);
+                ->paginate(30);
         } else if ($r_no != null) {
             $data = DB::table('reserves')
                 ->orWhere('room_no', $r_no)
-                ->paginate(5);
+                ->paginate(30);
         } else if ($roomtype != null) {
             $data = DB::table('reserves')
                 ->orWhere('t_id', $roomtype)
-                ->paginate(5);
+                ->paginate(30);
+        } else if ($cin != null) {
+            $data = DB::table('reserves')
+                //->orWhere('check_in', $cin)
+                ->orWhere('check_in', 'like', '%' . $cin . '%')
+                ->paginate(30);
+        } else if ($cout != null) {
+            $data = DB::table('reserves')
+                //->orWhere('check_out', $cout)
+                ->orWhere('check_out', 'like', '%' . $cout . '%')
+                ->paginate(30);
         }
-        */
 
         /*
         else if ($cin != null) {
@@ -849,6 +872,7 @@ class RoomController extends Controller
 
         //return view('room_reservation_management', ['reservations' => $data]);
 
+        /*
         $data = DB::table('reserves')
             ->orWhere('id', $id)
             ->orWhere('cid', $cid)
@@ -865,6 +889,7 @@ class RoomController extends Controller
             ->orWhere('check_in', $cin)
             ->orWhere('check_out', $cout)
             ->paginate(30);
+        */
 
         /*
         $data1 = DB::table('customers')
@@ -881,6 +906,7 @@ class RoomController extends Controller
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
 
+
     // Reports Generation
 
 
@@ -888,7 +914,8 @@ class RoomController extends Controller
     {
         $room_data = $this->get_room_data();
 
-        return view('dynamic_pdf_rooms')->with('room_data', $room_data);
+        return view('dynamic_pdf_rooms')
+            ->with('room_data', $room_data);
     }
 
 
@@ -896,7 +923,8 @@ class RoomController extends Controller
     {
         $room_types_data = $this->get_room_types_data();
 
-        return view('dynamic_pdf_rooms')->with('room_types_data', $room_types_data);
+        return view('dynamic_pdf_rooms')
+            ->with('room_types_data', $room_types_data);
     }
 
 
@@ -904,7 +932,8 @@ class RoomController extends Controller
     {
         $room_reservations_data = $this->get_room_reservations_data();
 
-        return view('dynamic_pdf_rooms')->with('room_reservations_data', $room_reservations_data);
+        return view('dynamic_pdf_rooms')
+            ->with('room_reservations_data', $room_reservations_data);
     }
 
 
@@ -989,7 +1018,9 @@ class RoomController extends Controller
         $rooms_data = $this->get_rooms_data();
         $room_types_data = $this->get_room_types_data();
 
+
         $date_today = date("Y/m/d");
+
 
         //$img = "{{ asset('images/g12.jpg') }}";
         //$filePath = "../../../public/images/g12.jpg";
@@ -1004,6 +1035,7 @@ class RoomController extends Controller
 
         //$img = "https://scontent.fcmb4-1.fna.fbcdn.net/v/t1.0-9/41770553_1922586088038067_3670679183752691712_n.jpg?_nc_cat=108&_nc_oc=AQkaGnHV6GpZLD3ygEi9ZnytPLN_K5qKEIvmuxYoufeCFFjV-eOyNbiLbF-Pph5zHuQ&_nc_ht=scontent.fcmb4-1.fna&oh=642539f387d00aaedde65de24ab60ac8&oe=5E3122A1";
         //$img = "scontent.fcmb4-1.fna.fbcdn.net/v/t1.0-9/41770553_1922586088038067_3670679183752691712_n.jpg?_nc_cat=108&_nc_oc=AQkaGnHV6GpZLD3ygEi9ZnytPLN_K5qKEIvmuxYoufeCFFjV-eOyNbiLbF-Pph5zHuQ&_nc_ht=scontent.fcmb4-1.fna&oh=642539f387d00aaedde65de24ab60ac8&oe=5E3122A1";
+
 
         /*
         // header
@@ -1064,7 +1096,9 @@ class RoomController extends Controller
                 </div>
 
                 <div style="margin-left: 300px; margin-top: -200px;">
-                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
+                    <h4 style="margin-left: 300px; margin-top: 10px;">' . $date_today . '</h4>
+
+                    <h2 style="margin-left: 50px; margin-top:-30px;">Peter\'s Place Hotel</h2>
 
                     <p> 
                         <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
@@ -1080,8 +1114,6 @@ class RoomController extends Controller
                         info@petersplace.lk</p>
                     </p>
                 </div>
-
-                <h3>' . $date_today . '</h3>
             </div>
         ';
 
@@ -1094,9 +1126,10 @@ class RoomController extends Controller
             <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border: 1px solid; padding: 12px;" width="20%">Room No</th>
-                <th style="border: 1px solid; padding: 12px;" width="20%">Floor</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Room No</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Floor</th>
                 <th style="border: 1px solid; padding: 12px;" width="20%">Type</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Description</th>
                 <th style="border: 1px solid; padding: 12px;" width="20%">Availability</th>
                 <th style="border: 1px solid; padding: 12px;" width="20%">Status</th>
             </tr>
@@ -1151,6 +1184,7 @@ class RoomController extends Controller
                     <td style="border: 1px solid; padding: 12px;">' . $rooms->id . '</td>
                     <td style="border: 1px solid; padding: 12px;">' . $rooms->floor . '</td>
                     <td style="border: 1px solid; padding: 12px;">' . $type . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $rooms->description . '</td>
                     <td style="border: 1px solid; padding: 12px;">' . $availability . '</td>
                     <td style="border: 1px solid; padding: 12px;">' . $status . '</td>
                 </tr>
@@ -1165,9 +1199,13 @@ class RoomController extends Controller
 
     function convert_room_types_data_to_html()
     {
+        $date_today = date("Y/m/d");
+
+
         //$rooms_data = $this->get_rooms_data();
 
         $room_types_data = $this->get_room_types_data();
+
 
         // header
 
@@ -1178,7 +1216,9 @@ class RoomController extends Controller
                 </div>
 
                 <div style="margin-left: 300px; margin-top: -200px;">
-                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
+                    <h4 style="margin-left: 300px; margin-top: 10px;">' . $date_today . '</h4>
+
+                    <h2 style="margin-left: 50px; margin-top:-30px;">Peter\'s Place Hotel</h2>
 
                     <p> 
                         <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
@@ -1206,12 +1246,17 @@ class RoomController extends Controller
             <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border: 1px solid; padding: 12px;" width="20%">Room Type ID</th>
-                <th style="border: 1px solid; padding: 12px;" width="20%">Room Type Name</th>
+                <th style="border: 1px solid; padding: 12px;" width="10%">Room Type ID</th>
+                <th style="border: 1px solid; padding: 12px;" width="15%">Room Type Name</th>
                 <th style="border: 1px solid; padding: 12px;" width="20%">Description</th>
-                <th style="border: 1px solid; padding: 12px;" width="20%">Base Price</th>
+                <th style="border: 1px solid; padding: 12px;" width="15%">Base Price</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Total Room Count</th>
+                <th style="border: 1px solid; padding: 12px;" width="20%">Available Room Count</th>
             </tr>
         ';
+
+
+        $dat = App\room::all();
 
 
         foreach ($room_types_data as $room_types) {
@@ -1256,6 +1301,24 @@ class RoomController extends Controller
             */
 
 
+            // calculating total and average
+
+            $tot = 0;
+            $avail = 0;
+
+            foreach ($dat as $d) {
+                if ($d->t_id == $room_types->id) {
+                    $tot = $tot + 1;
+                }
+            }
+
+            foreach ($dat as $d) {
+                if ($d->availability && $d->t_id == $room_types->id) {
+                    $avail = $avail + 1;
+                }
+            }
+
+
             // table rows with table data
 
             $output .= '
@@ -1263,7 +1326,9 @@ class RoomController extends Controller
                     <td style="border: 1px solid; padding: 12px;">' . $room_types->id . '</td>
                     <td style="border: 1px solid; padding: 12px;">' . $room_types->name . '</td>
                     <td style="border: 1px solid; padding: 30px;">' . $room_types->description . '</td>
-                    <td style="border: 1px solid; padding: 12px;">' . $room_types->base_price . '</td>        
+                    <td style="border: 1px solid; padding: 12px;">' . $room_types->base_price . '</td>
+                    <td style="border: 1px solid; padding: 30px;">' . $tot . '</td>
+                    <td style="border: 1px solid; padding: 12px;">' . $avail . '</td>          
                 </tr>
             ';
         }
@@ -1276,11 +1341,15 @@ class RoomController extends Controller
 
     function convert_room_reservations_data_to_html()
     {
+        $date_today = date("Y/m/d");
+
+
         //$rooms_data = $this->get_rooms_data();
 
         $room_types_data = $this->get_room_types_data();
         $room_reservation_data = $this->get_room_reservations_data();
         $customers_data = $this->get_customers_data();
+
 
         // header
 
@@ -1291,7 +1360,9 @@ class RoomController extends Controller
                 </div>
 
                 <div style="margin-left: 300px; margin-top: -200px;">
-                    <h2 style="margin-left: 50px;">Peter\'s Place Hotel</h2>
+                    <h4 style="margin-left: 300px; margin-top: 10px;">' . $date_today . '</h4>
+
+                    <h2 style="margin-left: 50px; margin-top:-30px;">Peter\'s Place Hotel</h2>
 
                     <p> 
                         <p style="margin-left: -70px;">Address &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; : &nbsp; 
@@ -1319,14 +1390,14 @@ class RoomController extends Controller
             <table width="100%" style="border-collapse: collapse; border: 0px;">
 
             <tr style="background-color:black; color:white;">
-                <th style="border: 1px solid; padding: 5px;" width="10%">R_ID</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">C_ID</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">First Name</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">Last Name</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">Phone No</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">Room Type</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">Room No</th>
-                <th style="border: 1px solid; padding: 5px;" width="10%">Reserved DateTime</th>
+                <th style="border: 1px solid; padding: 5px;" width="3%">ID</th>
+                <th style="border: 1px solid; padding: 5px;" width="3%">cID</th>
+                <th style="border: 1px solid; padding: 5px;" width="8%">First Name</th>
+                <th style="border: 1px solid; padding: 5px;" width="6%">Last Name</th>
+                <th style="border: 1px solid; padding: 5px;" width="8%">Phone No</th>
+                <th style="border: 1px solid; padding: 5px;" width="8%">Room Type</th>
+                <th style="border: 1px solid; padding: 5px;" width="4%">Room No</th>
+                <th style="border: 1px solid; padding: 5px;" width="12%">Reserved DateTime</th>
                 <th style="border: 1px solid; padding: 5px;" width="10%">Check In</th>
                 <th style="border: 1px solid; padding: 5px;" width="10%">Check Out</th>
             </tr>
@@ -1426,6 +1497,7 @@ class RoomController extends Controller
 
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
+
 
     // Default Methods in Controller
 

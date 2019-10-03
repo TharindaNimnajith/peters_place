@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Expenditures</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <link rel="stylesheet" href="form.css">
-    <script src="form.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <title>Supplier</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+    <!-- Styles -->
     <style>
+
         body {
             background-color: #a1cbef;
         }
-
         .topnav {
             overflow: hidden;
             background-color: #333;
@@ -51,7 +51,7 @@
 <div class="container" style="margin-top:151px">
 
     <div class="row">
-        <div class="col-md-6 col-md-offset-3" id="form_container">
+        <div class="col-sm-12 col-md-4">
 
             <h2>Expenditures</h2>
 
@@ -65,10 +65,10 @@
                             <option value="event">Event Products</option>
                             <option value="infa">Infrastructure</option>
                         </select></br></br>
-                        <label for="email" name="amount"> Amount:</label>
+                        <label for="email" name="amount">Expended Amount:</label>
                         <input type="text" style="width:175px" class="form-control" id="amount" name="amount" required>
                         </br>
-                        <label for="date" name="o_date"> Ordering Date:</label></br>
+                        <label for="date" name="o_date"> Ordered Date:</label></br>
                         <input type="date" id="date" style="height:32px" name="date">
                         </br></br>
                     </div>
@@ -87,7 +87,41 @@
             </form>
 
         </div>
+
+
+        <div class="col-sm-12 col-md-8">
+            <a href="{{ url('dynamic_pdf/pdf') }}" class="btn btn-danger"
+               style="margin-left: 473px;margin-bottom: -75px;margin-top: -123px">Convert into PDF </a>
+            <table id="supT" class="table table-dark" style="margin-left: 15px;">
+                <th class="sup1" scope="col">Type</th>
+                <th class="sup1" scope="col">Name</th>
+                <th class="sup1" scope="col">Email</th>
+                @foreach( $expend as $ex)
+                    <tr>
+                        <td class="sup1">{{$ex ->type}}</td>
+                        <td class="sup1">{{$ex ->amount}}</td>
+                        <td class="sup1">{{$ex ->date}}</td>
+
+                        <td class="sup1"><a href="{{route('expenditureFinal.edit',$ex -> id)}}" class="btn btn-success"
+                                            value="goBtn">Update</a></td>
+                        <td class="sup1">
+                            <form id=delete action="{{route('expenditureFinal.destroy',$ex -> id)}}" method="post"
+                                  style="margin-top: 0px;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                @endforeach
+
+
+            </table>
+        </div>
     </div>
+</div>
+</div>
 </div>
 </body>
 </html>

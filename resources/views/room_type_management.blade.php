@@ -135,12 +135,35 @@
 
             <tbody>
                 @foreach ($room_types as $room_type)
+                    <?php
+                    $tot = 0;
+                    $avail = 0;
+                    ?>
+
                     <tr>
                         <td>{{ $room_type->id }}</td>
                         <td>{{ $room_type->name }}</td>
                         <td>{{ $room_type->base_price }}</td>
-                        <td>{{ $room_type->total }}</td>
-                        <td>{{ $room_type->available }}</td>
+
+                        @foreach ($dat as $d)
+                            @if ($d->t_id == $room_type->id)
+                                <?php
+                                $tot = $tot + 1;
+                                ?>
+                            @endif
+                        @endforeach
+
+                        <td>{{ $tot }}</td>
+
+                        @foreach ($dat as $d)
+                            @if ($d->availability && $d->t_id == $room_type->id)
+                                <?php
+                                $avail = $avail + 1;
+                                ?>
+                            @endif
+                        @endforeach
+
+                        <td>{{ $avail }}</td>
 
                         <td>
                             <a href="/view_type/{{ $room_type->id }}" class="view">

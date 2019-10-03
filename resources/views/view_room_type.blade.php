@@ -73,14 +73,35 @@
                                disabled>
                     </div>
 
+                    <?php
+                    $tot = 0;
+                    $avail = 0;
+                    ?>
+
+                    @foreach ($dat as $d)
+                        @if ($d->t_id == $details->id)
+                            <?php
+                            $tot = $tot + 1;
+                            ?>
+                        @endif
+                    @endforeach
+
+                    @foreach ($dat as $d)
+                        @if ($d->availability && $d->t_id == $details->id)
+                            <?php
+                            $avail = $avail + 1;
+                            ?>
+                        @endif
+                    @endforeach
+
                     <div class="form-group">
                         <label>Total Room Count</label>
-                        <input type="text" name="tot" class="form-control" value="{{ $details->total }}" disabled>
+                        <input type="text" name="tot" class="form-control" value="{{ $tot }}" disabled>
                     </div>
 
                     <div class="form-group">
                         <label>Available Room Count</label>
-                        <input type="text" name="av_cnt" class="form-control" value="{{ $details->available }}"
+                        <input type="text" name="av_cnt" class="form-control" value="{{ $avail }}"
                                disabled>
                     </div>
                 </div>

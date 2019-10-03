@@ -124,7 +124,7 @@
                 <th>Phone No</th>
                 <th>Room Type</th>
                 <th>Room No</th>
-                <th>Reserved_Date_Time</th>
+                <th>Reserved DateTime</th>
                 <th>Check In</th>
                 <th>Check Out</th>
                 <th>Actions</th>

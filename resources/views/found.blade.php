@@ -58,7 +58,7 @@
                 <li><a href="{{ url('/vie') }}">Work Orders</a></li>
                 <li><a href="{{ url('/Update') }}">Room Status</a></li>
                 <li><a href="{{ url('/found') }}">Lost and Found Items</a></li>
-                <li><a href="{{ url('') }}">Reports</a></li>
+                <li><a href="{{ url('/Srepo') }}">Reports</a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right" id="nav-sign">

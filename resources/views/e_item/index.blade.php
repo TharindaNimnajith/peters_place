@@ -67,6 +67,7 @@
 <body>
 <div id="mySidenav" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="/home"> Home </a>
     <a href="/eventh"> Event Information </a>
     <a href="/eitems">Items Information</a>
     <a href="/menus">Menu Information</a>

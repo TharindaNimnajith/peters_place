@@ -31,7 +31,8 @@ Route::get('/online_reservation', function () {
 
     //return view('online_reservation');
 
-    return view('online_reservation')->with(['rt' => $data]);
+    return view('online_reservation')
+        ->with(['rt' => $data]);
 });
 
 
@@ -39,16 +40,23 @@ Route::get('/room_management', function () {
     $data = App\room::all();
     $data1 = App\room_type::all();
 
-    //return view('room_management')->with('rooms', $data);
+    //return view('room_management')
+    //    ->with('rooms', $data);
+
     //return view('room_management');
 
-    return view('room_management')->with(['rooms' => $data, 'dat' => $data1]);
+    return view('room_management')
+        ->with(['rooms' => $data, 'dat' => $data1]);
 });
 
 Route::get('/room_type_management', function () {
     $data = App\room_type::all();
+    $data1 = App\room::all();
 
-    return view('room_type_management')->with('room_types', $data);
+    //return view('room_type_management')->with('room_types', $data);
+
+    return view('room_type_management')
+        ->with(['room_types' => $data, 'dat' => $data1]);
 });
 
 Route::get('/room_reservation_management', function () {
@@ -56,7 +64,8 @@ Route::get('/room_reservation_management', function () {
     $data1 = App\customer::all();
     $data2 = App\room_type::all();
 
-    return view('room_reservation_management')->with(['reservations' => $data, 'dat' => $data1, 'rt' => $data2]);
+    return view('room_reservation_management')
+        ->with(['reservations' => $data, 'dat' => $data1, 'rt' => $data2]);
 });
 
 Route::get('/room_reports', function () {
@@ -341,55 +350,34 @@ Route::get('/Srepo/pdf', 'frontaddtask@pdfstate');
 // Tharushika Liyanage - Supplier Management
 
 
-/*
-Route::get('/supplier', function () {
+/*Route::get('/supplier', function () {
     $data =App\supplier::all();
     return view('supplier')->with('supplier',$data);
-});
-*/
+});*/
 
 Route::get('/booking', function () {
     return view('booking');
 });
-
 Route::get('/orderFinal', function () {
     return view('orderFinal');
 });
-
+Route::get('/search', 'orderController@search');
 Route::get('/expenditureFinal', function () {
     return view('expenditureFinal');
 });
-
-
-Route::get('/search', 'orderController@search');
-
 Route::post('/save', 'ExpendsController@store');
-
 Route::post('/makeorderTask', 'orderController@store');
+/*Route::post('/savesup','suppliercontroller@store');*/
+/*Route::get('/deletesup/{id}','suppliercontroller@deletesup');*/
 
-
-/*
-Route::post('/savesup','suppliercontroller@store');
-*/
-
-/*
-Route::get('/deletesup/{id}','suppliercontroller@deletesup');
-*/
-
-/*
-Route::get('/updatesup/{id}','suppliercontroller@updatesup');
-*/
-
-/*
+/*Route::get('/updatesup/{id}','suppliercontroller@updatesup');
 Route::post('/updatesupp','suppliercontroller@updatesupp');
 */
 
-
 Route::resource('/supplier', 'suppliercontroller');
-
-Route::get('/dynamic_pdf', 'DynamicPDFController1@sup');
-
-Route::get('/dynamic_pdf/pdf', 'DynamicPDFController1@pdf');
+Route::get('/dynamic_pdf', 'DynamicPDFController@sup');
+Route::get('/dynamic_pdf/pdf', 'DynamicPDFController@pdf');
+Route::resource('/expenditureFinal', 'Expendscontroller');
 
 
 // ------------------------------------------------------------------------
