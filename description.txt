@@ -1,0 +1,11 @@
+- A dynamic web application (web based, functional, fully fledged system) developed as a group project
+- 2nd year 2nd semester group project for the ITP (Information Technology Project) module
+- In this project, our team, which consisted of 8 members, developed a dynamic web application for the Peter's Place Hotel in Hiriketiya, Dikwella, Matara
+- This Hotel Management System includes eight main functions namely, Room Management and Reservation, Employee & Human Resource (HR) Management, Front Desk and Customer Management, Event Management, Supplier Management, Inventory Management, Housekeeping Management and Financial Management
+- Used technology : PHP, Laravel Framework, MVC Architecture, Bootstrap, MySQL, HTML, CSS, JavaScript, JQuery, Git & Github for version controlling
+- Software modeling & designing : UML (Use Case Diagram & Use Case Scenarios, Class Diagram, Sequence Diagrams, Communication Diagrams, Activity Diagrams, State Chart Diagrams)
+- Text editors & IDEs : PhpStorm, Visual Studio Code, Sublime Text 3
+- Web server : XAMPP Server
+- Database design : EER Diagram, Database Diagram, Database Schema, Mapping & Normalization
+- Database administration : phpMyAdmin
+- Functions implemented (Individual contribution) : Room Reservation and Room Management functionalities with all necessary CRUD operations (insert new records, delete records, retrieve and update details of existing records), advanced search functionality, proper navigation with good user experience and attractive & professional system interface, generating several meaningful reports in PDF format, necessary validations for all form inputs, proper error messages and designing and building a responsive, attrative and user-friendly website for customers

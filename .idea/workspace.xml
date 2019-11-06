@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="ITP Project">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;" />
+        <option value="Tharinda" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\ASUS\Desktop\peters_place-master\.idea" />
+        <option value="E:\PetersPlace\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-highlighter" />
+      <path value="$PROJECT_DIR$/vendor/jakub-onderka/php-console-color" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/vendor/erusev/parsedown" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/vendor/symfony/debug" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-token-stream" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/beyondcode/laravel-dump-server" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/fzaninotto/faker" />
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/yajra/laravel-datatables-oracle" />
+      <path value="$PROJECT_DIR$/vendor/phenx/php-font-lib" />
+      <path value="$PROJECT_DIR$/vendor/phenx/php-svg-lib" />
+      <path value="$PROJECT_DIR$/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/vendor/consoletvs/charts" />
+      <path value="$PROJECT_DIR$/vendor/balping/json-raw-encoder" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1Q0v8XDUxSYsEAvRZjQg1krasLk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\xampp\htdocs\Laravel\peter\resources\views\f_report" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="" />
+      <created>1566920169801</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1566920169801</updated>
+      <workItem from="1566920173717" duration="772000" />
+      <workItem from="1566921066038" duration="4781000" />
+      <workItem from="1567001971778" duration="2857000" />
+      <workItem from="1567009307916" duration="807000" />
+      <workItem from="1567010266954" duration="1427000" />
+      <workItem from="1567052106112" duration="252000" />
+      <workItem from="1567062714756" duration="3000" />
+      <workItem from="1567096265955" duration="612000" />
+      <workItem from="1567148107348" duration="193000" />
+      <workItem from="1567183952556" duration="43000" />
+      <workItem from="1567186434215" duration="285000" />
+      <workItem from="1567234428236" duration="134000" />
+      <workItem from="1567234593398" duration="94000" />
+      <workItem from="1567240684414" duration="100000" />
+      <workItem from="1567252143920" duration="216000" />
+      <workItem from="1567266785288" duration="188000" />
+      <workItem from="1567282362512" duration="3000" />
+      <workItem from="1567284150493" duration="2354000" />
+      <workItem from="1567328833040" duration="1052000" />
+      <workItem from="1567335867228" duration="37000" />
+      <workItem from="1567336175992" duration="151000" />
+      <workItem from="1567428723793" duration="6000" />
+      <workItem from="1567447386143" duration="1299000" />
+      <workItem from="1567452050957" duration="7905000" />
+      <workItem from="1567475807516" duration="5434000" />
+      <workItem from="1567486916576" duration="164000" />
+      <workItem from="1567494112899" duration="127000" />
+      <workItem from="1567499448992" duration="173000" />
+      <workItem from="1567506143145" duration="6000" />
+      <workItem from="1567506494190" duration="70000" />
+      <workItem from="1567597897321" duration="163000" />
+      <workItem from="1567612886344" duration="123000" />
+      <workItem from="1567615271432" duration="255000" />
+      <workItem from="1567624087368" duration="9051000" />
+      <workItem from="1567643505703" duration="11031000" />
+      <workItem from="1567952207999" duration="2869000" />
+      <workItem from="1567955800577" duration="156000" />
+      <workItem from="1567955966597" duration="59000" />
+      <workItem from="1567958595873" duration="368000" />
+      <workItem from="1567962737912" duration="16000" />
+      <workItem from="1568046142997" duration="81000" />
+      <workItem from="1568258190133" duration="3854000" />
+      <workItem from="1568368889010" duration="5000" />
+      <workItem from="1569479233599" duration="100000" />
+      <workItem from="1569479576561" duration="23961000" />
+      <workItem from="1569561776082" duration="113000" />
+      <workItem from="1569562196107" duration="1163000" />
+      <workItem from="1569563421882" duration="2434000" />
+      <workItem from="1569567768156" duration="1730000" />
+      <workItem from="1569569759367" duration="515000" />
+      <workItem from="1569570912821" duration="5000" />
+      <workItem from="1569571067491" duration="97000" />
+      <workItem from="1569588986534" duration="1408000" />
+      <workItem from="1569592949934" duration="7000" />
+      <workItem from="1569595272801" duration="3444000" />
+      <workItem from="1569649715843" duration="6996000" />
+      <workItem from="1569659621774" duration="475000" />
+      <workItem from="1569689147194" duration="2002000" />
+      <workItem from="1569692300566" duration="174000" />
+      <workItem from="1569775655929" duration="8675000" />
+      <workItem from="1569819392931" duration="750000" />
+      <workItem from="1569820282374" duration="4567000" />
+      <workItem from="1569860561135" duration="4890000" />
+      <workItem from="1569907594604" duration="3339000" />
+      <workItem from="1569917693593" duration="7121000" />
+      <workItem from="1569937631202" duration="3873000" />
+      <workItem from="1573054361524" duration="2862000" />
+      <workItem from="1573539046469" duration="745000" />
+    </task>
+    <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
+      <created>1566921284088</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1566921284088</updated>
+    </task>
+    <task id="LOCAL-00002" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
+      <created>1566921625175</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1566921625175</updated>
+    </task>
+    <task id="LOCAL-00003" summary="editing report generation ui, formatting code - Tharinda Nimnajith">
+      <created>1566925876689</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1566925876689</updated>
+    </task>
+    <task id="LOCAL-00004" summary="room reservation ui, update customer table - Tharinda Nimnajith">
+      <created>1567011966875</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1567011966875</updated>
+    </task>
+    <task id="LOCAL-00005" summary="validations with requests, insert data, etc. - Tharinda Nimnajith">
+      <created>1567148266804</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1567148266804</updated>
+    </task>
+    <task id="LOCAL-00006" summary="validations and inserting data - Tharinda Nimnajith">
+      <created>1567186515948</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1567186515949</updated>
+    </task>
+    <task id="LOCAL-00007" summary="online room reservation, materialize css, validations - Tharinda Nimnajith">
+      <created>1567252317079</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1567252317079</updated>
+    </task>
+    <task id="LOCAL-00008" summary="update tables when inserting (table view) - Tharinda Nimnajith">
+      <created>1567266949810</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1567266949810</updated>
+    </task>
+    <task id="LOCAL-00009" summary="delete rows - Tharinda Nimnajith">
+      <created>1567286508886</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1567286508886</updated>
+    </task>
+    <task id="LOCAL-00010" summary="delete rows in room type, reservations + changes to routes in web.php - Tharinda Nimnajith">
+      <created>1567336243683</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1567336243683</updated>
+    </task>
+    <task id="LOCAL-00011" summary="views - Tharinda Nimnajith">
+      <created>1567448054652</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1567448054652</updated>
+    </task>
+    <task id="LOCAL-00012" summary="view styles - Tharinda Nimnajith">
+      <created>1567459972671</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1567459972671</updated>
+    </task>
+    <task id="LOCAL-00013" summary="view rooms + radio buttons - Tharinda Nimnajith">
+      <created>1567483571227</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1567483571227</updated>
+    </task>
+    <task id="LOCAL-00014" summary="view reservations - Tharinda Nimnajith">
+      <created>1567487057610</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1567487057610</updated>
+    </task>
+    <task id="LOCAL-00015" summary="update uis without styling - Tharinda Nimnajith">
+      <created>1567494206436</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1567494206437</updated>
+    </task>
+    <task id="LOCAL-00016" summary="update uis with styling - Tharinda Nimnajith">
+      <created>1567506529930</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1567506529930</updated>
+    </task>
+    <task id="LOCAL-00017" summary="integration - Tharinda Nimnajith">
+      <created>1567615391797</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1567615391797</updated>
+    </task>
+    <task id="LOCAL-00018" summary="search - Tharinda Nimnajith">
+      <created>1567624137549</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1567624137549</updated>
+    </task>
+    <task id="LOCAL-00019" summary="search - Tharinda Nimnajith">
+      <created>1567624733715</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1567624733715</updated>
+    </task>
+    <task id="LOCAL-00020" summary="room_type changes - Tharinda Nimnajith">
+      <created>1567628917203</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1567628917203</updated>
+    </task>
+    <task id="LOCAL-00021" summary="join table - Tharinda Nimnajith">
+      <created>1567633227002</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1567633227002</updated>
+    </task>
+    <task id="LOCAL-00022" summary="test">
+      <created>1567952539804</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1567952539804</updated>
+    </task>
+    <task id="LOCAL-00023" summary="test1">
+      <created>1567954429407</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1567954429407</updated>
+    </task>
+    <task id="LOCAL-00024" summary="test3">
+      <created>1567958934876</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1567958934876</updated>
+    </task>
+    <task id="LOCAL-00025" summary="itp">
+      <created>1568258914668</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1568258914668</updated>
+    </task>
+    <task id="LOCAL-00026" summary="tharinda">
+      <created>1569487897373</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1569487897373</updated>
+    </task>
+    <task id="LOCAL-00027" summary="tharinda">
+      <created>1569516299441</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1569516299441</updated>
+    </task>
+    <task id="LOCAL-00028" summary="tharinda">
+      <created>1569561852025</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1569561852026</updated>
+    </task>
+    <task id="LOCAL-00029" summary="tharinda">
+      <created>1569562212219</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1569562212219</updated>
+    </task>
+    <task id="LOCAL-00030" summary="tharinda">
+      <created>1569562537040</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1569562537040</updated>
+    </task>
+    <task id="LOCAL-00031" summary="tharinda">
+      <created>1569563442309</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1569563442309</updated>
+    </task>
+    <task id="LOCAL-00032" summary="tharinda">
+      <created>1569564166418</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1569564166418</updated>
+    </task>
+    <task id="LOCAL-00033" summary="tharinda">
+      <created>1569565376801</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1569565376801</updated>
+    </task>
+    <task id="LOCAL-00034" summary="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install">
+      <created>1569569663015</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1569569663015</updated>
+    </task>
+    <task id="LOCAL-00035" summary="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install">
+      <created>1569569775919</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1569569775919</updated>
+    </task>
+    <task id="LOCAL-00036" summary="TNR">
+      <created>1569590752338</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1569590752338</updated>
+    </task>
+    <task id="LOCAL-00037" summary="TNR">
+      <created>1569595802017</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1569595802017</updated>
+    </task>
+    <task id="LOCAL-00038" summary="TNR">
+      <created>1569597189647</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1569597189647</updated>
+    </task>
+    <task id="LOCAL-00039" summary="TNR">
+      <created>1569598632401</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1569598632401</updated>
+    </task>
+    <task id="LOCAL-00040" summary="controller">
+      <created>1569653468313</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653468313</updated>
+    </task>
+    <task id="LOCAL-00041" summary="event model">
+      <created>1569653535046</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653535046</updated>
+    </task>
+    <task id="LOCAL-00042" summary="event management">
+      <created>1569653688424</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653688424</updated>
+    </task>
+    <task id="LOCAL-00043" summary="event management">
+      <created>1569653982695</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653982695</updated>
+    </task>
+    <task id="LOCAL-00044" summary="event management">
+      <created>1569653996114</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1569653996114</updated>
+    </task>
+    <task id="LOCAL-00045" summary="event management">
+      <created>1569654117410</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1569654117410</updated>
+    </task>
+    <task id="LOCAL-00046" summary="event management">
+      <created>1569654901770</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1569654901770</updated>
+    </task>
+    <task id="LOCAL-00047" summary="navigation errors fixed">
+      <created>1569655295647</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1569655295647</updated>
+    </task>
+    <task id="LOCAL-00048" summary="reports">
+      <created>1569655447497</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1569655447497</updated>
+    </task>
+    <task id="LOCAL-00049" summary="ITP Project">
+      <created>1573057871553</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1573057871553</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UpdateCopyrightCheckinHandler">
+    <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
+    <MESSAGE value="delete rows - Tharinda Nimnajith" />
+    <MESSAGE value="delete rows in room type, reservations + changes to routes in web.php - Tharinda Nimnajith" />
+    <MESSAGE value="views - Tharinda Nimnajith" />
+    <MESSAGE value="view styles - Tharinda Nimnajith" />
+    <MESSAGE value="view rooms + radio buttons - Tharinda Nimnajith" />
+    <MESSAGE value="view reservations - Tharinda Nimnajith" />
+    <MESSAGE value="update uis without styling - Tharinda Nimnajith" />
+    <MESSAGE value="update uis with styling - Tharinda Nimnajith" />
+    <MESSAGE value="integration - Tharinda Nimnajith" />
+    <MESSAGE value="search - Tharinda Nimnajith" />
+    <MESSAGE value="room_type changes - Tharinda Nimnajith" />
+    <MESSAGE value="join table - Tharinda Nimnajith" />
+    <MESSAGE value="test" />
+    <MESSAGE value="test1" />
+    <MESSAGE value="test3" />
+    <MESSAGE value="itp" />
+    <MESSAGE value="tharinda" />
+    <MESSAGE value="gitignore, node_modules, vendor, composer require barryvdh/laravel-dompdf, composer install" />
+    <MESSAGE value="TNR" />
+    <MESSAGE value="controller" />
+    <MESSAGE value="event model" />
+    <MESSAGE value="event management" />
+    <MESSAGE value="navigation errors fixed" />
+    <MESSAGE value="reports" />
+    <MESSAGE value="ITP Project" />
+    <option name="LAST_COMMIT_MESSAGE" value="ITP Project" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+</project>
