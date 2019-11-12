@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="ITP Project">
+    <list default="true" id="2d669d30-913e-4df7-8386-1d7e10c0a773" name="Default Changelist" comment="ITP Project&#10;&#10;Signed-off-by: TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/e_item/index.blade.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -236,21 +235,7 @@
       <workItem from="1569917693593" duration="7121000" />
       <workItem from="1569937631202" duration="3873000" />
       <workItem from="1573054361524" duration="2862000" />
-      <workItem from="1573539046469" duration="745000" />
-    </task>
-    <task id="LOCAL-00001" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
-      <created>1566921284088</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1566921284088</updated>
-    </task>
-    <task id="LOCAL-00002" summary="room reservation, room management, hotel web site, creating tables related to room management &amp; reservation - Tharinda Nimnajith">
-      <created>1566921625175</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1566921625175</updated>
+      <workItem from="1573539046469" duration="1778000" />
     </task>
     <task id="LOCAL-00003" summary="editing report generation ui, formatting code - Tharinda Nimnajith">
       <created>1566925876689</created>
@@ -581,7 +566,21 @@
       <option name="project" value="LOCAL" />
       <updated>1573057871553</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="ITP Project&#10;&#10;Signed-off-by: TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;">
+      <created>1573539827389</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1573539827389</updated>
+    </task>
+    <task id="LOCAL-00051" summary="ITP Project&#10;&#10;Signed-off-by: TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;">
+      <created>1573539885478</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1573539885478</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -608,7 +607,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
     </ignored-roots>
-    <MESSAGE value="delete rows - Tharinda Nimnajith" />
     <MESSAGE value="delete rows in room type, reservations + changes to routes in web.php - Tharinda Nimnajith" />
     <MESSAGE value="views - Tharinda Nimnajith" />
     <MESSAGE value="view styles - Tharinda Nimnajith" />
@@ -633,7 +631,8 @@
     <MESSAGE value="navigation errors fixed" />
     <MESSAGE value="reports" />
     <MESSAGE value="ITP Project" />
-    <option name="LAST_COMMIT_MESSAGE" value="ITP Project" />
+    <MESSAGE value="ITP Project&#10;&#10;Signed-off-by: TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="ITP Project&#10;&#10;Signed-off-by: TharindaNimnajith &lt;tharindarajapakshe@gmail.com&gt;" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
